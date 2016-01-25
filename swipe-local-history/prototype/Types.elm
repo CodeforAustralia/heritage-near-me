@@ -3,12 +3,14 @@ module Types (App(..), Exploration, Favourites, Story, Action(..)) where
 type App a =
       Exploring (Exploration a)
     | Viewing a (Exploration a)
+    | ViewingFavourites (Exploration a)
 
 type Action a =
       Explore
     | Favourite
     | Pass
     | View a
+    | ViewFavourites
 
 type alias Exploration a =
     { item : Maybe a

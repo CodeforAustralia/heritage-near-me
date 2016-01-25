@@ -1,30 +1,50 @@
-import Html exposing (Html)
+import Html exposing (Html, div, nav, button, text)
+import Html.Events exposing (onClick)
 import StartApp.Simple as StartApp
 
 import Types exposing (..)
 import Explore
 import Story
+import Favourites
 
 main = StartApp.start { model = Exploring exampleStories, view = view, update = update }
 
 view : Signal.Address (Action Story) -> App Story -> Html
-view address app = case app of
-    Exploring explore       -> Explore.view address explore
-    Viewing   story explore -> Story.view   address story
+view address app = div []
+    [ navigation address
+    , case app of
+        Exploring explore         -> Explore.view    address explore
+        Viewing   story explore   -> Story.view      address story
+        ViewingFavourites explore -> Favourites.view address explore.favourites
+    ]
+
+navigation address = nav []
+    [ button [onClick address Explore] [text "explore"]
+    , button [onClick address ViewFavourites] [text "favourites"]
+    ]
 
 update : Action Story -> App Story -> App Story
 update action app = case app of
     Exploring explore ->
         case action of
-            Explore     -> Exploring explore
-            View story' -> Viewing story' explore
-            Favourite   -> Exploring <| favouriteItem explore
-            Pass        -> Exploring <| passItem explore
+            Explore        -> Exploring explore
+            View story'    -> Viewing story' explore
+            ViewFavourites -> ViewingFavourites explore
+            Favourite      -> Exploring <| favouriteItem explore
+            Pass           -> Exploring <| passItem explore
+
     Viewing story explore ->
+        case action of
+            Explore        -> Exploring explore
+            View story'    -> Viewing story' explore
+            ViewFavourites -> ViewingFavourites explore
+            _ -> Viewing story explore
+
+    ViewingFavourites explore ->
         case action of
             Explore     -> Exploring explore
             View story' -> Viewing story' explore
-            _ -> Viewing story explore
+            _ -> ViewingFavourites explore
 
 favouriteItem : Exploration a -> Exploration a
 favouriteItem app =
