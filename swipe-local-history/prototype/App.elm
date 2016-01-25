@@ -18,14 +18,39 @@ update action app = case app of
         case action of
             Explore     -> Exploring explore
             View story' -> Viewing story' explore
+            Favourite   -> Exploring <| favouriteItem explore
+            Pass        -> Exploring <| passItem explore
     Viewing story explore ->
         case action of
             Explore     -> Exploring explore
             View story' -> Viewing story' explore
+            _ -> Viewing story explore
+
+favouriteItem : Exploration a -> Exploration a
+favouriteItem app =
+    { app |
+      item = List.head app.items
+    , items = Maybe.withDefault [] <| List.tail app.items
+    , favourites = case app.item of
+        Just item -> app.favourites ++ [item]
+        Nothing   -> app.favourites
+    }
+
+passItem : Exploration a -> Exploration a
+passItem app =
+    { app |
+      item = List.head app.items
+    , items = Maybe.withDefault [] <| List.tail app.items
+    , passes = case app.item of
+        Just item -> app.passes ++ [item]
+        Nothing   -> app.passes
+    }
 
 exampleStories =
     { item = Just exampleStory
-    , items = List.repeat 10 exampleStory
+    , items = List.indexedMap
+        (\i story -> {story | title = toString i ++ ": " ++ story.title})
+        <| List.repeat 10 exampleStory
     , favourites = []
     , passes = []
     }

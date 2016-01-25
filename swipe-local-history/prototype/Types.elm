@@ -6,6 +6,8 @@ type App a =
 
 type Action a =
       Explore
+    | Favourite
+    | Pass
     | View a
 
 type alias Exploration a =
