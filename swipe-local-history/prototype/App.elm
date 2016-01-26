@@ -1,13 +1,21 @@
 import Html exposing (Html, div, nav, button, text)
 import Html.Events exposing (onClick)
-import StartApp.Simple as StartApp
+import Effects
+import StartApp
 
 import Types exposing (..)
 import Explore
 import Story
 import Favourites
 
-main = StartApp.start { model = Exploring exampleStories, view = view, update = update }
+main = app.html
+
+app = StartApp.start
+    { init = (Exploring exampleStories, Effects.none)
+    , view = view
+    , update = \action model -> (update action model, Effects.none)
+    , inputs = []
+    }
 
 view : Signal.Address (Action Story) -> App Story -> Html
 view address app = div []
