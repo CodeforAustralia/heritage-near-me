@@ -1,9 +1,6 @@
-import String
 import Html exposing (Html, div, nav, button, text)
 import Html.Events exposing (onClick)
 import Effects
-import History
-import Task exposing (Task)
 import StartApp
 
 import Types exposing (..)
@@ -19,18 +16,6 @@ app = StartApp.start
     , update = \action model -> (update action model, Effects.none)
     , inputs = []
     }
-
-port updateHistory : Signal (Task error ())
-port updateHistory = Signal.map History.setPath
-    <| Signal.map appUrl app.model
-
-appUrl : App Story -> String
-appUrl app = case app of
-    Exploring explore         -> "/explore"
-    Viewing story explore     -> "/story/" ++ urlizeTitle story.title
-    ViewingFavourites explore -> "/favourites"
-
-urlizeTitle = String.concat << List.intersperse "-" << String.words
 
 view : Signal.Address (Action Story) -> App Story -> Html
 view address app = div []
