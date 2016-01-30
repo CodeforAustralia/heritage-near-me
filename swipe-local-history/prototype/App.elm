@@ -7,6 +7,7 @@ import Types exposing (..)
 import Explore
 import Story
 import Favourites
+import Swiping
 
 main = app.html
 
@@ -14,7 +15,7 @@ app = StartApp.start
     { init = (Exploring exampleStories, Effects.none)
     , view = view
     , update = \action model -> (update action model, Effects.none)
-    , inputs = []
+    , inputs = [Swiping.swipeActions]
     }
 
 view : Signal.Address (Action Story) -> App Story -> Html
@@ -40,6 +41,7 @@ update action app = case app of
             ViewFavourites -> ViewingFavourites explore
             Favourite      -> Exploring <| favouriteItem explore
             Pass           -> Exploring <| passItem explore
+            _              -> Exploring explore
 
     Viewing story explore ->
         case action of

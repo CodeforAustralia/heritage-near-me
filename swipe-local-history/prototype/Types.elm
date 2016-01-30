@@ -11,6 +11,7 @@ type Action a =
     | Pass
     | View a
     | ViewFavourites
+    | NoAction
 
 type alias Exploration a =
     { item : Maybe a
