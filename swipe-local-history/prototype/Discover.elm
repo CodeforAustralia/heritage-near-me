@@ -1,4 +1,4 @@
-module Explore (view) where
+module Discover (view) where
 
 import Html exposing (Html, div, nav, h1, h2, img, button, text)
 import Html.Events exposing (onClick)
@@ -6,7 +6,7 @@ import Html.Attributes as Attr exposing (..)
 
 import Types exposing (..)
 
-view : Signal.Address (Action Story) -> Exploration Story -> Html
+view : Signal.Address (Action Story) -> Discover Story -> Html
 view address app = div []
     [ case app.item of
         Just item -> viewStory address item
@@ -14,7 +14,7 @@ view address app = div []
     , navigation address app
     ]
 
-navigation : Signal.Address (Action Story) -> (Exploration Story) -> Html
+navigation : Signal.Address (Action Story) -> (Discover Story) -> Html
 navigation address app = nav []
     [ button [onClick address Pass] [text "❌"]
     , button [onClick address Favourite] [text "✅"]

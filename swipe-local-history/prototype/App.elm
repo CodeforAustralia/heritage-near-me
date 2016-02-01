@@ -4,7 +4,7 @@ import Effects
 import StartApp
 
 import Types exposing (..)
-import Explore
+import Discover
 import Story
 import Favourites
 import Swiping
@@ -12,7 +12,7 @@ import Swiping
 main = app.html
 
 app = StartApp.start
-    { init = (Exploring exampleStories, Effects.none)
+    { init = (Discovering exampleStories, Effects.none)
     , view = view
     , update = \action model -> (update action model, Effects.none)
     , inputs = [Swiping.swipeActions]
@@ -22,41 +22,41 @@ view : Signal.Address (Action Story) -> App Story -> Html
 view address app = div []
     [ navigation address
     , case app of
-        Exploring explore         -> Explore.view    address explore
-        Viewing   story explore   -> Story.view      address story
-        ViewingFavourites explore -> Favourites.view address explore.favourites
+        Discovering discover       -> Discover.view   address discover
+        Viewing   story discover   -> Story.view      address story
+        ViewingFavourites discover -> Favourites.view address discover.favourites
     ]
 
 navigation address = nav []
-    [ button [onClick address Explore] [text "explore"]
+    [ button [onClick address Discover] [text "discover"]
     , button [onClick address ViewFavourites] [text "favourites"]
     ]
 
 update : Action Story -> App Story -> App Story
 update action app = case app of
-    Exploring explore ->
+    Discovering discover ->
         case action of
-            Explore        -> Exploring explore
-            View story'    -> Viewing story' explore
-            ViewFavourites -> ViewingFavourites explore
-            Favourite      -> Exploring <| favouriteItem explore
-            Pass           -> Exploring <| passItem explore
-            _              -> Exploring explore
+            Discover       -> Discovering discover
+            View story'    -> Viewing story' discover
+            ViewFavourites -> ViewingFavourites discover
+            Favourite      -> Discovering <| favouriteItem discover
+            Pass           -> Discovering <| passItem discover
+            _              -> Discovering discover
 
-    Viewing story explore ->
+    Viewing story discover ->
         case action of
-            Explore        -> Exploring explore
-            View story'    -> Viewing story' explore
-            ViewFavourites -> ViewingFavourites explore
-            _ -> Viewing story explore
+            Discover       -> Discovering discover
+            View story'    -> Viewing story' discover
+            ViewFavourites -> ViewingFavourites discover
+            _ -> Viewing story discover
 
-    ViewingFavourites explore ->
+    ViewingFavourites discover ->
         case action of
-            Explore     -> Exploring explore
-            View story' -> Viewing story' explore
-            _ -> ViewingFavourites explore
+            Discover    -> Discovering discover
+            View story' -> Viewing story' discover
+            _ -> ViewingFavourites discover
 
-favouriteItem : Exploration a -> Exploration a
+favouriteItem : Discovery a -> Discovery a
 favouriteItem app =
     { app |
       item = List.head app.items
@@ -66,7 +66,7 @@ favouriteItem app =
         Nothing   -> app.favourites
     }
 
-passItem : Exploration a -> Exploration a
+passItem : Discovery a -> Discovery a
 passItem app =
     { app |
       item = List.head app.items
