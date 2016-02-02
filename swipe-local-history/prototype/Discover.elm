@@ -6,7 +6,7 @@ import Html.Attributes as Attr exposing (..)
 
 import Types exposing (..)
 
-view : Signal.Address (Action Story) -> Discover Story -> Html
+view : Signal.Address (Action Story) -> Discovery Story -> Html
 view address app = div []
     [ case app.item of
         Just item -> viewStory address item
@@ -14,7 +14,7 @@ view address app = div []
     , navigation address app
     ]
 
-navigation : Signal.Address (Action Story) -> (Discover Story) -> Html
+navigation : Signal.Address (Action Story) -> (Discovery Story) -> Html
 navigation address app = nav []
     [ button [onClick address Pass] [text "❌"]
     , button [onClick address Favourite] [text "✅"]

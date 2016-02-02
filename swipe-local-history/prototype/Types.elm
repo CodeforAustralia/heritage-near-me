@@ -1,9 +1,14 @@
-module Types (App(..), Discovery, Favourites, Story, Action(..)) where
+module Types (App, Location(..), Discovery, Favourites, Story, Action(..)) where
 
-type App a =
-      Discovering (Discovery a)
-    | Viewing a (Discovery a)
-    | ViewingFavourites (Discovery a)
+type alias App a =
+    { location : Location a
+    , discovery : Discovery a
+    }
+
+type Location a =
+      Discovering
+    | Viewing a
+    | ViewingFavourites
 
 type Action a =
       Discover

@@ -12,7 +12,7 @@ import Swiping
 main = app.html
 
 app = StartApp.start
-    { init = (Discovering exampleStories, Effects.none)
+    { init = (exampleApp, Effects.none)
     , view = view
     , update = \action model -> (update action model, Effects.none)
     , inputs = [Swiping.swipeActions]
@@ -21,10 +21,10 @@ app = StartApp.start
 view : Signal.Address (Action Story) -> App Story -> Html
 view address app = div []
     [ navigation address
-    , case app of
-        Discovering discover       -> Discover.view   address discover
-        Viewing   story discover   -> Story.view      address story
-        ViewingFavourites discover -> Favourites.view address discover.favourites
+    , case app.location of
+        Discovering       -> Discover.view   address app.discovery
+        Viewing story     -> Story.view      address story
+        ViewingFavourites -> Favourites.view address app.discovery.favourites
     ]
 
 navigation address = nav []
@@ -33,28 +33,29 @@ navigation address = nav []
     ]
 
 update : Action Story -> App Story -> App Story
-update action app = case app of
-    Discovering discover ->
+update action app = case app.location of
+    Discovering ->
         case action of
-            Discover       -> Discovering discover
-            View story'    -> Viewing story' discover
-            ViewFavourites -> ViewingFavourites discover
-            Favourite      -> Discovering <| favouriteItem discover
-            Pass           -> Discovering <| passItem discover
-            _              -> Discovering discover
+            Discover       -> {app | location = Discovering}
+            View story'    -> {app | location = Viewing story'}
+            ViewFavourites -> {app | location = ViewingFavourites}
+            Favourite      -> {app | location = Discovering, discovery = favouriteItem app.discovery}
+            Pass           -> {app | location = Discovering, discovery = passItem app.discovery}
+            _              -> app
 
-    Viewing story discover ->
+    Viewing story ->
         case action of
-            Discover       -> Discovering discover
-            View story'    -> Viewing story' discover
-            ViewFavourites -> ViewingFavourites discover
-            _ -> Viewing story discover
+            Discover       -> {app | location = Discovering}
+            View story'    -> {app | location = Viewing story'}
+            ViewFavourites -> {app | location = ViewingFavourites}
+            _              -> app
 
-    ViewingFavourites discover ->
+    ViewingFavourites ->
         case action of
-            Discover    -> Discovering discover
-            View story' -> Viewing story' discover
-            _ -> ViewingFavourites discover
+            Discover       -> {app | location = Discovering}
+            View story'    -> {app | location = Viewing story'}
+            ViewFavourites -> {app | location = ViewingFavourites}
+            _              -> app
 
 favouriteItem : Discovery a -> Discovery a
 favouriteItem app =
@@ -75,6 +76,9 @@ passItem app =
         Just item -> app.passes ++ [item]
         Nothing   -> app.passes
     }
+
+exampleApp : App Story
+exampleApp = {location = Discovering, discovery = exampleStories}
 
 exampleStories =
     { item = Just exampleStory
