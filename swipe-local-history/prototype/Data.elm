@@ -7,7 +7,7 @@ import Http
 import Types exposing (..)
 
 url : String -> String
-url subUrl = Http.url ("http://localhost:3000/"++subUrl) []
+url subUrl = Http.url ("api/"++subUrl) []
 
 fetch : App Story -> Task () (Action Story)
 fetch app = case app.location of
