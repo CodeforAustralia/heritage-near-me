@@ -65,3 +65,25 @@ body > div, .app {
         .discovery-navigation > * {
             flex: 0 1 50%;
         }
+
+.favourites {
+    margin: 16px;
+}
+
+    .favourites ul {
+        list-style: none;
+        -webkit-padding-start: 0px;
+    }
+
+        .favourites li {
+            display: flex;
+            flex-direction: column;
+        }
+
+            .favourites li .image {
+                flex: 0 1 180px;
+            }
+
+            .favourites li h2 {
+                flex: 0 1 50px;
+            }

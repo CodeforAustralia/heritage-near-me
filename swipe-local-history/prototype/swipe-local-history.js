@@ -11916,22 +11916,32 @@ Elm.Favourites.make = function (_elm) {
    $Signal = Elm.Signal.make(_elm),
    $Types = Elm.Types.make(_elm);
    var _op = {};
+   var favouriteImage = function (favourite) {
+      return A2($Html.div,
+      _U.list([$Html$Attributes.$class("image")
+              ,$Html$Attributes.style(_U.list([{ctor: "_Tuple2"
+                                               ,_0: "background-image"
+                                               ,_1: A2($Basics._op["++"],"url(\"",A2($Basics._op["++"],favourite.photo,"\")"))}
+                                              ,{ctor: "_Tuple2",_0: "background-repeat",_1: "no-repeat"}
+                                              ,{ctor: "_Tuple2",_0: "background-size",_1: "cover"}]))]),
+      _U.list([]));
+   };
    var viewFavourite = F2(function (address,favourite) {
       return A2($Html.li,
       _U.list([A2($Html$Events.onClick,address,$Types.View(favourite))]),
-      _U.list([A2($Html.img,_U.list([$Html$Attributes.src(favourite.photo)]),_U.list([])),A2($Html.h2,_U.list([]),_U.list([$Html.text(favourite.title)]))]));
+      _U.list([favouriteImage(favourite),A2($Html.h2,_U.list([]),_U.list([$Html.text(favourite.title)]))]));
    });
    var viewFavourites = F2(function (address,favourites) {    return A2($Html.ul,_U.list([]),A2($List.map,viewFavourite(address),favourites));});
    var view = F2(function (address,favourites) {
       return A2($Html.div,
-      _U.list([]),
+      _U.list([$Html$Attributes.$class("favourites")]),
       _U.list([A2($Html.h1,_U.list([]),_U.list([$Html.text("Favourites")]))
               ,function () {
                  var _p0 = favourites;
                  if (_p0.ctor === "[]") {
                        return $Html.text("You have no favourites yet");
                     } else {
-                       return A2($Html.ul,_U.list([]),_U.list([A2(viewFavourites,address,favourites)]));
+                       return A2(viewFavourites,address,favourites);
                     }
               }()]));
    });
