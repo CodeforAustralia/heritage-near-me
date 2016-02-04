@@ -37,6 +37,11 @@ body > div, .app {
     overflow: hidden;
 }
 
+    .discovery-empty {
+        flex: 0 1 100%;
+        margin: 16px;
+    }
+
     .discovery-story {
         display: flex;
         flex-direction: column;
@@ -55,6 +60,8 @@ body > div, .app {
 
         .discovery-story h2 {
             flex: 0 1 50px;
+            margin-left: 16px;
+            margin-right: 16px;
         }
 
     .discovery-navigation {

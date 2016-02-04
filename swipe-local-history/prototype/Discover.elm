@@ -13,7 +13,7 @@ view address app = div [class "discovery"
     ]
     [ case app.item of
         Just item -> viewStory address item app.swipeState
-        Nothing   -> text "No more stories left!"
+        Nothing   -> noStory
     , navigation address app
     ]
 
@@ -22,6 +22,9 @@ navigation address app = nav [class "discovery-navigation"]
     [ button [onClick address Pass] [text "❌"]
     , button [onClick address Favourite] [text "✅"]
     ]
+
+noStory : Html
+noStory = div [class "discovery-empty"] [h2 [] [text "No more stories left!"]]
 
 viewStory : Signal.Address (Action Story) -> Story -> Maybe SwipeState -> Html
 viewStory address story swipe = div

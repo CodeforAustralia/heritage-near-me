@@ -11878,6 +11878,9 @@ Elm.Discover.make = function (_elm) {
       A3($Swiping.onSwipe,address,swipe,$Swiping.swipeAction)),
       _U.list([storyImage(story),A2($Html.h2,_U.list([]),_U.list([$Html.text(story.title)]))]));
    });
+   var noStory = A2($Html.div,
+   _U.list([$Html$Attributes.$class("discovery-empty")]),
+   _U.list([A2($Html.h2,_U.list([]),_U.list([$Html.text("No more stories left!")]))]));
    var navigation = F2(function (address,app) {
       return A2($Html.nav,
       _U.list([$Html$Attributes.$class("discovery-navigation")]),
@@ -11892,7 +11895,7 @@ Elm.Discover.make = function (_elm) {
                  if (_p2.ctor === "Just") {
                        return A3(viewStory,address,_p2._0,app.swipeState);
                     } else {
-                       return $Html.text("No more stories left!");
+                       return noStory;
                     }
               }()
               ,A2(navigation,address,app)]));
