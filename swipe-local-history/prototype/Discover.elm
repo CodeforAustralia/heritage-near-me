@@ -9,11 +9,12 @@ import Types exposing (..)
 import Swiping exposing (onSwipe, swipeAction)
 
 view : Signal.Address (Action Story) -> Discovery Story -> Html
-view address app = div [class "discovery"
-    ]
+view address app = div [class "discovery"]
     [ case app.item of
-        Just item -> viewStory address item app.swipeState
-        Nothing   -> noStory
+        Loaded (Succeeded (Just item)) -> viewStory address item app.swipeState
+        Loaded (Succeeded (Nothing))   -> noStory
+        Loaded (Failed err) -> text "Something went wrong"
+        Loading -> text "Loading..."
     , navigation address app
     ]
 

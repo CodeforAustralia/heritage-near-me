@@ -1,5 +1,6 @@
-module Types (App, Location(..), Discovery, Favourites, Story, Action(..)) where
+module Types (App, Location(..), Discovery, Favourites, Story, Action(..), RemoteData(..), LoadedData(..)) where
 
+import Http
 import Swipe exposing (SwipeState)
 
 type alias App a =
@@ -19,12 +20,16 @@ type Action a =
     | Pass
     | View a
     | ViewFavourites
+    | LoadItems (LoadedData (List a))
     | NoAction
 
+type RemoteData a = Loading | Loaded (LoadedData a)
+type LoadedData a = Succeeded a | Failed Http.Error
+
 type alias Discovery a =
-    { item : Maybe a
+    { item : RemoteData (Maybe a)
     , swipeState : Maybe SwipeState
-    , items : List a
+    , items : RemoteData (List a)
     , favourites : Favourites a
     , passes : List a
     }
