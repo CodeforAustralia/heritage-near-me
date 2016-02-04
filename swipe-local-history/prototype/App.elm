@@ -1,9 +1,12 @@
 import Html exposing (Html, div, nav, button, text)
 import Html.Events exposing (onClick)
+import Task exposing (Task)
 import Effects
+import RouteHash
 import StartApp
 
 import Types exposing (..)
+import Route
 import Discover
 import Story
 import Favourites
@@ -15,7 +18,19 @@ app = StartApp.start
     { init = (exampleApp, Effects.none)
     , view = view
     , update = \action model -> (update action model, Effects.none)
-    , inputs = [Swiping.swipeActions]
+    , inputs = [Swiping.swipeActions, history.signal]
+    }
+
+history : Signal.Mailbox (Action Story)
+history = Signal.mailbox NoAction
+
+port routeTasks : Signal (Task () ())
+port routeTasks = RouteHash.start
+    { prefix = RouteHash.defaultPrefix
+    , address = history.address
+    , models = app.model
+    , delta2update = Route.url
+    , location2action = Route.action
     }
 
 view : Signal.Address (Action Story) -> App Story -> Html
