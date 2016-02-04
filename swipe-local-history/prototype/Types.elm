@@ -1,5 +1,7 @@
 module Types (App, Location(..), Discovery, Favourites, Story, Action(..)) where
 
+import Swipe exposing (SwipeState)
+
 type alias App a =
     { location : Location a
     , discovery : Discovery a
@@ -12,7 +14,7 @@ type Location a =
 
 type Action a =
       Discover
-    | SwipingItem Int
+    | SwipingItem (Maybe SwipeState)
     | Favourite
     | Pass
     | View a
@@ -21,7 +23,7 @@ type Action a =
 
 type alias Discovery a =
     { item : Maybe a
-    , swipePos : Maybe Int
+    , swipeState : Maybe SwipeState
     , items : List a
     , favourites : Favourites a
     , passes : List a
