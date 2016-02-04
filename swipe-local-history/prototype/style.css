@@ -1,3 +1,67 @@
-body {
-
+html {
+    height: 100%;
 }
+
+body {
+    min-height: 100%;
+    margin: 0px;
+}
+
+body > div, .app {
+    height: 100vh;
+}
+
+
+.app {
+    display: flex;
+    flex-direction: column;
+}
+
+
+.navigation {
+    display: flex;
+    flex: 0 0 50px;
+}
+
+        .navigation > * {
+            flex: 0 1 50%;
+        }
+
+
+.discovery {
+    display: flex;
+    flex-direction: column;
+    flex: 0 1 100%;
+    height: 100%;
+
+    overflow: hidden;
+}
+
+    .discovery-story {
+        display: flex;
+        flex-direction: column;
+        flex: 0 1 100%;
+
+        -moz-user-select: none;
+        -khtml-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+
+        .discovery-story .image {
+            flex: 0 1 100vh;
+        }
+
+        .discovery-story h2 {
+            flex: 0 1 50px;
+        }
+
+    .discovery-navigation {
+        display: flex;
+        flex: 0 1 80px;
+    }
+
+        .discovery-navigation > * {
+            flex: 0 1 50%;
+        }

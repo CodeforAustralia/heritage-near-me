@@ -11739,20 +11739,30 @@ Elm.Discover.make = function (_elm) {
             return _U.list([]);
          }
    };
+   var storyImage = function (story) {
+      return A2($Html.div,
+      _U.list([$Html$Attributes.$class("image")
+              ,$Html$Attributes.style(_U.list([{ctor: "_Tuple2"
+                                               ,_0: "background-image"
+                                               ,_1: A2($Basics._op["++"],"url(\"",A2($Basics._op["++"],story.photo,"\")"))}
+                                              ,{ctor: "_Tuple2",_0: "background-repeat",_1: "no-repeat"}
+                                              ,{ctor: "_Tuple2",_0: "background-size",_1: "cover"}]))]),
+      _U.list([]));
+   };
    var viewStory = F3(function (address,story,pos) {
       return A2($Html.div,
-      _U.list([A2($Html$Events.onClick,address,$Types.View(story)),$Html$Attributes.style(styleStory(pos))]),
-      _U.list([A2($Html.img,_U.list([$Html$Attributes.src(story.photo)]),_U.list([])),A2($Html.h2,_U.list([]),_U.list([$Html.text(story.title)]))]));
+      _U.list([A2($Html$Events.onClick,address,$Types.View(story)),$Html$Attributes.$class("discovery-story"),$Html$Attributes.style(styleStory(pos))]),
+      _U.list([storyImage(story),A2($Html.h2,_U.list([]),_U.list([$Html.text(story.title)]))]));
    });
    var navigation = F2(function (address,app) {
       return A2($Html.nav,
-      _U.list([]),
+      _U.list([$Html$Attributes.$class("discovery-navigation")]),
       _U.list([A2($Html.button,_U.list([A2($Html$Events.onClick,address,$Types.Pass)]),_U.list([$Html.text("❌")]))
               ,A2($Html.button,_U.list([A2($Html$Events.onClick,address,$Types.Favourite)]),_U.list([$Html.text("✅")]))]));
    });
    var view = F2(function (address,app) {
       return A2($Html.div,
-      _U.list([]),
+      _U.list([$Html$Attributes.$class("discovery")]),
       _U.list([function () {
                  var _p1 = app.item;
                  if (_p1.ctor === "Just") {
@@ -11917,6 +11927,7 @@ Elm.Main.make = function (_elm) {
    $Effects = Elm.Effects.make(_elm),
    $Favourites = Elm.Favourites.make(_elm),
    $Html = Elm.Html.make(_elm),
+   $Html$Attributes = Elm.Html.Attributes.make(_elm),
    $Html$Events = Elm.Html.Events.make(_elm),
    $List = Elm.List.make(_elm),
    $Maybe = Elm.Maybe.make(_elm),
@@ -11999,13 +12010,13 @@ Elm.Main.make = function (_elm) {
    });
    var navigation = function (address) {
       return A2($Html.nav,
-      _U.list([]),
+      _U.list([$Html$Attributes.$class("navigation")]),
       _U.list([A2($Html.button,_U.list([A2($Html$Events.onClick,address,$Types.Discover)]),_U.list([$Html.text("discover")]))
               ,A2($Html.button,_U.list([A2($Html$Events.onClick,address,$Types.ViewFavourites)]),_U.list([$Html.text("favourites")]))]));
    };
    var view = F2(function (address,app) {
       return A2($Html.div,
-      _U.list([]),
+      _U.list([$Html$Attributes.$class("app")]),
       _U.list([navigation(address)
               ,function () {
                  var _p6 = app.location;

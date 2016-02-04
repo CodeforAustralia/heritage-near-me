@@ -1,4 +1,5 @@
 import Html exposing (Html, div, nav, button, text)
+import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
 import Task exposing (Task)
 import Effects
@@ -34,7 +35,7 @@ port routeTasks = RouteHash.start
     }
 
 view : Signal.Address (Action Story) -> App Story -> Html
-view address app = div []
+view address app = div [class "app"]
     [ navigation address
     , case app.location of
         Discovering       -> Discover.view   address app.discovery
@@ -42,7 +43,7 @@ view address app = div []
         ViewingFavourites -> Favourites.view address app.discovery.favourites
     ]
 
-navigation address = nav []
+navigation address = nav [class "navigation"]
     [ button [onClick address Discover] [text "discover"]
     , button [onClick address ViewFavourites] [text "favourites"]
     ]
