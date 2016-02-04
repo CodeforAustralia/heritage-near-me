@@ -1,14 +1,14 @@
 server {
-	root /usr/share/nginx/www;
-	index index.html index.htm;
+        root /usr/share/nginx/www;
+        index index.html index.htm;
 
-	server_name localhost;
+        server_name localhost;
 
-	location /api {
-        proxy_pass http://localhost:3000/;
-    }
+        location /api {
+                proxy_pass http://localhost:3000/;
+        }
 
-	location / {
-		try_files $uri $uri/ /index.html =404;
-	}
+        location / {
+                try_files $uri $uri/ $uri/index.html =404;
+        }
 }
