@@ -73,6 +73,7 @@ body > div, .app {
             flex: 0 1 50%;
         }
 
+
 .favourites {
     margin: 16px;
 }
@@ -94,3 +95,16 @@ body > div, .app {
             .favourites li h2 {
                 flex: 0 1 50px;
             }
+
+
+.story {
+    margin: 16px;
+}
+
+    .story .image {
+        display: block;
+        height: 300px;
+    }
+
+    .story h1 {
+    }

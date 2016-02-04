@@ -12008,12 +12008,20 @@ Elm.Story.make = function (_elm) {
    $Signal = Elm.Signal.make(_elm),
    $Types = Elm.Types.make(_elm);
    var _op = {};
+   var storyImage = function (story) {
+      return A2($Html.div,
+      _U.list([$Html$Attributes.$class("image")
+              ,$Html$Attributes.style(_U.list([{ctor: "_Tuple2"
+                                               ,_0: "background-image"
+                                               ,_1: A2($Basics._op["++"],"url(\"",A2($Basics._op["++"],story.photo,"\")"))}
+                                              ,{ctor: "_Tuple2",_0: "background-repeat",_1: "no-repeat"}
+                                              ,{ctor: "_Tuple2",_0: "background-size",_1: "cover"}]))]),
+      _U.list([]));
+   };
    var view = F2(function (address,story) {
       return A2($Html.div,
-      _U.list([]),
-      _U.list([A2($Html.img,_U.list([$Html$Attributes.src(story.photo)]),_U.list([]))
-              ,A2($Html.h1,_U.list([]),_U.list([$Html.text(story.title)]))
-              ,A2($Html.div,_U.list([]),_U.list([$Html.text(story.story)]))]));
+      _U.list([$Html$Attributes.$class("story")]),
+      _U.list([storyImage(story),A2($Html.h1,_U.list([]),_U.list([$Html.text(story.title)])),A2($Html.div,_U.list([]),_U.list([$Html.text(story.story)]))]));
    });
    return _elm.Story.values = {_op: _op,view: view};
 };
