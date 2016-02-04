@@ -56,6 +56,7 @@ update action app = case app.location of
             ViewFavourites -> {app | location = ViewingFavourites}
             Favourite      -> {app | location = Discovering, discovery = favouriteItem app.discovery}
             Pass           -> {app | location = Discovering, discovery = passItem app.discovery}
+            SwipingItem p  -> {app | discovery = swipeItem app.discovery p}
             _              -> app
 
     Viewing story ->
@@ -80,6 +81,7 @@ favouriteItem app =
     , favourites = case app.item of
         Just item -> app.favourites ++ [item]
         Nothing   -> app.favourites
+    , swipePos = Nothing
     }
 
 passItem : Discovery a -> Discovery a
@@ -90,7 +92,11 @@ passItem app =
     , passes = case app.item of
         Just item -> app.passes ++ [item]
         Nothing   -> app.passes
+    , swipePos = Nothing
     }
+
+swipeItem : Discovery a -> Int -> Discovery a
+swipeItem app pos = {app | swipePos = Just pos}
 
 exampleApp : App Story
 exampleApp = {location = Discovering, discovery = exampleStories}
@@ -102,6 +108,7 @@ exampleStories =
         <| List.repeat 10 exampleStory
     , favourites = []
     , passes = []
+    , swipePos = Nothing
     }
 
 exampleStory =

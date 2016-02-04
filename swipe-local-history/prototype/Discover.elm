@@ -9,7 +9,7 @@ import Types exposing (..)
 view : Signal.Address (Action Story) -> Discovery Story -> Html
 view address app = div []
     [ case app.item of
-        Just item -> viewStory address item
+        Just item -> viewStory address item app.swipePos
         Nothing   -> text "No more stories left!"
     , navigation address app
     ]
@@ -20,8 +20,20 @@ navigation address app = nav []
     , button [onClick address Favourite] [text "✅"]
     ]
 
-viewStory : Signal.Address (Action Story) -> Story -> Html
-viewStory address story = div [onClick address <| View story]
+viewStory : Signal.Address (Action Story) -> Story -> Maybe Int -> Html
+viewStory address story pos = div
+    [ onClick address <| View story
+    , style <| styleStory pos
+    ]
     [ img [src story.photo] []
     , h2 [] [text story.title]
     ]
+
+styleStory : Maybe Int -> List (String, String)
+styleStory pos = case pos of
+    Just pos ->
+        [ ("position", "relative")
+        , ("left", toString pos ++ "px")
+        ]
+    Nothing ->
+        []

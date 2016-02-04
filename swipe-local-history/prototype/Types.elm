@@ -12,6 +12,7 @@ type Location a =
 
 type Action a =
       Discover
+    | SwipingItem Int
     | Favourite
     | Pass
     | View a
@@ -20,6 +21,7 @@ type Action a =
 
 type alias Discovery a =
     { item : Maybe a
+    , swipePos : Maybe Int
     , items : List a
     , favourites : Favourites a
     , passes : List a
