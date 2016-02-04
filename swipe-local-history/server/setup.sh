@@ -26,7 +26,7 @@ chmod -R g+rwx /root
 
 git init heritage-near-me
 
-cp -r $FRONTEND /usr/share/nginx/www
+cp -r $FRONTEND/* /usr/share/nginx/www
 
 ./$BACKEND/dbinit.sh $BACKEND/heritage-near-me.sql
 daemon --name="hnm-api" --output=api.log bash $BACKEND/apistart
