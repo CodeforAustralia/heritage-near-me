@@ -21,6 +21,7 @@ type Action id a =
     | Pass
     | View id
     | ViewFavourites
+    | LoadItem (LoadedData a)
     | LoadItems (LoadedData (List a))
     | NoAction
 

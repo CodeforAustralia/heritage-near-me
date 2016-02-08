@@ -67,6 +67,7 @@ update action app = case app.location of
             Favourite       -> {app | location = Discovering, discovery = favouriteItem app.discovery}
             Pass            -> {app | location = Discovering, discovery = passItem app.discovery}
             SwipingItem s   -> {app | discovery = swipeItem app.discovery s}
+            LoadItem item   -> {app | items = addItem app.items item}
             LoadItems items -> {app | items = addItems app.items items, discovery = loadItems app.discovery items Story.id}
             _               -> app
 
@@ -75,6 +76,7 @@ update action app = case app.location of
             Discover        -> {app | location = Discovering}
             View story'     -> {app | location = Viewing story'}
             ViewFavourites  -> {app | location = ViewingFavourites}
+            LoadItem item   -> {app | items = addItem app.items item}
             LoadItems items -> {app | items = addItems app.items items, discovery = loadItems app.discovery items Story.id}
             _               -> app
 
@@ -83,6 +85,7 @@ update action app = case app.location of
             Discover        -> {app | location = Discovering}
             View story'     -> {app | location = Viewing story'}
             ViewFavourites  -> {app | location = ViewingFavourites}
+            LoadItem item   -> {app | items = addItem app.items item}
             LoadItems items -> {app | items = addItems app.items items, discovery = loadItems app.discovery items Story.id}
             _               -> app
 
@@ -127,6 +130,11 @@ addItems items loaded = let
             _ -> []
     in
         newItems ++ items
+
+addItem : List (RemoteData a) -> LoadedData a -> List (RemoteData a)
+addItem items loaded = case loaded of
+    Succeeded item -> (Loaded << Succeeded) item :: items
+    _ -> items
 
 getStory : App StoryId Story -> StoryId -> RemoteData Story
 getStory app = Data.getItem app Story.id

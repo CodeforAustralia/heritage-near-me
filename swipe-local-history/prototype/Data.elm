@@ -18,13 +18,13 @@ fetch app = case app.location of
             Task.map (LoadItems << Succeeded) fetchDiscoverStories
             `Task.onError`
                 (Task.succeed << LoadItems << Failed)
-    Viewing story ->
+    Viewing storyId ->
         if isLoaded <| findItem app isFullStory then
             Task.succeed NoAction
         else
-            Task.map (LoadItems << Succeeded) fetchFullStories
+            Task.map (LoadItem << Succeeded) (fetchFullStory storyId)
             `Task.onError`
-                (Task.succeed << LoadItems << Failed)
+                (Task.succeed << LoadItem << Failed)
     _ -> Task.succeed NoAction
 
 fetchDiscoverStories : Task Http.Error (List Story)
@@ -40,8 +40,17 @@ discoverStory = Json.object3
     ("title" := Json.string)
     ("photo" := Json.string)
 
-fetchFullStories : Task Http.Error (List Story)
-fetchFullStories = Http.get fullStories <| url "story_details"
+fetchFullStory : StoryId -> Task Http.Error Story
+fetchFullStory storyId = let
+        (StoryId id) = storyId
+    in
+        (Task.map List.head
+        <| Http.get fullStories
+        <| Http.url (url "story_details") [("id", "eq." ++ toString id)])
+        `Task.andThen`
+            (\storyId -> Maybe.withDefault
+            (Task.fail <| Http.BadResponse 404 "Story with given id was not found")
+            <| Maybe.map Task.succeed storyId)
 
 fullStories : Json.Decoder (List Story)
 fullStories = Json.list fullStory
