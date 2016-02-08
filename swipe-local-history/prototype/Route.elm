@@ -5,22 +5,20 @@ import RouteHash exposing (HashUpdate)
 
 import Types exposing (..)
 
-action : List String -> List (Action Story)
+action : List String -> List (Action StoryId Story)
 action url = case url of
     "discover"::_ -> [Discover]
     "favourites"::_ -> [ViewFavourites]
     _ -> [Discover]
 
-url : App Story -> App Story -> Maybe HashUpdate
+url : App StoryId Story -> App StoryId Story -> Maybe HashUpdate
 url old new = if old.location /= new.location then
         Just <| case new.location of
             Discovering       -> RouteHash.set ["discover"]
             ViewingFavourites -> RouteHash.set ["favourites"]
-            Viewing story     -> RouteHash.set ["story", urliseStory story]
+            Viewing storyId   -> RouteHash.set ["story", urliseStory storyId]
     else
         Nothing
 
-urliseStory : Story -> String
-urliseStory story = String.concat
-    <| List.intersperse "-"
-    <| String.split " " story.title
+urliseStory : StoryId -> String
+urliseStory storyId = toString storyId
