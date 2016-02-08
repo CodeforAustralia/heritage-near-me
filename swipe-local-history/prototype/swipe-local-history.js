@@ -12145,28 +12145,34 @@ Elm.Route.make = function (_elm) {
    $Result = Elm.Result.make(_elm),
    $RouteHash = Elm.RouteHash.make(_elm),
    $Signal = Elm.Signal.make(_elm),
+   $String = Elm.String.make(_elm),
    $Types = Elm.Types.make(_elm);
    var _op = {};
-   var urliseStory = function (storyId) {    return $Basics.toString(storyId);};
+   var urliseStory = function (_p0) {    var _p1 = _p0;return $Basics.toString(_p1._0);};
    var url = F2(function (old,$new) {
       return !_U.eq(old.location,$new.location) ? $Maybe.Just(function () {
-         var _p0 = $new.location;
-         switch (_p0.ctor)
+         var _p2 = $new.location;
+         switch (_p2.ctor)
          {case "Discovering": return $RouteHash.set(_U.list(["discover"]));
             case "ViewingFavourites": return $RouteHash.set(_U.list(["favourites"]));
-            default: return $RouteHash.set(_U.list(["story",urliseStory(_p0._0)]));}
+            default: return $RouteHash.set(_U.list(["story",urliseStory(_p2._0)]));}
       }()) : $Maybe.Nothing;
    });
    var action = function (url) {
-      var _p1 = url;
-      _v1_2: do {
-         if (_p1.ctor === "::") {
-               switch (_p1._0)
+      var _p3 = url;
+      _v2_3: do {
+         if (_p3.ctor === "::") {
+               switch (_p3._0)
                {case "discover": return _U.list([$Types.Discover]);
                   case "favourites": return _U.list([$Types.ViewFavourites]);
-                  default: break _v1_2;}
+                  case "story": if (_p3._1.ctor === "::") {
+                          return _U.list([$Types.View($Types.StoryId(A2($Maybe.withDefault,-1,$Result.toMaybe($String.toInt(_p3._1._0)))))]);
+                       } else {
+                          break _v2_3;
+                       }
+                  default: break _v2_3;}
             } else {
-               break _v1_2;
+               break _v2_3;
             }
       } while (false);
       return _U.list([$Types.Discover]);
