@@ -14,7 +14,7 @@ view : Signal.Address (Action StoryId Story) -> App StoryId Story -> Html
 view address app = div [class "discovery"]
     [ case app.discovery.item of
         Loaded (Succeeded item) -> case item of
-            Just id -> case getItem app Story.id id of
+            Just id -> case getItem app id of
                 Loaded (Succeeded story) -> viewStory address story app.discovery.swipeState
                 Loaded (Failed err) -> text "Something went wrong"
                 Loading -> text "Loading..."

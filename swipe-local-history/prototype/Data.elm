@@ -1,6 +1,7 @@
 module Data (fetch, map, defaultMap, getItem) where
 
 import Json.Decode as Json exposing ((:=))
+import Dict exposing (Dict)
 import Task exposing (Task)
 import Http
 
@@ -84,12 +85,12 @@ defaultMap default f data = case data of
     Loaded (Succeeded x) -> f x
     _ -> default
 
-getItem : App id a -> (a -> id) -> id -> RemoteData a
-getItem app getId id = Maybe.withDefault Loading
-    <| List.head
-    <| List.filter (defaultMap False (\item -> getId item == id)) app.items
+getItem : App id a -> id -> RemoteData a
+getItem app id = Maybe.withDefault Loading
+    <| Dict.get (toString id) app.items
 
 findItem : App id a -> (a -> Bool) -> RemoteData a
 findItem app check = Maybe.withDefault Loading
     <| List.head
-    <| List.filter (defaultMap False check) app.items
+    <| List.filter (defaultMap False check)
+    <| Dict.values app.items

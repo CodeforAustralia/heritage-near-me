@@ -3,6 +3,7 @@ import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
 import Swipe exposing (SwipeState)
 import Task exposing (Task)
+import Dict exposing (Dict)
 import Effects
 import RouteHash
 import StartApp
@@ -67,8 +68,8 @@ update action app = case app.location of
             Favourite       -> {app | location = Discovering, discovery = favouriteItem app.discovery}
             Pass            -> {app | location = Discovering, discovery = passItem app.discovery}
             SwipingItem s   -> {app | discovery = swipeItem app.discovery s}
-            LoadItem item   -> {app | items = addItem app.items item}
-            LoadItems items -> {app | items = addItems app.items items, discovery = loadItems app.discovery items Story.id}
+            LoadItem item   -> {app | items = addItem Story.id item app.items}
+            LoadItems items -> {app | items = addItems Story.id items app.items, discovery = loadItems app.discovery items Story.id}
             _               -> app
 
     Viewing story ->
@@ -76,8 +77,8 @@ update action app = case app.location of
             Discover        -> {app | location = Discovering}
             View story'     -> {app | location = Viewing story'}
             ViewFavourites  -> {app | location = ViewingFavourites}
-            LoadItem item   -> {app | items = addItem app.items item}
-            LoadItems items -> {app | items = addItems app.items items, discovery = loadItems app.discovery items Story.id}
+            LoadItem item   -> {app | items = addItem Story.id item app.items}
+            LoadItems items -> {app | items = addItems Story.id items app.items, discovery = loadItems app.discovery items Story.id}
             _               -> app
 
     ViewingFavourites ->
@@ -85,8 +86,8 @@ update action app = case app.location of
             Discover        -> {app | location = Discovering}
             View story'     -> {app | location = Viewing story'}
             ViewFavourites  -> {app | location = ViewingFavourites}
-            LoadItem item   -> {app | items = addItem app.items item}
-            LoadItems items -> {app | items = addItems app.items items, discovery = loadItems app.discovery items Story.id}
+            LoadItem item   -> {app | items = addItem Story.id item app.items}
+            LoadItems items -> {app | items = addItems Story.id items app.items, discovery = loadItems app.discovery items Story.id}
             _               -> app
 
 favouriteItem : Discovery id -> Discovery id
@@ -123,24 +124,27 @@ loadItems discovery items getId = let
         , item = Loaded <| Succeeded <| List.head ids
         }
 
-addItems : List (RemoteData a) -> LoadedData (List a) -> List (RemoteData a)
-addItems items loaded = let
-        newItems = case loaded of
-            Succeeded items -> List.map (Loaded << Succeeded) items
-            _ -> []
-    in
-        newItems ++ items
+addItems : (a -> id) -> LoadedData (List a) -> Dict String (RemoteData a) -> Dict String (RemoteData a)
+addItems getId loaded items = case loaded of
+    Succeeded loadedItems -> List.foldl
+        (\loadedItem items -> Dict.insert
+            (toString <| getId loadedItem)
+            (Loaded <| Succeeded <| loadedItem)
+            items)
+        items
+        loadedItems
+    _ -> items
 
-addItem : List (RemoteData a) -> LoadedData a -> List (RemoteData a)
-addItem items loaded = case loaded of
-    Succeeded item -> (Loaded << Succeeded) item :: items
+addItem : (a -> id) -> LoadedData a -> Dict String (RemoteData a) -> Dict String (RemoteData a)
+addItem getId loaded items = case loaded of
+    Succeeded item -> Dict.insert (toString <| getId item) (Loaded <| Succeeded <| item) items
     _ -> items
 
 getStory : App StoryId Story -> StoryId -> RemoteData Story
-getStory app = Data.getItem app Story.id
+getStory app = Data.getItem app
 
 initialApp : App StoryId Story
-initialApp = {location = Discovering, discovery = initialDiscovery, items = []}
+initialApp = {location = Discovering, discovery = initialDiscovery, items = Dict.empty}
 
 initialDiscovery =
     { item = Loading

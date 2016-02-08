@@ -1,12 +1,13 @@
 module Types (App, Location(..), Discovery, Favourites, StoryId(..), Story(..), Action(..), RemoteData(..), LoadedData(..)) where
 
 import Http
+import Dict exposing (Dict)
 import Swipe exposing (SwipeState)
 
 type alias App id a =
     { location : Location id
     , discovery : Discovery id
-    , items : List (RemoteData a)
+    , items : Dict String (RemoteData a)
     }
 
 type Location id =
