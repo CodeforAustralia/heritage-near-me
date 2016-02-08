@@ -1,4 +1,4 @@
-module Story (view) where
+module Story (view, id, title, photo) where
 
 import Html exposing (Html, div, h1, h2, img, text)
 import Html.Events exposing (onClick)
@@ -11,8 +11,10 @@ view address story = div [class "story"]
     <| case story of
         Loaded (Succeeded story) ->
             [ storyImage story
-            , h1 [] [text story.title]
-            , div [] [text story.story]
+            , h1 [] [text <| title story]
+            , case story of
+                DiscoverStory story -> text "Loading story"
+                FullStory story -> div [] [text story.story]
             ]
         Loading ->
             [ text "Loading"]
@@ -21,7 +23,22 @@ view address story = div [class "story"]
 
 storyImage story = div
     [ class "image"
-    , style [ ("background-image", "url(\"" ++ story.photo ++ "\")")
+    , style [ ("background-image", "url(\"" ++ photo story ++ "\")")
             , ("background-repeat", "no-repeat")
             , ("background-size", "cover")]
     ] []
+
+id : Story -> StoryId
+id story = case story of
+    DiscoverStory story -> story.id
+    FullStory story -> story.id
+
+title : Story -> String
+title story = case story of
+    DiscoverStory story -> story.title
+    FullStory story -> story.title
+
+photo : Story -> String
+photo story = case story of
+    DiscoverStory story -> story.photo
+    FullStory story -> Maybe.withDefault "" <| List.head story.photos

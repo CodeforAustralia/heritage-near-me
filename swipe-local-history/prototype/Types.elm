@@ -1,4 +1,4 @@
-module Types (App, Location(..), Discovery, Favourites, StoryId(..), Story, Action(..), RemoteData(..), LoadedData(..)) where
+module Types (App, Location(..), Discovery, Favourites, StoryId(..), Story(..), Action(..), RemoteData(..), LoadedData(..)) where
 
 import Http
 import Swipe exposing (SwipeState)
@@ -39,9 +39,15 @@ type alias Favourites a = List a
 
 type StoryId = StoryId Int
 
-type alias Story =
-    { id : StoryId
-    , title : String
-    , photo : String
-    , story : String
-    }
+type Story =
+      DiscoverStory
+        { id : StoryId
+        , title : String
+        , photo : String
+        }
+    | FullStory
+        { id : StoryId
+        , title : String
+        , photos : List String
+        , story : String
+        }

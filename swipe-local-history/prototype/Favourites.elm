@@ -5,6 +5,7 @@ import Html.Events exposing (onClick)
 import Html.Attributes as Attr exposing (..)
 
 import Types exposing (..)
+import Story
 
 view : Signal.Address (Action StoryId Story) -> Favourites Story -> Html
 view address favourites = div [class "favourites"]
@@ -19,14 +20,14 @@ viewFavourites address favourites = ul []
     <| List.map (viewFavourite address) favourites
 
 viewFavourite : Signal.Address (Action StoryId Story) -> Story -> Html
-viewFavourite address favourite = li [onClick address <| View favourite.id]
+viewFavourite address favourite = li [onClick address <| View <| Story.id favourite]
     [ favouriteImage favourite
-    , h2 [] [text favourite.title]
+    , h2 [] [text <| Story.title favourite]
     ]
 
 favouriteImage favourite = div
     [ class "image"
-    , style [ ("background-image", "url(\"" ++ favourite.photo ++ "\")")
+    , style [ ("background-image", "url(\"" ++ Story.photo favourite ++ "\")")
             , ("background-repeat", "no-repeat")
             , ("background-size", "cover")]
     ] []

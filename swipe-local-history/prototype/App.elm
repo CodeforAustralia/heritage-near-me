@@ -67,7 +67,7 @@ update action app = case app.location of
             Favourite       -> {app | location = Discovering, discovery = favouriteItem app.discovery}
             Pass            -> {app | location = Discovering, discovery = passItem app.discovery}
             SwipingItem s   -> {app | discovery = swipeItem app.discovery s}
-            LoadItems items -> {app | items = addItems app.items items, discovery = loadItems app.discovery items (\story -> story.id)}
+            LoadItems items -> {app | items = addItems app.items items, discovery = loadItems app.discovery items Story.id}
             _               -> app
 
     Viewing story ->
@@ -75,7 +75,7 @@ update action app = case app.location of
             Discover        -> {app | location = Discovering}
             View story'     -> {app | location = Viewing story'}
             ViewFavourites  -> {app | location = ViewingFavourites}
-            LoadItems items -> {app | items = addItems app.items items, discovery = loadItems app.discovery items (\story -> story.id)}
+            LoadItems items -> {app | items = addItems app.items items, discovery = loadItems app.discovery items Story.id}
             _               -> app
 
     ViewingFavourites ->
@@ -83,7 +83,7 @@ update action app = case app.location of
             Discover        -> {app | location = Discovering}
             View story'     -> {app | location = Viewing story'}
             ViewFavourites  -> {app | location = ViewingFavourites}
-            LoadItems items -> {app | items = addItems app.items items, discovery = loadItems app.discovery items (\story -> story.id)}
+            LoadItems items -> {app | items = addItems app.items items, discovery = loadItems app.discovery items Story.id}
             _               -> app
 
 favouriteItem : Discovery id -> Discovery id
@@ -126,10 +126,10 @@ addItems items loaded = let
             Succeeded items -> List.map (Loaded << Succeeded) items
             _ -> []
     in
-        items ++ newItems
+        newItems ++ items
 
 getStory : App StoryId Story -> StoryId -> RemoteData Story
-getStory app = Data.getItem app (\story -> story.id)
+getStory app = Data.getItem app Story.id
 
 initialApp : App StoryId Story
 initialApp = {location = Discovering, discovery = initialDiscovery, items = []}

@@ -8,12 +8,13 @@ import Swipe exposing (SwipeState(..))
 import Types exposing (..)
 import Swiping exposing (onSwipe, swipeAction)
 import Data exposing (getItem)
+import Story
 
 view : Signal.Address (Action StoryId Story) -> App StoryId Story -> Html
 view address app = div [class "discovery"]
     [ case app.discovery.item of
         Loaded (Succeeded item) -> case item of
-            Just id -> case getItem app (\story -> story.id) id of
+            Just id -> case getItem app Story.id id of
                 Loaded (Succeeded story) -> viewStory address story app.discovery.swipeState
                 Loaded (Failed err) -> text "Something went wrong"
                 Loading -> text "Loading..."
@@ -34,17 +35,17 @@ noStory = div [class "discovery-empty"] [h2 [] [text "No more stories left!"]]
 
 viewStory : Signal.Address (Action StoryId Story) -> Story -> Maybe SwipeState -> Html
 viewStory address story swipe = div
-    ([ onClick address <| View story.id
+    ([ onClick address <| View <| Story.id story
     , class "discovery-story"
     , style <| styleStory swipe
     ] ++ onSwipe address swipe swipeAction)
     [ storyImage story
-    , h2 [] [text story.title]
+    , h2 [] [text <| Story.title story]
     ]
 
 storyImage story = div
     [ class "image"
-    , style [ ("background-image", "url(\"" ++ story.photo ++ "\")")
+    , style [ ("background-image", "url(\"" ++ Story.photo story ++ "\")")
             , ("background-repeat", "no-repeat")
             , ("background-size", "cover")]
     ] []
