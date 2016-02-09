@@ -1,3 +1,4 @@
+/* Page style */
 html {
     height: 100%;
 }
@@ -5,29 +6,51 @@ html {
 body {
     min-height: 100%;
     margin: 0px;
+        
+    background: #61d1f0; /* Old browsers */
+    background: -moz-linear-gradient(top,  #61d1f0 15%, #086ac4 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(top,  #61d1f0 15%,#086ac4 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to bottom,  #61d1f0 15%,#086ac4 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#61d1f0', endColorstr='#086ac4',GradientType=0 ); /* IE6-9 */
+
+    color: white;
+    font-family: 'Helvetica Neue';
 }
 
 body > div, .app {
     height: 100vh;
 }
 
-
 .app {
     display: flex;
     flex-direction: column;
 }
 
-
+/* Top of the page navigation */
 .navigation {
     display: flex;
     flex: 0 0 50px;
+    align-items: center;
 }
 
         .navigation > * {
-            flex: 0 1 50%;
+            flex: 1 0 auto;
         }
 
+        .navigation button {
+            color: white;
+            background: none;
+            border: none;
+        }
 
+        .navigation h1 {
+            flex: 10 0 auto;
+            text-align: center;
+
+            color: white;
+        }
+
+/* Discovery (swiping) stlye */
 .discovery {
     display: flex;
     flex-direction: column;
@@ -42,10 +65,16 @@ body > div, .app {
         margin: 16px;
     }
 
+        .discovery-empty h2 {
+            color: white;
+        }
+
     .discovery-story {
+        position: relative;
         display: flex;
         flex-direction: column;
         flex: 0 1 100%;
+        margin: 0px 8px;
 
         -moz-user-select: none;
         -khtml-user-select: none;
@@ -55,28 +84,51 @@ body > div, .app {
     }
 
         .discovery-story .image {
+            display: flex;
+            flex-direction: column;
             flex: 0 1 100vh;
+            justify-content: flex-end;
         }
 
-        .discovery-story h2 {
-            flex: 0 1 50px;
-            margin-left: 16px;
-            margin-right: 16px;
-        }
+            .discovery-story-image {
+                flex: 2;
+            }
+
+            .discovery-story-details {
+                flex: 1;
+
+                background-color: rgba(0,0,0, 0.4);
+            }
+                .discovery-story-details .title {
+                    color: white;
+                }
 
     .discovery-navigation {
         display: flex;
-        flex: 0 1 80px;
+        flex: 0 0 80px;
+        align-items: center;
     }
 
         .discovery-navigation > * {
-            flex: 0 1 50%;
+            flex: 0 1 25%;
         }
 
+        .discovery-navigation button {
+            flex: 1 0 30%;
 
+            color: white;
+            background: none;
+            border: none;
+        }
+
+/* Favourites list style */
 .favourites {
     margin: 16px;
 }
+
+    .favourites h1 {
+        color: white;
+    }
 
     .favourites ul {
         list-style: none;
@@ -92,19 +144,80 @@ body > div, .app {
                 flex: 0 1 180px;
             }
 
-            .favourites li h2 {
+            .favourites li .title {
                 flex: 0 1 50px;
+
+                color: white;
             }
 
-
+/* Story page style */
 .story {
-    margin: 16px;
+    height: auto;
+    min-height: 100%;
+
+    background-color: white;
+    color:black;
+
+    
 }
+
+    .story > * {
+        margin:16px;
+    }
 
     .story .image {
         display: block;
         height: 300px;
+        margin: 0px;
     }
 
-    .story h1 {
+    .story .title {
     }
+
+    .story .suburb {
+    }
+
+    .story .date {
+        font-size: 22px;
+        font-weight: 300;
+    }
+
+
+/* General contents */
+
+h1 {
+    text-align: center;
+    font-size: 42px;
+    font-weight: normal;
+    color: #1887EC;
+}
+
+h2 {
+    text-align: center;
+    font-size: 30px;
+    font-weight: 200;
+    color: #1887EC;
+}
+
+h3 {
+    text-align: left;
+    font-size: 18pt;
+    font-weight: 200;
+    letter-spacing: .5px;
+    color: 1887EC;
+
+}
+
+p {
+    text-align: left;
+    font-size: 16pt;
+    font-weight: normal;
+    color: 000000;
+}
+
+blockquote {
+    text-align: center;
+    font-size: 17pt;
+    font-weight: 400;
+    color: 9B9B9B;
+}

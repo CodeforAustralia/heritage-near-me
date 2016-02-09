@@ -11,7 +11,7 @@ view address story = div [class "story"]
     <| case story of
         Loaded (Succeeded story) ->
             [ storyImage story
-            , h1 [] [text <| title story]
+            , h1 [class "title"] [text <| title story]
             , case story of
                 DiscoverStory story -> text "Loading story"
                 FullStory story -> div [] [text story.story]

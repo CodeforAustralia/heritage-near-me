@@ -11779,7 +11779,7 @@ Elm.Story.make = function (_elm) {
                if (_p3._0.ctor === "Succeeded") {
                      var _p5 = _p3._0._0;
                      return _U.list([storyImage(_p5)
-                                    ,A2($Html.h1,_U.list([]),_U.list([$Html.text(title(_p5))]))
+                                    ,A2($Html.h1,_U.list([$Html$Attributes.$class("title")]),_U.list([$Html.text(title(_p5))]))
                                     ,function () {
                                        var _p4 = _p5;
                                        if (_p4.ctor === "DiscoverStory") {
@@ -12038,7 +12038,7 @@ Elm.Discover.make = function (_elm) {
             return _U.list([]);
          }
    };
-   var storyImage = function (story) {
+   var storyImage = F2(function (story,content) {
       return A2($Html.div,
       _U.list([$Html$Attributes.$class("image")
               ,$Html$Attributes.style(_U.list([{ctor: "_Tuple2"
@@ -12046,8 +12046,8 @@ Elm.Discover.make = function (_elm) {
                                                ,_1: A2($Basics._op["++"],"url(\"",A2($Basics._op["++"],$Story.photo(story),"\")"))}
                                               ,{ctor: "_Tuple2",_0: "background-repeat",_1: "no-repeat"}
                                               ,{ctor: "_Tuple2",_0: "background-size",_1: "cover"}]))]),
-      _U.list([]));
-   };
+      content);
+   });
    var viewStory = F3(function (address,story,swipe) {
       return A2($Html.div,
       A2($Basics._op["++"],
@@ -12055,16 +12055,33 @@ Elm.Discover.make = function (_elm) {
               ,$Html$Attributes.$class("discovery-story")
               ,$Html$Attributes.style(styleStory(swipe))]),
       A3($Swiping.onSwipe,address,swipe,$Swiping.swipeAction)),
-      _U.list([storyImage(story),A2($Html.h2,_U.list([]),_U.list([$Html.text($Story.title(story))]))]));
+      _U.list([A2(storyImage,
+      story,
+      _U.list([A2($Html.div,_U.list([$Html$Attributes.$class("discovery-story-image")]),_U.list([]))
+              ,A2($Html.div,
+              _U.list([$Html$Attributes.$class("discovery-story-details")]),
+              _U.list([A2($Html.h2,_U.list([$Html$Attributes.$class("title")]),_U.list([$Html.text($Story.title(story))]))]))]))]));
    });
-   var noStory = A2($Html.div,
-   _U.list([$Html$Attributes.$class("discovery-empty")]),
-   _U.list([A2($Html.h2,_U.list([]),_U.list([$Html.text("No more stories left!")]))]));
+   var noStory = function (message) {
+      return A2($Html.div,_U.list([$Html$Attributes.$class("discovery-empty")]),_U.list([A2($Html.h2,_U.list([]),_U.list([$Html.text(message)]))]));
+   };
    var navigation = function (address) {
       return A2($Html.nav,
       _U.list([$Html$Attributes.$class("discovery-navigation")]),
-      _U.list([A2($Html.button,_U.list([A2($Html$Events.onClick,address,$Types.Pass)]),_U.list([$Html.text("❌")]))
-              ,A2($Html.button,_U.list([A2($Html$Events.onClick,address,$Types.Favourite)]),_U.list([$Html.text("✅")]))]));
+      _U.list([A2($Html.button,
+              _U.list([A2($Html$Events.onClick,address,$Types.Pass)]),
+              _U.list([A2($Html.span,
+              _U.list([$Html$Attributes.$class("fa-stack fa-3x")]),
+              _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-circle-thin fa-stack-2x")]),_U.list([]))
+                      ,A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-times fa-stack-1x")]),_U.list([]))]))]))
+              ,A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-fw fa-share fa-flip-horizontal fa-3x")]),_U.list([]))
+              ,A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-fw fa-share fa-3x")]),_U.list([]))
+              ,A2($Html.button,
+              _U.list([A2($Html$Events.onClick,address,$Types.Favourite)]),
+              _U.list([A2($Html.span,
+              _U.list([$Html$Attributes.$class("fa-stack fa-3x")]),
+              _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-circle-thin fa-stack-2x")]),_U.list([]))
+                      ,A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-check fa-stack-1x")]),_U.list([]))]))]))]));
    };
    var view = F2(function (address,app) {
       return A2($Html.div,
@@ -12083,16 +12100,16 @@ Elm.Discover.make = function (_elm) {
                                                return $Html.text("Something went wrong");
                                             }
                                       } else {
-                                         return $Html.text("Loading...");
+                                         return noStory("Loading...");
                                       }
                                 } else {
-                                   return noStory;
+                                   return noStory("No more stories left!");
                                 }
                           } else {
-                             return $Html.text("Something went wrong");
+                             return noStory("Something went wrong");
                           }
                     } else {
-                       return $Html.text("Loading...");
+                       return noStory("Loading...");
                     }
               }()
               ,navigation(address)]));
@@ -12130,7 +12147,7 @@ Elm.Favourites.make = function (_elm) {
    var viewFavourite = F2(function (address,favourite) {
       return A2($Html.li,
       _U.list([A2($Html$Events.onClick,address,$Types.View($Story.id(favourite)))]),
-      _U.list([favouriteImage(favourite),A2($Html.h2,_U.list([]),_U.list([$Html.text($Story.title(favourite))]))]));
+      _U.list([favouriteImage(favourite),A2($Html.h2,_U.list([$Html$Attributes.$class("title")]),_U.list([$Html.text($Story.title(favourite))]))]));
    });
    var viewFavourites = F2(function (address,favourites) {    return A2($Html.ul,_U.list([]),A2($List.map,viewFavourite(address),favourites));});
    var view = F2(function (address,favourites) {
@@ -12320,21 +12337,33 @@ Elm.Main.make = function (_elm) {
                 return _U.update(app,{items: A3(addItems,$Story.id,_p14,app.items),discovery: A3(loadItems,app.discovery,_p14,$Story.id)});
               default: return app;}}
    });
-   var navigation = function (address) {
+   var navigation = F2(function (location,address) {
       return A2($Html.nav,
       _U.list([$Html$Attributes.$class("navigation")]),
-      _U.list([A2($Html.button,_U.list([A2($Html$Events.onClick,address,$Types.Discover)]),_U.list([$Html.text("discover")]))
-              ,A2($Html.button,_U.list([A2($Html$Events.onClick,address,$Types.ViewFavourites)]),_U.list([$Html.text("favourites")]))]));
-   };
+      _U.list([function () {
+                 var _p15 = location;
+                 switch (_p15.ctor)
+                 {case "Discovering": return A2($Html.button,
+                      _U.list([A2($Html$Events.onClick,address,$Types.ViewFavourites)]),
+                      _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-heart fa-3x")]),_U.list([]))]));
+                    case "Viewing": return A2($Html.button,
+                      _U.list([A2($Html$Events.onClick,address,$Types.Discover)]),
+                      _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-angle-left fa-5x")]),_U.list([]))]));
+                    default: return A2($Html.button,
+                      _U.list([A2($Html$Events.onClick,address,$Types.Discover)]),
+                      _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-map fa-3x")]),_U.list([]))]));}
+              }()
+              ,A2($Html.h1,_U.list([]),_U.list([$Html.text("Heritage Near Me")]))]));
+   });
    var view = F2(function (address,app) {
       return A2($Html.div,
       _U.list([$Html$Attributes.$class("app")]),
-      _U.list([navigation(address)
+      _U.list([A2(navigation,app.location,address)
               ,function () {
-                 var _p15 = app.location;
-                 switch (_p15.ctor)
+                 var _p16 = app.location;
+                 switch (_p16.ctor)
                  {case "Discovering": return A2($Discover.view,address,app);
-                    case "Viewing": return A2($Story.view,address,A2(getStory,app,_p15._0));
+                    case "Viewing": return A2($Story.view,address,A2(getStory,app,_p16._0));
                     default: return A2($Favourites.view,
                       address,
                       A2($List.filterMap,

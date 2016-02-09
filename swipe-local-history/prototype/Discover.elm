@@ -1,6 +1,6 @@
 module Discover (view) where
 
-import Html exposing (Html, div, nav, h1, h2, img, button, text)
+import Html exposing (Html, div, nav, h1, h2, img, button, span, i, text)
 import Html.Events exposing (onClick)
 import Html.Attributes as Attr exposing (..)
 import Swipe exposing (SwipeState(..))
@@ -17,21 +17,31 @@ view address app = div [class "discovery"]
             Just id -> case getItem app id of
                 Loaded (Succeeded story) -> viewStory address story app.discovery.swipeState
                 Loaded (Failed err) -> text "Something went wrong"
-                Loading -> text "Loading..."
-            Nothing -> noStory
-        Loaded (Failed err) -> text "Something went wrong"
-        Loading -> text "Loading..."
+                Loading -> noStory "Loading..."
+            Nothing -> noStory "No more stories left!"
+        Loaded (Failed err) -> noStory "Something went wrong"
+        Loading -> noStory "Loading..."
     , navigation address
     ]
 
 navigation : Signal.Address (Action StoryId Story) -> Html
 navigation address = nav [class "discovery-navigation"]
-    [ button [onClick address Pass] [text "❌"]
-    , button [onClick address Favourite] [text "✅"]
+    [ button [onClick address Pass]
+        [span [class "fa-stack fa-3x"]
+            [ i [class "fa fa-circle-thin fa-stack-2x"] []
+            , i [class "fa fa-times fa-stack-1x"] []
+            ]]
+    , i [class "fa fa-fw fa-share fa-flip-horizontal fa-3x"] []
+    , i [class "fa fa-fw fa-share fa-3x"] []
+    , button [onClick address Favourite]
+        [span [class "fa-stack fa-3x"]
+            [ i [class "fa fa-circle-thin fa-stack-2x"] []
+            , i [class "fa fa-check fa-stack-1x"] []
+            ]]
     ]
 
-noStory : Html
-noStory = div [class "discovery-empty"] [h2 [] [text "No more stories left!"]]
+noStory : String -> Html
+noStory message = div [class "discovery-empty"] [h2 [] [text message]]
 
 viewStory : Signal.Address (Action StoryId Story) -> Story -> Maybe SwipeState -> Html
 viewStory address story swipe = div
@@ -39,16 +49,18 @@ viewStory address story swipe = div
     , class "discovery-story"
     , style <| styleStory swipe
     ] ++ onSwipe address swipe swipeAction)
-    [ storyImage story
-    , h2 [] [text <| Story.title story]
+    [storyImage story
+        [ div [class "discovery-story-image"] []
+        , div [class "discovery-story-details"]
+            [h2 [class "title"] [text <| Story.title story]]]
     ]
 
-storyImage story = div
+storyImage story content = div
     [ class "image"
     , style [ ("background-image", "url(\"" ++ Story.photo story ++ "\")")
             , ("background-repeat", "no-repeat")
             , ("background-size", "cover")]
-    ] []
+    ] content
 
 styleStory : Maybe SwipeState -> List (String, String)
 styleStory swipe = case swipe of
