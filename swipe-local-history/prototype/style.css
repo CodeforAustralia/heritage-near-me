@@ -17,8 +17,8 @@ body {
 }
 
 body > div, .app {
+    height: 100vh;
     max-height: 100%;
-    height: 100%;
 }
 
 .app.screen-size {
