@@ -79,10 +79,12 @@ body > div, .app {
             flex: 0 1 100vh;
         }
 
-        .discovery-story h2 {
+        .discovery-story .title {
             flex: 0 1 50px;
             margin-left: 16px;
             margin-right: 16px;
+
+            color: white;
         }
 
     .discovery-navigation {
@@ -99,6 +101,10 @@ body > div, .app {
     margin: 16px;
 }
 
+    .favourites h1 {
+        color: white;
+    }
+
     .favourites ul {
         list-style: none;
         -webkit-padding-start: 0px;
@@ -113,8 +119,10 @@ body > div, .app {
                 flex: 0 1 180px;
             }
 
-            .favourites li h2 {
+            .favourites li .title {
                 flex: 0 1 50px;
+
+                color: white;
             }
 
 
@@ -128,64 +136,62 @@ body > div, .app {
     
 }
 
+    .story > * {
+        margin:16px;
+    }
+
     .story .image {
         display: block;
         height: 300px;
+        margin: 0px;
     }
 
-    .story 
-
-/* Listing Title */
-    h1 {
-        text-align: center;
-        margin:16px;
-        font-size: 27pt;
-        font-weight:normal;
-        letter-spacing: -0.5;
-        color:#1887EC;
+    .story .title {
     }
 
-/* Suburb */
-    h2 {
-        text-align: center;
-        font-size: 18pt;
-        font-weight: 200;
-        letter-spacing: .5px;
-        color: 1887EC;
+    .story .suburb {
     }
 
-/* Date */
-    h3 {
-        text-align: center;
-        font-size: 14pt;
+    .story .date {
+        font-size: 22px;
         font-weight: 300;
-        color: 1887EC;
-
-    }
-/* Paragraph Headings */
-    h4 {
-        text-align: left;
-        font-size: 18pt;
-        font-weight: 200;
-        letter-spacing: .5px;
-        color: 1887EC;
-
     }
 
-    p{
-        text-align: left;
-        font-size: 16pt;
-        font-weight: normal;
-        color: 000000;
-    }
+/* General contents */
 
-    blockquote{
-        text-align: center;
-        font-size: 17pt;
-        font-weight: 400;
-        color: 9B9B9B;
-    }
+h1 {
+    text-align: center;
+    font-size: 42px;
+    font-weight: normal;
+    color: #1887EC;
+}
 
-    .story div {
+h2 {
+    text-align: center;
+    font-size: 30px;
+    font-weight: 200;
+    color: #1887EC;
+}
 
-    }
+h3 {
+    text-align: left;
+    font-size: 18pt;
+    font-weight: 200;
+    letter-spacing: .5px;
+    color: 1887EC;
+
+}
+
+p {
+    text-align: left;
+    font-size: 16pt;
+    font-weight: normal;
+    color: 000000;
+}
+
+blockquote {
+    text-align: center;
+    font-size: 17pt;
+    font-weight: 400;
+    color: 9B9B9B;
+}

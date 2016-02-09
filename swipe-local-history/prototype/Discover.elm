@@ -40,7 +40,7 @@ viewStory address story swipe = div
     , style <| styleStory swipe
     ] ++ onSwipe address swipe swipeAction)
     [ storyImage story
-    , h2 [] [text <| Story.title story]
+    , h2 [class "title"] [text <| Story.title story]
     ]
 
 storyImage story = div

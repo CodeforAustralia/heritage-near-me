@@ -11779,7 +11779,7 @@ Elm.Story.make = function (_elm) {
                if (_p3._0.ctor === "Succeeded") {
                      var _p5 = _p3._0._0;
                      return _U.list([storyImage(_p5)
-                                    ,A2($Html.h1,_U.list([]),_U.list([$Html.text(title(_p5))]))
+                                    ,A2($Html.h1,_U.list([$Html$Attributes.$class("title")]),_U.list([$Html.text(title(_p5))]))
                                     ,function () {
                                        var _p4 = _p5;
                                        if (_p4.ctor === "DiscoverStory") {
@@ -12055,7 +12055,7 @@ Elm.Discover.make = function (_elm) {
               ,$Html$Attributes.$class("discovery-story")
               ,$Html$Attributes.style(styleStory(swipe))]),
       A3($Swiping.onSwipe,address,swipe,$Swiping.swipeAction)),
-      _U.list([storyImage(story),A2($Html.h2,_U.list([]),_U.list([$Html.text($Story.title(story))]))]));
+      _U.list([storyImage(story),A2($Html.h2,_U.list([$Html$Attributes.$class("title")]),_U.list([$Html.text($Story.title(story))]))]));
    });
    var noStory = A2($Html.div,
    _U.list([$Html$Attributes.$class("discovery-empty")]),
@@ -12130,7 +12130,7 @@ Elm.Favourites.make = function (_elm) {
    var viewFavourite = F2(function (address,favourite) {
       return A2($Html.li,
       _U.list([A2($Html$Events.onClick,address,$Types.View($Story.id(favourite)))]),
-      _U.list([favouriteImage(favourite),A2($Html.h2,_U.list([]),_U.list([$Html.text($Story.title(favourite))]))]));
+      _U.list([favouriteImage(favourite),A2($Html.h2,_U.list([$Html$Attributes.$class("title")]),_U.list([$Html.text($Story.title(favourite))]))]));
    });
    var viewFavourites = F2(function (address,favourites) {    return A2($Html.ul,_U.list([]),A2($List.map,viewFavourite(address),favourites));});
    var view = F2(function (address,favourites) {

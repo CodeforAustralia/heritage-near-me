@@ -22,7 +22,7 @@ viewFavourites address favourites = ul []
 viewFavourite : Signal.Address (Action StoryId Story) -> Story -> Html
 viewFavourite address favourite = li [onClick address <| View <| Story.id favourite]
     [ favouriteImage favourite
-    , h2 [] [text <| Story.title favourite]
+    , h2 [class "title"] [text <| Story.title favourite]
     ]
 
 favouriteImage favourite = div
