@@ -1,3 +1,4 @@
+/* Page style */
 html {
     height: 100%;
 }
@@ -20,13 +21,12 @@ body > div, .app {
     height: 100vh;
 }
 
-
 .app {
     display: flex;
     flex-direction: column;
 }
 
-
+/* Top of the page navigation */
 .navigation {
     display: flex;
     flex: 0 0 50px;
@@ -48,7 +48,7 @@ body > div, .app {
             text-align: center;
         }
 
-
+/* Discovery (swiping) stlye */
 .discovery {
     display: flex;
     flex-direction: column;
@@ -96,7 +96,7 @@ body > div, .app {
             flex: 0 1 50%;
         }
 
-
+/* Favourites list style */
 .favourites {
     margin: 16px;
 }
@@ -125,7 +125,7 @@ body > div, .app {
                 color: white;
             }
 
-
+/* Story page style */
 .story {
     height: auto;
     min-height: 100%;
@@ -156,6 +156,7 @@ body > div, .app {
         font-size: 22px;
         font-weight: 300;
     }
+
 
 /* General contents */
 
