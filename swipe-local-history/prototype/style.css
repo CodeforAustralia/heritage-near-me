@@ -120,7 +120,7 @@ body > div, .app {
 
 .story {
     height: auto;
-    padding:16px;
+    min-height: 100%;
 
     background-color: white;
     color:black;
