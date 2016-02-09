@@ -1,10 +1,9 @@
 /* Page style */
 html {
-    height: 100%;
+    min-height: 100%;
 }
 
 body {
-    min-height: 100%;
     margin: 0px;
         
     background: #61d1f0; /* Old browsers */
@@ -18,18 +17,21 @@ body {
 }
 
 body > div, .app {
-    height: 100vh;
+    max-height: 100%;
+    height: 100%;
 }
 
-.app {
+.app.screen-size {
     display: flex;
     flex-direction: column;
+    height: 100vh;
 }
 
 /* Top of the page navigation */
 .navigation {
     display: flex;
     flex: 0 0 50px;
+    height: 50px;
     align-items: center;
 }
 
@@ -68,12 +70,13 @@ body > div, .app {
         .discovery-empty h2 {
             color: white;
         }
-
+    
     .discovery-story {
         position: relative;
         display: flex;
         flex-direction: column;
-        flex: 0 1 100%;
+        justify-content: flex-end;
+        flex: 1 1 100%;
         margin: 0px 8px;
 
         -moz-user-select: none;
@@ -86,8 +89,8 @@ body > div, .app {
         .discovery-story .image {
             display: flex;
             flex-direction: column;
-            flex: 0 1 100vh;
             justify-content: flex-end;
+            flex: 1 1 0px;
         }
 
             .discovery-story-image {
@@ -154,21 +157,16 @@ body > div, .app {
 .story {
     height: auto;
     min-height: 100%;
+    padding: 16px;    
 
     background-color: white;
     color:black;
-
-    
 }
-
-    .story > * {
-        margin:16px;
-    }
 
     .story .image {
         display: block;
         height: 300px;
-        margin: 0px;
+        margin: -16px;
     }
 
     .story .title {

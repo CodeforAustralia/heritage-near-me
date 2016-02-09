@@ -12359,22 +12359,24 @@ Elm.Main.make = function (_elm) {
               ,A2($Html.h1,_U.list([]),_U.list([$Html.text("Heritage Near Me")]))]));
    });
    var view = F2(function (address,app) {
-      return A2($Html.div,
-      _U.list([$Html$Attributes.$class("app")]),
-      _U.list([A2(navigation,app.location,address)
-              ,function () {
-                 var _p16 = app.location;
-                 switch (_p16.ctor)
-                 {case "Discovering": return A2($Discover.view,address,app);
-                    case "Viewing": return A2($Story.view,address,A2(getStory,app,_p16._0));
-                    default: return A2($Favourites.view,
-                      address,
-                      A2($List.filterMap,
-                      function (id) {
-                         return A3($Data.defaultMap,$Maybe.Nothing,$Maybe.Just,A2(getStory,app,id));
-                      },
-                      app.discovery.favourites));}
-              }()]));
+      var _p16 = app.location;
+      switch (_p16.ctor)
+      {case "Discovering": return A2($Html.div,
+           _U.list([$Html$Attributes.$class("app screen-size")]),
+           _U.list([A2(navigation,app.location,address),A2($Discover.view,address,app)]));
+         case "Viewing": return A2($Html.div,
+           _U.list([$Html$Attributes.$class("app")]),
+           _U.list([A2(navigation,app.location,address),A2($Story.view,address,A2(getStory,app,_p16._0))]));
+         default: return A2($Html.div,
+           _U.list([$Html$Attributes.$class("app")]),
+           _U.list([A2(navigation,app.location,address)
+                   ,A2($Favourites.view,
+                   address,
+                   A2($List.filterMap,
+                   function (id) {
+                      return A3($Data.defaultMap,$Maybe.Nothing,$Maybe.Just,A2(getStory,app,id));
+                   },
+                   app.discovery.favourites))]));}
    });
    var data = $Signal.mailbox($Types.NoAction);
    var history = $Signal.mailbox($Types.NoAction);

@@ -2,7 +2,8 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1">
+        <meta name="mobile-web-app-capable" content="yes" />
         <title>Heritage Near Me</title>
         <link rel="stylesheet" type="text/css" href="style.css">
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
@@ -11,6 +12,13 @@
     <body>
     </body>
     <script type="text/javascript">
+        window.addEventListener("load",function() {
+            // Set a timeout...
+            setTimeout(function() {
+                // Hide the address bar!
+                window.scrollTo(0, 1);
+            }, 0);
+        });
         Elm.fullscreen(Elm.Main);
     </script>
 </html>
