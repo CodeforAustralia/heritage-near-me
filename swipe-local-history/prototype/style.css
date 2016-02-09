@@ -70,9 +70,11 @@ body > div, .app {
         }
 
     .discovery-story {
+        position: relative;
         display: flex;
         flex-direction: column;
         flex: 0 1 100%;
+        margin: 0px 8px;
 
         -moz-user-select: none;
         -khtml-user-select: none;
@@ -82,16 +84,24 @@ body > div, .app {
     }
 
         .discovery-story .image {
+            display: flex;
+            flex-direction: column;
             flex: 0 1 100vh;
+            justify-content: flex-end;
         }
 
-        .discovery-story .title {
-            flex: 0 1 50px;
-            margin-left: 16px;
-            margin-right: 16px;
+            .discovery-story-image {
+                flex: 2;
+            }
 
-            color: white;
-        }
+            .discovery-story-details {
+                flex: 1;
+
+                background-color: rgba(0,0,0, 0.4);
+            }
+                .discovery-story-details .title {
+                    color: white;
+                }
 
     .discovery-navigation {
         display: flex;

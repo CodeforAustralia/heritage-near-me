@@ -12038,7 +12038,7 @@ Elm.Discover.make = function (_elm) {
             return _U.list([]);
          }
    };
-   var storyImage = function (story) {
+   var storyImage = F2(function (story,content) {
       return A2($Html.div,
       _U.list([$Html$Attributes.$class("image")
               ,$Html$Attributes.style(_U.list([{ctor: "_Tuple2"
@@ -12046,8 +12046,8 @@ Elm.Discover.make = function (_elm) {
                                                ,_1: A2($Basics._op["++"],"url(\"",A2($Basics._op["++"],$Story.photo(story),"\")"))}
                                               ,{ctor: "_Tuple2",_0: "background-repeat",_1: "no-repeat"}
                                               ,{ctor: "_Tuple2",_0: "background-size",_1: "cover"}]))]),
-      _U.list([]));
-   };
+      content);
+   });
    var viewStory = F3(function (address,story,swipe) {
       return A2($Html.div,
       A2($Basics._op["++"],
@@ -12055,7 +12055,12 @@ Elm.Discover.make = function (_elm) {
               ,$Html$Attributes.$class("discovery-story")
               ,$Html$Attributes.style(styleStory(swipe))]),
       A3($Swiping.onSwipe,address,swipe,$Swiping.swipeAction)),
-      _U.list([storyImage(story),A2($Html.h2,_U.list([$Html$Attributes.$class("title")]),_U.list([$Html.text($Story.title(story))]))]));
+      _U.list([A2(storyImage,
+      story,
+      _U.list([A2($Html.div,_U.list([$Html$Attributes.$class("discovery-story-image")]),_U.list([]))
+              ,A2($Html.div,
+              _U.list([$Html$Attributes.$class("discovery-story-details")]),
+              _U.list([A2($Html.h2,_U.list([$Html$Attributes.$class("title")]),_U.list([$Html.text($Story.title(story))]))]))]))]));
    });
    var noStory = function (message) {
       return A2($Html.div,_U.list([$Html$Attributes.$class("discovery-empty")]),_U.list([A2($Html.h2,_U.list([]),_U.list([$Html.text(message)]))]));

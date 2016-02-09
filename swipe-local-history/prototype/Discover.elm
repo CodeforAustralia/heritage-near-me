@@ -49,16 +49,18 @@ viewStory address story swipe = div
     , class "discovery-story"
     , style <| styleStory swipe
     ] ++ onSwipe address swipe swipeAction)
-    [ storyImage story
-    , h2 [class "title"] [text <| Story.title story]
+    [storyImage story
+        [ div [class "discovery-story-image"] []
+        , div [class "discovery-story-details"]
+            [h2 [class "title"] [text <| Story.title story]]]
     ]
 
-storyImage story = div
+storyImage story content = div
     [ class "image"
     , style [ ("background-image", "url(\"" ++ Story.photo story ++ "\")")
             , ("background-repeat", "no-repeat")
             , ("background-size", "cover")]
-    ] []
+    ] content
 
 styleStory : Maybe SwipeState -> List (String, String)
 styleStory swipe = case swipe of
