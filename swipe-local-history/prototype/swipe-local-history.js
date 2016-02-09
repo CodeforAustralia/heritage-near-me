@@ -11699,6 +11699,7 @@ Elm.Types.make = function (_elm) {
    var NoAction = {ctor: "NoAction"};
    var LoadItems = function (a) {    return {ctor: "LoadItems",_0: a};};
    var LoadItem = function (a) {    return {ctor: "LoadItem",_0: a};};
+   var Back = {ctor: "Back"};
    var ViewFavourites = {ctor: "ViewFavourites"};
    var View = function (a) {    return {ctor: "View",_0: a};};
    var Pass = {ctor: "Pass"};
@@ -11724,6 +11725,7 @@ Elm.Types.make = function (_elm) {
                               ,Pass: Pass
                               ,View: View
                               ,ViewFavourites: ViewFavourites
+                              ,Back: Back
                               ,LoadItem: LoadItem
                               ,LoadItems: LoadItems
                               ,NoAction: NoAction
@@ -12225,6 +12227,7 @@ Elm.Main.make = function (_elm) {
    $Discover = Elm.Discover.make(_elm),
    $Effects = Elm.Effects.make(_elm),
    $Favourites = Elm.Favourites.make(_elm),
+   $History = Elm.History.make(_elm),
    $Html = Elm.Html.make(_elm),
    $Html$Attributes = Elm.Html.Attributes.make(_elm),
    $Html$Events = Elm.Html.Events.make(_elm),
@@ -12347,7 +12350,7 @@ Elm.Main.make = function (_elm) {
                       _U.list([A2($Html$Events.onClick,address,$Types.ViewFavourites)]),
                       _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-heart fa-3x")]),_U.list([]))]));
                     case "Viewing": return A2($Html.button,
-                      _U.list([A2($Html$Events.onClick,address,$Types.Discover)]),
+                      _U.list([A2($Html$Events.onClick,address,$Types.Back)]),
                       _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-angle-left fa-5x")]),_U.list([]))]));
                     default: return A2($Html.button,
                       _U.list([A2($Html$Events.onClick,address,$Types.Discover)]),
@@ -12375,10 +12378,19 @@ Elm.Main.make = function (_elm) {
    });
    var data = $Signal.mailbox($Types.NoAction);
    var history = $Signal.mailbox($Types.NoAction);
+   var effects = F2(function (action,app) {
+      var _p17 = action;
+      if (_p17.ctor === "Back") {
+            return A2($Effects.map,function (_p18) {    return $Types.NoAction;},A2($Debug.log,"back",$Effects.task($History.back)));
+         } else {
+            return $Effects.none;
+         }
+   });
    var app = $StartApp.start({init: {ctor: "_Tuple2",_0: initialApp,_1: $Effects.none}
                              ,view: view
-                             ,update: F2(function (action,model) {    return {ctor: "_Tuple2",_0: A2(update,action,model),_1: $Effects.none};})
+                             ,update: F2(function (action,model) {    return {ctor: "_Tuple2",_0: A2(update,action,model),_1: A2(effects,action,model)};})
                              ,inputs: _U.list([history.signal,data.signal])});
+   var tasks = Elm.Native.Task.make(_elm).performSignal("tasks",app.tasks);
    var routeTasks = Elm.Native.Task.make(_elm).performSignal("routeTasks",
    $RouteHash.start({prefix: $RouteHash.defaultPrefix,address: history.address,models: app.model,delta2update: $Route.url,location2action: $Route.action}));
    var fetchData = Elm.Native.Task.make(_elm).performSignal("fetchData",
@@ -12387,6 +12399,7 @@ Elm.Main.make = function (_elm) {
    return _elm.Main.values = {_op: _op
                              ,main: main
                              ,app: app
+                             ,effects: effects
                              ,history: history
                              ,data: data
                              ,view: view

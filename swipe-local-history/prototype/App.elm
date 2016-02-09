@@ -5,6 +5,7 @@ import Swipe exposing (SwipeState)
 import Task exposing (Task)
 import Dict exposing (Dict)
 import Effects
+import History
 import RouteHash
 import StartApp
 
@@ -21,9 +22,17 @@ main = app.html
 app = StartApp.start
     { init = (initialApp, Effects.none)
     , view = view
-    , update = \action model -> (update action model, Effects.none)
+    , update = \action model -> (update action model, effects action model)
     , inputs = [history.signal, data.signal]
     }
+
+effects : Action id a -> App id a -> Effects.Effects (Action id a)
+effects action app = case action of
+    Back -> Effects.map (\_ -> NoAction) <| Debug.log "back" <| Effects.task History.back
+    _ -> Effects.none
+
+port tasks : Signal (Task.Task Effects.Never ())
+port tasks = app.tasks
 
 history : Signal.Mailbox (Action StoryId Story)
 history = Signal.mailbox NoAction
@@ -58,7 +67,7 @@ navigation location address = nav [class "navigation"]
         Discovering ->
             button [onClick address ViewFavourites] [i [class "fa fa-heart fa-3x"] []]
         Viewing _ ->
-            button [onClick address Discover] [i [class "fa fa-angle-left fa-5x"] []]
+            button [onClick address Back] [i [class "fa fa-angle-left fa-5x"] []]
         ViewingFavourites ->
             button [onClick address Discover] [i [class "fa fa-map fa-3x"] []]
     , h1 [] [text "Heritage Near Me"]
