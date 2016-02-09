@@ -30,10 +30,22 @@ body > div, .app {
 .navigation {
     display: flex;
     flex: 0 0 50px;
+    align-items: center;
 }
 
         .navigation > * {
-            flex: 0 1 50%;
+            flex: 1 0 auto;
+        }
+
+        .navigation button {
+            color: white;
+            background: none;
+            border: none;
+        }
+
+        .navigation h1 {
+            flex: 10 0 auto;
+            text-align: center;
         }
 
 
@@ -107,7 +119,13 @@ body > div, .app {
 
 
 .story {
-    margin: 16px;
+    height: auto;
+    padding:16px;
+
+    background-color: white;
+    color:black;
+
+    
 }
 
     .story .image {
@@ -115,5 +133,59 @@ body > div, .app {
         height: 300px;
     }
 
-    .story h1 {
+    .story 
+
+/* Listing Title */
+    h1 {
+        text-align: center;
+        margin:16px;
+        font-size: 27pt;
+        font-weight:normal;
+        letter-spacing: -0.5;
+        color:#1887EC;
+    }
+
+/* Suburb */
+    h2 {
+        text-align: center;
+        font-size: 18pt;
+        font-weight: 200;
+        letter-spacing: .5px;
+        color: 1887EC;
+    }
+
+/* Date */
+    h3 {
+        text-align: center;
+        font-size: 14pt;
+        font-weight: 300;
+        color: 1887EC;
+
+    }
+/* Paragraph Headings */
+    h4 {
+        text-align: left;
+        font-size: 18pt;
+        font-weight: 200;
+        letter-spacing: .5px;
+        color: 1887EC;
+
+    }
+
+    p{
+        text-align: left;
+        font-size: 16pt;
+        font-weight: normal;
+        color: 000000;
+    }
+
+    blockquote{
+        text-align: center;
+        font-size: 17pt;
+        font-weight: 400;
+        color: 9B9B9B;
+    }
+
+    .story div {
+
     }
