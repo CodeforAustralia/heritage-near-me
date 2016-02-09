@@ -11732,6 +11732,70 @@ Elm.Types.make = function (_elm) {
                               ,Succeeded: Succeeded
                               ,Failed: Failed};
 };
+Elm.Story = Elm.Story || {};
+Elm.Story.make = function (_elm) {
+   "use strict";
+   _elm.Story = _elm.Story || {};
+   if (_elm.Story.values) return _elm.Story.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $Html = Elm.Html.make(_elm),
+   $Html$Attributes = Elm.Html.Attributes.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $Types = Elm.Types.make(_elm);
+   var _op = {};
+   var photo = function (story) {
+      var _p0 = story;
+      if (_p0.ctor === "DiscoverStory") {
+            return _p0._0.photo;
+         } else {
+            return A2($Maybe.withDefault,"",$List.head(_p0._0.photos));
+         }
+   };
+   var title = function (story) {    var _p1 = story;if (_p1.ctor === "DiscoverStory") {    return _p1._0.title;} else {    return _p1._0.title;}};
+   var id = function (story) {    var _p2 = story;if (_p2.ctor === "DiscoverStory") {    return _p2._0.id;} else {    return _p2._0.id;}};
+   var storyImage = function (story) {
+      return A2($Html.div,
+      _U.list([$Html$Attributes.$class("image")
+              ,$Html$Attributes.style(_U.list([{ctor: "_Tuple2"
+                                               ,_0: "background-image"
+                                               ,_1: A2($Basics._op["++"],"url(\"",A2($Basics._op["++"],photo(story),"\")"))}
+                                              ,{ctor: "_Tuple2",_0: "background-repeat",_1: "no-repeat"}
+                                              ,{ctor: "_Tuple2",_0: "background-size",_1: "cover"}]))]),
+      _U.list([]));
+   };
+   var view = F2(function (address,story) {
+      return A2($Html.div,
+      _U.list([$Html$Attributes.$class("story")]),
+      function () {
+         var _p3 = story;
+         if (_p3.ctor === "Loading") {
+               return _U.list([$Html.text("Loading")]);
+            } else {
+               if (_p3._0.ctor === "Succeeded") {
+                     var _p5 = _p3._0._0;
+                     return _U.list([storyImage(_p5)
+                                    ,A2($Html.h1,_U.list([]),_U.list([$Html.text(title(_p5))]))
+                                    ,function () {
+                                       var _p4 = _p5;
+                                       if (_p4.ctor === "DiscoverStory") {
+                                             return $Html.text("Loading story");
+                                          } else {
+                                             return A2($Html.div,_U.list([]),_U.list([$Html.text(_p4._0.story)]));
+                                          }
+                                    }()]);
+                  } else {
+                     return _U.list([$Html.text("Something went wrong")]);
+                  }
+            }
+      }());
+   });
+   return _elm.Story.values = {_op: _op,view: view,id: id,title: title,photo: photo};
+};
 Elm.Data = Elm.Data || {};
 Elm.Data.make = function (_elm) {
    "use strict";
@@ -11747,6 +11811,7 @@ Elm.Data.make = function (_elm) {
    $Maybe = Elm.Maybe.make(_elm),
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm),
+   $Story = Elm.Story.make(_elm),
    $Task = Elm.Task.make(_elm),
    $Types = Elm.Types.make(_elm);
    var _op = {};
@@ -11810,8 +11875,13 @@ Elm.Data.make = function (_elm) {
            function (_p7) {
               return $Task.succeed($Types.LoadItems($Types.Failed(_p7)));
            });
-         case "Viewing": return isLoaded(A2(findItem,app,isFullStory)) ? $Task.succeed($Types.NoAction) : A2($Task.onError,
-           A2($Task.map,function (_p8) {    return $Types.LoadItem($Types.Succeeded(_p8));},fetchFullStory(_p5._0)),
+         case "Viewing": var _p10 = _p5._0;
+           return isLoaded(A2(findItem,
+           app,
+           function (story) {
+              return isFullStory(story) && _U.eq($Story.id(story),_p10);
+           })) ? $Task.succeed($Types.NoAction) : A2($Task.onError,
+           A2($Task.map,function (_p8) {    return $Types.LoadItem($Types.Succeeded(_p8));},fetchFullStory(_p10)),
            function (_p9) {
               return $Task.succeed($Types.LoadItem($Types.Failed(_p9)));
            });
@@ -11936,70 +12006,6 @@ Elm.Swiping.make = function (_elm) {
    };
    var swipeActions = A2($Signal.map,swipeAction,swipes);
    return _elm.Swiping.values = {_op: _op,swipeActions: swipeActions,swipeAction: swipeAction,onSwipe: onSwipe};
-};
-Elm.Story = Elm.Story || {};
-Elm.Story.make = function (_elm) {
-   "use strict";
-   _elm.Story = _elm.Story || {};
-   if (_elm.Story.values) return _elm.Story.values;
-   var _U = Elm.Native.Utils.make(_elm),
-   $Basics = Elm.Basics.make(_elm),
-   $Debug = Elm.Debug.make(_elm),
-   $Html = Elm.Html.make(_elm),
-   $Html$Attributes = Elm.Html.Attributes.make(_elm),
-   $List = Elm.List.make(_elm),
-   $Maybe = Elm.Maybe.make(_elm),
-   $Result = Elm.Result.make(_elm),
-   $Signal = Elm.Signal.make(_elm),
-   $Types = Elm.Types.make(_elm);
-   var _op = {};
-   var photo = function (story) {
-      var _p0 = story;
-      if (_p0.ctor === "DiscoverStory") {
-            return _p0._0.photo;
-         } else {
-            return A2($Maybe.withDefault,"",$List.head(_p0._0.photos));
-         }
-   };
-   var title = function (story) {    var _p1 = story;if (_p1.ctor === "DiscoverStory") {    return _p1._0.title;} else {    return _p1._0.title;}};
-   var id = function (story) {    var _p2 = story;if (_p2.ctor === "DiscoverStory") {    return _p2._0.id;} else {    return _p2._0.id;}};
-   var storyImage = function (story) {
-      return A2($Html.div,
-      _U.list([$Html$Attributes.$class("image")
-              ,$Html$Attributes.style(_U.list([{ctor: "_Tuple2"
-                                               ,_0: "background-image"
-                                               ,_1: A2($Basics._op["++"],"url(\"",A2($Basics._op["++"],photo(story),"\")"))}
-                                              ,{ctor: "_Tuple2",_0: "background-repeat",_1: "no-repeat"}
-                                              ,{ctor: "_Tuple2",_0: "background-size",_1: "cover"}]))]),
-      _U.list([]));
-   };
-   var view = F2(function (address,story) {
-      return A2($Html.div,
-      _U.list([$Html$Attributes.$class("story")]),
-      function () {
-         var _p3 = story;
-         if (_p3.ctor === "Loading") {
-               return _U.list([$Html.text("Loading")]);
-            } else {
-               if (_p3._0.ctor === "Succeeded") {
-                     var _p5 = _p3._0._0;
-                     return _U.list([storyImage(_p5)
-                                    ,A2($Html.h1,_U.list([]),_U.list([$Html.text(title(_p5))]))
-                                    ,function () {
-                                       var _p4 = _p5;
-                                       if (_p4.ctor === "DiscoverStory") {
-                                             return $Html.text("Loading story");
-                                          } else {
-                                             return A2($Html.div,_U.list([]),_U.list([$Html.text(_p4._0.story)]));
-                                          }
-                                    }()]);
-                  } else {
-                     return _U.list([$Html.text("Something went wrong")]);
-                  }
-            }
-      }());
-   });
-   return _elm.Story.values = {_op: _op,view: view,id: id,title: title,photo: photo};
 };
 Elm.Discover = Elm.Discover || {};
 Elm.Discover.make = function (_elm) {

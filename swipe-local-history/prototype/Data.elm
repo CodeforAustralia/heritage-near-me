@@ -6,6 +6,7 @@ import Task exposing (Task)
 import Http
 
 import Types exposing (..)
+import Story
 
 url : String -> String
 url subUrl = Http.url ("api/"++subUrl) []
@@ -20,7 +21,7 @@ fetch app = case app.location of
             `Task.onError`
                 (Task.succeed << LoadItems << Failed)
     Viewing storyId ->
-        if isLoaded <| findItem app isFullStory then
+        if isLoaded <| findItem app (\story -> isFullStory story && Story.id story == storyId) then
             Task.succeed NoAction
         else
             Task.map (LoadItem << Succeeded) (fetchFullStory storyId)
