@@ -10,9 +10,10 @@ import Swiping exposing (onSwipe, swipeAction)
 import Data exposing (getItem)
 import Story
 
-view : Signal.Address (Action StoryId Story) -> App StoryId Story -> Html
-view address app = div [class "discovery"]
-    [ case app.discovery.item of
+view : Signal.Address (Action StoryId Story) -> App StoryId Story -> Html -> Html
+view address app topNav = div [class "app screen-size discovery"]
+    [ topNav
+    , case app.discovery.item of
         Loaded (Succeeded item) -> case item of
             Just id -> case getItem app id of
                 Loaded (Succeeded story) -> viewStory address story app.discovery.swipeState
@@ -28,15 +29,15 @@ navigation : Signal.Address (Action StoryId Story) -> Html
 navigation address = nav [class "discovery-navigation"]
     [ button [onClick address Pass]
         [span [class "fa-stack fa-3x"]
-            [ i [class "fa fa-circle-thin fa-stack-2x"] []
-            , i [class "fa fa-times fa-stack-1x"] []
+            [ i [class "fa fa-circle fa-stack-2x"] []
+            , i [class "fa fa-times fa-stack-1x fa-inverse"] []
             ]]
     , i [class "fa fa-fw fa-share fa-flip-horizontal fa-3x"] []
     , i [class "fa fa-fw fa-share fa-3x"] []
     , button [onClick address Favourite]
         [span [class "fa-stack fa-3x"]
-            [ i [class "fa fa-circle-thin fa-stack-2x"] []
-            , i [class "fa fa-check fa-stack-1x"] []
+            [ i [class "fa fa-circle fa-stack-2x"] []
+            , i [class "fa fa-heart fa-stack-1x fa-inverse"] []
             ]]
     ]
 

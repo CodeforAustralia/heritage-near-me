@@ -54,13 +54,18 @@ port fetchData = Signal.map Data.fetch app.model
     |> Signal.map (\fetch -> fetch `Task.andThen` (Signal.send data.address))
 
 view : Signal.Address (Action StoryId Story) -> App StoryId Story -> Html
-view address app = div [class "app"]
-    [ navigation app.location address
-    , case app.location of
-        Discovering       -> Discover.view   address app
-        Viewing storyId   -> Story.view      address <| getStory app storyId
-        ViewingFavourites -> Favourites.view address <| List.filterMap (\id -> Data.defaultMap Nothing Just <| getStory app id) app.discovery.favourites
-    ]
+view address app = case app.location of
+    Discovering -> Discover.view address app
+        <| navigation app.location address
+    Viewing storyId   -> div [class "app"]
+        [ navigation app.location address
+        , Story.view address <| getStory app storyId
+        ]
+    ViewingFavourites -> div [class "app"]
+        [ navigation app.location address
+        , Favourites.view address
+            <| List.filterMap (\id -> Data.defaultMap Nothing Just <| getStory app id) app.discovery.favourites
+        ]
 
 navigation location address = nav [class "navigation"]
     [ case location of

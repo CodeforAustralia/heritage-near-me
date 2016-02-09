@@ -12074,21 +12074,22 @@ Elm.Discover.make = function (_elm) {
               _U.list([A2($Html$Events.onClick,address,$Types.Pass)]),
               _U.list([A2($Html.span,
               _U.list([$Html$Attributes.$class("fa-stack fa-3x")]),
-              _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-circle-thin fa-stack-2x")]),_U.list([]))
-                      ,A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-times fa-stack-1x")]),_U.list([]))]))]))
+              _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-circle fa-stack-2x")]),_U.list([]))
+                      ,A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-times fa-stack-1x fa-inverse")]),_U.list([]))]))]))
               ,A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-fw fa-share fa-flip-horizontal fa-3x")]),_U.list([]))
               ,A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-fw fa-share fa-3x")]),_U.list([]))
               ,A2($Html.button,
               _U.list([A2($Html$Events.onClick,address,$Types.Favourite)]),
               _U.list([A2($Html.span,
               _U.list([$Html$Attributes.$class("fa-stack fa-3x")]),
-              _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-circle-thin fa-stack-2x")]),_U.list([]))
-                      ,A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-check fa-stack-1x")]),_U.list([]))]))]))]));
+              _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-circle fa-stack-2x")]),_U.list([]))
+                      ,A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-heart fa-stack-1x fa-inverse")]),_U.list([]))]))]))]));
    };
-   var view = F2(function (address,app) {
+   var view = F3(function (address,app,topNav) {
       return A2($Html.div,
-      _U.list([$Html$Attributes.$class("discovery")]),
-      _U.list([function () {
+      _U.list([$Html$Attributes.$class("app screen-size discovery")]),
+      _U.list([topNav
+              ,function () {
                  var _p2 = app.discovery.item;
                  if (_p2.ctor === "Loaded") {
                        if (_p2._0.ctor === "Succeeded") {
@@ -12359,22 +12360,22 @@ Elm.Main.make = function (_elm) {
               ,A2($Html.h1,_U.list([]),_U.list([$Html.text("Heritage Near Me")]))]));
    });
    var view = F2(function (address,app) {
-      return A2($Html.div,
-      _U.list([$Html$Attributes.$class("app")]),
-      _U.list([A2(navigation,app.location,address)
-              ,function () {
-                 var _p16 = app.location;
-                 switch (_p16.ctor)
-                 {case "Discovering": return A2($Discover.view,address,app);
-                    case "Viewing": return A2($Story.view,address,A2(getStory,app,_p16._0));
-                    default: return A2($Favourites.view,
-                      address,
-                      A2($List.filterMap,
-                      function (id) {
-                         return A3($Data.defaultMap,$Maybe.Nothing,$Maybe.Just,A2(getStory,app,id));
-                      },
-                      app.discovery.favourites));}
-              }()]));
+      var _p16 = app.location;
+      switch (_p16.ctor)
+      {case "Discovering": return A3($Discover.view,address,app,A2(navigation,app.location,address));
+         case "Viewing": return A2($Html.div,
+           _U.list([$Html$Attributes.$class("app")]),
+           _U.list([A2(navigation,app.location,address),A2($Story.view,address,A2(getStory,app,_p16._0))]));
+         default: return A2($Html.div,
+           _U.list([$Html$Attributes.$class("app")]),
+           _U.list([A2(navigation,app.location,address)
+                   ,A2($Favourites.view,
+                   address,
+                   A2($List.filterMap,
+                   function (id) {
+                      return A3($Data.defaultMap,$Maybe.Nothing,$Maybe.Just,A2(getStory,app,id));
+                   },
+                   app.discovery.favourites))]));}
    });
    var data = $Signal.mailbox($Types.NoAction);
    var history = $Signal.mailbox($Types.NoAction);
