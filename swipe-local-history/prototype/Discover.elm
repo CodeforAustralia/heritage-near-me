@@ -10,9 +10,10 @@ import Swiping exposing (onSwipe, swipeAction)
 import Data exposing (getItem)
 import Story
 
-view : Signal.Address (Action StoryId Story) -> App StoryId Story -> Html
-view address app = div [class "discovery"]
-    [ case app.discovery.item of
+view : Signal.Address (Action StoryId Story) -> App StoryId Story -> Html -> Html
+view address app topNav = div [class "app screen-size discovery"]
+    [ topNav
+    , case app.discovery.item of
         Loaded (Succeeded item) -> case item of
             Just id -> case getItem app id of
                 Loaded (Succeeded story) -> viewStory address story app.discovery.swipeState

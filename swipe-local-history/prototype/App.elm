@@ -55,10 +55,8 @@ port fetchData = Signal.map Data.fetch app.model
 
 view : Signal.Address (Action StoryId Story) -> App StoryId Story -> Html
 view address app = case app.location of
-    Discovering -> div [class "app screen-size"]
-        [ navigation app.location address
-        , Discover.view address app
-        ]
+    Discovering -> Discover.view address app
+        <| navigation app.location address
     Viewing storyId   -> div [class "app"]
         [ navigation app.location address
         , Story.view address <| getStory app storyId
