@@ -17,10 +17,10 @@ view address app = div [class "discovery"]
             Just id -> case getItem app id of
                 Loaded (Succeeded story) -> viewStory address story app.discovery.swipeState
                 Loaded (Failed err) -> text "Something went wrong"
-                Loading -> text "Loading..."
-            Nothing -> noStory
-        Loaded (Failed err) -> text "Something went wrong"
-        Loading -> text "Loading..."
+                Loading -> noStory "Loading..."
+            Nothing -> noStory "No more stories left!"
+        Loaded (Failed err) -> noStory "Something went wrong"
+        Loading -> noStory "Loading..."
     , navigation address
     ]
 
@@ -30,8 +30,8 @@ navigation address = nav [class "discovery-navigation"]
     , button [onClick address Favourite] [text "✅"]
     ]
 
-noStory : Html
-noStory = div [class "discovery-empty"] [h2 [] [text "No more stories left!"]]
+noStory : String -> Html
+noStory message = div [class "discovery-empty"] [h2 [] [text message]]
 
 viewStory : Signal.Address (Action StoryId Story) -> Story -> Maybe SwipeState -> Html
 viewStory address story swipe = div

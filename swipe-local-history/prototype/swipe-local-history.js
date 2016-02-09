@@ -12057,9 +12057,9 @@ Elm.Discover.make = function (_elm) {
       A3($Swiping.onSwipe,address,swipe,$Swiping.swipeAction)),
       _U.list([storyImage(story),A2($Html.h2,_U.list([$Html$Attributes.$class("title")]),_U.list([$Html.text($Story.title(story))]))]));
    });
-   var noStory = A2($Html.div,
-   _U.list([$Html$Attributes.$class("discovery-empty")]),
-   _U.list([A2($Html.h2,_U.list([]),_U.list([$Html.text("No more stories left!")]))]));
+   var noStory = function (message) {
+      return A2($Html.div,_U.list([$Html$Attributes.$class("discovery-empty")]),_U.list([A2($Html.h2,_U.list([]),_U.list([$Html.text(message)]))]));
+   };
    var navigation = function (address) {
       return A2($Html.nav,
       _U.list([$Html$Attributes.$class("discovery-navigation")]),
@@ -12083,16 +12083,16 @@ Elm.Discover.make = function (_elm) {
                                                return $Html.text("Something went wrong");
                                             }
                                       } else {
-                                         return $Html.text("Loading...");
+                                         return noStory("Loading...");
                                       }
                                 } else {
-                                   return noStory;
+                                   return noStory("No more stories left!");
                                 }
                           } else {
-                             return $Html.text("Something went wrong");
+                             return noStory("Something went wrong");
                           }
                     } else {
-                       return $Html.text("Loading...");
+                       return noStory("Loading...");
                     }
               }()
               ,navigation(address)]));
