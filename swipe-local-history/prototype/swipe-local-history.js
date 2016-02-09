@@ -12320,21 +12320,33 @@ Elm.Main.make = function (_elm) {
                 return _U.update(app,{items: A3(addItems,$Story.id,_p14,app.items),discovery: A3(loadItems,app.discovery,_p14,$Story.id)});
               default: return app;}}
    });
-   var navigation = function (address) {
+   var navigation = F2(function (location,address) {
       return A2($Html.nav,
       _U.list([$Html$Attributes.$class("navigation")]),
-      _U.list([A2($Html.button,_U.list([A2($Html$Events.onClick,address,$Types.Discover)]),_U.list([$Html.text("discover")]))
-              ,A2($Html.button,_U.list([A2($Html$Events.onClick,address,$Types.ViewFavourites)]),_U.list([$Html.text("favourites")]))]));
-   };
+      _U.list([function () {
+                 var _p15 = location;
+                 switch (_p15.ctor)
+                 {case "Discovering": return A2($Html.button,
+                      _U.list([A2($Html$Events.onClick,address,$Types.ViewFavourites)]),
+                      _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-heart fa-3x")]),_U.list([]))]));
+                    case "Viewing": return A2($Html.button,
+                      _U.list([A2($Html$Events.onClick,address,$Types.Discover)]),
+                      _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-angle-left fa-5x")]),_U.list([]))]));
+                    default: return A2($Html.button,
+                      _U.list([A2($Html$Events.onClick,address,$Types.Discover)]),
+                      _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-map fa-3x")]),_U.list([]))]));}
+              }()
+              ,A2($Html.h1,_U.list([]),_U.list([$Html.text("Heritage Near Me")]))]));
+   });
    var view = F2(function (address,app) {
       return A2($Html.div,
       _U.list([$Html$Attributes.$class("app")]),
-      _U.list([navigation(address)
+      _U.list([A2(navigation,app.location,address)
               ,function () {
-                 var _p15 = app.location;
-                 switch (_p15.ctor)
+                 var _p16 = app.location;
+                 switch (_p16.ctor)
                  {case "Discovering": return A2($Discover.view,address,app);
-                    case "Viewing": return A2($Story.view,address,A2(getStory,app,_p15._0));
+                    case "Viewing": return A2($Story.view,address,A2(getStory,app,_p16._0));
                     default: return A2($Favourites.view,
                       address,
                       A2($List.filterMap,

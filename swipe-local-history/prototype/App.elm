@@ -1,4 +1,4 @@
-import Html exposing (Html, div, nav, button, text)
+import Html exposing (Html, div, nav, h1, button, i, text)
 import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
 import Swipe exposing (SwipeState)
@@ -46,16 +46,22 @@ port fetchData = Signal.map Data.fetch app.model
 
 view : Signal.Address (Action StoryId Story) -> App StoryId Story -> Html
 view address app = div [class "app"]
-    [ navigation address
+    [ navigation app.location address
     , case app.location of
         Discovering       -> Discover.view   address app
         Viewing storyId   -> Story.view      address <| getStory app storyId
         ViewingFavourites -> Favourites.view address <| List.filterMap (\id -> Data.defaultMap Nothing Just <| getStory app id) app.discovery.favourites
     ]
 
-navigation address = nav [class "navigation"]
-    [ button [onClick address Discover] [text "discover"]
-    , button [onClick address ViewFavourites] [text "favourites"]
+navigation location address = nav [class "navigation"]
+    [ case location of
+        Discovering ->
+            button [onClick address ViewFavourites] [i [class "fa fa-heart fa-3x"] []]
+        Viewing _ ->
+            button [onClick address Discover] [i [class "fa fa-angle-left fa-5x"] []]
+        ViewingFavourites ->
+            button [onClick address Discover] [i [class "fa fa-map fa-3x"] []]
+    , h1 [] [text "Heritage Near Me"]
     ]
 
 update : Action StoryId Story -> App StoryId Story -> App StoryId Story

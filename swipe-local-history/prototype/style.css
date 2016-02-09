@@ -46,6 +46,8 @@ body > div, .app {
         .navigation h1 {
             flex: 10 0 auto;
             text-align: center;
+
+            color: white;
         }
 
 /* Discovery (swiping) stlye */
