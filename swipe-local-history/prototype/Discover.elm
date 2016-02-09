@@ -7,19 +7,25 @@ import Swipe exposing (SwipeState(..))
 
 import Types exposing (..)
 import Swiping exposing (onSwipe, swipeAction)
+import Data exposing (getItem)
+import Story
 
-view : Signal.Address (Action Story) -> Discovery Story -> Html
+view : Signal.Address (Action StoryId Story) -> App StoryId Story -> Html
 view address app = div [class "discovery"]
-    [ case app.item of
-        Loaded (Succeeded (Just item)) -> viewStory address item app.swipeState
-        Loaded (Succeeded (Nothing))   -> noStory
+    [ case app.discovery.item of
+        Loaded (Succeeded item) -> case item of
+            Just id -> case getItem app id of
+                Loaded (Succeeded story) -> viewStory address story app.discovery.swipeState
+                Loaded (Failed err) -> text "Something went wrong"
+                Loading -> text "Loading..."
+            Nothing -> noStory
         Loaded (Failed err) -> text "Something went wrong"
         Loading -> text "Loading..."
-    , navigation address app
+    , navigation address
     ]
 
-navigation : Signal.Address (Action Story) -> (Discovery Story) -> Html
-navigation address app = nav [class "discovery-navigation"]
+navigation : Signal.Address (Action StoryId Story) -> Html
+navigation address = nav [class "discovery-navigation"]
     [ button [onClick address Pass] [text "❌"]
     , button [onClick address Favourite] [text "✅"]
     ]
@@ -27,19 +33,19 @@ navigation address app = nav [class "discovery-navigation"]
 noStory : Html
 noStory = div [class "discovery-empty"] [h2 [] [text "No more stories left!"]]
 
-viewStory : Signal.Address (Action Story) -> Story -> Maybe SwipeState -> Html
+viewStory : Signal.Address (Action StoryId Story) -> Story -> Maybe SwipeState -> Html
 viewStory address story swipe = div
-    ([ onClick address <| View story
+    ([ onClick address <| View <| Story.id story
     , class "discovery-story"
     , style <| styleStory swipe
     ] ++ onSwipe address swipe swipeAction)
     [ storyImage story
-    , h2 [] [text story.title]
+    , h2 [] [text <| Story.title story]
     ]
 
 storyImage story = div
     [ class "image"
-    , style [ ("background-image", "url(\"" ++ story.photo ++ "\")")
+    , style [ ("background-image", "url(\"" ++ Story.photo story ++ "\")")
             , ("background-repeat", "no-repeat")
             , ("background-size", "cover")]
     ] []

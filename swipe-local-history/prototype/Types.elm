@@ -1,43 +1,55 @@
-module Types (App, Location(..), Discovery, Favourites, Story, Action(..), RemoteData(..), LoadedData(..)) where
+module Types (App, Location(..), Discovery, Favourites, StoryId(..), Story(..), Action(..), RemoteData(..), LoadedData(..)) where
 
 import Http
+import Dict exposing (Dict)
 import Swipe exposing (SwipeState)
 
-type alias App a =
-    { location : Location a
-    , discovery : Discovery a
+type alias App id a =
+    { location : Location id
+    , discovery : Discovery id
+    , items : Dict String (RemoteData a)
     }
 
-type Location a =
+type Location id =
       Discovering
-    | Viewing a
+    | Viewing id
     | ViewingFavourites
 
-type Action a =
+type Action id a =
       Discover
     | SwipingItem (Maybe SwipeState)
     | Favourite
     | Pass
-    | View a
+    | View id
     | ViewFavourites
+    | LoadItem (LoadedData a)
     | LoadItems (LoadedData (List a))
     | NoAction
 
 type RemoteData a = Loading | Loaded (LoadedData a)
 type LoadedData a = Succeeded a | Failed Http.Error
 
-type alias Discovery a =
-    { item : RemoteData (Maybe a)
+type alias Discovery id =
+    { item : RemoteData (Maybe id)
     , swipeState : Maybe SwipeState
-    , items : RemoteData (List a)
-    , favourites : Favourites a
-    , passes : List a
+    , items : List id
+    , favourites : Favourites id
+    , passes : List id
     }
 
 type alias Favourites a = List a
 
-type alias Story =
-    { title : String
-    , story : String
-    , photo : String
-    }
+type StoryId = StoryId Int
+
+type Story =
+      DiscoverStory
+        { id : StoryId
+        , title : String
+        , photo : String
+        }
+    | FullStory
+        { id : StoryId
+        , title : String
+        , photos : List String
+        , story : String
+        }

@@ -7,10 +7,10 @@ import Swipe exposing (..)
 
 import Types exposing (..)
 
-swipeActions : Signal (Action a)
+swipeActions : Signal (Action id a)
 swipeActions = Signal.map swipeAction swipes
 
-swipeAction : Maybe SwipeState -> Action a
+swipeAction : Maybe SwipeState -> Action id a
 swipeAction swipe = case swipe of
     Just (End state) -> case state.direction of
         Right -> Favourite
