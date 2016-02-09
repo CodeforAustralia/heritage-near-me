@@ -12074,16 +12074,16 @@ Elm.Discover.make = function (_elm) {
               _U.list([A2($Html$Events.onClick,address,$Types.Pass)]),
               _U.list([A2($Html.span,
               _U.list([$Html$Attributes.$class("fa-stack fa-3x")]),
-              _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-circle-thin fa-stack-2x")]),_U.list([]))
-                      ,A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-times fa-stack-1x")]),_U.list([]))]))]))
+              _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-circle fa-stack-2x")]),_U.list([]))
+                      ,A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-times fa-stack-1x fa-inverse")]),_U.list([]))]))]))
               ,A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-fw fa-share fa-flip-horizontal fa-3x")]),_U.list([]))
               ,A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-fw fa-share fa-3x")]),_U.list([]))
               ,A2($Html.button,
               _U.list([A2($Html$Events.onClick,address,$Types.Favourite)]),
               _U.list([A2($Html.span,
               _U.list([$Html$Attributes.$class("fa-stack fa-3x")]),
-              _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-circle-thin fa-stack-2x")]),_U.list([]))
-                      ,A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-check fa-stack-1x")]),_U.list([]))]))]))]));
+              _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-circle fa-stack-2x")]),_U.list([]))
+                      ,A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-heart fa-stack-1x fa-inverse")]),_U.list([]))]))]))]));
    };
    var view = F3(function (address,app,topNav) {
       return A2($Html.div,

@@ -219,3 +219,8 @@ blockquote {
     font-weight: 400;
     color: 9B9B9B;
 }
+
+/* Other tweaks */
+.app .fa-inverse {
+    color: #086ac4;
+}
