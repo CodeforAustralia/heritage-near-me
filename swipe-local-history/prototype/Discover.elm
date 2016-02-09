@@ -1,6 +1,6 @@
 module Discover (view) where
 
-import Html exposing (Html, div, nav, h1, h2, img, button, text)
+import Html exposing (Html, div, nav, h1, h2, img, button, span, i, text)
 import Html.Events exposing (onClick)
 import Html.Attributes as Attr exposing (..)
 import Swipe exposing (SwipeState(..))
@@ -26,8 +26,18 @@ view address app = div [class "discovery"]
 
 navigation : Signal.Address (Action StoryId Story) -> Html
 navigation address = nav [class "discovery-navigation"]
-    [ button [onClick address Pass] [text "❌"]
-    , button [onClick address Favourite] [text "✅"]
+    [ button [onClick address Pass]
+        [span [class "fa-stack fa-3x"]
+            [ i [class "fa fa-circle-thin fa-stack-2x"] []
+            , i [class "fa fa-times fa-stack-1x"] []
+            ]]
+    , i [class "fa fa-fw fa-share fa-flip-horizontal fa-3x"] []
+    , i [class "fa fa-fw fa-share fa-3x"] []
+    , button [onClick address Favourite]
+        [span [class "fa-stack fa-3x"]
+            [ i [class "fa fa-circle-thin fa-stack-2x"] []
+            , i [class "fa fa-check fa-stack-1x"] []
+            ]]
     ]
 
 noStory : String -> Html

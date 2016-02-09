@@ -12063,8 +12063,20 @@ Elm.Discover.make = function (_elm) {
    var navigation = function (address) {
       return A2($Html.nav,
       _U.list([$Html$Attributes.$class("discovery-navigation")]),
-      _U.list([A2($Html.button,_U.list([A2($Html$Events.onClick,address,$Types.Pass)]),_U.list([$Html.text("❌")]))
-              ,A2($Html.button,_U.list([A2($Html$Events.onClick,address,$Types.Favourite)]),_U.list([$Html.text("✅")]))]));
+      _U.list([A2($Html.button,
+              _U.list([A2($Html$Events.onClick,address,$Types.Pass)]),
+              _U.list([A2($Html.span,
+              _U.list([$Html$Attributes.$class("fa-stack fa-3x")]),
+              _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-circle-thin fa-stack-2x")]),_U.list([]))
+                      ,A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-times fa-stack-1x")]),_U.list([]))]))]))
+              ,A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-fw fa-share fa-flip-horizontal fa-3x")]),_U.list([]))
+              ,A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-fw fa-share fa-3x")]),_U.list([]))
+              ,A2($Html.button,
+              _U.list([A2($Html$Events.onClick,address,$Types.Favourite)]),
+              _U.list([A2($Html.span,
+              _U.list([$Html$Attributes.$class("fa-stack fa-3x")]),
+              _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-circle-thin fa-stack-2x")]),_U.list([]))
+                      ,A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-check fa-stack-1x")]),_U.list([]))]))]))]));
    };
    var view = F2(function (address,app) {
       return A2($Html.div,

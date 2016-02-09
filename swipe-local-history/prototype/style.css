@@ -95,11 +95,20 @@ body > div, .app {
 
     .discovery-navigation {
         display: flex;
-        flex: 0 1 80px;
+        flex: 0 0 80px;
+        align-items: center;
     }
 
         .discovery-navigation > * {
-            flex: 0 1 50%;
+            flex: 0 1 25%;
+        }
+
+        .discovery-navigation button {
+            flex: 1 0 30%;
+
+            color: white;
+            background: none;
+            border: none;
         }
 
 /* Favourites list style */
