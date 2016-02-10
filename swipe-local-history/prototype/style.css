@@ -28,15 +28,10 @@ body > div, .app {
 
 /* Top of the page navigation */
 .navigation {
-    display: flex;
     flex: 0 0 50px;
     height: 50px;
     align-items: center;
 }
-
-        .navigation > * {
-            flex: 1 0 auto;
-        }
 
         .navigation button {
             color: white;
@@ -50,8 +45,12 @@ body > div, .app {
             outline: 0;
         }
 
+        .navigation button:first-child {
+            position: absolute;
+            float: left;
+        }
+
         .navigation .logo {
-            flex: 10 10 auto;
             height: 100%;
             text-align: center;
         }
