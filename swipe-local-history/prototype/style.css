@@ -122,16 +122,23 @@ body > div, .app {
     .discovery-navigation {
         display: flex;
         flex: 0 0 80px;
-        align-items: center;
+        align-items: stretch;
+        justify-content: center;
     }
 
         .discovery-navigation > * {
-            flex: 0 1 25%;
+            flex: 0 0 auto;
+        }
+
+        .discovery-navigation .fa-share {
+            transform: rotate(-20deg);
+        }
+
+        .discovery-navigation .fa-share.fa-flip-horizontal {
+            transform: scale(-1, 1) rotate(-20deg);
         }
 
         .discovery-navigation button {
-            flex: 1 0 30%;
-
             color: white;
             background: none;
             border: none;
