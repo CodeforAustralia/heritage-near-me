@@ -12379,7 +12379,9 @@ Elm.Main.make = function (_elm) {
                       _U.list([A2($Html$Events.onClick,address,$Types.Discover)]),
                       _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-map fa-3x")]),_U.list([]))]));}
               }()
-              ,A2($Html.h1,_U.list([]),_U.list([$Html.text("Heritage Near Me")]))]));
+              ,A2($Html.div,
+              _U.list([$Html$Attributes.$class("logo")]),
+              _U.list([A2($Html.img,_U.list([$Html$Attributes.src("images/logo.png")]),_U.list([]))]))]));
    });
    var view = F2(function (address,app) {
       var _p15 = app.location;
