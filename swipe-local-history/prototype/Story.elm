@@ -14,7 +14,7 @@ view address story = div [class "story"]
             [ storyImage story
             , h1 [class "title"] [text <| title story]
             , case story of
-                DiscoverStory story -> text "Loading story"
+                DiscoverStory story -> loading
                 FullStory story -> div [] [text story.story]
             ]
         Loaded (Failed _) ->

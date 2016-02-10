@@ -11804,7 +11804,7 @@ Elm.Story.make = function (_elm) {
                                     ,function () {
                                        var _p4 = _p5;
                                        if (_p4.ctor === "DiscoverStory") {
-                                             return $Html.text("Loading story");
+                                             return $Loading.loading;
                                           } else {
                                              return A2($Html.div,_U.list([]),_U.list([$Html.text(_p4._0.story)]));
                                           }
