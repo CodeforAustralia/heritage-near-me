@@ -44,6 +44,10 @@ body > div, .app {
             border: none;
         }
 
+        .navigation button:focus {
+            outline: 0;
+        }
+
         .navigation .logo {
             flex: 10 10 auto;
             height: 100%;
@@ -127,6 +131,10 @@ body > div, .app {
             color: white;
             background: none;
             border: none;
+        }
+
+        .discovery-navigation button:focus {
+            outline: 0;
         }
 
 /* Favourites list style */
