@@ -180,6 +180,12 @@ body > div, .app {
         font-weight: 300;
     }
 
+/* Loading indicators */
+.loading {
+    margin: 16px;
+    text-align: center;
+}
+
 
 /* General contents */
 

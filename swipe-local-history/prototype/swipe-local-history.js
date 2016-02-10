@@ -11734,6 +11734,26 @@ Elm.Types.make = function (_elm) {
                               ,Succeeded: Succeeded
                               ,Failed: Failed};
 };
+Elm.Loading = Elm.Loading || {};
+Elm.Loading.make = function (_elm) {
+   "use strict";
+   _elm.Loading = _elm.Loading || {};
+   if (_elm.Loading.values) return _elm.Loading.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $Html = Elm.Html.make(_elm),
+   $Html$Attributes = Elm.Html.Attributes.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm);
+   var _op = {};
+   var loading = A2($Html.div,
+   _U.list([$Html$Attributes.$class("loading")]),
+   _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-circle-o-notch fa-spin fa-3x")]),_U.list([]))]));
+   return _elm.Loading.values = {_op: _op,loading: loading};
+};
 Elm.Story = Elm.Story || {};
 Elm.Story.make = function (_elm) {
    "use strict";
@@ -11745,6 +11765,7 @@ Elm.Story.make = function (_elm) {
    $Html = Elm.Html.make(_elm),
    $Html$Attributes = Elm.Html.Attributes.make(_elm),
    $List = Elm.List.make(_elm),
+   $Loading = Elm.Loading.make(_elm),
    $Maybe = Elm.Maybe.make(_elm),
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm),
@@ -11775,9 +11796,7 @@ Elm.Story.make = function (_elm) {
       _U.list([$Html$Attributes.$class("story")]),
       function () {
          var _p3 = story;
-         if (_p3.ctor === "Loading") {
-               return _U.list([$Html.text("Loading")]);
-            } else {
+         if (_p3.ctor === "Loaded") {
                if (_p3._0.ctor === "Succeeded") {
                      var _p5 = _p3._0._0;
                      return _U.list([storyImage(_p5)
@@ -11793,6 +11812,8 @@ Elm.Story.make = function (_elm) {
                   } else {
                      return _U.list([$Html.text("Something went wrong")]);
                   }
+            } else {
+               return _U.list([$Loading.loading]);
             }
       }());
    });
@@ -12022,6 +12043,7 @@ Elm.Discover.make = function (_elm) {
    $Html$Attributes = Elm.Html.Attributes.make(_elm),
    $Html$Events = Elm.Html.Events.make(_elm),
    $List = Elm.List.make(_elm),
+   $Loading = Elm.Loading.make(_elm),
    $Maybe = Elm.Maybe.make(_elm),
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm),
@@ -12103,7 +12125,7 @@ Elm.Discover.make = function (_elm) {
                                                return $Html.text("Something went wrong");
                                             }
                                       } else {
-                                         return noStory("Loading...");
+                                         return $Loading.loading;
                                       }
                                 } else {
                                    return noStory("No more stories left!");
@@ -12112,7 +12134,7 @@ Elm.Discover.make = function (_elm) {
                              return noStory("Something went wrong");
                           }
                     } else {
-                       return noStory("Loading...");
+                       return $Loading.loading;
                     }
               }()
               ,navigation(address)]));

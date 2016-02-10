@@ -5,6 +5,7 @@ import Html.Events exposing (onClick)
 import Html.Attributes as Attr exposing (..)
 
 import Types exposing (..)
+import Loading exposing (loading)
 
 view : Signal.Address (Action StoryId Story) -> RemoteData Story -> Html
 view address story = div [class "story"]
@@ -16,10 +17,10 @@ view address story = div [class "story"]
                 DiscoverStory story -> text "Loading story"
                 FullStory story -> div [] [text story.story]
             ]
-        Loading ->
-            [ text "Loading"]
         Loaded (Failed _) ->
             [ text "Something went wrong"]
+        Loading ->
+            [ loading ]
 
 storyImage story = div
     [ class "image"
