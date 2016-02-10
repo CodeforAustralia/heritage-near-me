@@ -44,11 +44,17 @@ body > div, .app {
             border: none;
         }
 
-        .navigation h1 {
-            flex: 10 0 auto;
+        .navigation .logo {
+            flex: 10 10 auto;
+            height: 100%;
             text-align: center;
+        }
 
-            color: white;
+        .navigation .logo img {
+            box-sizing: border-box;
+            height: 100%;
+            width: auto;
+            padding: 4px;
         }
 
 /* Discovery (swiping) stlye */

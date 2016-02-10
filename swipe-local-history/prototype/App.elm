@@ -1,5 +1,5 @@
-import Html exposing (Html, div, nav, h1, button, i, text)
-import Html.Attributes exposing (class)
+import Html exposing (Html, div, nav, img, button, i, text)
+import Html.Attributes exposing (class, src)
 import Html.Events exposing (onClick)
 import Swipe exposing (SwipeState)
 import Task exposing (Task)
@@ -75,7 +75,7 @@ navigation location address = nav [class "navigation"]
             button [onClick address Back] [i [class "fa fa-angle-left fa-5x"] []]
         ViewingFavourites ->
             button [onClick address Discover] [i [class "fa fa-map fa-3x"] []]
-    , h1 [] [text "Heritage Near Me"]
+    , div [class "logo"] [img [src "images/logo.png"] []]
     ]
 
 update : Action StoryId Story -> App StoryId Story -> App StoryId Story
