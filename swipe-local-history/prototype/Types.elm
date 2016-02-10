@@ -23,7 +23,7 @@ type Action id a =
     | View id
     | ViewFavourites
     | Back
-    | LoadItem (LoadedData a)
+    | LoadItem id (LoadedData a)
     | LoadItems (LoadedData (List a))
     | NoAction
 

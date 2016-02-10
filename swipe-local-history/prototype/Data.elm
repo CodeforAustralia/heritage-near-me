@@ -21,12 +21,12 @@ fetch app = case app.location of
             `Task.onError`
                 (Task.succeed << LoadItems << Failed)
     Viewing storyId ->
-        if isLoaded <| findItem app (\story -> isFullStory story && Story.id story == storyId) then
+        if (isLoaded <| getItem app storyId) && (not <| isLoaded <| findItem app (\story -> Story.id story == storyId && isDiscoverStory story)) then
             Task.succeed NoAction
         else
-            Task.map (LoadItem << Succeeded) (fetchFullStory storyId)
+            Task.map (LoadItem storyId << Succeeded) (fetchFullStory storyId)
             `Task.onError`
-                (Task.succeed << LoadItem << Failed)
+                (Task.succeed << LoadItem storyId << Failed)
     _ -> Task.succeed NoAction
 
 fetchDiscoverStories : Task Http.Error (List Story)
@@ -64,6 +64,11 @@ fullStory = Json.object4
     ("title" := Json.string)
     ("photos" := Json.list Json.string)
     ("story" := Json.string)
+
+isDiscoverStory : Story -> Bool
+isDiscoverStory story = case story of
+    DiscoverStory story -> True
+    FullStory story -> False
 
 isFullStory : Story -> Bool
 isFullStory story = case story of

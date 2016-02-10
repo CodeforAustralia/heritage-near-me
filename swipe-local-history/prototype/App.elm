@@ -82,33 +82,33 @@ update : Action StoryId Story -> App StoryId Story -> App StoryId Story
 update action app = case app.location of
     Discovering ->
         case action of
-            Discover        -> {app | location = Discovering}
-            View story'     -> {app | location = Viewing story'}
-            ViewFavourites  -> {app | location = ViewingFavourites}
-            Favourite       -> {app | location = Discovering, discovery = favouriteItem app.discovery}
-            Pass            -> {app | location = Discovering, discovery = passItem app.discovery}
-            SwipingItem s   -> {app | discovery = swipeItem app.discovery s}
-            LoadItem item   -> {app | items = addItem Story.id item app.items}
-            LoadItems items -> {app | items = addItems Story.id items app.items, discovery = loadItems app.discovery items Story.id}
-            _               -> app
+            Discover         -> {app | location = Discovering}
+            View story'      -> {app | location = Viewing story'}
+            ViewFavourites   -> {app | location = ViewingFavourites}
+            Favourite        -> {app | location = Discovering, discovery = favouriteItem app.discovery}
+            Pass             -> {app | location = Discovering, discovery = passItem app.discovery}
+            SwipingItem s    -> {app | discovery = swipeItem app.discovery s}
+            LoadItem id item -> {app | items = addItem id item app.items}
+            LoadItems items  -> {app | items = addItems Story.id items app.items, discovery = loadItems app.discovery items Story.id}
+            _                -> app
 
     Viewing story ->
         case action of
-            Discover        -> {app | location = Discovering}
-            View story'     -> {app | location = Viewing story'}
-            ViewFavourites  -> {app | location = ViewingFavourites}
-            LoadItem item   -> {app | items = addItem Story.id item app.items}
-            LoadItems items -> {app | items = addItems Story.id items app.items, discovery = loadItems app.discovery items Story.id}
-            _               -> app
+            Discover         -> {app | location = Discovering}
+            View story'      -> {app | location = Viewing story'}
+            ViewFavourites   -> {app | location = ViewingFavourites}
+            LoadItem id item -> {app | items = addItem id item app.items}
+            LoadItems items  -> {app | items = addItems Story.id items app.items, discovery = loadItems app.discovery items Story.id}
+            _                -> app
 
     ViewingFavourites ->
         case action of
-            Discover        -> {app | location = Discovering}
-            View story'     -> {app | location = Viewing story'}
-            ViewFavourites  -> {app | location = ViewingFavourites}
-            LoadItem item   -> {app | items = addItem Story.id item app.items}
-            LoadItems items -> {app | items = addItems Story.id items app.items, discovery = loadItems app.discovery items Story.id}
-            _               -> app
+            Discover         -> {app | location = Discovering}
+            View story'      -> {app | location = Viewing story'}
+            ViewFavourites   -> {app | location = ViewingFavourites}
+            LoadItem id item -> {app | items = addItem id item app.items}
+            LoadItems items  -> {app | items = addItems Story.id items app.items, discovery = loadItems app.discovery items Story.id}
+            _                -> app
 
 favouriteItem : Discovery id -> Discovery id
 favouriteItem app =
@@ -155,10 +155,10 @@ addItems getId loaded items = case loaded of
         loadedItems
     _ -> items
 
-addItem : (a -> id) -> LoadedData a -> Dict String (RemoteData a) -> Dict String (RemoteData a)
-addItem getId loaded items = case loaded of
-    Succeeded item -> Dict.insert (toString <| getId item) (Loaded <| Succeeded <| item) items
-    _ -> items
+addItem : id -> LoadedData a -> Dict String (RemoteData a) -> Dict String (RemoteData a)
+addItem id loaded items = case loaded of
+    Succeeded item -> Dict.insert (toString id) (Loaded <| Succeeded <| item) items
+    Failed item -> Dict.insert (toString id) (Loaded <| Failed <| item) items
 
 getStory : App StoryId Story -> StoryId -> RemoteData Story
 getStory app = Data.getItem app
