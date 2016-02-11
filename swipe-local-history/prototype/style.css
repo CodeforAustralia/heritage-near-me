@@ -96,8 +96,6 @@ body > div, .app {
         margin: 0px 8px;
         padding-top: 20px;
         padding-bottom: 20px;
-        box-shadow: 0px,2px,4px rgba(0,0,0,0.5);
-        border-radius: 5px,5px,5px,5px;
 
         -moz-user-select: none;
         -khtml-user-select: none;
@@ -113,6 +111,9 @@ body > div, .app {
             flex-direction: column;
             justify-content: flex-end;
             flex: 1 1 0px;
+
+            border-radius: 5px;
+            box-shadow: 0px 2px 4px rgba(0,0,0,0.5);
         }
 
             .discovery-story-image {
@@ -120,8 +121,7 @@ body > div, .app {
             }
 
             .discovery-story-details {
-                flex: 1;
-
+                border-radius: 0px 0px 5px 5px;
                 background-color: rgba(0,0,0, 0.4);
             }
                 .discovery-story-details .title {
@@ -189,7 +189,9 @@ body > div, .app {
             display: flex;
             flex-direction: column;
             background-color: white;
-            box-shadow: 0px,2px,4px rgba(0,0,0,0.5);
+            margin: 16px 0px;
+
+            box-shadow: 0px 2px 4px rgba(0,0,0,0.5);
         }
 
             .favourites li .image {
@@ -197,7 +199,6 @@ body > div, .app {
             }
 
             .favourites li .title {
-                flex: 0 1 50px;
                 text-align: left;
                 margin: 10px 20px;
                 font-weight: 100;
