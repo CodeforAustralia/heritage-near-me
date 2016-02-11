@@ -3,6 +3,7 @@ module Story (view, id, title, photo) where
 import Html exposing (Html, div, h1, h2, img, text)
 import Html.Events exposing (onClick)
 import Html.Attributes as Attr exposing (..)
+import Markdown
 
 import Types exposing (..)
 import Loading exposing (loading)
@@ -15,7 +16,7 @@ view address story = div [class "story"]
             , h1 [class "title"] [text <| title story]
             , case story of
                 DiscoverStory story -> loading
-                FullStory story -> div [] [text story.story]
+                FullStory story -> Markdown.toHtml story.story
             ]
         Loaded (Failed _) ->
             [ text "Something went wrong"]
