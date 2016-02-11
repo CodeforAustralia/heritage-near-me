@@ -11,9 +11,12 @@ view : Signal.Address (Action StoryId Story) -> Favourites Story -> Html
 view address favourites = div [class "favourites"]
     [ h1 [] [text "Favourites"]
     , case favourites of
-        [] -> text "You have no favourites yet"
+        [] -> noStories "You have no favourites yet"
         _  -> viewFavourites address favourites
     ]
+
+noStories : String -> Html
+noStories message = div [class "favourites-empty"] [h2 [] [text message]]
 
 viewFavourites : Signal.Address (Action StoryId Story) -> Favourites Story -> Html
 viewFavourites address favourites = ul []
