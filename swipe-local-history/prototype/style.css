@@ -284,6 +284,10 @@ blockquote {
     color: 9B9B9B;
 }
 
+button {
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+
 /* Other tweaks */
 .app .fa-inverse {
     color: #086ac4;
