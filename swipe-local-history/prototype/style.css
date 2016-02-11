@@ -181,16 +181,21 @@ body > div, .app {
         .favourites li {
             display: flex;
             flex-direction: column;
+            background-color: white;
+            box-shadow: 0px,2px,4px rgba(0,0,0,0.5);
         }
 
             .favourites li .image {
-                flex: 0 1 180px;
+                flex: 0 1 100px;
             }
 
             .favourites li .title {
                 flex: 0 1 50px;
-
-                color: white;
+                text-align: left;
+                margin: 10px 20px;
+                font-weight: 100;
+                font-size: 24px;
+                color: black;
             }
 
 /* Story page style */
