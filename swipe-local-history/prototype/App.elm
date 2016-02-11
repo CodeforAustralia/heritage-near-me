@@ -70,11 +70,11 @@ view address app = case app.location of
 navigation location address = nav [class "navigation"]
     [ case location of
         Discovering ->
-            button [onClick address ViewFavourites] [i [class "fa fa-heart fa-3x"] []]
+            button [onClick address ViewFavourites] [i [class "fa fa-heart fa-2x"] []]
         Viewing _ ->
-            button [onClick address Back] [i [class "fa fa-angle-left fa-4x"] []]
+            button [onClick address Back] [i [class "fa fa-angle-left fa-3x"] []]
         ViewingFavourites ->
-            button [onClick address Discover] [i [class "fa fa-map fa-3x"] []]
+            button [onClick address Discover] [i [class "fa fa-map fa-2x"] []]
     , div [class "logo"] [img [src "images/logo.png"] []]
     ]
 
