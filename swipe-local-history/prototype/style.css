@@ -231,21 +231,21 @@ body > div, .app {
 
 h1 {
     text-align: center;
-    font-size: 42px;
+    font-size: 36px;
     font-weight: normal;
     color: #1887EC;
 }
 
 h2 {
     text-align: center;
-    font-size: 30px;
+    font-size: 28px;
     font-weight: 200;
     color: #1887EC;
 }
 
 h3 {
     text-align: left;
-    font-size: 18pt;
+    font-size: 24px;
     font-weight: 200;
     letter-spacing: .5px;
     color: 1887EC;
@@ -254,7 +254,7 @@ h3 {
 
 p {
     text-align: left;
-    font-size: 16pt;
+    font-size: 22px;
     font-weight: normal;
     color: 000000;
 }
