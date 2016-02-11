@@ -37,9 +37,14 @@ body > div, .app {
             color: white;
             background: none;
             border: none;
-            height: inherit;
-            
+            height: inherit; 
             cursor: pointer;
+            transition: all 0.3s ease 0s;
+            opacity: 1;
+        }
+
+        .navigation button:active {
+            color:#0A3D78;
         }
 
         .navigation button:focus {
@@ -135,8 +140,13 @@ body > div, .app {
             color: white;
             background: none;
             border: none;
-
             cursor: pointer;
+            transition: all 0.3s ease 0s;
+            opacity: 1;
+        }
+
+        .discovery-navigation button:active {
+            color:#0A3D78;
         }
 
         .discovery-navigation button:focus {
