@@ -12180,6 +12180,9 @@ Elm.Favourites.make = function (_elm) {
       _U.list([favouriteImage(favourite),A2($Html.h2,_U.list([$Html$Attributes.$class("title")]),_U.list([$Html.text($Story.title(favourite))]))]));
    });
    var viewFavourites = F2(function (address,favourites) {    return A2($Html.ul,_U.list([]),A2($List.map,viewFavourite(address),favourites));});
+   var noStories = function (message) {
+      return A2($Html.div,_U.list([$Html$Attributes.$class("favourites-empty")]),_U.list([A2($Html.h2,_U.list([]),_U.list([$Html.text(message)]))]));
+   };
    var view = F2(function (address,favourites) {
       return A2($Html.div,
       _U.list([$Html$Attributes.$class("favourites")]),
@@ -12187,7 +12190,7 @@ Elm.Favourites.make = function (_elm) {
               ,function () {
                  var _p0 = favourites;
                  if (_p0.ctor === "[]") {
-                       return $Html.text("You have no favourites yet");
+                       return noStories("You have no favourites yet");
                     } else {
                        return A2(viewFavourites,address,favourites);
                     }

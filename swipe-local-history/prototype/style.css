@@ -79,8 +79,8 @@ body > div, .app {
 }
 
     .discovery-empty {
-        flex: 0 1 100%;
-        margin: 16px;
+        height: 100%;
+        padding-top: 30vh;
     }
 
         .discovery-empty h2 {
@@ -164,6 +164,13 @@ body > div, .app {
 .favourites {
     margin: 16px;
 }
+
+    .favourites .favourites-empty {
+        padding-top: 30vh;
+    }
+        .favourites .favourites-empty h2 {
+            color: white;
+        }
 
     .favourites h1 {
         color: white;
