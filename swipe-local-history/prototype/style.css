@@ -1,6 +1,6 @@
 /* Page style */
 html {
-    min-height: 100%;
+    background-color: #086ac4;
 }
 
 body {
@@ -16,14 +16,14 @@ body {
     font-family: 'Helvetica Neue';
 }
 
-body > div, .app {
+html, body, body > div {
     height: 100%;
 }
 
 .app.screen-size {
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    height: 100%;
 }
 
 /* Top of the page navigation */
@@ -282,6 +282,10 @@ blockquote {
     font-size: 17pt;
     font-weight: 400;
     color: 9B9B9B;
+}
+
+button {
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
 }
 
 /* Other tweaks */
