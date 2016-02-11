@@ -81,7 +81,7 @@ updateSwipeState swipe touch update = let
                     }
                 _ -> Nothing
 
-direction : Int -> Int -> Maybe Direction
+direction : Float -> Float -> Maybe Direction
 direction dx dy =
     if abs dx > abs dy then
         if dx > 0 then
@@ -100,15 +100,15 @@ direction dx dy =
 
 type alias SwipeUpdate =
     { id : Int
-    , x : Int
-    , y : Int
+    , x : Float
+    , y : Float
     , t0 : Float
     }
 
 type TouchState = TouchStart | TouchMove | TouchEnd
 
 touch : Json.Decoder SwipeUpdate
-touch = Json.object2 (\t0 touch -> {id = touch.id, x = floor touch.x, y = floor touch.y, t0 = toFloat t0})
+touch = Json.object2 (\t0 touch -> {id = touch.id, x = touch.x, y = touch.y, t0 = toFloat t0})
     ("timeStamp" := Json.int)
     ("changedTouches" := Json.object1 (\x -> x)
         ("0" := changedTouch))

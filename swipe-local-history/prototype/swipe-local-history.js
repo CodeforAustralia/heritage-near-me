@@ -11641,21 +11641,39 @@ Elm.Swipe.make = function (_elm) {
       var _p1 = swipeState;
       switch (_p1.ctor)
       {case "Start": var _p3 = _p1._0;
-           var _p2 = A2(direction,touch.x - _p3.x,touch.y - _p3.y);
+           var _p2 = A2(direction,$Basics.toFloat(touch.x) - _p3.x,$Basics.toFloat(touch.y) - _p3.y);
            if (_p2.ctor === "Just") {
-                 return $Maybe.Just(Swiping({x0: _p3.x,y0: _p3.y,x1: touch.x,y1: touch.y,id: _p3.id,direction: _p2._0,t0: _p3.t0}));
+                 return $Maybe.Just(Swiping({x0: _p3.x
+                                            ,y0: _p3.y
+                                            ,x1: $Basics.toFloat(touch.x)
+                                            ,y1: $Basics.toFloat(touch.y)
+                                            ,id: _p3.id
+                                            ,direction: _p2._0
+                                            ,t0: _p3.t0}));
               } else {
                  return $Maybe.Nothing;
               }
          case "Swiping": var _p5 = _p1._0;
-           var fromStartDir = A2(direction,touch.x - _p5.x0,touch.y - _p5.y0);
+           var fromStartDir = A2(direction,$Basics.toFloat(touch.x) - _p5.x0,$Basics.toFloat(touch.y) - _p5.y0);
            var _p4 = fromStartDir;
            if (_p4.ctor === "Just") {
-                 return $Maybe.Just(Swiping({x0: _p5.x0,y0: _p5.y0,x1: touch.x,y1: touch.y,id: _p5.id,direction: _p4._0,t0: _p5.t0}));
+                 return $Maybe.Just(Swiping({x0: _p5.x0
+                                            ,y0: _p5.y0
+                                            ,x1: $Basics.toFloat(touch.x)
+                                            ,y1: $Basics.toFloat(touch.y)
+                                            ,id: _p5.id
+                                            ,direction: _p4._0
+                                            ,t0: _p5.t0}));
               } else {
-                 return $Maybe.Just(End({x0: _p5.x0,y0: _p5.y0,x1: touch.x,y1: touch.y,id: _p5.id,direction: _p5.direction,t0: _p5.t0}));
+                 return $Maybe.Just(End({x0: _p5.x0
+                                        ,y0: _p5.y0
+                                        ,x1: $Basics.toFloat(touch.x)
+                                        ,y1: $Basics.toFloat(touch.y)
+                                        ,id: _p5.id
+                                        ,direction: _p5.direction
+                                        ,t0: _p5.t0}));
               }
-         default: return $Maybe.Just(Start({x: touch.x,y: touch.y,id: touch.id,t0: touch.t0}));}
+         default: return $Maybe.Just(Start({x: $Basics.toFloat(touch.x),y: $Basics.toFloat(touch.y),id: touch.id,t0: touch.t0}));}
    });
    var swipeStates = function () {
       var updates = F2(function (touches,states) {
@@ -11674,7 +11692,7 @@ Elm.Swipe.make = function (_elm) {
          states),
          A2($List.map,
          function (touch) {
-            return Start({x: touch.x,y: touch.y,id: touch.id,t0: touch.t0});
+            return Start({x: $Basics.toFloat(touch.x),y: $Basics.toFloat(touch.y),id: touch.id,t0: touch.t0});
          },
          A2($List.filter,function (touch) {    return $Basics.not(A2($List.any,function (s) {    return _U.eq(swipeId(s),touch.id);},states));},touches)));
       });
@@ -12084,7 +12102,7 @@ Elm.Swiping.make = function (_elm) {
    A2($Json$Decode._op[":="],"clientX",$Json$Decode.$float),
    A2($Json$Decode._op[":="],"clientY",$Json$Decode.$float));
    var touch = A3($Json$Decode.object2,
-   F2(function (t0,touch) {    return {id: touch.id,x: $Basics.floor(touch.x),y: $Basics.floor(touch.y),t0: $Basics.toFloat(t0)};}),
+   F2(function (t0,touch) {    return {id: touch.id,x: touch.x,y: touch.y,t0: $Basics.toFloat(t0)};}),
    A2($Json$Decode._op[":="],"timeStamp",$Json$Decode.$int),
    A2($Json$Decode._op[":="],"changedTouches",A2($Json$Decode.object1,function (x) {    return x;},A2($Json$Decode._op[":="],"0",changedTouch))));
    var TouchEnd = {ctor: "TouchEnd"};
