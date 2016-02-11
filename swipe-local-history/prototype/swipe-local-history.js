@@ -12378,13 +12378,13 @@ Elm.Main.make = function (_elm) {
                  switch (_p14.ctor)
                  {case "Discovering": return A2($Html.button,
                       _U.list([A2($Html$Events.onClick,address,$Types.ViewFavourites)]),
-                      _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-heart fa-3x")]),_U.list([]))]));
+                      _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-heart fa-2x")]),_U.list([]))]));
                     case "Viewing": return A2($Html.button,
                       _U.list([A2($Html$Events.onClick,address,$Types.Back)]),
-                      _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-angle-left fa-4x")]),_U.list([]))]));
+                      _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-angle-left fa-3x")]),_U.list([]))]));
                     default: return A2($Html.button,
                       _U.list([A2($Html$Events.onClick,address,$Types.Discover)]),
-                      _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-map fa-3x")]),_U.list([]))]));}
+                      _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-map fa-2x")]),_U.list([]))]));}
               }()
               ,A2($Html.div,
               _U.list([$Html$Attributes.$class("logo")]),
