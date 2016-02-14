@@ -12295,7 +12295,7 @@ Elm.Discover.make = function (_elm) {
                                                return $Html.text("Something went wrong");
                                             }
                                       } else {
-                                         return $Loading.loading;
+                                         return A2($Html.div,_U.list([$Html$Attributes.$class("discovery-empty")]),_U.list([$Loading.loading]));
                                       }
                                 } else {
                                    return noStory("No more stories left!");
@@ -12304,7 +12304,7 @@ Elm.Discover.make = function (_elm) {
                              return noStory("Something went wrong");
                           }
                     } else {
-                       return $Loading.loading;
+                       return A2($Html.div,_U.list([$Html$Attributes.$class("discovery-empty")]),_U.list([$Loading.loading]));
                     }
               }()
               ,navigation(address)]));
