@@ -124,6 +124,8 @@ html, body, body > div {
             .discovery-story-details {
 				padding: 8px;				
 
+                text-align: center;
+
                 border-radius: 0px 0px 5px 5px;
                 background-color: rgba(0,0,0, 0.4);
             }
@@ -333,7 +335,6 @@ h4 {
 }
 
 p {
-    text-align: left;
     font-size: 20px;
     line-height: 1.2;
     font-weight: normal;
