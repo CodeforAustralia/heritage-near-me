@@ -1,6 +1,7 @@
 module Data (fetch, map, defaultMap, getItem) where
 
-import Json.Decode as Json exposing ((:=))
+import Json.Decode as Json exposing ((:=), andThen)
+import Date exposing (Date)
 import Dict exposing (Dict)
 import Task exposing (Task)
 import Http
@@ -36,11 +37,17 @@ discoverStories : Json.Decoder (List Story)
 discoverStories = Json.list discoverStory
 
 discoverStory : Json.Decoder Story
-discoverStory = Json.object3
-    (\id title photo -> DiscoverStory {id = StoryId id, title = title, photo = photo})
+discoverStory = Json.object4
+    (\id title blurb photo -> DiscoverStory
+        { id = StoryId id
+        , title = title
+        , blurb = blurb
+        , photo = photo
+        })
     ("id" := Json.int)
     ("title" := Json.string)
-    ("photo" := Json.string)
+    ("blurb" := Json.string)
+    ("photo" := Json.oneOf [Json.string, Json.null ""])
 
 fetchFullStory : StoryId -> Task Http.Error Story
 fetchFullStory storyId = let
@@ -58,12 +65,47 @@ fullStories : Json.Decoder (List Story)
 fullStories = Json.list fullStory
 
 fullStory : Json.Decoder Story
-fullStory = Json.object4
-    (\id title photos story -> FullStory {id = StoryId id, title = title, photos = photos, story = story})
-    ("id" := Json.int)
+fullStory = ("id" := Json.int) `andThen` \id -> Json.object8
+    (\title blurb suburb dates photos story sites locations -> FullStory
+        { id = StoryId id
+        , title = title
+        , blurb = blurb
+        , suburb = suburb
+        , dates = dates
+        , photos = photos
+        , story = story
+        , sites = List.filterMap identity sites
+        , locations = List.filterMap identity locations
+        })
     ("title" := Json.string)
-    ("photos" := Json.list Json.string)
+    ("blurb" := Json.string)
+    (Json.maybe ("suburb" := Json.string))
+    ("dates" := dates)
+    ("photos" := Json.list (Json.oneOf [Json.string, Json.null ""]))
     ("story" := Json.string)
+    ("sites" := Json.list (Json.maybe site))
+    ("locations" := Json.list (Json.maybe location))
+
+dates : Json.Decoder Dates
+dates = Json.object2
+    (\start end ->
+        { start = start `Maybe.andThen` (Date.fromString >> Result.toMaybe)
+        , end = end `Maybe.andThen` (Date.fromString >> Result.toMaybe)
+        })
+    (Json.maybe ("start" := Json.string))
+    (Json.maybe ("end" := Json.string))
+
+site : Json.Decoder Site
+site = Json.object2
+    (\id name -> {id = id, name = name})
+    ("id" := Json.string)
+    ("name" := Json.string)
+
+location : Json.Decoder LatLng
+location = Json.object2
+    (\lat lng -> {lat = lat, lng = lng})
+    ("lat" := Json.string)
+    ("lng" := Json.string)
 
 isDiscoverStory : Story -> Bool
 isDiscoverStory story = case story of

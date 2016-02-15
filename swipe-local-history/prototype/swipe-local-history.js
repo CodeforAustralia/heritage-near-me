@@ -6963,6 +6963,116 @@ Elm.Char.make = function (_elm) {
                              ,toCode: toCode
                              ,fromCode: fromCode};
 };
+Elm.Native.Date = {};
+Elm.Native.Date.make = function(localRuntime) {
+	localRuntime.Native = localRuntime.Native || {};
+	localRuntime.Native.Date = localRuntime.Native.Date || {};
+	if (localRuntime.Native.Date.values)
+	{
+		return localRuntime.Native.Date.values;
+	}
+
+	var Result = Elm.Result.make(localRuntime);
+
+	function readDate(str)
+	{
+		var date = new Date(str);
+		return isNaN(date.getTime())
+			? Result.Err('unable to parse \'' + str + '\' as a date')
+			: Result.Ok(date);
+	}
+
+	var dayTable = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+	var monthTable =
+		['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+		 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+
+	return localRuntime.Native.Date.values = {
+		read: readDate,
+		year: function(d) { return d.getFullYear(); },
+		month: function(d) { return { ctor: monthTable[d.getMonth()] }; },
+		day: function(d) { return d.getDate(); },
+		hour: function(d) { return d.getHours(); },
+		minute: function(d) { return d.getMinutes(); },
+		second: function(d) { return d.getSeconds(); },
+		millisecond: function(d) { return d.getMilliseconds(); },
+		toTime: function(d) { return d.getTime(); },
+		fromTime: function(t) { return new Date(t); },
+		dayOfWeek: function(d) { return { ctor: dayTable[d.getDay()] }; }
+	};
+};
+
+Elm.Date = Elm.Date || {};
+Elm.Date.make = function (_elm) {
+   "use strict";
+   _elm.Date = _elm.Date || {};
+   if (_elm.Date.values) return _elm.Date.values;
+   var _U = Elm.Native.Utils.make(_elm),$Native$Date = Elm.Native.Date.make(_elm),$Result = Elm.Result.make(_elm),$Time = Elm.Time.make(_elm);
+   var _op = {};
+   var millisecond = $Native$Date.millisecond;
+   var second = $Native$Date.second;
+   var minute = $Native$Date.minute;
+   var hour = $Native$Date.hour;
+   var dayOfWeek = $Native$Date.dayOfWeek;
+   var day = $Native$Date.day;
+   var month = $Native$Date.month;
+   var year = $Native$Date.year;
+   var fromTime = $Native$Date.fromTime;
+   var toTime = $Native$Date.toTime;
+   var fromString = $Native$Date.read;
+   var Dec = {ctor: "Dec"};
+   var Nov = {ctor: "Nov"};
+   var Oct = {ctor: "Oct"};
+   var Sep = {ctor: "Sep"};
+   var Aug = {ctor: "Aug"};
+   var Jul = {ctor: "Jul"};
+   var Jun = {ctor: "Jun"};
+   var May = {ctor: "May"};
+   var Apr = {ctor: "Apr"};
+   var Mar = {ctor: "Mar"};
+   var Feb = {ctor: "Feb"};
+   var Jan = {ctor: "Jan"};
+   var Sun = {ctor: "Sun"};
+   var Sat = {ctor: "Sat"};
+   var Fri = {ctor: "Fri"};
+   var Thu = {ctor: "Thu"};
+   var Wed = {ctor: "Wed"};
+   var Tue = {ctor: "Tue"};
+   var Mon = {ctor: "Mon"};
+   var Date = {ctor: "Date"};
+   return _elm.Date.values = {_op: _op
+                             ,fromString: fromString
+                             ,toTime: toTime
+                             ,fromTime: fromTime
+                             ,year: year
+                             ,month: month
+                             ,day: day
+                             ,dayOfWeek: dayOfWeek
+                             ,hour: hour
+                             ,minute: minute
+                             ,second: second
+                             ,millisecond: millisecond
+                             ,Jan: Jan
+                             ,Feb: Feb
+                             ,Mar: Mar
+                             ,Apr: Apr
+                             ,May: May
+                             ,Jun: Jun
+                             ,Jul: Jul
+                             ,Aug: Aug
+                             ,Sep: Sep
+                             ,Oct: Oct
+                             ,Nov: Nov
+                             ,Dec: Dec
+                             ,Mon: Mon
+                             ,Tue: Tue
+                             ,Wed: Wed
+                             ,Thu: Thu
+                             ,Fri: Fri
+                             ,Sat: Sat
+                             ,Sun: Sun};
+};
 Elm.Native.String = {};
 
 Elm.Native.String.make = function(localRuntime) {
@@ -11843,6 +11953,7 @@ Elm.Types.make = function (_elm) {
    if (_elm.Types.values) return _elm.Types.values;
    var _U = Elm.Native.Utils.make(_elm),
    $Basics = Elm.Basics.make(_elm),
+   $Date = Elm.Date.make(_elm),
    $Debug = Elm.Debug.make(_elm),
    $Dict = Elm.Dict.make(_elm),
    $Http = Elm.Http.make(_elm),
@@ -11852,6 +11963,9 @@ Elm.Types.make = function (_elm) {
    $Signal = Elm.Signal.make(_elm),
    $Swipe = Elm.Swipe.make(_elm);
    var _op = {};
+   var Dates = F2(function (a,b) {    return {start: a,end: b};});
+   var Site = F2(function (a,b) {    return {id: a,name: b};});
+   var LatLng = F2(function (a,b) {    return {lat: a,lng: b};});
    var FullStory = function (a) {    return {ctor: "FullStory",_0: a};};
    var DiscoverStory = function (a) {    return {ctor: "DiscoverStory",_0: a};};
    var StoryId = function (a) {    return {ctor: "StoryId",_0: a};};
@@ -11877,6 +11991,9 @@ Elm.Types.make = function (_elm) {
    return _elm.Types.values = {_op: _op
                               ,App: App
                               ,Discovery: Discovery
+                              ,Site: Site
+                              ,LatLng: LatLng
+                              ,Dates: Dates
                               ,Discovering: Discovering
                               ,Viewing: Viewing
                               ,ViewingFavourites: ViewingFavourites
@@ -11991,6 +12108,7 @@ Elm.Data.make = function (_elm) {
    if (_elm.Data.values) return _elm.Data.values;
    var _U = Elm.Native.Utils.make(_elm),
    $Basics = Elm.Basics.make(_elm),
+   $Date = Elm.Date.make(_elm),
    $Debug = Elm.Debug.make(_elm),
    $Dict = Elm.Dict.make(_elm),
    $Http = Elm.Http.make(_elm),
@@ -12030,18 +12148,49 @@ Elm.Data.make = function (_elm) {
    var isLoaded = function (data) {    var _p2 = data;if (_p2.ctor === "Loaded") {    return true;} else {    return false;}};
    var isFullStory = function (story) {    var _p3 = story;if (_p3.ctor === "DiscoverStory") {    return false;} else {    return true;}};
    var isDiscoverStory = function (story) {    var _p4 = story;if (_p4.ctor === "DiscoverStory") {    return true;} else {    return false;}};
-   var fullStory = A5($Json$Decode.object4,
-   F4(function (id,title,photos,story) {    return $Types.FullStory({id: $Types.StoryId(id),title: title,photos: photos,story: story});}),
+   var location = A3($Json$Decode.object2,
+   F2(function (lat,lng) {    return {lat: lat,lng: lng};}),
+   A2($Json$Decode._op[":="],"lat",$Json$Decode.string),
+   A2($Json$Decode._op[":="],"lng",$Json$Decode.string));
+   var site = A3($Json$Decode.object2,
+   F2(function (id,name) {    return {id: id,name: name};}),
+   A2($Json$Decode._op[":="],"id",$Json$Decode.string),
+   A2($Json$Decode._op[":="],"name",$Json$Decode.string));
+   var dates = A3($Json$Decode.object2,
+   F2(function (start,end) {    return {start: $Result.toMaybe($Date.fromString(start)),end: $Result.toMaybe($Date.fromString(end))};}),
+   A2($Json$Decode._op[":="],"start",$Json$Decode.string),
+   A2($Json$Decode._op[":="],"end",$Json$Decode.string));
+   var fullStory = A2($Json$Decode.andThen,
    A2($Json$Decode._op[":="],"id",$Json$Decode.$int),
-   A2($Json$Decode._op[":="],"title",$Json$Decode.string),
-   A2($Json$Decode._op[":="],"photos",$Json$Decode.list($Json$Decode.string)),
-   A2($Json$Decode._op[":="],"story",$Json$Decode.string));
+   function (id) {
+      return A9($Json$Decode.object8,
+      F8(function (title,blurb,suburb,dates,photos,story,sites,locations) {
+         return $Types.FullStory({id: $Types.StoryId(id)
+                                 ,title: title
+                                 ,blurb: blurb
+                                 ,suburb: suburb
+                                 ,dates: dates
+                                 ,photos: photos
+                                 ,story: story
+                                 ,sites: sites
+                                 ,locations: locations});
+      }),
+      A2($Json$Decode._op[":="],"title",$Json$Decode.string),
+      A2($Json$Decode._op[":="],"blurb",$Json$Decode.string),
+      $Json$Decode.maybe(A2($Json$Decode._op[":="],"suburb",$Json$Decode.string)),
+      A2($Json$Decode._op[":="],"dates",dates),
+      A2($Json$Decode._op[":="],"photos",$Json$Decode.list($Json$Decode.oneOf(_U.list([$Json$Decode.string,$Json$Decode.$null("")])))),
+      A2($Json$Decode._op[":="],"story",$Json$Decode.string),
+      A2($Json$Decode._op[":="],"sites",$Json$Decode.list(site)),
+      A2($Json$Decode._op[":="],"locations",$Json$Decode.list(location)));
+   });
    var fullStories = $Json$Decode.list(fullStory);
-   var discoverStory = A4($Json$Decode.object3,
-   F3(function (id,title,photo) {    return $Types.DiscoverStory({id: $Types.StoryId(id),title: title,photo: photo});}),
+   var discoverStory = A5($Json$Decode.object4,
+   F4(function (id,title,blurb,photo) {    return $Types.DiscoverStory({id: $Types.StoryId(id),title: title,blurb: blurb,photo: photo});}),
    A2($Json$Decode._op[":="],"id",$Json$Decode.$int),
    A2($Json$Decode._op[":="],"title",$Json$Decode.string),
-   A2($Json$Decode._op[":="],"photo",$Json$Decode.string));
+   A2($Json$Decode._op[":="],"blurb",$Json$Decode.string),
+   A2($Json$Decode._op[":="],"photo",$Json$Decode.oneOf(_U.list([$Json$Decode.string,$Json$Decode.$null("")]))));
    var discoverStories = $Json$Decode.list(discoverStory);
    var url = function (subUrl) {    return A2($Http.url,A2($Basics._op["++"],"api/",subUrl),_U.list([]));};
    var fetchDiscoverStories = A2($Http.get,discoverStories,url("story_discover"));

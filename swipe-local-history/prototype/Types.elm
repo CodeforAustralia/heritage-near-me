@@ -1,6 +1,7 @@
-module Types (App, Location(..), Discovery, Favourites, StoryId(..), Story(..), Action(..), RemoteData(..), LoadedData(..)) where
+module Types (App, Location(..), Discovery, Favourites, StoryId(..), Story(..), Site, LatLng, Dates, Action(..), RemoteData(..), LoadedData(..)) where
 
 import Http
+import Date exposing (Date)
 import Dict exposing (Dict)
 import Swipe exposing (SwipeState)
 
@@ -46,11 +47,32 @@ type Story =
       DiscoverStory
         { id : StoryId
         , title : String
+        , blurb : String
         , photo : String
         }
     | FullStory
         { id : StoryId
         , title : String
+        , blurb : String
+        , suburb : Maybe String
+        , dates : Dates
         , photos : List String
         , story : String
+        , sites : List Site
+        , locations : List LatLng
         }
+
+type alias LatLng =
+    { lat : String
+    , lng : String
+    }
+
+type alias Site =
+    { id : String
+    , name : String
+    }
+
+type alias Dates =
+    { start : Maybe Date
+    , end : Maybe Date
+    }
