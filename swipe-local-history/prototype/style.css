@@ -251,36 +251,36 @@ html, body, body > div {
 
 h1 {
     text-align: center;
-    font-size: 36px;
+    font-size: 28px;
     font-weight: normal;
     color: #1887EC;
 }
 
 h2 {
     text-align: center;
-    font-size: 28px;
+    font-size: 24px;
     font-weight: 200;
     color: #1887EC;
 }
 
 h3 {
     text-align: center;
-    font-size: 24px;
+    font-size: 22px;
     font-weight: 200;
     letter-spacing: .5px;
     color: #1887EC;
-
 }
 
 p {
     text-align: left;
-    font-size: 22px;
+    font-size: 20px;
+    line-height: 1.2;
     font-weight: normal;
 }
 
 blockquote {
     text-align: center;
-    font-size: 17pt;
+    font-size: 22px;
     font-weight: 400;
     color: #9B9B9B;
 }
