@@ -1,6 +1,6 @@
 module Discover (view) where
 
-import Html exposing (Html, div, nav, h1, h2, img, button, span, i, text)
+import Html exposing (Html, div, nav, h1, h2, p, img, button, span, i, text)
 import Html.Events exposing (onClick)
 import Html.Attributes as Attr exposing (..)
 import Swipe exposing (SwipeState(..))
@@ -56,7 +56,10 @@ viewStory address story swipe = div
     [storyImage story
         [ div [class "discovery-story-image"] []
         , div [class "discovery-story-details"]
-            [h2 [class "title"] [text <| Story.title story]]]
+            [ h2 [class "title"] [text <| Story.title story]
+            , p [] [text <| Story.blurb story]
+            ]
+        ]
     ]
 
 storyImage story content = div

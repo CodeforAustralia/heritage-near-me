@@ -122,6 +122,8 @@ html, body, body > div {
             }
 
             .discovery-story-details {
+				padding: 8px;				
+
                 border-radius: 0px 0px 5px 5px;
                 background-color: rgba(0,0,0, 0.4);
             }
@@ -238,6 +240,59 @@ html, body, body > div {
         font-weight: 300;
     }
 
+/* Links list style */
+.link {
+
+}
+
+    .links h4 {
+        text-align: left;
+        margin-bottom: 8px;
+    }
+
+    .links ul {
+        margin: 8px 0px;
+        list-style: none;
+        -webkit-padding-start: 0px;
+    }
+
+        .links ul li {
+            border-bottom: 2px solid #ddd;
+        }
+
+        .links ul li:last-child {
+            border-bottom: none;
+        }
+
+            .links ul li a {
+                display: block;
+                padding: 8px;
+
+                text-decoration: none;
+                font-weight: normal;
+                color: black;
+            }
+
+            .links ul li a:hover {
+                background-color: #eee;
+            }
+
+            .links ul li a[href*="//"]:not([href*="heritagenear.me"]):after {
+                content: 'External Site';
+                float: right;
+                color: #aaa;
+            }
+
+            .links ul li a:before {
+                content: '\f105';
+                float: right;
+                margin-left: 5px;
+                padding: 1px;
+
+                font-family: FontAwesome;
+                color: #aaa;
+            }
+
 /* Loading indicators */
 .loading {
     margin: 16px;
@@ -262,12 +317,19 @@ h2 {
 }
 
 h3 {
-    text-align: left;
+    text-align: center;
     font-size: 22px;
     font-weight: 200;
     letter-spacing: .5px;
-    color: 1887EC;
+    color: #1887EC;
+}
 
+h4 {
+    text-align: center;
+    font-size: 20px;
+    font-weight: 400;
+    letter-spacing: .5px;
+    color: #1887EC;
 }
 
 p {
@@ -275,14 +337,13 @@ p {
     font-size: 20px;
     line-height: 1.2;
     font-weight: normal;
-    color: 000000;
 }
 
 blockquote {
     text-align: center;
     font-size: 22px;
     font-weight: 400;
-    color: 9B9B9B;
+    color: #9B9B9B;
 }
 
 button {
