@@ -12356,6 +12356,20 @@ Elm.Story.make = function (_elm) {
                                               ,{ctor: "_Tuple2",_0: "background-size",_1: "cover"}]))]),
       _U.list([]));
    };
+   var link = F2(function (name,url) {    return A2($Html.a,_U.list([$Html$Attributes.href(url)]),_U.list([$Html.text(name)]));});
+   var links = function (story) {
+      var heritageUrl = "http://www.environment.nsw.gov.au/heritageapp/visit/ViewAttractionDetail.aspx?ID=";
+      return A2($Html.div,
+      _U.list([$Html$Attributes.$class("links")]),
+      _U.list([A2($Html.h4,_U.list([]),_U.list([$Html.text("Further Reading")]))
+              ,A2($Html.ul,
+              _U.list([$Html$Attributes.$class("links")]),
+              A2($List.map,
+              function (site) {
+                 return A2($Html.li,_U.list([]),_U.list([A2(link,site.name,A2($Basics._op["++"],heritageUrl,site.id))]));
+              },
+              story.sites))]));
+   };
    var view = F2(function (address,story) {
       return A2($Html.div,
       _U.list([$Html$Attributes.$class("story")]),
@@ -12389,11 +12403,12 @@ Elm.Story.make = function (_elm) {
                                                    }
                                              }()
                                              ,A2($Html.blockquote,_U.list([]),_U.list([$Html.text(_p9.blurb)]))
-                                             ,$Markdown.toHtml(_p9.story)]);
+                                             ,$Markdown.toHtml(_p9.story)
+                                             ,links(_p9)]);
                            }
                      }());
                   } else {
-                     return _U.list([$Html.text($Basics.toString(_p5._0._0))]);
+                     return _U.list([$Html.text("Something went wrong")]);
                   }
             } else {
                return _U.list([$Loading.loading]);

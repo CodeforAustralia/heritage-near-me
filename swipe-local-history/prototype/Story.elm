@@ -3,7 +3,7 @@ module Story (view, id, title, blurb, photo) where
 import Date exposing (Date)
 import Date.Format as Date
 
-import Html exposing (Html, div, h1, h2, h3, blockquote, img, text)
+import Html exposing (Html, div, h1, h2, h3, h4, blockquote, img, ul, li, a, text)
 import Html.Events exposing (onClick)
 import Html.Attributes as Attr exposing (..)
 import Markdown
@@ -28,11 +28,24 @@ view address story = div [class "story"]
                         Nothing -> text ""
                     , blockquote [] [text story.blurb]
                     , Markdown.toHtml story.story
+                    , links story
                     ]
         Loaded (Failed _) ->
             [ text "Something went wrong"]
         Loading ->
             [ loading ]
+
+links story = let
+        heritageUrl = "http://www.environment.nsw.gov.au/heritageapp/visit/ViewAttractionDetail.aspx?ID=" 
+    in
+        div [class "links"]
+            [ h4 [] [text "Further Reading"]
+            , ul [class "links"]
+                <| List.map (\site -> li [] [link site.name (heritageUrl ++ site.id)]) story.sites 
+            ] 
+
+link : String -> String -> Html
+link name url = a [href url] [text name]
 
 storyImage story = div
     [ class "image"
