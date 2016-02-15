@@ -27,5 +27,5 @@ INSERT INTO story_photo (story_id, photo_id) VALUES (3, 3);
 INSERT INTO site (id, name, heritageItemId, suburb, latitude, longitude) VALUES (1, 'Experiment Farm & Cottage', 5051403, 'Harris Park', '-33.8197280468', '151.0126189980');
 INSERT INTO site (id, name, heritageItemId, suburb, latitude, longitude) VALUES (2, 'Old Government House', 5051462, 'Parramatta', '-33.8090998594', '150.9967517580');
 
-INSERT INTO story_site (story_id, site_id) VALUES (1, 1);
-INSERT INTO story_site (story_id, site_id) VALUES (2, 2);
+INSERT INTO story_site (story_id, site_id) VALUES (2, 1);
+INSERT INTO story_site (story_id, site_id) VALUES (3, 2);
