@@ -122,6 +122,8 @@ html, body, body > div {
             }
 
             .discovery-story-details {
+				padding: 8px;				
+
                 border-radius: 0px 0px 5px 5px;
                 background-color: rgba(0,0,0, 0.4);
             }

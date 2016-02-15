@@ -12061,8 +12061,9 @@ Elm.Story.make = function (_elm) {
             return A2($Maybe.withDefault,"",$List.head(_p0._0.photos));
          }
    };
-   var title = function (story) {    var _p1 = story;if (_p1.ctor === "DiscoverStory") {    return _p1._0.title;} else {    return _p1._0.title;}};
-   var id = function (story) {    var _p2 = story;if (_p2.ctor === "DiscoverStory") {    return _p2._0.id;} else {    return _p2._0.id;}};
+   var blurb = function (story) {    var _p1 = story;if (_p1.ctor === "DiscoverStory") {    return _p1._0.blurb;} else {    return _p1._0.blurb;}};
+   var title = function (story) {    var _p2 = story;if (_p2.ctor === "DiscoverStory") {    return _p2._0.title;} else {    return _p2._0.title;}};
+   var id = function (story) {    var _p3 = story;if (_p3.ctor === "DiscoverStory") {    return _p3._0.id;} else {    return _p3._0.id;}};
    var storyImage = function (story) {
       return A2($Html.div,
       _U.list([$Html$Attributes.$class("image")
@@ -12077,18 +12078,18 @@ Elm.Story.make = function (_elm) {
       return A2($Html.div,
       _U.list([$Html$Attributes.$class("story")]),
       function () {
-         var _p3 = story;
-         if (_p3.ctor === "Loaded") {
-               if (_p3._0.ctor === "Succeeded") {
-                     var _p5 = _p3._0._0;
-                     return _U.list([storyImage(_p5)
-                                    ,A2($Html.h1,_U.list([$Html$Attributes.$class("title")]),_U.list([$Html.text(title(_p5))]))
+         var _p4 = story;
+         if (_p4.ctor === "Loaded") {
+               if (_p4._0.ctor === "Succeeded") {
+                     var _p6 = _p4._0._0;
+                     return _U.list([storyImage(_p6)
+                                    ,A2($Html.h1,_U.list([$Html$Attributes.$class("title")]),_U.list([$Html.text(title(_p6))]))
                                     ,function () {
-                                       var _p4 = _p5;
-                                       if (_p4.ctor === "DiscoverStory") {
+                                       var _p5 = _p6;
+                                       if (_p5.ctor === "DiscoverStory") {
                                              return $Loading.loading;
                                           } else {
-                                             return $Markdown.toHtml(_p4._0.story);
+                                             return $Markdown.toHtml(_p5._0.story);
                                           }
                                     }()]);
                   } else {
@@ -12099,7 +12100,7 @@ Elm.Story.make = function (_elm) {
             }
       }());
    });
-   return _elm.Story.values = {_op: _op,view: view,id: id,title: title,photo: photo};
+   return _elm.Story.values = {_op: _op,view: view,id: id,title: title,blurb: blurb,photo: photo};
 };
 Elm.Data = Elm.Data || {};
 Elm.Data.make = function (_elm) {
@@ -12399,7 +12400,8 @@ Elm.Discover.make = function (_elm) {
       _U.list([A2($Html.div,_U.list([$Html$Attributes.$class("discovery-story-image")]),_U.list([]))
               ,A2($Html.div,
               _U.list([$Html$Attributes.$class("discovery-story-details")]),
-              _U.list([A2($Html.h2,_U.list([$Html$Attributes.$class("title")]),_U.list([$Html.text($Story.title(story))]))]))]))]));
+              _U.list([A2($Html.h2,_U.list([$Html$Attributes.$class("title")]),_U.list([$Html.text($Story.title(story))]))
+                      ,A2($Html.p,_U.list([]),_U.list([$Html.text($Story.blurb(story))]))]))]))]));
    });
    var noStory = function (message) {
       return A2($Html.div,_U.list([$Html$Attributes.$class("discovery-empty")]),_U.list([A2($Html.h2,_U.list([]),_U.list([$Html.text(message)]))]));

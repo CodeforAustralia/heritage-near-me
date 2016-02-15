@@ -1,4 +1,4 @@
-module Story (view, id, title, photo) where
+module Story (view, id, title, blurb, photo) where
 
 import Html exposing (Html, div, h1, h2, img, text)
 import Html.Events exposing (onClick)
@@ -39,6 +39,11 @@ title : Story -> String
 title story = case story of
     DiscoverStory story -> story.title
     FullStory story -> story.title
+
+blurb : Story -> String
+blurb story = case story of
+    DiscoverStory story -> story.blurb
+    FullStory story -> story.blurb
 
 photo : Story -> String
 photo story = case story of
