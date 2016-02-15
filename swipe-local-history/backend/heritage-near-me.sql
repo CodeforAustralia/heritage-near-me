@@ -3,7 +3,8 @@ CREATE TABLE IF NOT EXISTS story (
 	title TEXT,
 	blurb TEXT,
 	story TEXT,
-	dateRange TEXT
+	dateStart DATE,
+	dateEnd DATE
 );
 
 CREATE TABLE IF NOT EXISTS photo (
@@ -17,21 +18,20 @@ CREATE TABLE IF NOT EXISTS story_photo (
 	photo_id SERIAL REFERENCES photo (id)
 );
 
-CREATE TABLE IF NOT EXISTS site {
+CREATE TABLE IF NOT EXISTS site (
 	id SERIAL PRIMARY KEY,
 	heritageItemId SERIAL,
 	name TEXT,
 	suburb TEXT,
 	latitude TEXT,
 	longitude TEXT
-}
+);
 
-
-CREATE TABLE IF NOT EXISTS story_site {
+CREATE TABLE IF NOT EXISTS story_site (
 	id SERIAL PRIMARY KEY,
 	story_id SERIAL REFERENCES story (id),
 	site_id SERIAL REFERENCES site (id)
-}
+);
 
 CREATE SCHEMA hnm
 	CREATE VIEW story_discover AS
@@ -48,3 +48,12 @@ CREATE SCHEMA hnm
 		LEFT JOIN story_photo ON story_photo.story_id = story.id
 		LEFT JOIN photo       ON story_photo.photo_id = photo.id
 		GROUP BY story.id
+
+GRANT SELECT ON story TO postgres;
+GRANT SELECT ON photo TO postgres;
+GRANT SELECT ON story_photo TO postgres;
+GRANT SELECT ON site TO postgres;
+GRANT SELECT ON story_site TO postgres;
+GRANT ALL ON SCHEMA hnm TO postgres;
+GRANT ALL ON hnm.story_discover TO postgres;
+GRANT ALL ON hnm.story_details TO postgres;
