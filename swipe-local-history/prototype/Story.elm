@@ -1,6 +1,9 @@
 module Story (view, id, title, blurb, photo) where
 
-import Html exposing (Html, div, h1, h2, img, text)
+import Date exposing (Date)
+import Date.Format as Date
+
+import Html exposing (Html, div, h1, h2, h3, blockquote, img, text)
 import Html.Events exposing (onClick)
 import Html.Attributes as Attr exposing (..)
 import Markdown
@@ -14,10 +17,18 @@ view address story = div [class "story"]
         Loaded (Succeeded story) ->
             [ storyImage story
             , h1 [class "title"] [text <| title story]
-            , case story of
-                DiscoverStory story -> loading
-                FullStory story -> Markdown.toHtml story.story
-            ]
+            ] ++ case story of
+                DiscoverStory story -> [loading]
+                FullStory story ->
+                    [ case story.suburb of
+                        Just suburb -> h3 [class "suburb"] [text suburb]
+                        Nothing -> text ""
+                    , case formatDate story.dates of
+                        Just date -> h3 [class "date"] [text date]
+                        Nothing -> text ""
+                    , blockquote [] [text story.blurb]
+                    , Markdown.toHtml story.story
+                    ]
         Loaded (Failed _) ->
             [ text "Something went wrong"]
         Loading ->
@@ -29,6 +40,14 @@ storyImage story = div
             , ("background-repeat", "no-repeat")
             , ("background-size", "cover")]
     ] []
+
+formatDate : Dates -> Maybe String
+formatDate dates = case (dates.start, dates.end) of
+    (Just start, Nothing) -> Just <| Date.format "%Y" start
+    (Nothing, Just end) -> Just <| Date.format "%Y" end
+    (Just start, Just end) -> Just
+        <| Date.format "%Y" start ++ " - " ++ Date.format "%Y" end
+    _ -> Nothing
 
 id : Story -> StoryId
 id story = case story of

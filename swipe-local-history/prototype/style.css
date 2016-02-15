@@ -264,11 +264,11 @@ h2 {
 }
 
 h3 {
-    text-align: left;
+    text-align: center;
     font-size: 24px;
     font-weight: 200;
     letter-spacing: .5px;
-    color: 1887EC;
+    color: #1887EC;
 
 }
 
@@ -276,14 +276,13 @@ p {
     text-align: left;
     font-size: 22px;
     font-weight: normal;
-    color: 000000;
 }
 
 blockquote {
     text-align: center;
     font-size: 17pt;
     font-weight: 400;
-    color: 9B9B9B;
+    color: #9B9B9B;
 }
 
 button {
