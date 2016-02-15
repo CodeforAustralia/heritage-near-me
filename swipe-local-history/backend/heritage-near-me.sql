@@ -1,7 +1,9 @@
 CREATE TABLE IF NOT EXISTS story (
 	id SERIAL PRIMARY KEY,
 	title TEXT,
-	story TEXT
+	blurb TEXT,
+	story TEXT,
+	dateRange TEXT
 );
 
 CREATE TABLE IF NOT EXISTS photo (
@@ -14,6 +16,22 @@ CREATE TABLE IF NOT EXISTS story_photo (
 	story_id SERIAL REFERENCES story (id),
 	photo_id SERIAL REFERENCES photo (id)
 );
+
+CREATE TABLE IF NOT EXISTS site {
+	id SERIAL PRIMARY KEY,
+	heritageItemId SERIAL,
+	name TEXT,
+	suburb TEXT,
+	latitude TEXT,
+	longitude TEXT
+}
+
+
+CREATE TABLE IF NOT EXISTS story_site {
+	id SERIAL PRIMARY KEY,
+	story_id SERIAL REFERENCES story (id),
+	site_id SERIAL REFERENCES site (id)
+}
 
 CREATE SCHEMA hnm
 	CREATE VIEW story_discover AS
