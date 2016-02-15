@@ -28,7 +28,9 @@ view address story = div [class "story"]
                         Nothing -> text ""
                     , blockquote [] [text story.blurb]
                     , Markdown.toHtml story.story
-                    , links story
+                    , case story.sites of
+                        [] -> text ""
+                        _ -> links story
                     ]
         Loaded (Failed _) ->
             [ text "Something went wrong"]

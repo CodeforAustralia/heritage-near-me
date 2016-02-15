@@ -12377,17 +12377,17 @@ Elm.Story.make = function (_elm) {
          var _p5 = story;
          if (_p5.ctor === "Loaded") {
                if (_p5._0.ctor === "Succeeded") {
-                     var _p10 = _p5._0._0;
+                     var _p11 = _p5._0._0;
                      return A2($Basics._op["++"],
-                     _U.list([storyImage(_p10),A2($Html.h1,_U.list([$Html$Attributes.$class("title")]),_U.list([$Html.text(title(_p10))]))]),
+                     _U.list([storyImage(_p11),A2($Html.h1,_U.list([$Html$Attributes.$class("title")]),_U.list([$Html.text(title(_p11))]))]),
                      function () {
-                        var _p6 = _p10;
+                        var _p6 = _p11;
                         if (_p6.ctor === "DiscoverStory") {
                               return _U.list([$Loading.loading]);
                            } else {
-                              var _p9 = _p6._0;
+                              var _p10 = _p6._0;
                               return _U.list([function () {
-                                                var _p7 = _p9.suburb;
+                                                var _p7 = _p10.suburb;
                                                 if (_p7.ctor === "Just") {
                                                       return A2($Html.h3,_U.list([$Html$Attributes.$class("suburb")]),_U.list([$Html.text(_p7._0)]));
                                                    } else {
@@ -12395,16 +12395,23 @@ Elm.Story.make = function (_elm) {
                                                    }
                                              }()
                                              ,function () {
-                                                var _p8 = formatDate(_p9.dates);
+                                                var _p8 = formatDate(_p10.dates);
                                                 if (_p8.ctor === "Just") {
                                                       return A2($Html.h3,_U.list([$Html$Attributes.$class("date")]),_U.list([$Html.text(_p8._0)]));
                                                    } else {
                                                       return $Html.text("");
                                                    }
                                              }()
-                                             ,A2($Html.blockquote,_U.list([]),_U.list([$Html.text(_p9.blurb)]))
-                                             ,$Markdown.toHtml(_p9.story)
-                                             ,links(_p9)]);
+                                             ,A2($Html.blockquote,_U.list([]),_U.list([$Html.text(_p10.blurb)]))
+                                             ,$Markdown.toHtml(_p10.story)
+                                             ,function () {
+                                                var _p9 = _p10.sites;
+                                                if (_p9.ctor === "[]") {
+                                                      return $Html.text("");
+                                                   } else {
+                                                      return links(_p10);
+                                                   }
+                                             }()]);
                            }
                      }());
                   } else {
