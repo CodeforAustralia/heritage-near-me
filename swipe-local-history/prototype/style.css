@@ -97,6 +97,7 @@ html, body, body > div {
         padding-top: 20px;
         padding-bottom: 20px;
 
+        -webkit-tap-highlight-color: rgba(0,0,0,0);
         -moz-user-select: none;
         -khtml-user-select: none;
         -webkit-user-select: none;
