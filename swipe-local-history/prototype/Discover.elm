@@ -7,7 +7,7 @@ import Swipe exposing (SwipeState(..))
 
 import Types exposing (..)
 import Loading exposing (loading)
-import Swiping exposing (onSwipe, swipeAction)
+import Swiping exposing (itemSwipe, itemPos, onSwipe, swipeAction)
 import Data exposing (getItem)
 import Story
 
@@ -17,7 +17,7 @@ view address app topNav = div [class "app screen-size discovery"]
     , case app.discovery.item of
         Loaded (Succeeded item) -> case item of
             Just id -> case getItem app id of
-                Loaded (Succeeded story) -> viewStory address story app.discovery.swipeState
+                Loaded (Succeeded story) -> viewStory address story app.discovery.itemPosition
                 Loaded (Failed err) -> text "Something went wrong"
                 Loading -> div [class "discovery-empty"] [loading]
             Nothing -> noStory "No more stories left!"
@@ -47,14 +47,21 @@ navigation address = nav [class "discovery-navigation"]
 noStory : String -> Html
 noStory message = div [class "discovery-empty"] [h2 [] [text message]]
 
-viewStory : Signal.Address (Action StoryId Story) -> Story -> Maybe SwipeState -> Html
-viewStory address story swipe = div
+viewStory : Signal.Address (Action StoryId Story) -> Story -> ItemPosition -> Html
+viewStory address story pos = div
     ([ onClick address <| View <| Story.id story
     , class "discovery-story"
-    , style <| styleStory swipe
-    ] ++ onSwipe address swipe swipeAction)
+    , style <| styleStory pos
+    ] ++ onSwipe address (itemSwipe pos) swipeAction)
     [storyImage story
-        [ div [class "discovery-story-image"] []
+        [ div [class "discovery-story-image"]
+            [ if (Maybe.withDefault 0 <| itemPos pos) > 100 then
+                i [class "fa fa-heart favourite"] []
+              else if (Maybe.withDefault 0 <| itemPos pos) < -100 then
+                i [class "fa fa-times pass"] []
+              else
+                text ""
+            ]
         , div [class "discovery-story-details"]
             [ h2 [class "title"] [text <| Story.title story]
             , p [] [text <| Story.blurb story]
@@ -69,11 +76,11 @@ storyImage story content = div
             , ("background-size", "cover")]
     ] content
 
-styleStory : Maybe SwipeState -> List (String, String)
-styleStory swipe = case swipe of
-    Just (Swiping state) ->
+styleStory : ItemPosition -> List (String, String)
+styleStory pos = case itemPos pos of
+    Just p ->
         [ ("position", "relative")
-        , ("left", toString (state.x1 - state.x0) ++ "px")
+        , ("left", toString p ++ "px")
         ]
-    _ ->
+    Nothing ->
         []

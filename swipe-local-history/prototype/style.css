@@ -97,6 +97,7 @@ html, body, body > div {
         padding-top: 20px;
         padding-bottom: 20px;
 
+        -webkit-tap-highlight-color: rgba(0,0,0,0);
         -moz-user-select: none;
         -khtml-user-select: none;
         -webkit-user-select: none;
@@ -118,8 +119,22 @@ html, body, body > div {
         }
 
             .discovery-story-image {
+                display: flex;
+                align-items: center;
+                justify-content: center;
                 flex: 2;
             }
+
+                .discovery-story-image i {
+                    opacity: 0.5;
+                    font-size: 10em;
+                }
+                .discovery-story-image i.favourite {
+                    color: #417505;
+                }
+                .discovery-story-image i.pass {
+                    color: red;
+                }
 
             .discovery-story-details {
 				padding: 8px;				
