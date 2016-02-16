@@ -282,7 +282,9 @@ html, body, body > div {
         }
 
             .links ul li a {
-                display: block;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
                 padding: 8px;
 
                 text-decoration: none;
@@ -294,21 +296,27 @@ html, body, body > div {
                 background-color: #eee;
             }
 
-            .links ul li a[href*="//"]:not([href*="heritagenear.me"]):after {
-                content: 'External Site';
-                float: right;
-                color: #aaa;
-            }
+                .links ul li a .link-arrow {
+                    flex-shrink: 0;
+                }
 
-            .links ul li a:before {
-                content: '\f105';
-                float: right;
-                margin-left: 5px;
-                padding: 1px;
+                .links ul li a .link-arrow .external-link {
+                    display: none;
+                    color: #aaa;
+                }
+                .links ul li a[href*="//"]:not([href*="heritagenear.me"])
+                .link-arrow .external-link {
+                    display: inline-block;
+                }
 
-                font-family: FontAwesome;
-                color: #aaa;
-            }
+                .links ul li a .link-arrow i {
+                    float: right;
+                    margin-left: 5px;
+                    padding: 2px;
+
+                    font-family: FontAwesome;
+                    color: #aaa;
+                }
 
 /* Loading indicators */
 .loading {

@@ -3,7 +3,7 @@ module Story (view, id, title, blurb, photo) where
 import Date exposing (Date)
 import Date.Format as Date
 
-import Html exposing (Html, div, h1, h2, h3, h4, blockquote, img, ul, li, a, text)
+import Html exposing (Html, div, h1, h2, h3, h4, blockquote, img, ul, li, span, a, i, text)
 import Html.Events exposing (onClick)
 import Html.Attributes as Attr exposing (..)
 import Markdown
@@ -47,7 +47,13 @@ links story = let
             ] 
 
 link : String -> String -> Html
-link name url = a [href url] [text name]
+link name url = a [href url]
+    [ text name
+    , span [class "link-arrow"]
+        [ span [class "external-link"] [text "External Link"]
+        , i [class "fa fa-angle-right"] []
+        ]
+    ]
 
 storyImage story = div
     [ class "image"

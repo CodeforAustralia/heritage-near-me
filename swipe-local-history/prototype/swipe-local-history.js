@@ -12603,7 +12603,15 @@ Elm.Story.make = function (_elm) {
                                               ,{ctor: "_Tuple2",_0: "background-size",_1: "cover"}]))]),
       _U.list([]));
    };
-   var link = F2(function (name,url) {    return A2($Html.a,_U.list([$Html$Attributes.href(url)]),_U.list([$Html.text(name)]));});
+   var link = F2(function (name,url) {
+      return A2($Html.a,
+      _U.list([$Html$Attributes.href(url)]),
+      _U.list([$Html.text(name)
+              ,A2($Html.span,
+              _U.list([$Html$Attributes.$class("link-arrow")]),
+              _U.list([A2($Html.span,_U.list([$Html$Attributes.$class("external-link")]),_U.list([$Html.text("External Link")]))
+                      ,A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-angle-right")]),_U.list([]))]))]));
+   });
    var links = function (story) {
       var heritageUrl = "http://www.environment.nsw.gov.au/heritageapp/visit/ViewAttractionDetail.aspx?ID=";
       return A2($Html.div,
