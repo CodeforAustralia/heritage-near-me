@@ -9140,6 +9140,74 @@ Elm.Native.Touch.make = function(localRuntime) {
 	return localRuntime.Native.Touch.values = { touches: touches, taps: taps };
 };
 
+Elm.Native = Elm.Native || {};
+Elm.Native.Window = {};
+Elm.Native.Window.make = function make(localRuntime) {
+	localRuntime.Native = localRuntime.Native || {};
+	localRuntime.Native.Window = localRuntime.Native.Window || {};
+	if (localRuntime.Native.Window.values)
+	{
+		return localRuntime.Native.Window.values;
+	}
+
+	var NS = Elm.Native.Signal.make(localRuntime);
+	var Tuple2 = Elm.Native.Utils.make(localRuntime).Tuple2;
+
+
+	function getWidth()
+	{
+		return localRuntime.node.clientWidth;
+	}
+
+
+	function getHeight()
+	{
+		if (localRuntime.isFullscreen())
+		{
+			return window.innerHeight;
+		}
+		return localRuntime.node.clientHeight;
+	}
+
+
+	var dimensions = NS.input('Window.dimensions', Tuple2(getWidth(), getHeight()));
+
+
+	function resizeIfNeeded()
+	{
+		// Do not trigger event if the dimensions have not changed.
+		// This should be most of the time.
+		var w = getWidth();
+		var h = getHeight();
+		if (dimensions.value._0 === w && dimensions.value._1 === h)
+		{
+			return;
+		}
+
+		setTimeout(function() {
+			// Check again to see if the dimensions have changed.
+			// It is conceivable that the dimensions have changed
+			// again while some other event was being processed.
+			w = getWidth();
+			h = getHeight();
+			if (dimensions.value._0 === w && dimensions.value._1 === h)
+			{
+				return;
+			}
+			localRuntime.notify(dimensions.id, Tuple2(w, h));
+		}, 0);
+	}
+
+
+	localRuntime.addListener([dimensions.id], window, 'resize', resizeIfNeeded);
+
+
+	return localRuntime.Native.Window.values = {
+		dimensions: dimensions,
+		resizeIfNeeded: resizeIfNeeded
+	};
+};
+
 Elm.Regex = Elm.Regex || {};
 Elm.Regex.make = function (_elm) {
    "use strict";
@@ -9181,6 +9249,18 @@ Elm.Touch.make = function (_elm) {
    var touches = $Native$Touch.touches;
    var Touch = F6(function (a,b,c,d,e,f) {    return {x: a,y: b,id: c,x0: d,y0: e,t0: f};});
    return _elm.Touch.values = {_op: _op,touches: touches,taps: taps,Touch: Touch};
+};
+Elm.Window = Elm.Window || {};
+Elm.Window.make = function (_elm) {
+   "use strict";
+   _elm.Window = _elm.Window || {};
+   if (_elm.Window.values) return _elm.Window.values;
+   var _U = Elm.Native.Utils.make(_elm),$Basics = Elm.Basics.make(_elm),$Native$Window = Elm.Native.Window.make(_elm),$Signal = Elm.Signal.make(_elm);
+   var _op = {};
+   var dimensions = $Native$Window.dimensions;
+   var width = A2($Signal.map,$Basics.fst,dimensions);
+   var height = A2($Signal.map,$Basics.snd,dimensions);
+   return _elm.Window.values = {_op: _op,dimensions: dimensions,width: width,height: height};
 };
 Elm.Native.Effects = {};
 Elm.Native.Effects.make = function(localRuntime) {
@@ -12738,21 +12818,32 @@ Elm.Swiping.make = function (_elm) {
    $Signal = Elm.Signal.make(_elm),
    $Swipe = Elm.Swipe.make(_elm),
    $Time = Elm.Time.make(_elm),
-   $Types = Elm.Types.make(_elm);
+   $Types = Elm.Types.make(_elm),
+   $Window = Elm.Window.make(_elm);
    var _op = {};
    var changedTouch = A4($Json$Decode.object3,
    F3(function (id,x,y) {    return {id: id,x: x,y: y};}),
    A2($Json$Decode._op[":="],"identifier",$Json$Decode.$int),
    A2($Json$Decode._op[":="],"clientX",$Json$Decode.$float),
    A2($Json$Decode._op[":="],"clientY",$Json$Decode.$float));
-   var touch = A3($Json$Decode.object2,
-   F2(function (t0,touch) {    return {id: touch.id,x: touch.x,y: touch.y,t0: $Basics.toFloat(t0)};}),
+   var touch = A4($Json$Decode.object3,
+   F3(function (t0,touch,_p0) {
+      var _p1 = _p0;
+      return {id: touch.id,x: touch.x,y: touch.y,t0: $Basics.toFloat(t0),window: {width: $Basics.toFloat(_p1._0),height: $Basics.toFloat(_p1._1)}};
+   }),
    A2($Json$Decode._op[":="],"timeStamp",$Json$Decode.$int),
-   A2($Json$Decode._op[":="],"changedTouches",A2($Json$Decode.object1,function (x) {    return x;},A2($Json$Decode._op[":="],"0",changedTouch))));
+   A2($Json$Decode._op[":="],"changedTouches",A2($Json$Decode.object1,function (x) {    return x;},A2($Json$Decode._op[":="],"0",changedTouch))),
+   A2($Json$Decode._op[":="],
+   "view",
+   A3($Json$Decode.object2,
+   F2(function (w,h) {    return {ctor: "_Tuple2",_0: w,_1: h};}),
+   A2($Json$Decode._op[":="],"innerWidth",$Json$Decode.$int),
+   A2($Json$Decode._op[":="],"innerHeight",$Json$Decode.$int))));
    var TouchEnd = {ctor: "TouchEnd"};
    var TouchMove = {ctor: "TouchMove"};
    var TouchStart = {ctor: "TouchStart"};
-   var SwipeUpdate = F4(function (a,b,c,d) {    return {id: a,x: b,y: c,t0: d};});
+   var Window = F2(function (a,b) {    return {width: a,height: b};});
+   var SwipeUpdate = F5(function (a,b,c,d,e) {    return {id: a,x: b,y: c,t0: d,window: e};});
    var direction = F2(function (dx,dy) {
       return _U.cmp($Basics.abs(dx),$Basics.abs(dy)) > 0 ? _U.cmp(dx,0) > 0 ? $Maybe.Just($Swipe.Right) : _U.cmp(dx,
       0) < 0 ? $Maybe.Just($Swipe.Left) : $Maybe.Nothing : _U.cmp(dy,0) > 0 ? $Maybe.Just($Swipe.Down) : _U.cmp(dy,
@@ -12760,118 +12851,122 @@ Elm.Swiping.make = function (_elm) {
    });
    var updateSwipeState = F3(function (swipe,touch,update) {
       var dir = F2(function (x,y) {    return A2(direction,update.x - x,update.y - y);});
-      var _p0 = touch;
-      switch (_p0.ctor)
-      {case "TouchStart": return $Maybe.Just($Swipe.Start(update));
-         case "TouchMove": var _p1 = swipe;
-           _v1_2: do {
-              if (_p1.ctor === "Just") {
-                    switch (_p1._0.ctor)
-                    {case "Start": var _p2 = _p1._0._0;
-                         return $Maybe.Just($Swipe.Swiping({x0: _p2.x
-                                                           ,y0: _p2.y
-                                                           ,x1: update.x
-                                                           ,y1: update.y
-                                                           ,id: _p2.id
-                                                           ,t0: _p2.t0
-                                                           ,direction: A2($Maybe.withDefault,$Swipe.Right,A2(dir,_p2.x,_p2.y))}));
-                       case "Swiping": var _p3 = _p1._0._0;
-                         return $Maybe.Just($Swipe.Swiping({x0: _p3.x0
-                                                           ,y0: _p3.y0
-                                                           ,x1: update.x
-                                                           ,y1: update.y
-                                                           ,id: _p3.id
-                                                           ,t0: _p3.t0
-                                                           ,direction: A2($Maybe.withDefault,_p3.direction,A2(dir,_p3.x0,_p3.y0))}));
-                       default: break _v1_2;}
-                 } else {
-                    break _v1_2;
-                 }
-           } while (false);
-           return $Maybe.Just($Swipe.Start(update));
-         default: var _p4 = swipe;
+      var _p2 = touch;
+      switch (_p2.ctor)
+      {case "TouchStart": return $Maybe.Just($Swipe.Start({id: update.id,x: update.x,y: update.y,t0: update.t0}));
+         case "TouchMove": var _p3 = swipe;
            _v2_2: do {
-              if (_p4.ctor === "Just") {
-                    switch (_p4._0.ctor)
-                    {case "Start": var _p5 = _p4._0._0;
-                         return $Maybe.Just($Swipe.End({x0: _p5.x
-                                                       ,y0: _p5.y
-                                                       ,x1: update.x
-                                                       ,y1: update.y
-                                                       ,id: _p5.id
-                                                       ,t0: _p5.t0
-                                                       ,direction: A2($Maybe.withDefault,$Swipe.Right,A2(dir,_p5.x,_p5.y))}));
-                       case "Swiping": var _p6 = _p4._0._0;
-                         return $Maybe.Just($Swipe.End({x0: _p6.x0
-                                                       ,y0: _p6.y0
-                                                       ,x1: update.x
-                                                       ,y1: update.y
-                                                       ,id: _p6.id
-                                                       ,t0: _p6.t0
-                                                       ,direction: A2($Maybe.withDefault,_p6.direction,A2(dir,_p6.x0,_p6.y0))}));
+              if (_p3.ctor === "Just") {
+                    switch (_p3._0.ctor)
+                    {case "Start": var _p4 = _p3._0._0;
+                         return $Maybe.Just($Swipe.Swiping({x0: _p4.x
+                                                           ,y0: _p4.y
+                                                           ,x1: update.x
+                                                           ,y1: update.y
+                                                           ,id: _p4.id
+                                                           ,t0: _p4.t0
+                                                           ,direction: A2($Maybe.withDefault,$Swipe.Right,A2(dir,_p4.x,_p4.y))}));
+                       case "Swiping": var _p5 = _p3._0._0;
+                         return $Maybe.Just($Swipe.Swiping({x0: _p5.x0
+                                                           ,y0: _p5.y0
+                                                           ,x1: update.x
+                                                           ,y1: update.y
+                                                           ,id: _p5.id
+                                                           ,t0: _p5.t0
+                                                           ,direction: A2($Maybe.withDefault,_p5.direction,A2(dir,_p5.x0,_p5.y0))}));
                        default: break _v2_2;}
                  } else {
                     break _v2_2;
+                 }
+           } while (false);
+           return $Maybe.Just($Swipe.Start({id: update.id,x: update.x,y: update.y,t0: update.t0}));
+         default: var _p6 = swipe;
+           _v3_2: do {
+              if (_p6.ctor === "Just") {
+                    switch (_p6._0.ctor)
+                    {case "Start": var _p7 = _p6._0._0;
+                         return $Maybe.Just($Swipe.End({x0: _p7.x
+                                                       ,y0: _p7.y
+                                                       ,x1: update.x
+                                                       ,y1: update.y
+                                                       ,id: _p7.id
+                                                       ,t0: _p7.t0
+                                                       ,direction: A2($Maybe.withDefault,$Swipe.Right,A2(dir,_p7.x,_p7.y))}));
+                       case "Swiping": var _p8 = _p6._0._0;
+                         return $Maybe.Just($Swipe.End({x0: _p8.x0
+                                                       ,y0: _p8.y0
+                                                       ,x1: update.x
+                                                       ,y1: update.y
+                                                       ,id: _p8.id
+                                                       ,t0: _p8.t0
+                                                       ,direction: A2($Maybe.withDefault,_p8.direction,A2(dir,_p8.x0,_p8.y0))}));
+                       default: break _v3_2;}
+                 } else {
+                    break _v3_2;
                  }
            } while (false);
            return $Maybe.Nothing;}
    });
    var onSwipe = F3(function (address,swipeState,swipeAction) {
       var doAction = F2(function (touchState,touchUpdate) {
-         return A2($Signal.message,address,swipeAction(A3(updateSwipeState,swipeState,touchState,touchUpdate)));
+         return A2($Signal.message,address,A2(swipeAction,touchUpdate.window,A3(updateSwipeState,swipeState,touchState,touchUpdate)));
       });
       return _U.list([A3($Html$Events.on,"touchstart",touch,doAction(TouchStart))
                      ,A3($Html$Events.on,"touchmove",touch,doAction(TouchMove))
                      ,A3($Html$Events.on,"touchend",touch,doAction(TouchEnd))]);
    });
    var swipes = A2($Signal.map,$List.head,$Swipe.swipeStates);
-   var swipeAction = function (swipe) {
-      var _p7 = swipe;
-      if (_p7.ctor === "Just") {
-            if (_p7._0.ctor === "End") {
-                  var _p8 = _p7._0._0;
-                  return _U.cmp($Basics.abs(_p8.x1 - _p8.x0),
-                  160) > 0 ? $Types.MoveItem($Types.Leave(_p8.x1 - _p8.x0)) : $Types.MoveItem($Types.Return(_p8.x1 - _p8.x0));
+   var swipeAction = F2(function (window,swipe) {
+      var _p9 = swipe;
+      if (_p9.ctor === "Just") {
+            if (_p9._0.ctor === "End") {
+                  var _p10 = _p9._0._0;
+                  return _U.cmp($Basics.abs(_p10.x1 - _p10.x0),
+                  window.width / 3) > 0 ? $Types.MoveItem($Types.Leave(_p10.x1 - _p10.x0)) : $Types.MoveItem($Types.Return(_p10.x1 - _p10.x0));
                } else {
-                  return $Types.MoveItem($Types.Swiping(_p7._0));
+                  return $Types.MoveItem($Types.Swiping(_p9._0));
                }
          } else {
             return $Types.NoAction;
          }
-   };
-   var swipeActions = A2($Signal.map,swipeAction,swipes);
-   var itemSwipe = function (pos) {    var _p9 = pos;if (_p9.ctor === "Swiping") {    return $Maybe.Just(_p9._0);} else {    return $Maybe.Nothing;}};
+   });
+   var swipeActions = A4($Signal.map3,
+   F2(function (w,h) {    return swipeAction({width: $Basics.toFloat(w),height: $Basics.toFloat(h)});}),
+   $Window.width,
+   $Window.height,
+   swipes);
+   var itemSwipe = function (pos) {    var _p11 = pos;if (_p11.ctor === "Swiping") {    return $Maybe.Just(_p11._0);} else {    return $Maybe.Nothing;}};
    var timeSoFar = A3($Signal.foldp,F2(function (x,y) {    return x + y;}),0,$Time.fps(40));
    var sign = function (number) {    return $Basics.abs(number) / number;};
    var itemPos = function (pos) {
-      var _p10 = pos;
-      _v5_5: do {
-         switch (_p10.ctor)
-         {case "Swiping": if (_p10._0.ctor === "Swiping") {
-                    var _p11 = _p10._0._0;
-                    return $Maybe.Just(_p11.x1 - _p11.x0);
+      var _p12 = pos;
+      _v6_5: do {
+         switch (_p12.ctor)
+         {case "Swiping": if (_p12._0.ctor === "Swiping") {
+                    var _p13 = _p12._0._0;
+                    return $Maybe.Just(_p13.x1 - _p13.x0);
                  } else {
-                    break _v5_5;
+                    break _v6_5;
                  }
-            case "Leave": return $Maybe.Just(_p10._0);
-            case "Return": return $Maybe.Just(_p10._0);
-            case "Leaving": var _p13 = _p10._1;
-              var _p12 = _p10._0;
-              return $Maybe.Just(A6($Easing.ease,$Easing.easeInCubic,$Easing.$float,_p12,_p12 + 500 * sign(_p12),_p10._2 - _p13,_p10._3 - _p13));
-            case "Returning": var _p14 = _p10._1;
-              return $Maybe.Just(A6($Easing.ease,$Easing.easeInCubic,$Easing.$float,_p10._0,0,_p10._2 - _p14,_p10._3 - _p14));
-            default: break _v5_5;}
+            case "Leave": return $Maybe.Just(_p12._0);
+            case "Return": return $Maybe.Just(_p12._0);
+            case "Leaving": var _p15 = _p12._1;
+              var _p14 = _p12._0;
+              return $Maybe.Just(A6($Easing.ease,$Easing.easeInCubic,$Easing.$float,_p14,_p14 + 500 * sign(_p14),_p12._2 - _p15,_p12._3 - _p15));
+            case "Returning": var _p16 = _p12._1;
+              return $Maybe.Just(A6($Easing.ease,$Easing.easeInCubic,$Easing.$float,_p12._0,0,_p12._2 - _p16,_p12._3 - _p16));
+            default: break _v6_5;}
       } while (false);
       return $Maybe.Nothing;
    };
    var animateStep = F2(function (t,state) {
-      var _p15 = state;
-      switch (_p15.ctor)
-      {case "Leave": return A4($Types.Leaving,_p15._0,t,t + 600,t);
-         case "Return": return A4($Types.Returning,_p15._0,t,t + 600,t);
-         case "Leaving": return A4($Types.Leaving,_p15._0,_p15._1,_p15._2,t);
-         case "Returning": return A4($Types.Returning,_p15._0,_p15._1,_p15._2,t);
-         default: return _p15;}
+      var _p17 = state;
+      switch (_p17.ctor)
+      {case "Leave": return A4($Types.Leaving,_p17._0,t,t + 600,t);
+         case "Return": return A4($Types.Returning,_p17._0,t,t + 600,t);
+         case "Leaving": return A4($Types.Leaving,_p17._0,_p17._1,_p17._2,t);
+         case "Returning": return A4($Types.Returning,_p17._0,_p17._1,_p17._2,t);
+         default: return _p17;}
    });
    var animate = A2($Signal.map,$Types.AnimateItem,timeSoFar);
    return _elm.Swiping.values = {_op: _op
