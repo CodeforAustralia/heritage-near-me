@@ -12932,7 +12932,13 @@ Elm.Discover.make = function (_elm) {
       A3($Swiping.onSwipe,address,$Swiping.itemSwipe(pos),$Swiping.swipeAction)),
       _U.list([A2(storyImage,
       story,
-      _U.list([A2($Html.div,_U.list([$Html$Attributes.$class("discovery-story-image")]),_U.list([]))
+      _U.list([A2($Html.div,
+              _U.list([$Html$Attributes.$class("discovery-story-image")]),
+              _U.list([_U.cmp(A2($Maybe.withDefault,0,$Swiping.itemPos(pos)),100) > 0 ? A2($Html.i,
+              _U.list([$Html$Attributes.$class("fa fa-heart favourite")]),
+              _U.list([])) : _U.cmp(A2($Maybe.withDefault,0,$Swiping.itemPos(pos)),-100) < 0 ? A2($Html.i,
+              _U.list([$Html$Attributes.$class("fa fa-times pass")]),
+              _U.list([])) : $Html.text("")]))
               ,A2($Html.div,
               _U.list([$Html$Attributes.$class("discovery-story-details")]),
               _U.list([A2($Html.h2,_U.list([$Html$Attributes.$class("title")]),_U.list([$Html.text($Story.title(story))]))

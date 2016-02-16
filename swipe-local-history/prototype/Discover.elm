@@ -54,7 +54,14 @@ viewStory address story pos = div
     , style <| styleStory pos
     ] ++ onSwipe address (itemSwipe pos) swipeAction)
     [storyImage story
-        [ div [class "discovery-story-image"] []
+        [ div [class "discovery-story-image"]
+            [ if (Maybe.withDefault 0 <| itemPos pos) > 100 then
+                i [class "fa fa-heart favourite"] []
+              else if (Maybe.withDefault 0 <| itemPos pos) < -100 then
+                i [class "fa fa-times pass"] []
+              else
+                text ""
+            ]
         , div [class "discovery-story-details"]
             [ h2 [class "title"] [text <| Story.title story]
             , p [] [text <| Story.blurb story]
