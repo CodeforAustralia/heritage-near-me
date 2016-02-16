@@ -12831,7 +12831,7 @@ Elm.Swiping.make = function (_elm) {
             if (_p7._0.ctor === "End") {
                   var _p8 = _p7._0._0;
                   return _U.cmp($Basics.abs(_p8.x1 - _p8.x0),
-                  250) > 0 ? $Types.MoveItem($Types.Leave(_p8.x1 - _p8.x0)) : $Types.MoveItem($Types.Return(_p8.x1 - _p8.x0));
+                  160) > 0 ? $Types.MoveItem($Types.Leave(_p8.x1 - _p8.x0)) : $Types.MoveItem($Types.Return(_p8.x1 - _p8.x0));
                } else {
                   return $Types.MoveItem($Types.Swiping(_p7._0));
                }

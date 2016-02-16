@@ -50,7 +50,7 @@ swipeActions = Signal.map swipeAction swipes
 swipeAction : Maybe SwipeState -> Action id a
 swipeAction swipe = case swipe of
     Just (End state) ->
-        if abs (state.x1 - state.x0) > 250 then
+        if abs (state.x1 - state.x0) > 160 then
             MoveItem <| Leave <| state.x1 - state.x0
         else
             MoveItem <| Return <| state.x1 - state.x0
