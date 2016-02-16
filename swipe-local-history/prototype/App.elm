@@ -1,7 +1,7 @@
 import Html exposing (Html, div, nav, img, button, i, text)
 import Html.Attributes exposing (class, src)
 import Html.Events exposing (onClick)
-import Swipe exposing (SwipeState)
+import Time exposing (Time)
 import Task exposing (Task)
 import Dict exposing (Dict)
 import Effects
@@ -17,18 +17,35 @@ import Story
 import Favourites
 import Swiping
 
+main : Signal Html
 main = app.html
 
 app = StartApp.start
     { init = (initialApp, Effects.none)
     , view = view
     , update = \action model -> (update action model, effects action model)
-    , inputs = [history.signal, data.signal]
+    , inputs = [history.signal, data.signal, animate]
     }
+
+animate : Signal (Action StoryId Story)
+animate = Swiping.animate
 
 effects : Action id a -> App id a -> Effects.Effects (Action id a)
 effects action app = case action of
-    Back -> Effects.map (\_ -> NoAction) <| Debug.log "back" <| Effects.task History.back
+    Back -> Effects.map (\_ -> NoAction) <| Effects.task History.back
+    AnimateItem time -> case app.discovery.itemPosition of
+        Leaving pos start end _ ->
+            if time > end then
+                Effects.task <| Task.succeed
+                <| if pos < 0 then
+                    Pass
+                else if pos > 0 then
+                    Favourite
+                else
+                    NoAction
+            else
+                Effects.none
+        _ -> Effects.none
     _ -> Effects.none
 
 port tasks : Signal (Task.Task Effects.Never ())
@@ -85,9 +102,10 @@ update action app = case app.location of
             Discover         -> {app | location = Discovering}
             View story'      -> {app | location = Viewing story'}
             ViewFavourites   -> {app | location = ViewingFavourites}
+            AnimateItem time -> {app | discovery = animateItem app.discovery time}
+            MoveItem pos     -> {app | discovery = moveItem app.discovery pos}
             Favourite        -> {app | location = Discovering, discovery = favouriteItem app.discovery}
             Pass             -> {app | location = Discovering, discovery = passItem app.discovery}
-            SwipingItem s    -> {app | discovery = swipeItem app.discovery s}
             LoadItem id item -> {app | items = addItem id item app.items}
             LoadItems items  -> {app | items = addItems Story.id items app.items, discovery = loadItems app.discovery items Story.id}
             _                -> app
@@ -118,7 +136,7 @@ favouriteItem app =
     , favourites = case app.item of
         Loaded (Succeeded (Just item)) -> app.favourites ++ [item]
         _ -> app.favourites
-    , swipeState = Nothing
+    , itemPosition = Static
     }
 
 passItem : Discovery a -> Discovery a
@@ -129,11 +147,14 @@ passItem app =
     , passes = case app.item of
         Loaded (Succeeded (Just item)) -> app.passes ++ [item]
         _ -> app.passes
-    , swipeState = Nothing
+    , itemPosition = Static
     }
 
-swipeItem : Discovery a -> Maybe SwipeState -> Discovery a
-swipeItem app state = {app | swipeState = state}
+animateItem : Discovery a -> Time -> Discovery a
+animateItem discovery time = {discovery | itemPosition = Swiping.animateStep time discovery.itemPosition}
+
+moveItem : Discovery a -> ItemPosition -> Discovery a
+moveItem discovery pos = {discovery | itemPosition = pos}
 
 loadItems : Discovery id -> LoadedData (List a) -> (a -> id) -> Discovery id
 loadItems discovery items getId = let
@@ -168,8 +189,8 @@ initialApp = {location = Discovering, discovery = initialDiscovery, items = Dict
 
 initialDiscovery =
     { item = Loading
+    , itemPosition = Static
     , items = []
     , favourites = []
     , passes = []
-    , swipeState = Nothing
     }

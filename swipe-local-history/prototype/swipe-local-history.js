@@ -5732,6 +5732,158 @@ Elm.Time.make = function (_elm) {
                              ,delay: delay
                              ,since: since};
 };
+Elm.Easing = Elm.Easing || {};
+Elm.Easing.make = function (_elm) {
+   "use strict";
+   _elm.Easing = _elm.Easing || {};
+   if (_elm.Easing.values) return _elm.Easing.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Color = Elm.Color.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $Time = Elm.Time.make(_elm);
+   var _op = {};
+   var cycle = F3(function (animation,d,t) {    return A2(animation,1,t / d - $Basics.toFloat($Basics.floor(t / d)));});
+   var flip = F2(function (easing,time) {    return easing(1 - time);});
+   var retour = F2(function (easing,time) {    return _U.cmp(time,0.5) < 0 ? easing(time * 2) : A2(flip,easing,(time - 0.5) * 2);});
+   var invert = F2(function (easing,time) {    return 1 - easing(1 - time);});
+   var inOut = F3(function (e1,e2,time) {    return _U.cmp(time,0.5) < 0 ? e1(time * 2) / 2 : 0.5 + e2((time - 0.5) * 2) / 2;});
+   var easeInElastic = function (time) {
+      if (_U.eq(time,0.0)) return 0.0; else {
+            var t$ = time - 1;
+            var p = 0.3;
+            var s = 7.5e-2;
+            return 0 - Math.pow(2,10 * t$) * $Basics.sin((t$ - s) * (2 * $Basics.pi) / p);
+         }
+   };
+   var easeOutElastic = invert(easeInElastic);
+   var easeInOutElastic = A2(inOut,easeInElastic,easeOutElastic);
+   var easeOutBounce = function (time) {
+      var t4 = time - 2.625 / 2.75;
+      var t3 = time - 2.25 / 2.75;
+      var t2 = time - 1.5 / 2.75;
+      var a = 7.5625;
+      return _U.cmp(time,1 / 2.75) < 0 ? a * time * time : _U.cmp(time,2 / 2.75) < 0 ? a * t2 * t2 + 0.75 : _U.cmp(time,
+      2.5 / 2.75) < 0 ? a * t3 * t3 + 0.9375 : a * t4 * t4 + 0.984375;
+   };
+   var easeInBounce = invert(easeOutBounce);
+   var easeInOutBounce = A2(inOut,easeInBounce,easeOutBounce);
+   var easeInBack = function (time) {    return time * time * (2.70158 * time - 1.70158);};
+   var easeOutBack = invert(easeInBack);
+   var easeInOutBack = A2(inOut,easeInBack,easeOutBack);
+   var easeOutCirc = function (time) {    return $Basics.sqrt(1 - Math.pow(time - 1,2));};
+   var easeInCirc = invert(easeOutCirc);
+   var easeInOutCirc = A2(inOut,easeInCirc,easeOutCirc);
+   var easeInExpo = function (time) {    return _U.eq(time,0.0) ? 0.0 : Math.pow(2,10 * (time - 1));};
+   var easeOutExpo = invert(easeInExpo);
+   var easeInOutExpo = A2(inOut,easeInExpo,easeOutExpo);
+   var easeOutSine = function (time) {    return $Basics.sin(time * ($Basics.pi / 2));};
+   var easeInSine = invert(easeOutSine);
+   var easeInOutSine = A2(inOut,easeInSine,easeOutSine);
+   var easeInQuint = function (time) {    return Math.pow(time,5);};
+   var easeOutQuint = invert(easeInQuint);
+   var easeInOutQuint = A2(inOut,easeInQuint,easeOutQuint);
+   var easeInQuart = function (time) {    return Math.pow(time,4);};
+   var easeOutQuart = invert(easeInQuart);
+   var easeInOutQuart = A2(inOut,easeInQuart,easeOutQuart);
+   var easeInCubic = function (time) {    return Math.pow(time,3);};
+   var easeOutCubic = invert(easeInCubic);
+   var easeInOutCubic = A2(inOut,easeInCubic,easeOutCubic);
+   var easeInQuad = function (time) {    return Math.pow(time,2);};
+   var easeOutQuad = invert(easeInQuad);
+   var easeInOutQuad = A2(inOut,easeInQuad,easeOutQuad);
+   var linear = $Basics.identity;
+   var pair = F4(function (interpolate,_p1,_p0,v) {
+      var _p2 = _p1;
+      var _p3 = _p0;
+      return {ctor: "_Tuple2",_0: A3(interpolate,_p2._0,_p3._0,v),_1: A3(interpolate,_p2._1,_p3._1,v)};
+   });
+   var $float = F3(function (from,to,v) {    return from + (to - from) * v;});
+   var point2d = F3(function (from,to,v) {    return {x: A3($float,from.x,to.x,v),y: A3($float,from.y,to.y,v)};});
+   var point3d = F3(function (from,to,v) {    return {x: A3($float,from.x,to.x,v),y: A3($float,from.y,to.y,v),z: A3($float,from.z,to.z,v)};});
+   var color = F3(function (from,to,v) {
+      var float$ = F3(function (from,to,v) {    return $Basics.round(A3($float,$Basics.toFloat(from),$Basics.toFloat(to),v));});
+      var _p4 = {ctor: "_Tuple2",_0: $Color.toRgb(from),_1: $Color.toRgb(to)};
+      var rgb1 = _p4._0;
+      var rgb2 = _p4._1;
+      var _p5 = {ctor: "_Tuple4",_0: rgb1.red,_1: rgb1.green,_2: rgb1.blue,_3: rgb1.alpha};
+      var r1 = _p5._0;
+      var g1 = _p5._1;
+      var b1 = _p5._2;
+      var a1 = _p5._3;
+      var _p6 = {ctor: "_Tuple4",_0: rgb2.red,_1: rgb2.green,_2: rgb2.blue,_3: rgb2.alpha};
+      var r2 = _p6._0;
+      var g2 = _p6._1;
+      var b2 = _p6._2;
+      var a2 = _p6._3;
+      return A4($Color.rgba,A3(float$,r1,r2,v),A3(float$,g1,g2,v),A3(float$,b1,b2,v),A3($float,a1,a2,v));
+   });
+   var bezier = F5(function (x1,y1,x2,y2,time) {
+      var casteljau = function (ps) {
+         casteljau: while (true) {
+            var _p7 = ps;
+            if (_p7.ctor === "::" && _p7._0.ctor === "_Tuple2" && _p7._1.ctor === "[]") {
+                  return _p7._0._1;
+               } else {
+                  var _p8 = _p7;
+                  var _v3 = A3($List.map2,F2(function (x,y) {    return A4(pair,$float,x,y,time);}),_p8,A2($Maybe.withDefault,_U.list([]),$List.tail(_p8)));
+                  ps = _v3;
+                  continue casteljau;
+               }
+         }
+      };
+      return casteljau(_U.list([{ctor: "_Tuple2",_0: 0,_1: 0},{ctor: "_Tuple2",_0: x1,_1: y1},{ctor: "_Tuple2",_0: x2,_1: y2},{ctor: "_Tuple2",_0: 1,_1: 1}]));
+   });
+   var ease = F6(function (easing,interpolation,from,to,duration,time) {    return A3(interpolation,from,to,easing(A2($Basics.min,time / duration,1)));});
+   return _elm.Easing.values = {_op: _op
+                               ,ease: ease
+                               ,$float: $float
+                               ,point2d: point2d
+                               ,point3d: point3d
+                               ,color: color
+                               ,pair: pair
+                               ,cycle: cycle
+                               ,invert: invert
+                               ,retour: retour
+                               ,inOut: inOut
+                               ,flip: flip
+                               ,bezier: bezier
+                               ,linear: linear
+                               ,easeInQuad: easeInQuad
+                               ,easeOutQuad: easeOutQuad
+                               ,easeInOutQuad: easeInOutQuad
+                               ,easeInCubic: easeInCubic
+                               ,easeOutCubic: easeOutCubic
+                               ,easeInOutCubic: easeInOutCubic
+                               ,easeInQuart: easeInQuart
+                               ,easeOutQuart: easeOutQuart
+                               ,easeInOutQuart: easeInOutQuart
+                               ,easeInQuint: easeInQuint
+                               ,easeOutQuint: easeOutQuint
+                               ,easeInOutQuint: easeInOutQuint
+                               ,easeInSine: easeInSine
+                               ,easeOutSine: easeOutSine
+                               ,easeInOutSine: easeInOutSine
+                               ,easeInExpo: easeInExpo
+                               ,easeOutExpo: easeOutExpo
+                               ,easeInOutExpo: easeInOutExpo
+                               ,easeInCirc: easeInCirc
+                               ,easeOutCirc: easeOutCirc
+                               ,easeInOutCirc: easeInOutCirc
+                               ,easeInBack: easeInBack
+                               ,easeOutBack: easeOutBack
+                               ,easeInOutBack: easeInOutBack
+                               ,easeInBounce: easeInBounce
+                               ,easeOutBounce: easeOutBounce
+                               ,easeInOutBounce: easeInOutBounce
+                               ,easeInElastic: easeInElastic
+                               ,easeOutElastic: easeOutElastic
+                               ,easeInOutElastic: easeInOutElastic};
+};
 Elm.Native = Elm.Native || {};
 Elm.Native.History = {};
 Elm.Native.History.make = function(localRuntime){
@@ -12217,7 +12369,8 @@ Elm.Types.make = function (_elm) {
    $Maybe = Elm.Maybe.make(_elm),
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm),
-   $Swipe = Elm.Swipe.make(_elm);
+   $Swipe = Elm.Swipe.make(_elm),
+   $Time = Elm.Time.make(_elm);
    var _op = {};
    var Dates = F2(function (a,b) {    return {start: a,end: b};});
    var Site = F2(function (a,b) {    return {id: a,name: b};});
@@ -12225,7 +12378,13 @@ Elm.Types.make = function (_elm) {
    var FullStory = function (a) {    return {ctor: "FullStory",_0: a};};
    var DiscoverStory = function (a) {    return {ctor: "DiscoverStory",_0: a};};
    var StoryId = function (a) {    return {ctor: "StoryId",_0: a};};
-   var Discovery = F5(function (a,b,c,d,e) {    return {item: a,swipeState: b,items: c,favourites: d,passes: e};});
+   var Discovery = F5(function (a,b,c,d,e) {    return {item: a,itemPosition: b,items: c,favourites: d,passes: e};});
+   var Leaving = F4(function (a,b,c,d) {    return {ctor: "Leaving",_0: a,_1: b,_2: c,_3: d};});
+   var Leave = function (a) {    return {ctor: "Leave",_0: a};};
+   var Returning = F4(function (a,b,c,d) {    return {ctor: "Returning",_0: a,_1: b,_2: c,_3: d};});
+   var Return = function (a) {    return {ctor: "Return",_0: a};};
+   var Swiping = function (a) {    return {ctor: "Swiping",_0: a};};
+   var Static = {ctor: "Static"};
    var Failed = function (a) {    return {ctor: "Failed",_0: a};};
    var Succeeded = function (a) {    return {ctor: "Succeeded",_0: a};};
    var Loaded = function (a) {    return {ctor: "Loaded",_0: a};};
@@ -12238,7 +12397,8 @@ Elm.Types.make = function (_elm) {
    var View = function (a) {    return {ctor: "View",_0: a};};
    var Pass = {ctor: "Pass"};
    var Favourite = {ctor: "Favourite"};
-   var SwipingItem = function (a) {    return {ctor: "SwipingItem",_0: a};};
+   var MoveItem = function (a) {    return {ctor: "MoveItem",_0: a};};
+   var AnimateItem = function (a) {    return {ctor: "AnimateItem",_0: a};};
    var Discover = {ctor: "Discover"};
    var ViewingFavourites = {ctor: "ViewingFavourites"};
    var Viewing = function (a) {    return {ctor: "Viewing",_0: a};};
@@ -12257,7 +12417,8 @@ Elm.Types.make = function (_elm) {
                               ,DiscoverStory: DiscoverStory
                               ,FullStory: FullStory
                               ,Discover: Discover
-                              ,SwipingItem: SwipingItem
+                              ,AnimateItem: AnimateItem
+                              ,MoveItem: MoveItem
                               ,Favourite: Favourite
                               ,Pass: Pass
                               ,View: View
@@ -12269,7 +12430,13 @@ Elm.Types.make = function (_elm) {
                               ,Loading: Loading
                               ,Loaded: Loaded
                               ,Succeeded: Succeeded
-                              ,Failed: Failed};
+                              ,Failed: Failed
+                              ,Static: Static
+                              ,Swiping: Swiping
+                              ,Return: Return
+                              ,Returning: Returning
+                              ,Leave: Leave
+                              ,Leaving: Leaving};
 };
 Elm.Loading = Elm.Loading || {};
 Elm.Loading.make = function (_elm) {
@@ -12561,6 +12728,7 @@ Elm.Swiping.make = function (_elm) {
    var _U = Elm.Native.Utils.make(_elm),
    $Basics = Elm.Basics.make(_elm),
    $Debug = Elm.Debug.make(_elm),
+   $Easing = Elm.Easing.make(_elm),
    $Html = Elm.Html.make(_elm),
    $Html$Events = Elm.Html.Events.make(_elm),
    $Json$Decode = Elm.Json.Decode.make(_elm),
@@ -12569,6 +12737,7 @@ Elm.Swiping.make = function (_elm) {
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm),
    $Swipe = Elm.Swipe.make(_elm),
+   $Time = Elm.Time.make(_elm),
    $Types = Elm.Types.make(_elm);
    var _op = {};
    var changedTouch = A4($Json$Decode.object3,
@@ -12658,18 +12827,61 @@ Elm.Swiping.make = function (_elm) {
    var swipes = A2($Signal.map,$List.head,$Swipe.swipeStates);
    var swipeAction = function (swipe) {
       var _p7 = swipe;
-      if (_p7.ctor === "Just" && _p7._0.ctor === "End") {
-            var _p8 = _p7._0._0.direction;
-            switch (_p8.ctor)
-            {case "Right": return $Types.Favourite;
-               case "Left": return $Types.Pass;
-               default: return $Types.SwipingItem($Maybe.Nothing);}
+      if (_p7.ctor === "Just") {
+            if (_p7._0.ctor === "End") {
+                  var _p8 = _p7._0._0;
+                  return _U.cmp($Basics.abs(_p8.x1 - _p8.x0),
+                  250) > 0 ? $Types.MoveItem($Types.Leave(_p8.x1 - _p8.x0)) : $Types.MoveItem($Types.Return(_p8.x1 - _p8.x0));
+               } else {
+                  return $Types.MoveItem($Types.Swiping(_p7._0));
+               }
          } else {
-            return $Types.SwipingItem(_p7);
+            return $Types.NoAction;
          }
    };
    var swipeActions = A2($Signal.map,swipeAction,swipes);
-   return _elm.Swiping.values = {_op: _op,swipeActions: swipeActions,swipeAction: swipeAction,onSwipe: onSwipe};
+   var itemSwipe = function (pos) {    var _p9 = pos;if (_p9.ctor === "Swiping") {    return $Maybe.Just(_p9._0);} else {    return $Maybe.Nothing;}};
+   var timeSoFar = A3($Signal.foldp,F2(function (x,y) {    return x + y;}),0,$Time.fps(40));
+   var sign = function (number) {    return $Basics.abs(number) / number;};
+   var itemPos = function (pos) {
+      var _p10 = pos;
+      _v5_5: do {
+         switch (_p10.ctor)
+         {case "Swiping": if (_p10._0.ctor === "Swiping") {
+                    var _p11 = _p10._0._0;
+                    return $Maybe.Just(_p11.x1 - _p11.x0);
+                 } else {
+                    break _v5_5;
+                 }
+            case "Leave": return $Maybe.Just(_p10._0);
+            case "Return": return $Maybe.Just(_p10._0);
+            case "Leaving": var _p13 = _p10._1;
+              var _p12 = _p10._0;
+              return $Maybe.Just(A6($Easing.ease,$Easing.easeInCubic,$Easing.$float,_p12,_p12 + 500 * sign(_p12),_p10._2 - _p13,_p10._3 - _p13));
+            case "Returning": var _p14 = _p10._1;
+              return $Maybe.Just(A6($Easing.ease,$Easing.easeInCubic,$Easing.$float,_p10._0,0,_p10._2 - _p14,_p10._3 - _p14));
+            default: break _v5_5;}
+      } while (false);
+      return $Maybe.Nothing;
+   };
+   var animateStep = F2(function (t,state) {
+      var _p15 = state;
+      switch (_p15.ctor)
+      {case "Leave": return A4($Types.Leaving,_p15._0,t,t + 600,t);
+         case "Return": return A4($Types.Returning,_p15._0,t,t + 600,t);
+         case "Leaving": return A4($Types.Leaving,_p15._0,_p15._1,_p15._2,t);
+         case "Returning": return A4($Types.Returning,_p15._0,_p15._1,_p15._2,t);
+         default: return _p15;}
+   });
+   var animate = A2($Signal.map,$Types.AnimateItem,timeSoFar);
+   return _elm.Swiping.values = {_op: _op
+                                ,animate: animate
+                                ,itemSwipe: itemSwipe
+                                ,itemPos: itemPos
+                                ,swipeActions: swipeActions
+                                ,swipeAction: swipeAction
+                                ,onSwipe: onSwipe
+                                ,animateStep: animateStep};
 };
 Elm.Discover = Elm.Discover || {};
 Elm.Discover.make = function (_elm) {
@@ -12689,16 +12901,14 @@ Elm.Discover.make = function (_elm) {
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm),
    $Story = Elm.Story.make(_elm),
-   $Swipe = Elm.Swipe.make(_elm),
    $Swiping = Elm.Swiping.make(_elm),
    $Types = Elm.Types.make(_elm);
    var _op = {};
-   var styleStory = function (swipe) {
-      var _p0 = swipe;
-      if (_p0.ctor === "Just" && _p0._0.ctor === "Swiping") {
-            var _p1 = _p0._0._0;
+   var styleStory = function (pos) {
+      var _p0 = $Swiping.itemPos(pos);
+      if (_p0.ctor === "Just") {
             return _U.list([{ctor: "_Tuple2",_0: "position",_1: "relative"}
-                           ,{ctor: "_Tuple2",_0: "left",_1: A2($Basics._op["++"],$Basics.toString(_p1.x1 - _p1.x0),"px")}]);
+                           ,{ctor: "_Tuple2",_0: "left",_1: A2($Basics._op["++"],$Basics.toString(_p0._0),"px")}]);
          } else {
             return _U.list([]);
          }
@@ -12713,13 +12923,13 @@ Elm.Discover.make = function (_elm) {
                                               ,{ctor: "_Tuple2",_0: "background-size",_1: "cover"}]))]),
       content);
    });
-   var viewStory = F3(function (address,story,swipe) {
+   var viewStory = F3(function (address,story,pos) {
       return A2($Html.div,
       A2($Basics._op["++"],
       _U.list([A2($Html$Events.onClick,address,$Types.View($Story.id(story)))
               ,$Html$Attributes.$class("discovery-story")
-              ,$Html$Attributes.style(styleStory(swipe))]),
-      A3($Swiping.onSwipe,address,swipe,$Swiping.swipeAction)),
+              ,$Html$Attributes.style(styleStory(pos))]),
+      A3($Swiping.onSwipe,address,$Swiping.itemSwipe(pos),$Swiping.swipeAction)),
       _U.list([A2(storyImage,
       story,
       _U.list([A2($Html.div,_U.list([$Html$Attributes.$class("discovery-story-image")]),_U.list([]))
@@ -12758,15 +12968,15 @@ Elm.Discover.make = function (_elm) {
       _U.list([$Html$Attributes.$class("app screen-size discovery")]),
       _U.list([topNav
               ,function () {
-                 var _p2 = app.discovery.item;
-                 if (_p2.ctor === "Loaded") {
-                       if (_p2._0.ctor === "Succeeded") {
-                             var _p3 = _p2._0._0;
-                             if (_p3.ctor === "Just") {
-                                   var _p4 = A2($Data.getItem,app,_p3._0);
-                                   if (_p4.ctor === "Loaded") {
-                                         if (_p4._0.ctor === "Succeeded") {
-                                               return A3(viewStory,address,_p4._0._0,app.discovery.swipeState);
+                 var _p1 = app.discovery.item;
+                 if (_p1.ctor === "Loaded") {
+                       if (_p1._0.ctor === "Succeeded") {
+                             var _p2 = _p1._0._0;
+                             if (_p2.ctor === "Just") {
+                                   var _p3 = A2($Data.getItem,app,_p2._0);
+                                   if (_p3.ctor === "Loaded") {
+                                         if (_p3._0.ctor === "Succeeded") {
+                                               return A3(viewStory,address,_p3._0._0,app.discovery.itemPosition);
                                             } else {
                                                return $Html.text("Something went wrong");
                                             }
@@ -12911,11 +13121,12 @@ Elm.Main.make = function (_elm) {
    $Signal = Elm.Signal.make(_elm),
    $StartApp = Elm.StartApp.make(_elm),
    $Story = Elm.Story.make(_elm),
-   $Swipe = Elm.Swipe.make(_elm),
+   $Swiping = Elm.Swiping.make(_elm),
    $Task = Elm.Task.make(_elm),
+   $Time = Elm.Time.make(_elm),
    $Types = Elm.Types.make(_elm);
    var _op = {};
-   var initialDiscovery = {item: $Types.Loading,items: _U.list([]),favourites: _U.list([]),passes: _U.list([]),swipeState: $Maybe.Nothing};
+   var initialDiscovery = {item: $Types.Loading,itemPosition: $Types.Static,items: _U.list([]),favourites: _U.list([]),passes: _U.list([])};
    var initialApp = {location: $Types.Discovering,discovery: initialDiscovery,items: $Dict.empty};
    var getStory = function (app) {    return $Data.getItem(app);};
    var addItem = F3(function (id,loaded,items) {
@@ -12944,7 +13155,8 @@ Elm.Main.make = function (_elm) {
       return _U.update(discovery,
       {items: function (_p2) {    return A2($Maybe.withDefault,_U.list([]),$List.tail(_p2));}(ids),item: $Types.Loaded($Types.Succeeded($List.head(ids)))});
    });
-   var swipeItem = F2(function (app,state) {    return _U.update(app,{swipeState: state});});
+   var moveItem = F2(function (discovery,pos) {    return _U.update(discovery,{itemPosition: pos});});
+   var animateItem = F2(function (discovery,time) {    return _U.update(discovery,{itemPosition: A2($Swiping.animateStep,time,discovery.itemPosition)});});
    var passItem = function (app) {
       return _U.update(app,
       {item: $Types.Loaded($Types.Succeeded($List.head(app.items)))
@@ -12959,7 +13171,7 @@ Elm.Main.make = function (_elm) {
                return app.passes;
             }
       }()
-      ,swipeState: $Maybe.Nothing});
+      ,itemPosition: $Types.Static});
    };
    var favouriteItem = function (app) {
       return _U.update(app,
@@ -12975,7 +13187,7 @@ Elm.Main.make = function (_elm) {
                return app.favourites;
             }
       }()
-      ,swipeState: $Maybe.Nothing});
+      ,itemPosition: $Types.Static});
    };
    var update = F2(function (action,app) {
       var _p7 = app.location;
@@ -12985,9 +13197,10 @@ Elm.Main.make = function (_elm) {
            {case "Discover": return _U.update(app,{location: $Types.Discovering});
               case "View": return _U.update(app,{location: $Types.Viewing(_p8._0)});
               case "ViewFavourites": return _U.update(app,{location: $Types.ViewingFavourites});
+              case "AnimateItem": return _U.update(app,{discovery: A2(animateItem,app.discovery,_p8._0)});
+              case "MoveItem": return _U.update(app,{discovery: A2(moveItem,app.discovery,_p8._0)});
               case "Favourite": return _U.update(app,{location: $Types.Discovering,discovery: favouriteItem(app.discovery)});
               case "Pass": return _U.update(app,{location: $Types.Discovering,discovery: passItem(app.discovery)});
-              case "SwipingItem": return _U.update(app,{discovery: A2(swipeItem,app.discovery,_p8._0)});
               case "LoadItem": return _U.update(app,{items: A3(addItem,_p8._0,_p8._1,app.items)});
               case "LoadItems": var _p9 = _p8._0;
                 return _U.update(app,{items: A3(addItems,$Story.id,_p9,app.items),discovery: A3(loadItems,app.discovery,_p9,$Story.id)});
@@ -13053,16 +13266,23 @@ Elm.Main.make = function (_elm) {
    var history = $Signal.mailbox($Types.NoAction);
    var effects = F2(function (action,app) {
       var _p16 = action;
-      if (_p16.ctor === "Back") {
-            return A2($Effects.map,function (_p17) {    return $Types.NoAction;},A2($Debug.log,"back",$Effects.task($History.back)));
-         } else {
-            return $Effects.none;
-         }
+      switch (_p16.ctor)
+      {case "Back": return A2($Effects.map,function (_p17) {    return $Types.NoAction;},$Effects.task($History.back));
+         case "AnimateItem": var _p18 = app.discovery.itemPosition;
+           if (_p18.ctor === "Leaving") {
+                 var _p19 = _p18._0;
+                 return _U.cmp(_p16._0,_p18._2) > 0 ? $Effects.task($Task.succeed(_U.cmp(_p19,0) < 0 ? $Types.Pass : _U.cmp(_p19,
+                 0) > 0 ? $Types.Favourite : $Types.NoAction)) : $Effects.none;
+              } else {
+                 return $Effects.none;
+              }
+         default: return $Effects.none;}
    });
+   var animate = $Swiping.animate;
    var app = $StartApp.start({init: {ctor: "_Tuple2",_0: initialApp,_1: $Effects.none}
                              ,view: view
                              ,update: F2(function (action,model) {    return {ctor: "_Tuple2",_0: A2(update,action,model),_1: A2(effects,action,model)};})
-                             ,inputs: _U.list([history.signal,data.signal])});
+                             ,inputs: _U.list([history.signal,data.signal,animate])});
    var tasks = Elm.Native.Task.make(_elm).performSignal("tasks",app.tasks);
    var routeTasks = Elm.Native.Task.make(_elm).performSignal("routeTasks",
    $RouteHash.start({prefix: $RouteHash.defaultPrefix,address: history.address,models: app.model,delta2update: $Route.url,location2action: $Route.action}));
@@ -13072,6 +13292,7 @@ Elm.Main.make = function (_elm) {
    return _elm.Main.values = {_op: _op
                              ,main: main
                              ,app: app
+                             ,animate: animate
                              ,effects: effects
                              ,history: history
                              ,data: data
@@ -13080,7 +13301,8 @@ Elm.Main.make = function (_elm) {
                              ,update: update
                              ,favouriteItem: favouriteItem
                              ,passItem: passItem
-                             ,swipeItem: swipeItem
+                             ,animateItem: animateItem
+                             ,moveItem: moveItem
                              ,loadItems: loadItems
                              ,addItems: addItems
                              ,addItem: addItem

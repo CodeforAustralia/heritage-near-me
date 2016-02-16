@@ -1,26 +1,64 @@
-module Swiping (swipeActions, swipeAction, onSwipe) where
+module Swiping (animate, itemSwipe, itemPos, swipeActions, swipeAction, onSwipe, animateStep) where
 
 import Json.Decode as Json exposing ((:=))
 import Html exposing (Attribute)
 import Html.Events exposing (on)
+import Time exposing (Time)
+import Easing exposing (..)
 import Swipe exposing (..)
 
 import Types exposing (..)
+
+animate : Signal (Action id a)
+animate = Signal.map AnimateItem timeSoFar
+
+animateStep : Time -> ItemPosition -> ItemPosition
+animateStep t state = case state of
+    Leave pos -> Leaving pos t (t+600) t
+    Return pos -> Returning pos t (t+600) t
+    Leaving pos start end _ ->
+        Leaving pos start end t
+    Returning pos start end _ ->
+        Returning pos start end t
+    x -> x
+
+sign : Float -> Float
+sign number = abs number / number
+
+timeSoFar : Signal Time
+timeSoFar = Signal.foldp (+) 0 <| Time.fps 40
+
+itemSwipe : ItemPosition -> Maybe SwipeState
+itemSwipe pos = case pos of
+    Types.Swiping swipe -> Just swipe
+    _ -> Nothing
+
+itemPos : ItemPosition -> Maybe Float
+itemPos pos = case pos of
+    Types.Swiping (Swipe.Swiping swipe) -> Just <| swipe.x1 - swipe.x0
+    Leave pos -> Just pos
+    Return pos -> Just pos
+    Leaving pos start end t ->
+        Just <| ease easeInCubic float pos (pos + (500*sign pos)) (end-start) (t-start)
+    Returning pos start end t ->
+        Just <| ease easeInCubic float pos 0 (end-start) (t-start)
+    _ -> Nothing
 
 swipeActions : Signal (Action id a)
 swipeActions = Signal.map swipeAction swipes
 
 swipeAction : Maybe SwipeState -> Action id a
 swipeAction swipe = case swipe of
-    Just (End state) -> case state.direction of
-        Right -> Favourite
-        Left -> Pass
-        _ -> SwipingItem Nothing
-    swipe -> SwipingItem swipe
+    Just (End state) ->
+        if abs (state.x1 - state.x0) > 250 then
+            MoveItem <| Leave <| state.x1 - state.x0
+        else
+            MoveItem <| Return <| state.x1 - state.x0
+    Just swipe -> MoveItem <| Types.Swiping swipe
+    Nothing -> NoAction
     
 swipes : Signal (Maybe SwipeState)
 swipes = Signal.map List.head swipeStates
-
 
 onSwipe : Signal.Address a -> Maybe SwipeState -> (Maybe SwipeState -> a) -> List Attribute
 onSwipe address swipeState swipeAction =
@@ -41,7 +79,7 @@ updateSwipeState swipe touch update = let
         case touch of
             TouchStart -> Just <| Start update
             TouchMove -> case swipe of
-                Just (Start state) -> Just <| Swiping
+                Just (Start state) -> Just <| Swipe.Swiping
                     { x0 = state.x
                     , y0 = state.y
                     , x1 = update.x
@@ -50,7 +88,7 @@ updateSwipeState swipe touch update = let
                     , t0 = state.t0
                     , direction = Maybe.withDefault Right <| dir state.x state.y
                     }
-                Just (Swiping state) -> Just <| Swiping
+                Just (Swipe.Swiping state) -> Just <| Swipe.Swiping
                     { x0 = state.x0
                     , y0 = state.y0
                     , x1 = update.x
@@ -70,7 +108,7 @@ updateSwipeState swipe touch update = let
                     , t0 = state.t0
                     , direction = Maybe.withDefault Right <| dir state.x state.y
                     }
-                Just (Swiping state) -> Just <| End
+                Just (Swipe.Swiping state) -> Just <| End
                     { x0 = state.x0
                     , y0 = state.y0
                     , x1 = update.x

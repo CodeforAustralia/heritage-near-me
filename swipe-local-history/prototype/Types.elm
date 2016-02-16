@@ -1,9 +1,10 @@
-module Types (App, Location(..), Discovery, Favourites, StoryId(..), Story(..), Site, LatLng, Dates, Action(..), RemoteData(..), LoadedData(..)) where
+module Types (App, Location(..), Discovery, Favourites, StoryId(..), Story(..), Site, LatLng, Dates, Action(..), RemoteData(..), LoadedData(..), ItemPosition(..)) where
 
 import Http
 import Date exposing (Date)
 import Dict exposing (Dict)
 import Swipe exposing (SwipeState)
+import Time exposing (Time)
 
 type alias App id a =
     { location : Location id
@@ -18,7 +19,8 @@ type Location id =
 
 type Action id a =
       Discover
-    | SwipingItem (Maybe SwipeState)
+    | AnimateItem Time
+    | MoveItem ItemPosition
     | Favourite
     | Pass
     | View id
@@ -31,9 +33,16 @@ type Action id a =
 type RemoteData a = Loading | Loaded (LoadedData a)
 type LoadedData a = Succeeded a | Failed Http.Error
 
+type ItemPosition = Static
+    | Swiping SwipeState
+    | Return Float
+    | Returning Float Time Time Time
+    | Leave Float
+    | Leaving Float Time Time Time
+
 type alias Discovery id =
     { item : RemoteData (Maybe id)
-    , swipeState : Maybe SwipeState
+    , itemPosition : ItemPosition
     , items : List id
     , favourites : Favourites id
     , passes : List id
