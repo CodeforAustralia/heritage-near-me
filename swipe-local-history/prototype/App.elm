@@ -76,7 +76,7 @@ view address app = case app.location of
         <| navigation app.location address
     Viewing storyId itemView -> div [class "app"]
         [ navigation app.location address
-        , Story.view address <| getStory app storyId
+        , Story.view address (getStory app storyId) itemView
         ]
     ViewingFavourites -> div [class "app"]
         [ navigation app.location address

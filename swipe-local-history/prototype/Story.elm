@@ -2,6 +2,7 @@ module Story (view, id, title, blurb, photo) where
 
 import Date exposing (Date)
 import Date.Format as Date
+import List.Extra as List
 
 import Html exposing (Html, div, h1, h2, h3, h4, blockquote, img, ul, li, span, a, i, text)
 import Html.Events exposing (onClick)
@@ -11,11 +12,11 @@ import Markdown
 import Types exposing (..)
 import Loading exposing (loading)
 
-view : Signal.Address (Action StoryId Story) -> RemoteData Story -> Html
-view address story = div [class "story"]
+view : Signal.Address (Action StoryId Story) -> RemoteData Story -> ItemView -> Html
+view address story item = div [class "story"]
     <| case story of
         Loaded (Succeeded story) ->
-            [ storyImage story
+            [ storyImage story item
             , h1 [class "title"] [text <| title story]
             ] ++ case story of
                 DiscoverStory story -> [loading]
@@ -55,12 +56,19 @@ link name url = a [href url]
         ]
     ]
 
-storyImage story = div
-    [ class "image"
-    , style [ ("background-image", "url(\"" ++ photo story ++ "\")")
-            , ("background-repeat", "no-repeat")
-            , ("background-size", "cover")]
-    ] []
+storyImage story item = case story of
+        DiscoverStory story -> div
+            [ class "image"
+            , style [ ("background-image", "url(\"" ++ story.photo ++ "\")")
+                    , ("background-repeat", "no-repeat")
+                    , ("background-size", "cover")]
+            ] []
+        FullStory fullStory -> div
+            [ class "image"
+            , style [ ("background-image", "url(\"" ++ (Maybe.withDefault (photo story) <| List.getAt fullStory.photos item.photoIndex) ++ "\")")
+                    , ("background-repeat", "no-repeat")
+                    , ("background-size", "cover")]
+            ] []
 
 formatDate : Dates -> Maybe String
 formatDate dates = case (dates.start, dates.end) of
