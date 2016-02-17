@@ -21,7 +21,7 @@ fetch app = case app.location of
             Task.map (LoadItems << Succeeded) fetchDiscoverStories
             `Task.onError`
                 (Task.succeed << LoadItems << Failed)
-    Viewing storyId ->
+    Viewing storyId _ ->
         if (isLoaded <| getItem app storyId) && (not <| isLoaded <| findItem app (\story -> Story.id story == storyId && isDiscoverStory story)) then
             Task.succeed NoAction
         else

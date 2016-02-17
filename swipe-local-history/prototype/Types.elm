@@ -1,4 +1,4 @@
-module Types (App, Location(..), Discovery, Favourites, StoryId(..), Story(..), Site, LatLng, Dates, Action(..), RemoteData(..), LoadedData(..), ItemPosition(..)) where
+module Types (App, Location(..), Discovery, ItemView, Favourites, StoryId(..), Story(..), Site, LatLng, Dates, Action(..), RemoteData(..), LoadedData(..), ItemPosition(..)) where
 
 import Http
 import Date exposing (Date)
@@ -14,7 +14,7 @@ type alias App id a =
 
 type Location id =
       Discovering
-    | Viewing id
+    | Viewing id ItemView
     | ViewingFavourites
 
 type Action id a =
@@ -46,6 +46,11 @@ type alias Discovery id =
     , items : List id
     , favourites : Favourites id
     , passes : List id
+    }
+
+type alias ItemView =
+    { photoIndex : Int
+    , photoPosition : ItemPosition
     }
 
 type alias Favourites a = List a

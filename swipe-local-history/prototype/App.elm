@@ -74,7 +74,7 @@ view : Signal.Address (Action StoryId Story) -> App StoryId Story -> Html
 view address app = case app.location of
     Discovering -> Discover.view address app
         <| navigation app.location address
-    Viewing storyId   -> div [class "app"]
+    Viewing storyId itemView -> div [class "app"]
         [ navigation app.location address
         , Story.view address <| getStory app storyId
         ]
@@ -88,7 +88,7 @@ navigation location address = nav [class "navigation"]
     [ case location of
         Discovering ->
             button [onClick address ViewFavourites] [i [class "fa fa-heart fa-2x"] []]
-        Viewing _ ->
+        Viewing _ _ ->
             button [onClick address Back] [i [class "fa fa-angle-left fa-3x"] []]
         ViewingFavourites ->
             button [onClick address Discover] [i [class "fa fa-map fa-2x"] []]
@@ -100,7 +100,7 @@ update action app = case app.location of
     Discovering ->
         case action of
             Discover         -> {app | location = Discovering}
-            View story'      -> {app | location = Viewing story'}
+            View story'      -> {app | location = Viewing story' initialItemView}
             ViewFavourites   -> {app | location = ViewingFavourites}
             AnimateItem time -> {app | discovery = animateItem app.discovery time}
             MoveItem pos     -> {app | discovery = moveItem app.discovery pos}
@@ -110,10 +110,10 @@ update action app = case app.location of
             LoadItems items  -> {app | items = addItems Story.id items app.items, discovery = loadItems app.discovery items Story.id}
             _                -> app
 
-    Viewing story ->
+    Viewing story view ->
         case action of
             Discover         -> {app | location = Discovering}
-            View story'      -> {app | location = Viewing story'}
+            View story'      -> {app | location = Viewing story' initialItemView}
             ViewFavourites   -> {app | location = ViewingFavourites}
             LoadItem id item -> {app | items = addItem id item app.items}
             LoadItems items  -> {app | items = addItems Story.id items app.items, discovery = loadItems app.discovery items Story.id}
@@ -122,7 +122,7 @@ update action app = case app.location of
     ViewingFavourites ->
         case action of
             Discover         -> {app | location = Discovering}
-            View story'      -> {app | location = Viewing story'}
+            View story'      -> {app | location = Viewing story' initialItemView}
             ViewFavourites   -> {app | location = ViewingFavourites}
             LoadItem id item -> {app | items = addItem id item app.items}
             LoadItems items  -> {app | items = addItems Story.id items app.items, discovery = loadItems app.discovery items Story.id}
@@ -186,6 +186,9 @@ getStory app = Data.getItem app
 
 initialApp : App StoryId Story
 initialApp = {location = Discovering, discovery = initialDiscovery, items = Dict.empty}
+
+initialItemView : ItemView
+initialItemView = {photoIndex = 0, photoPosition = Static}
 
 initialDiscovery =
     { item = Loading
