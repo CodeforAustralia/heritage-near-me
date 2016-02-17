@@ -36,9 +36,9 @@ effects action app = case action of
                 if time > end then
                     Effects.task <| Task.succeed
                     <| if pos < 0 then
-                        PrevPhoto 
-                    else if pos > 0 then
                         NextPhoto
+                    else if pos > 0 then
+                        PrevPhoto 
                     else
                         NoAction
                 else

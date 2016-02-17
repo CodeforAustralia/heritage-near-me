@@ -17,7 +17,9 @@ view : Signal.Address (Action StoryId Story) -> RemoteData Story -> ItemView -> 
 view address story item = div [class "story"]
     <| case story of
         Loaded (Succeeded story) ->
-            [ div [class "photos"] [storyImage address story item]
+            [ div
+                ([class "photos"] ++ onSwipe address (itemSwipe item.photoPosition) swipePhotoAction)
+                <| List.map (storyImage story item.photoPosition) [item.photoIndex-1, item.photoIndex, item.photoIndex+1]
             , h1 [class "title"] [text <| title story]
             ] ++ case story of
                 DiscoverStory story -> [loading]
@@ -57,23 +59,19 @@ link name url = a [href url]
         ]
     ]
 
-storyImage address story item = case story of
-        DiscoverStory story -> div
-            [ class "image"
-            , style [ ("background-image", "url(\"" ++ story.photo ++ "\")")
-                    , ("background-repeat", "no-repeat")
-                    , ("background-size", "cover")]
-            ] []
-        FullStory fullStory -> div
-            ([ class "image"
-            , style [ ("background-image", "url(\"" ++ (Maybe.withDefault (photo story) <| List.getAt fullStory.photos item.photoIndex) ++ "\")")
-                    , ("background-repeat", "no-repeat")
-                    , ("background-size", "cover")
-                    , ("position", "relative")
-                    , ("left", toString (Maybe.withDefault 0 <| itemPos item.photoPosition) ++ "px")
-                    ]
-            ] ++ onSwipe address (itemSwipe item.photoPosition) swipePhotoAction)
-            []
+photoPosition pos =
+    [ ("position", "relative")
+    , ("left", toString (Maybe.withDefault 0 <| itemPos pos) ++ "px")
+    ]
+
+storyImage story pos index = div
+    [ class "image"
+    , style <|
+        [ ("background-image", "url(\"" ++ (Maybe.withDefault (photo story) <| List.getAt (photos story) index) ++ "\")")
+        , ("background-repeat", "no-repeat")
+        , ("background-size", "cover")
+        ] ++ photoPosition pos
+    ] []
 
 formatDate : Dates -> Maybe String
 formatDate dates = case (dates.start, dates.end) of
