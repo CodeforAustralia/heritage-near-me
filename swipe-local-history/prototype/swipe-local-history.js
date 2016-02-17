@@ -13007,10 +13007,13 @@ Elm.Types.make = function (_elm) {
    var Back = {ctor: "Back"};
    var ViewFavourites = {ctor: "ViewFavourites"};
    var View = function (a) {    return {ctor: "View",_0: a};};
+   var NextPhoto = {ctor: "NextPhoto"};
+   var PrevPhoto = {ctor: "PrevPhoto"};
+   var MovePhoto = function (a) {    return {ctor: "MovePhoto",_0: a};};
    var Pass = {ctor: "Pass"};
    var Favourite = {ctor: "Favourite"};
    var MoveItem = function (a) {    return {ctor: "MoveItem",_0: a};};
-   var AnimateItem = function (a) {    return {ctor: "AnimateItem",_0: a};};
+   var Animate = function (a) {    return {ctor: "Animate",_0: a};};
    var Discover = {ctor: "Discover"};
    var ViewingFavourites = {ctor: "ViewingFavourites"};
    var Viewing = F2(function (a,b) {    return {ctor: "Viewing",_0: a,_1: b};});
@@ -13030,10 +13033,13 @@ Elm.Types.make = function (_elm) {
                               ,DiscoverStory: DiscoverStory
                               ,FullStory: FullStory
                               ,Discover: Discover
-                              ,AnimateItem: AnimateItem
+                              ,Animate: Animate
                               ,MoveItem: MoveItem
                               ,Favourite: Favourite
                               ,Pass: Pass
+                              ,MovePhoto: MovePhoto
+                              ,PrevPhoto: PrevPhoto
+                              ,NextPhoto: NextPhoto
                               ,View: View
                               ,ViewFavourites: ViewFavourites
                               ,Back: Back
@@ -13071,6 +13077,199 @@ Elm.Loading.make = function (_elm) {
    _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-circle-o-notch fa-spin fa-3x")]),_U.list([]))]));
    return _elm.Loading.values = {_op: _op,loading: loading};
 };
+Elm.Swiping = Elm.Swiping || {};
+Elm.Swiping.make = function (_elm) {
+   "use strict";
+   _elm.Swiping = _elm.Swiping || {};
+   if (_elm.Swiping.values) return _elm.Swiping.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $Easing = Elm.Easing.make(_elm),
+   $Html = Elm.Html.make(_elm),
+   $Html$Events = Elm.Html.Events.make(_elm),
+   $Json$Decode = Elm.Json.Decode.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $Swipe = Elm.Swipe.make(_elm),
+   $Time = Elm.Time.make(_elm),
+   $Types = Elm.Types.make(_elm),
+   $Window = Elm.Window.make(_elm);
+   var _op = {};
+   var changedTouch = A4($Json$Decode.object3,
+   F3(function (id,x,y) {    return {id: id,x: x,y: y};}),
+   A2($Json$Decode._op[":="],"identifier",$Json$Decode.$int),
+   A2($Json$Decode._op[":="],"clientX",$Json$Decode.$float),
+   A2($Json$Decode._op[":="],"clientY",$Json$Decode.$float));
+   var touch = A4($Json$Decode.object3,
+   F3(function (t0,touch,_p0) {
+      var _p1 = _p0;
+      return {id: touch.id,x: touch.x,y: touch.y,t0: $Basics.toFloat(t0),window: {width: $Basics.toFloat(_p1._0),height: $Basics.toFloat(_p1._1)}};
+   }),
+   A2($Json$Decode._op[":="],"timeStamp",$Json$Decode.$int),
+   A2($Json$Decode._op[":="],"changedTouches",A2($Json$Decode.object1,function (x) {    return x;},A2($Json$Decode._op[":="],"0",changedTouch))),
+   A2($Json$Decode._op[":="],
+   "view",
+   A3($Json$Decode.object2,
+   F2(function (w,h) {    return {ctor: "_Tuple2",_0: w,_1: h};}),
+   A2($Json$Decode._op[":="],"innerWidth",$Json$Decode.$int),
+   A2($Json$Decode._op[":="],"innerHeight",$Json$Decode.$int))));
+   var TouchEnd = {ctor: "TouchEnd"};
+   var TouchMove = {ctor: "TouchMove"};
+   var TouchStart = {ctor: "TouchStart"};
+   var Window = F2(function (a,b) {    return {width: a,height: b};});
+   var SwipeUpdate = F5(function (a,b,c,d,e) {    return {id: a,x: b,y: c,t0: d,window: e};});
+   var direction = F2(function (dx,dy) {
+      return _U.cmp($Basics.abs(dx),$Basics.abs(dy)) > 0 ? _U.cmp(dx,0) > 0 ? $Maybe.Just($Swipe.Right) : _U.cmp(dx,
+      0) < 0 ? $Maybe.Just($Swipe.Left) : $Maybe.Nothing : _U.cmp(dy,0) > 0 ? $Maybe.Just($Swipe.Down) : _U.cmp(dy,
+      0) < 0 ? $Maybe.Just($Swipe.Up) : $Maybe.Nothing;
+   });
+   var updateSwipeState = F3(function (swipe,touch,update) {
+      var dir = F2(function (x,y) {    return A2(direction,update.x - x,update.y - y);});
+      var _p2 = touch;
+      switch (_p2.ctor)
+      {case "TouchStart": return $Maybe.Just($Swipe.Start({id: update.id,x: update.x,y: update.y,t0: update.t0}));
+         case "TouchMove": var _p3 = swipe;
+           _v2_2: do {
+              if (_p3.ctor === "Just") {
+                    switch (_p3._0.ctor)
+                    {case "Start": var _p4 = _p3._0._0;
+                         return $Maybe.Just($Swipe.Swiping({x0: _p4.x
+                                                           ,y0: _p4.y
+                                                           ,x1: update.x
+                                                           ,y1: update.y
+                                                           ,id: _p4.id
+                                                           ,t0: _p4.t0
+                                                           ,direction: A2($Maybe.withDefault,$Swipe.Right,A2(dir,_p4.x,_p4.y))}));
+                       case "Swiping": var _p5 = _p3._0._0;
+                         return $Maybe.Just($Swipe.Swiping({x0: _p5.x0
+                                                           ,y0: _p5.y0
+                                                           ,x1: update.x
+                                                           ,y1: update.y
+                                                           ,id: _p5.id
+                                                           ,t0: _p5.t0
+                                                           ,direction: A2($Maybe.withDefault,_p5.direction,A2(dir,_p5.x0,_p5.y0))}));
+                       default: break _v2_2;}
+                 } else {
+                    break _v2_2;
+                 }
+           } while (false);
+           return $Maybe.Just($Swipe.Start({id: update.id,x: update.x,y: update.y,t0: update.t0}));
+         default: var _p6 = swipe;
+           _v3_2: do {
+              if (_p6.ctor === "Just") {
+                    switch (_p6._0.ctor)
+                    {case "Start": var _p7 = _p6._0._0;
+                         return $Maybe.Just($Swipe.End({x0: _p7.x
+                                                       ,y0: _p7.y
+                                                       ,x1: update.x
+                                                       ,y1: update.y
+                                                       ,id: _p7.id
+                                                       ,t0: _p7.t0
+                                                       ,direction: A2($Maybe.withDefault,$Swipe.Right,A2(dir,_p7.x,_p7.y))}));
+                       case "Swiping": var _p8 = _p6._0._0;
+                         return $Maybe.Just($Swipe.End({x0: _p8.x0
+                                                       ,y0: _p8.y0
+                                                       ,x1: update.x
+                                                       ,y1: update.y
+                                                       ,id: _p8.id
+                                                       ,t0: _p8.t0
+                                                       ,direction: A2($Maybe.withDefault,_p8.direction,A2(dir,_p8.x0,_p8.y0))}));
+                       default: break _v3_2;}
+                 } else {
+                    break _v3_2;
+                 }
+           } while (false);
+           return $Maybe.Nothing;}
+   });
+   var onSwipe = F3(function (address,swipeState,swipeAction) {
+      var doAction = F2(function (touchState,touchUpdate) {
+         return A2($Signal.message,address,A2(swipeAction,touchUpdate.window,A3(updateSwipeState,swipeState,touchState,touchUpdate)));
+      });
+      return _U.list([A3($Html$Events.on,"touchstart",touch,doAction(TouchStart))
+                     ,A3($Html$Events.on,"touchmove",touch,doAction(TouchMove))
+                     ,A3($Html$Events.on,"touchend",touch,doAction(TouchEnd))]);
+   });
+   var swipes = A2($Signal.map,$List.head,$Swipe.swipeStates);
+   var swipePhotoAction = F2(function (window,swipe) {
+      var _p9 = swipe;
+      if (_p9.ctor === "Just") {
+            if (_p9._0.ctor === "End") {
+                  var _p10 = _p9._0._0;
+                  return _U.cmp($Basics.abs(_p10.x1 - _p10.x0),
+                  window.width / 3) > 0 ? $Types.MovePhoto($Types.Leave(_p10.x1 - _p10.x0)) : $Types.MovePhoto($Types.Return(_p10.x1 - _p10.x0));
+               } else {
+                  return $Types.MovePhoto($Types.Swiping(_p9._0));
+               }
+         } else {
+            return $Types.NoAction;
+         }
+   });
+   var swipeAction = F2(function (window,swipe) {
+      var _p11 = swipe;
+      if (_p11.ctor === "Just") {
+            if (_p11._0.ctor === "End") {
+                  var _p12 = _p11._0._0;
+                  return _U.cmp($Basics.abs(_p12.x1 - _p12.x0),
+                  window.width / 3) > 0 ? $Types.MoveItem($Types.Leave(_p12.x1 - _p12.x0)) : $Types.MoveItem($Types.Return(_p12.x1 - _p12.x0));
+               } else {
+                  return $Types.MoveItem($Types.Swiping(_p11._0));
+               }
+         } else {
+            return $Types.NoAction;
+         }
+   });
+   var swipeActions = A4($Signal.map3,
+   F2(function (w,h) {    return swipeAction({width: $Basics.toFloat(w),height: $Basics.toFloat(h)});}),
+   $Window.width,
+   $Window.height,
+   swipes);
+   var itemSwipe = function (pos) {    var _p13 = pos;if (_p13.ctor === "Swiping") {    return $Maybe.Just(_p13._0);} else {    return $Maybe.Nothing;}};
+   var timeSoFar = A3($Signal.foldp,F2(function (x,y) {    return x + y;}),0,$Time.fps(40));
+   var sign = function (number) {    return $Basics.abs(number) / number;};
+   var itemPos = function (pos) {
+      var _p14 = pos;
+      _v7_5: do {
+         switch (_p14.ctor)
+         {case "Swiping": if (_p14._0.ctor === "Swiping") {
+                    var _p15 = _p14._0._0;
+                    return $Maybe.Just(_p15.x1 - _p15.x0);
+                 } else {
+                    break _v7_5;
+                 }
+            case "Leave": return $Maybe.Just(_p14._0);
+            case "Return": return $Maybe.Just(_p14._0);
+            case "Leaving": var _p17 = _p14._1;
+              var _p16 = _p14._0;
+              return $Maybe.Just(A6($Easing.ease,$Easing.easeInCubic,$Easing.$float,_p16,_p16 + 500 * sign(_p16),_p14._2 - _p17,_p14._3 - _p17));
+            case "Returning": var _p18 = _p14._1;
+              return $Maybe.Just(A6($Easing.ease,$Easing.easeInCubic,$Easing.$float,_p14._0,0,_p14._2 - _p18,_p14._3 - _p18));
+            default: break _v7_5;}
+      } while (false);
+      return $Maybe.Nothing;
+   };
+   var animateStep = F2(function (t,state) {
+      var _p19 = state;
+      switch (_p19.ctor)
+      {case "Leave": return A4($Types.Leaving,_p19._0,t,t + 600,t);
+         case "Return": return A4($Types.Returning,_p19._0,t,t + 600,t);
+         case "Leaving": return A4($Types.Leaving,_p19._0,_p19._1,_p19._2,t);
+         case "Returning": return A4($Types.Returning,_p19._0,_p19._1,_p19._2,t);
+         default: return _p19;}
+   });
+   var animate = A2($Signal.map,$Types.Animate,timeSoFar);
+   return _elm.Swiping.values = {_op: _op
+                                ,animate: animate
+                                ,itemSwipe: itemSwipe
+                                ,itemPos: itemPos
+                                ,swipeActions: swipeActions
+                                ,swipeAction: swipeAction
+                                ,swipePhotoAction: swipePhotoAction
+                                ,onSwipe: onSwipe
+                                ,animateStep: animateStep};
+};
 Elm.Story = Elm.Story || {};
 Elm.Story.make = function (_elm) {
    "use strict";
@@ -13089,67 +13288,77 @@ Elm.Story.make = function (_elm) {
    $Maybe = Elm.Maybe.make(_elm),
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm),
+   $Swiping = Elm.Swiping.make(_elm),
    $Types = Elm.Types.make(_elm);
    var _op = {};
+   var photos = function (story) {    var _p0 = story;if (_p0.ctor === "DiscoverStory") {    return _U.list([_p0._0.photo]);} else {    return _p0._0.photos;}};
    var photo = function (story) {
-      var _p0 = story;
-      if (_p0.ctor === "DiscoverStory") {
-            return _p0._0.photo;
+      var _p1 = story;
+      if (_p1.ctor === "DiscoverStory") {
+            return _p1._0.photo;
          } else {
-            return A2($Maybe.withDefault,"",$List.head(_p0._0.photos));
+            return A2($Maybe.withDefault,"",$List.head(_p1._0.photos));
          }
    };
-   var blurb = function (story) {    var _p1 = story;if (_p1.ctor === "DiscoverStory") {    return _p1._0.blurb;} else {    return _p1._0.blurb;}};
-   var title = function (story) {    var _p2 = story;if (_p2.ctor === "DiscoverStory") {    return _p2._0.title;} else {    return _p2._0.title;}};
-   var id = function (story) {    var _p3 = story;if (_p3.ctor === "DiscoverStory") {    return _p3._0.id;} else {    return _p3._0.id;}};
+   var blurb = function (story) {    var _p2 = story;if (_p2.ctor === "DiscoverStory") {    return _p2._0.blurb;} else {    return _p2._0.blurb;}};
+   var title = function (story) {    var _p3 = story;if (_p3.ctor === "DiscoverStory") {    return _p3._0.title;} else {    return _p3._0.title;}};
+   var id = function (story) {    var _p4 = story;if (_p4.ctor === "DiscoverStory") {    return _p4._0.id;} else {    return _p4._0.id;}};
    var formatDate = function (dates) {
-      var _p4 = {ctor: "_Tuple2",_0: dates.start,_1: dates.end};
-      _v4_3: do {
-         if (_p4.ctor === "_Tuple2") {
-               if (_p4._0.ctor === "Nothing") {
-                     if (_p4._1.ctor === "Just") {
-                           return $Maybe.Just(A2($Date$Format.format,"%Y",_p4._1._0));
+      var _p5 = {ctor: "_Tuple2",_0: dates.start,_1: dates.end};
+      _v5_3: do {
+         if (_p5.ctor === "_Tuple2") {
+               if (_p5._0.ctor === "Nothing") {
+                     if (_p5._1.ctor === "Just") {
+                           return $Maybe.Just(A2($Date$Format.format,"%Y",_p5._1._0));
                         } else {
-                           break _v4_3;
+                           break _v5_3;
                         }
                   } else {
-                     if (_p4._1.ctor === "Nothing") {
-                           return $Maybe.Just(A2($Date$Format.format,"%Y",_p4._0._0));
+                     if (_p5._1.ctor === "Nothing") {
+                           return $Maybe.Just(A2($Date$Format.format,"%Y",_p5._0._0));
                         } else {
                            return $Maybe.Just(A2($Basics._op["++"],
-                           A2($Date$Format.format,"%Y",_p4._0._0),
-                           A2($Basics._op["++"]," - ",A2($Date$Format.format,"%Y",_p4._1._0))));
+                           A2($Date$Format.format,"%Y",_p5._0._0),
+                           A2($Basics._op["++"]," - ",A2($Date$Format.format,"%Y",_p5._1._0))));
                         }
                   }
             } else {
-               break _v4_3;
+               break _v5_3;
             }
       } while (false);
       return $Maybe.Nothing;
    };
-   var storyImage = F2(function (story,item) {
-      var _p5 = story;
-      if (_p5.ctor === "DiscoverStory") {
+   var storyImage = F3(function (address,story,item) {
+      var _p6 = story;
+      if (_p6.ctor === "DiscoverStory") {
             return A2($Html.div,
             _U.list([$Html$Attributes.$class("image")
                     ,$Html$Attributes.style(_U.list([{ctor: "_Tuple2"
                                                      ,_0: "background-image"
-                                                     ,_1: A2($Basics._op["++"],"url(\"",A2($Basics._op["++"],_p5._0.photo,"\")"))}
+                                                     ,_1: A2($Basics._op["++"],"url(\"",A2($Basics._op["++"],_p6._0.photo,"\")"))}
                                                     ,{ctor: "_Tuple2",_0: "background-repeat",_1: "no-repeat"}
                                                     ,{ctor: "_Tuple2",_0: "background-size",_1: "cover"}]))]),
             _U.list([]));
          } else {
             return A2($Html.div,
+            A2($Basics._op["++"],
             _U.list([$Html$Attributes.$class("image")
                     ,$Html$Attributes.style(_U.list([{ctor: "_Tuple2"
                                                      ,_0: "background-image"
                                                      ,_1: A2($Basics._op["++"],
                                                      "url(\"",
                                                      A2($Basics._op["++"],
-                                                     A2($Maybe.withDefault,photo(story),A2($List$Extra.getAt,_p5._0.photos,item.photoIndex)),
+                                                     A2($Maybe.withDefault,photo(story),A2($List$Extra.getAt,_p6._0.photos,item.photoIndex)),
                                                      "\")"))}
                                                     ,{ctor: "_Tuple2",_0: "background-repeat",_1: "no-repeat"}
-                                                    ,{ctor: "_Tuple2",_0: "background-size",_1: "cover"}]))]),
+                                                    ,{ctor: "_Tuple2",_0: "background-size",_1: "cover"}
+                                                    ,{ctor: "_Tuple2",_0: "position",_1: "relative"}
+                                                    ,{ctor: "_Tuple2"
+                                                     ,_0: "left"
+                                                     ,_1: A2($Basics._op["++"],
+                                                     $Basics.toString(A2($Maybe.withDefault,0,$Swiping.itemPos(item.photoPosition))),
+                                                     "px")}]))]),
+            A3($Swiping.onSwipe,address,$Swiping.itemSwipe(item.photoPosition),$Swiping.swipePhotoAction)),
             _U.list([]));
          }
    });
@@ -13179,42 +13388,43 @@ Elm.Story.make = function (_elm) {
       return A2($Html.div,
       _U.list([$Html$Attributes.$class("story")]),
       function () {
-         var _p6 = story;
-         if (_p6.ctor === "Loaded") {
-               if (_p6._0.ctor === "Succeeded") {
-                     var _p12 = _p6._0._0;
+         var _p7 = story;
+         if (_p7.ctor === "Loaded") {
+               if (_p7._0.ctor === "Succeeded") {
+                     var _p13 = _p7._0._0;
                      return A2($Basics._op["++"],
-                     _U.list([A2(storyImage,_p12,item),A2($Html.h1,_U.list([$Html$Attributes.$class("title")]),_U.list([$Html.text(title(_p12))]))]),
+                     _U.list([A2($Html.div,_U.list([$Html$Attributes.$class("photos")]),_U.list([A3(storyImage,address,_p13,item)]))
+                             ,A2($Html.h1,_U.list([$Html$Attributes.$class("title")]),_U.list([$Html.text(title(_p13))]))]),
                      function () {
-                        var _p7 = _p12;
-                        if (_p7.ctor === "DiscoverStory") {
+                        var _p8 = _p13;
+                        if (_p8.ctor === "DiscoverStory") {
                               return _U.list([$Loading.loading]);
                            } else {
-                              var _p11 = _p7._0;
+                              var _p12 = _p8._0;
                               return _U.list([function () {
-                                                var _p8 = _p11.suburb;
-                                                if (_p8.ctor === "Just") {
-                                                      return A2($Html.h3,_U.list([$Html$Attributes.$class("suburb")]),_U.list([$Html.text(_p8._0)]));
-                                                   } else {
-                                                      return $Html.text("");
-                                                   }
-                                             }()
-                                             ,function () {
-                                                var _p9 = formatDate(_p11.dates);
+                                                var _p9 = _p12.suburb;
                                                 if (_p9.ctor === "Just") {
-                                                      return A2($Html.h3,_U.list([$Html$Attributes.$class("date")]),_U.list([$Html.text(_p9._0)]));
+                                                      return A2($Html.h3,_U.list([$Html$Attributes.$class("suburb")]),_U.list([$Html.text(_p9._0)]));
                                                    } else {
                                                       return $Html.text("");
                                                    }
                                              }()
-                                             ,A2($Html.blockquote,_U.list([]),_U.list([$Html.text(_p11.blurb)]))
-                                             ,$Markdown.toHtml(_p11.story)
                                              ,function () {
-                                                var _p10 = _p11.sites;
-                                                if (_p10.ctor === "[]") {
+                                                var _p10 = formatDate(_p12.dates);
+                                                if (_p10.ctor === "Just") {
+                                                      return A2($Html.h3,_U.list([$Html$Attributes.$class("date")]),_U.list([$Html.text(_p10._0)]));
+                                                   } else {
+                                                      return $Html.text("");
+                                                   }
+                                             }()
+                                             ,A2($Html.blockquote,_U.list([]),_U.list([$Html.text(_p12.blurb)]))
+                                             ,$Markdown.toHtml(_p12.story)
+                                             ,function () {
+                                                var _p11 = _p12.sites;
+                                                if (_p11.ctor === "[]") {
                                                       return $Html.text("");
                                                    } else {
-                                                      return links(_p11);
+                                                      return links(_p12);
                                                    }
                                              }()]);
                            }
@@ -13227,7 +13437,7 @@ Elm.Story.make = function (_elm) {
             }
       }());
    });
-   return _elm.Story.values = {_op: _op,view: view,id: id,title: title,blurb: blurb,photo: photo};
+   return _elm.Story.values = {_op: _op,view: view,id: id,title: title,blurb: blurb,photo: photo,photos: photos};
 };
 Elm.Data = Elm.Data || {};
 Elm.Data.make = function (_elm) {
@@ -13357,184 +13567,6 @@ Elm.Data.make = function (_elm) {
          default: return $Task.succeed($Types.NoAction);}
    };
    return _elm.Data.values = {_op: _op,fetch: fetch,map: map,defaultMap: defaultMap,getItem: getItem};
-};
-Elm.Swiping = Elm.Swiping || {};
-Elm.Swiping.make = function (_elm) {
-   "use strict";
-   _elm.Swiping = _elm.Swiping || {};
-   if (_elm.Swiping.values) return _elm.Swiping.values;
-   var _U = Elm.Native.Utils.make(_elm),
-   $Basics = Elm.Basics.make(_elm),
-   $Debug = Elm.Debug.make(_elm),
-   $Easing = Elm.Easing.make(_elm),
-   $Html = Elm.Html.make(_elm),
-   $Html$Events = Elm.Html.Events.make(_elm),
-   $Json$Decode = Elm.Json.Decode.make(_elm),
-   $List = Elm.List.make(_elm),
-   $Maybe = Elm.Maybe.make(_elm),
-   $Result = Elm.Result.make(_elm),
-   $Signal = Elm.Signal.make(_elm),
-   $Swipe = Elm.Swipe.make(_elm),
-   $Time = Elm.Time.make(_elm),
-   $Types = Elm.Types.make(_elm),
-   $Window = Elm.Window.make(_elm);
-   var _op = {};
-   var changedTouch = A4($Json$Decode.object3,
-   F3(function (id,x,y) {    return {id: id,x: x,y: y};}),
-   A2($Json$Decode._op[":="],"identifier",$Json$Decode.$int),
-   A2($Json$Decode._op[":="],"clientX",$Json$Decode.$float),
-   A2($Json$Decode._op[":="],"clientY",$Json$Decode.$float));
-   var touch = A4($Json$Decode.object3,
-   F3(function (t0,touch,_p0) {
-      var _p1 = _p0;
-      return {id: touch.id,x: touch.x,y: touch.y,t0: $Basics.toFloat(t0),window: {width: $Basics.toFloat(_p1._0),height: $Basics.toFloat(_p1._1)}};
-   }),
-   A2($Json$Decode._op[":="],"timeStamp",$Json$Decode.$int),
-   A2($Json$Decode._op[":="],"changedTouches",A2($Json$Decode.object1,function (x) {    return x;},A2($Json$Decode._op[":="],"0",changedTouch))),
-   A2($Json$Decode._op[":="],
-   "view",
-   A3($Json$Decode.object2,
-   F2(function (w,h) {    return {ctor: "_Tuple2",_0: w,_1: h};}),
-   A2($Json$Decode._op[":="],"innerWidth",$Json$Decode.$int),
-   A2($Json$Decode._op[":="],"innerHeight",$Json$Decode.$int))));
-   var TouchEnd = {ctor: "TouchEnd"};
-   var TouchMove = {ctor: "TouchMove"};
-   var TouchStart = {ctor: "TouchStart"};
-   var Window = F2(function (a,b) {    return {width: a,height: b};});
-   var SwipeUpdate = F5(function (a,b,c,d,e) {    return {id: a,x: b,y: c,t0: d,window: e};});
-   var direction = F2(function (dx,dy) {
-      return _U.cmp($Basics.abs(dx),$Basics.abs(dy)) > 0 ? _U.cmp(dx,0) > 0 ? $Maybe.Just($Swipe.Right) : _U.cmp(dx,
-      0) < 0 ? $Maybe.Just($Swipe.Left) : $Maybe.Nothing : _U.cmp(dy,0) > 0 ? $Maybe.Just($Swipe.Down) : _U.cmp(dy,
-      0) < 0 ? $Maybe.Just($Swipe.Up) : $Maybe.Nothing;
-   });
-   var updateSwipeState = F3(function (swipe,touch,update) {
-      var dir = F2(function (x,y) {    return A2(direction,update.x - x,update.y - y);});
-      var _p2 = touch;
-      switch (_p2.ctor)
-      {case "TouchStart": return $Maybe.Just($Swipe.Start({id: update.id,x: update.x,y: update.y,t0: update.t0}));
-         case "TouchMove": var _p3 = swipe;
-           _v2_2: do {
-              if (_p3.ctor === "Just") {
-                    switch (_p3._0.ctor)
-                    {case "Start": var _p4 = _p3._0._0;
-                         return $Maybe.Just($Swipe.Swiping({x0: _p4.x
-                                                           ,y0: _p4.y
-                                                           ,x1: update.x
-                                                           ,y1: update.y
-                                                           ,id: _p4.id
-                                                           ,t0: _p4.t0
-                                                           ,direction: A2($Maybe.withDefault,$Swipe.Right,A2(dir,_p4.x,_p4.y))}));
-                       case "Swiping": var _p5 = _p3._0._0;
-                         return $Maybe.Just($Swipe.Swiping({x0: _p5.x0
-                                                           ,y0: _p5.y0
-                                                           ,x1: update.x
-                                                           ,y1: update.y
-                                                           ,id: _p5.id
-                                                           ,t0: _p5.t0
-                                                           ,direction: A2($Maybe.withDefault,_p5.direction,A2(dir,_p5.x0,_p5.y0))}));
-                       default: break _v2_2;}
-                 } else {
-                    break _v2_2;
-                 }
-           } while (false);
-           return $Maybe.Just($Swipe.Start({id: update.id,x: update.x,y: update.y,t0: update.t0}));
-         default: var _p6 = swipe;
-           _v3_2: do {
-              if (_p6.ctor === "Just") {
-                    switch (_p6._0.ctor)
-                    {case "Start": var _p7 = _p6._0._0;
-                         return $Maybe.Just($Swipe.End({x0: _p7.x
-                                                       ,y0: _p7.y
-                                                       ,x1: update.x
-                                                       ,y1: update.y
-                                                       ,id: _p7.id
-                                                       ,t0: _p7.t0
-                                                       ,direction: A2($Maybe.withDefault,$Swipe.Right,A2(dir,_p7.x,_p7.y))}));
-                       case "Swiping": var _p8 = _p6._0._0;
-                         return $Maybe.Just($Swipe.End({x0: _p8.x0
-                                                       ,y0: _p8.y0
-                                                       ,x1: update.x
-                                                       ,y1: update.y
-                                                       ,id: _p8.id
-                                                       ,t0: _p8.t0
-                                                       ,direction: A2($Maybe.withDefault,_p8.direction,A2(dir,_p8.x0,_p8.y0))}));
-                       default: break _v3_2;}
-                 } else {
-                    break _v3_2;
-                 }
-           } while (false);
-           return $Maybe.Nothing;}
-   });
-   var onSwipe = F3(function (address,swipeState,swipeAction) {
-      var doAction = F2(function (touchState,touchUpdate) {
-         return A2($Signal.message,address,A2(swipeAction,touchUpdate.window,A3(updateSwipeState,swipeState,touchState,touchUpdate)));
-      });
-      return _U.list([A3($Html$Events.on,"touchstart",touch,doAction(TouchStart))
-                     ,A3($Html$Events.on,"touchmove",touch,doAction(TouchMove))
-                     ,A3($Html$Events.on,"touchend",touch,doAction(TouchEnd))]);
-   });
-   var swipes = A2($Signal.map,$List.head,$Swipe.swipeStates);
-   var swipeAction = F2(function (window,swipe) {
-      var _p9 = swipe;
-      if (_p9.ctor === "Just") {
-            if (_p9._0.ctor === "End") {
-                  var _p10 = _p9._0._0;
-                  return _U.cmp($Basics.abs(_p10.x1 - _p10.x0),
-                  window.width / 3) > 0 ? $Types.MoveItem($Types.Leave(_p10.x1 - _p10.x0)) : $Types.MoveItem($Types.Return(_p10.x1 - _p10.x0));
-               } else {
-                  return $Types.MoveItem($Types.Swiping(_p9._0));
-               }
-         } else {
-            return $Types.NoAction;
-         }
-   });
-   var swipeActions = A4($Signal.map3,
-   F2(function (w,h) {    return swipeAction({width: $Basics.toFloat(w),height: $Basics.toFloat(h)});}),
-   $Window.width,
-   $Window.height,
-   swipes);
-   var itemSwipe = function (pos) {    var _p11 = pos;if (_p11.ctor === "Swiping") {    return $Maybe.Just(_p11._0);} else {    return $Maybe.Nothing;}};
-   var timeSoFar = A3($Signal.foldp,F2(function (x,y) {    return x + y;}),0,$Time.fps(40));
-   var sign = function (number) {    return $Basics.abs(number) / number;};
-   var itemPos = function (pos) {
-      var _p12 = pos;
-      _v6_5: do {
-         switch (_p12.ctor)
-         {case "Swiping": if (_p12._0.ctor === "Swiping") {
-                    var _p13 = _p12._0._0;
-                    return $Maybe.Just(_p13.x1 - _p13.x0);
-                 } else {
-                    break _v6_5;
-                 }
-            case "Leave": return $Maybe.Just(_p12._0);
-            case "Return": return $Maybe.Just(_p12._0);
-            case "Leaving": var _p15 = _p12._1;
-              var _p14 = _p12._0;
-              return $Maybe.Just(A6($Easing.ease,$Easing.easeInCubic,$Easing.$float,_p14,_p14 + 500 * sign(_p14),_p12._2 - _p15,_p12._3 - _p15));
-            case "Returning": var _p16 = _p12._1;
-              return $Maybe.Just(A6($Easing.ease,$Easing.easeInCubic,$Easing.$float,_p12._0,0,_p12._2 - _p16,_p12._3 - _p16));
-            default: break _v6_5;}
-      } while (false);
-      return $Maybe.Nothing;
-   };
-   var animateStep = F2(function (t,state) {
-      var _p17 = state;
-      switch (_p17.ctor)
-      {case "Leave": return A4($Types.Leaving,_p17._0,t,t + 600,t);
-         case "Return": return A4($Types.Returning,_p17._0,t,t + 600,t);
-         case "Leaving": return A4($Types.Leaving,_p17._0,_p17._1,_p17._2,t);
-         case "Returning": return A4($Types.Returning,_p17._0,_p17._1,_p17._2,t);
-         default: return _p17;}
-   });
-   var animate = A2($Signal.map,$Types.AnimateItem,timeSoFar);
-   return _elm.Swiping.values = {_op: _op
-                                ,animate: animate
-                                ,itemSwipe: itemSwipe
-                                ,itemPos: itemPos
-                                ,swipeActions: swipeActions
-                                ,swipeAction: swipeAction
-                                ,onSwipe: onSwipe
-                                ,animateStep: animateStep};
 };
 Elm.Discover = Elm.Discover || {};
 Elm.Discover.make = function (_elm) {
@@ -13857,7 +13889,7 @@ Elm.Main.make = function (_elm) {
            {case "Discover": return _U.update(app,{location: $Types.Discovering});
               case "View": return _U.update(app,{location: A2($Types.Viewing,_p8._0,initialItemView)});
               case "ViewFavourites": return _U.update(app,{location: $Types.ViewingFavourites});
-              case "AnimateItem": return _U.update(app,{discovery: A2(animateItem,app.discovery,_p8._0)});
+              case "Animate": return _U.update(app,{discovery: A2(animateItem,app.discovery,_p8._0)});
               case "MoveItem": return _U.update(app,{discovery: A2(moveItem,app.discovery,_p8._0)});
               case "Favourite": return _U.update(app,{location: $Types.Discovering,discovery: favouriteItem(app.discovery)});
               case "Pass": return _U.update(app,{location: $Types.Discovering,discovery: passItem(app.discovery)});
@@ -13865,31 +13897,40 @@ Elm.Main.make = function (_elm) {
               case "LoadItems": var _p9 = _p8._0;
                 return _U.update(app,{items: A3(addItems,$Story.id,_p9,app.items),discovery: A3(loadItems,app.discovery,_p9,$Story.id)});
               default: return app;}
-         case "Viewing": var _p10 = action;
+         case "Viewing": var _p13 = _p7._1;
+           var _p12 = _p7._0;
+           var _p10 = action;
            switch (_p10.ctor)
            {case "Discover": return _U.update(app,{location: $Types.Discovering});
               case "View": return _U.update(app,{location: A2($Types.Viewing,_p10._0,initialItemView)});
               case "ViewFavourites": return _U.update(app,{location: $Types.ViewingFavourites});
+              case "Animate": return _U.update(app,
+                {location: A2($Types.Viewing,_p12,_U.update(_p13,{photoPosition: A2($Swiping.animateStep,_p10._0,_p13.photoPosition)}))});
+              case "MovePhoto": return _U.update(app,{location: A2($Types.Viewing,_p12,_U.update(_p13,{photoPosition: _p10._0}))});
+              case "PrevPhoto": return _U.update(app,
+                {location: A2($Types.Viewing,_p12,_U.update(_p13,{photoIndex: _p13.photoIndex - 1,photoPosition: $Types.Static}))});
+              case "NextPhoto": return _U.update(app,
+                {location: A2($Types.Viewing,_p12,_U.update(_p13,{photoIndex: _p13.photoIndex + 1,photoPosition: $Types.Static}))});
               case "LoadItem": return _U.update(app,{items: A3(addItem,_p10._0,_p10._1,app.items)});
               case "LoadItems": var _p11 = _p10._0;
                 return _U.update(app,{items: A3(addItems,$Story.id,_p11,app.items),discovery: A3(loadItems,app.discovery,_p11,$Story.id)});
               default: return app;}
-         default: var _p12 = action;
-           switch (_p12.ctor)
+         default: var _p14 = action;
+           switch (_p14.ctor)
            {case "Discover": return _U.update(app,{location: $Types.Discovering});
-              case "View": return _U.update(app,{location: A2($Types.Viewing,_p12._0,initialItemView)});
+              case "View": return _U.update(app,{location: A2($Types.Viewing,_p14._0,initialItemView)});
               case "ViewFavourites": return _U.update(app,{location: $Types.ViewingFavourites});
-              case "LoadItem": return _U.update(app,{items: A3(addItem,_p12._0,_p12._1,app.items)});
-              case "LoadItems": var _p13 = _p12._0;
-                return _U.update(app,{items: A3(addItems,$Story.id,_p13,app.items),discovery: A3(loadItems,app.discovery,_p13,$Story.id)});
+              case "LoadItem": return _U.update(app,{items: A3(addItem,_p14._0,_p14._1,app.items)});
+              case "LoadItems": var _p15 = _p14._0;
+                return _U.update(app,{items: A3(addItems,$Story.id,_p15,app.items),discovery: A3(loadItems,app.discovery,_p15,$Story.id)});
               default: return app;}}
    });
    var navigation = F2(function (location,address) {
       return A2($Html.nav,
       _U.list([$Html$Attributes.$class("navigation")]),
       _U.list([function () {
-                 var _p14 = location;
-                 switch (_p14.ctor)
+                 var _p16 = location;
+                 switch (_p16.ctor)
                  {case "Discovering": return A2($Html.button,
                       _U.list([A2($Html$Events.onClick,address,$Types.ViewFavourites)]),
                       _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-heart fa-2x")]),_U.list([]))]));
@@ -13905,12 +13946,12 @@ Elm.Main.make = function (_elm) {
               _U.list([A2($Html.img,_U.list([$Html$Attributes.src("images/logo.png")]),_U.list([]))]))]));
    });
    var view = F2(function (address,app) {
-      var _p15 = app.location;
-      switch (_p15.ctor)
+      var _p17 = app.location;
+      switch (_p17.ctor)
       {case "Discovering": return A3($Discover.view,address,app,A2(navigation,app.location,address));
          case "Viewing": return A2($Html.div,
            _U.list([$Html$Attributes.$class("app")]),
-           _U.list([A2(navigation,app.location,address),A3($Story.view,address,A2(getStory,app,_p15._0),_p15._1)]));
+           _U.list([A2(navigation,app.location,address),A3($Story.view,address,A2(getStory,app,_p17._0),_p17._1)]));
          default: return A2($Html.div,
            _U.list([$Html$Attributes.$class("app")]),
            _U.list([A2(navigation,app.location,address)
@@ -13925,24 +13966,35 @@ Elm.Main.make = function (_elm) {
    var data = $Signal.mailbox($Types.NoAction);
    var history = $Signal.mailbox($Types.NoAction);
    var effects = F2(function (action,app) {
-      var _p16 = action;
-      switch (_p16.ctor)
-      {case "Back": return A2($Effects.map,function (_p17) {    return $Types.NoAction;},$Effects.task($History.back));
-         case "AnimateItem": var _p18 = app.discovery.itemPosition;
-           if (_p18.ctor === "Leaving") {
-                 var _p19 = _p18._0;
-                 return _U.cmp(_p16._0,_p18._2) > 0 ? $Effects.task($Task.succeed(_U.cmp(_p19,0) < 0 ? $Types.Pass : _U.cmp(_p19,
-                 0) > 0 ? $Types.Favourite : $Types.NoAction)) : $Effects.none;
-              } else {
-                 return $Effects.none;
-              }
+      var _p18 = action;
+      switch (_p18.ctor)
+      {case "Back": return A2($Effects.map,function (_p19) {    return $Types.NoAction;},$Effects.task($History.back));
+         case "Animate": var _p25 = _p18._0;
+           var _p20 = app.location;
+           switch (_p20.ctor)
+           {case "Viewing": var _p21 = _p20._1.photoPosition;
+                if (_p21.ctor === "Leaving") {
+                      var _p22 = _p21._0;
+                      return _U.cmp(_p25,_p21._2) > 0 ? $Effects.task($Task.succeed(_U.cmp(_p22,0) < 0 ? $Types.PrevPhoto : _U.cmp(_p22,
+                      0) > 0 ? $Types.NextPhoto : $Types.NoAction)) : $Effects.none;
+                   } else {
+                      return $Effects.none;
+                   }
+              case "Discovering": var _p23 = app.discovery.itemPosition;
+                if (_p23.ctor === "Leaving") {
+                      var _p24 = _p23._0;
+                      return _U.cmp(_p25,_p23._2) > 0 ? $Effects.task($Task.succeed(_U.cmp(_p24,0) < 0 ? $Types.Pass : _U.cmp(_p24,
+                      0) > 0 ? $Types.Favourite : $Types.NoAction)) : $Effects.none;
+                   } else {
+                      return $Effects.none;
+                   }
+              default: return $Effects.none;}
          default: return $Effects.none;}
    });
-   var animate = $Swiping.animate;
    var app = $StartApp.start({init: {ctor: "_Tuple2",_0: initialApp,_1: $Effects.none}
                              ,view: view
                              ,update: F2(function (action,model) {    return {ctor: "_Tuple2",_0: A2(update,action,model),_1: A2(effects,action,model)};})
-                             ,inputs: _U.list([history.signal,data.signal,animate])});
+                             ,inputs: _U.list([history.signal,data.signal,$Swiping.animate])});
    var tasks = Elm.Native.Task.make(_elm).performSignal("tasks",app.tasks);
    var routeTasks = Elm.Native.Task.make(_elm).performSignal("routeTasks",
    $RouteHash.start({prefix: $RouteHash.defaultPrefix,address: history.address,models: app.model,delta2update: $Route.url,location2action: $Route.action}));
@@ -13952,7 +14004,6 @@ Elm.Main.make = function (_elm) {
    return _elm.Main.values = {_op: _op
                              ,main: main
                              ,app: app
-                             ,animate: animate
                              ,effects: effects
                              ,history: history
                              ,data: data

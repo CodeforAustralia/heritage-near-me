@@ -238,13 +238,19 @@ html, body, body > div {
     color:black;
 }
 
-    .story .image {
-        display: block;
+    .story .photos {
         height: 300px;
         margin: -16px;
-
-        background-position: center;
+        overflow: hidden;
     }
+
+        .story .image {
+            display: block;
+            height: 100%;
+            width: 100%
+
+            background-position: center;
+        }
 
     .story .title {
     }

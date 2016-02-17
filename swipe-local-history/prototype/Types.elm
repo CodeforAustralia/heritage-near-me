@@ -19,10 +19,13 @@ type Location id =
 
 type Action id a =
       Discover
-    | AnimateItem Time
+    | Animate Time
     | MoveItem ItemPosition
     | Favourite
     | Pass
+    | MovePhoto ItemPosition
+    | PrevPhoto
+    | NextPhoto
     | View id
     | ViewFavourites
     | Back

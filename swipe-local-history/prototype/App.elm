@@ -24,27 +24,39 @@ app = StartApp.start
     { init = (initialApp, Effects.none)
     , view = view
     , update = \action model -> (update action model, effects action model)
-    , inputs = [history.signal, data.signal, animate]
+    , inputs = [history.signal, data.signal, Swiping.animate]
     }
-
-animate : Signal (Action StoryId Story)
-animate = Swiping.animate
 
 effects : Action id a -> App id a -> Effects.Effects (Action id a)
 effects action app = case action of
     Back -> Effects.map (\_ -> NoAction) <| Effects.task History.back
-    AnimateItem time -> case app.discovery.itemPosition of
-        Leaving pos start end _ ->
-            if time > end then
-                Effects.task <| Task.succeed
-                <| if pos < 0 then
-                    Pass
-                else if pos > 0 then
-                    Favourite
+    Animate time -> case app.location of
+        Viewing _ view -> case view.photoPosition of
+            Leaving pos start end _ ->
+                if time > end then
+                    Effects.task <| Task.succeed
+                    <| if pos < 0 then
+                        PrevPhoto 
+                    else if pos > 0 then
+                        NextPhoto
+                    else
+                        NoAction
                 else
-                    NoAction
-            else
-                Effects.none
+                    Effects.none
+            _ -> Effects.none
+        Discovering -> case app.discovery.itemPosition of
+            Leaving pos start end _ ->
+                if time > end then
+                    Effects.task <| Task.succeed
+                    <| if pos < 0 then
+                        Pass
+                    else if pos > 0 then
+                        Favourite
+                    else
+                        NoAction
+                else
+                    Effects.none
+            _ -> Effects.none
         _ -> Effects.none
     _ -> Effects.none
 
@@ -102,7 +114,7 @@ update action app = case app.location of
             Discover         -> {app | location = Discovering}
             View story'      -> {app | location = Viewing story' initialItemView}
             ViewFavourites   -> {app | location = ViewingFavourites}
-            AnimateItem time -> {app | discovery = animateItem app.discovery time}
+            Animate time     -> {app | discovery = animateItem app.discovery time}
             MoveItem pos     -> {app | discovery = moveItem app.discovery pos}
             Favourite        -> {app | location = Discovering, discovery = favouriteItem app.discovery}
             Pass             -> {app | location = Discovering, discovery = passItem app.discovery}
@@ -112,12 +124,16 @@ update action app = case app.location of
 
     Viewing story view ->
         case action of
-            Discover         -> {app | location = Discovering}
-            View story'      -> {app | location = Viewing story' initialItemView}
-            ViewFavourites   -> {app | location = ViewingFavourites}
-            LoadItem id item -> {app | items = addItem id item app.items}
-            LoadItems items  -> {app | items = addItems Story.id items app.items, discovery = loadItems app.discovery items Story.id}
-            _                -> app
+            Discover          -> {app | location = Discovering}
+            View story'       -> {app | location = Viewing story' initialItemView}
+            ViewFavourites    -> {app | location = ViewingFavourites}
+            Animate time      -> {app | location = Viewing story {view | photoPosition = Swiping.animateStep time view.photoPosition}}
+            MovePhoto pos     -> {app | location = Viewing story {view | photoPosition = pos}}
+            PrevPhoto         -> {app | location = Viewing story {view | photoIndex = view.photoIndex-1, photoPosition = Static}}
+            NextPhoto         -> {app | location = Viewing story {view | photoIndex = view.photoIndex+1, photoPosition = Static}}
+            LoadItem id item  -> {app | items = addItem id item app.items}
+            LoadItems items   -> {app | items = addItems Story.id items app.items, discovery = loadItems app.discovery items Story.id}
+            _                 -> app
 
     ViewingFavourites ->
         case action of

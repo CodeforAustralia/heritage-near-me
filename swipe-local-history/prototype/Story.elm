@@ -1,4 +1,4 @@
-module Story (view, id, title, blurb, photo) where
+module Story (view, id, title, blurb, photo, photos) where
 
 import Date exposing (Date)
 import Date.Format as Date
@@ -11,12 +11,13 @@ import Markdown
 
 import Types exposing (..)
 import Loading exposing (loading)
+import Swiping exposing (onSwipe, swipePhotoAction, itemSwipe, itemPos)
 
 view : Signal.Address (Action StoryId Story) -> RemoteData Story -> ItemView -> Html
 view address story item = div [class "story"]
     <| case story of
         Loaded (Succeeded story) ->
-            [ storyImage story item
+            [ div [class "photos"] [storyImage address story item]
             , h1 [class "title"] [text <| title story]
             ] ++ case story of
                 DiscoverStory story -> [loading]
@@ -56,7 +57,7 @@ link name url = a [href url]
         ]
     ]
 
-storyImage story item = case story of
+storyImage address story item = case story of
         DiscoverStory story -> div
             [ class "image"
             , style [ ("background-image", "url(\"" ++ story.photo ++ "\")")
@@ -64,11 +65,15 @@ storyImage story item = case story of
                     , ("background-size", "cover")]
             ] []
         FullStory fullStory -> div
-            [ class "image"
+            ([ class "image"
             , style [ ("background-image", "url(\"" ++ (Maybe.withDefault (photo story) <| List.getAt fullStory.photos item.photoIndex) ++ "\")")
                     , ("background-repeat", "no-repeat")
-                    , ("background-size", "cover")]
-            ] []
+                    , ("background-size", "cover")
+                    , ("position", "relative")
+                    , ("left", toString (Maybe.withDefault 0 <| itemPos item.photoPosition) ++ "px")
+                    ]
+            ] ++ onSwipe address (itemSwipe item.photoPosition) swipePhotoAction)
+            []
 
 formatDate : Dates -> Maybe String
 formatDate dates = case (dates.start, dates.end) of
@@ -97,3 +102,8 @@ photo : Story -> String
 photo story = case story of
     DiscoverStory story -> story.photo
     FullStory story -> Maybe.withDefault "" <| List.head story.photos
+
+photos : Story -> List String
+photos story = case story of
+    DiscoverStory story -> [story.photo]
+    FullStory story -> story.photos

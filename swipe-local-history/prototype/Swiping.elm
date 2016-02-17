@@ -1,4 +1,4 @@
-module Swiping (animate, itemSwipe, itemPos, swipeActions, swipeAction, onSwipe, animateStep) where
+module Swiping (animate, itemSwipe, itemPos, swipeActions, swipeAction, swipePhotoAction, onSwipe, animateStep) where
 
 import Json.Decode as Json exposing ((:=))
 import Html exposing (Attribute)
@@ -11,7 +11,7 @@ import Window
 import Types exposing (..)
 
 animate : Signal (Action id a)
-animate = Signal.map AnimateItem timeSoFar
+animate = Signal.map Animate timeSoFar
 
 animateStep : Time -> ItemPosition -> ItemPosition
 animateStep t state = case state of
@@ -59,6 +59,16 @@ swipeAction window swipe = case swipe of
         else
             MoveItem <| Return <| state.x1 - state.x0
     Just swipe -> MoveItem <| Types.Swiping swipe
+    Nothing -> NoAction
+   
+swipePhotoAction : Window -> Maybe SwipeState -> Action id a
+swipePhotoAction window swipe = case swipe of
+    Just (End state) ->
+        if abs (state.x1 - state.x0) > window.width/3 then
+            MovePhoto <| Leave <| state.x1 - state.x0
+        else
+            MovePhoto <| Return <| state.x1 - state.x0
+    Just swipe -> MovePhoto <| Types.Swiping swipe
     Nothing -> NoAction
     
 swipes : Signal (Maybe SwipeState)
