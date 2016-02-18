@@ -17,14 +17,17 @@ view : Signal.Address (Action StoryId Story) -> RemoteData Story -> ItemView -> 
 view address story item = div [class "story"]
     <| case story of
         Loaded (Succeeded story) ->
-            [ div
-                ([class "photo-slide"] ++ onSwipe address (itemSwipe item.photoPosition) swipePhotoAction)
-                [ div [class "photos"]
-                    <| List.map (storyImage story item.photoPosition) [item.photoIndex-1, item.photoIndex, item.photoIndex+1]
-                , case photos story of
-                    [] -> text ""
-                    photos -> photoIndicators story item.photoIndex
-                ]
+            [ if (List.length <| photos story) > 1 then
+                    div
+                        ([class "photo-slide"] ++ onSwipe address (itemSwipe item.photoPosition) swipePhotoAction)
+                        [ div [class "photos"]
+                            <| List.map (storyImage story item.photoPosition) [item.photoIndex-1, item.photoIndex, item.photoIndex+1]
+                        , photoIndicators story item.photoIndex
+                        ]
+                else
+                    div
+                        [class "photos"]
+                        [storyImage story item.photoPosition item.photoIndex] 
             , h1 [class "title"] [text <| title story]
             ] ++ case story of
                 DiscoverStory story -> [loading]
