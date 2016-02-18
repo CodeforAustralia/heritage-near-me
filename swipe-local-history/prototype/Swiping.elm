@@ -1,4 +1,4 @@
-module Swiping (animate, itemSwipe, itemPos, swipeActions, swipeAction, onSwipe, animateStep) where
+module Swiping (animate, itemSwipe, itemPos, swipeActions, swipeAction, swipePhotoAction, onSwipe, animateStep) where
 
 import Json.Decode as Json exposing ((:=))
 import Html exposing (Attribute)
@@ -11,16 +11,16 @@ import Window
 import Types exposing (..)
 
 animate : Signal (Action id a)
-animate = Signal.map AnimateItem timeSoFar
+animate = Signal.map2 Animate timeSoFar windowSize
 
-animateStep : Time -> ItemPosition -> ItemPosition
-animateStep t state = case state of
-    Leave pos -> Leaving pos t (t+600) t
-    Return pos -> Returning pos t (t+600) t
-    Leaving pos start end _ ->
-        Leaving pos start end t
-    Returning pos start end _ ->
-        Returning pos start end t
+animateStep : Time -> Window -> ItemPosition -> ItemPosition
+animateStep t window state = case state of
+    Leave pos -> Leaving window pos t (t+600) t
+    Return pos -> Returning window pos t (t+600) t
+    Leaving w pos start end _ ->
+        Leaving window pos start end t
+    Returning w pos start end _ ->
+        Returning window pos start end t
     x -> x
 
 sign : Float -> Float
@@ -28,6 +28,10 @@ sign number = abs number / number
 
 timeSoFar : Signal Time
 timeSoFar = Signal.foldp (+) 0 <| Time.fps 40
+
+windowSize : Signal Window
+windowSize = Signal.map2 (\w h -> {width = toFloat w, height = toFloat h})
+    Window.width Window.height
 
 itemSwipe : ItemPosition -> Maybe SwipeState
 itemSwipe pos = case pos of
@@ -39,10 +43,10 @@ itemPos pos = case pos of
     Types.Swiping (Swipe.Swiping swipe) -> Just <| swipe.x1 - swipe.x0
     Leave pos -> Just pos
     Return pos -> Just pos
-    Leaving pos start end t ->
-        Just <| ease easeInCubic float pos (pos + (500*sign pos)) (end-start) (t-start)
-    Returning pos start end t ->
-        Just <| ease easeInCubic float pos 0 (end-start) (t-start)
+    Leaving window pos start end t ->
+        Just <| ease easeOutCubic float pos (window.width*sign pos) (end-start) (t-start)
+    Returning window pos start end t ->
+        Just <| ease easeOutCubic float pos 0 (end-start) (t-start)
     _ -> Nothing
 
 swipeActions : Signal (Action id a)
@@ -59,6 +63,16 @@ swipeAction window swipe = case swipe of
         else
             MoveItem <| Return <| state.x1 - state.x0
     Just swipe -> MoveItem <| Types.Swiping swipe
+    Nothing -> NoAction
+   
+swipePhotoAction : Window -> Maybe SwipeState -> Action id a
+swipePhotoAction window swipe = case swipe of
+    Just (End state) ->
+        if abs (state.x1 - state.x0) > window.width/3 then
+            MovePhoto <| Leave <| state.x1 - state.x0
+        else
+            MovePhoto <| Return <| state.x1 - state.x0
+    Just swipe -> MovePhoto <| Types.Swiping swipe
     Nothing -> NoAction
     
 swipes : Signal (Maybe SwipeState)
@@ -157,11 +171,6 @@ type alias SwipeUpdate =
     , t0 : Float
     , window : Window
     }
-
-type alias Window =
-     { width : Float
-     , height : Float
-     }
 
 type TouchState = TouchStart | TouchMove | TouchEnd
 

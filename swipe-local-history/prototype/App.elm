@@ -24,27 +24,39 @@ app = StartApp.start
     { init = (initialApp, Effects.none)
     , view = view
     , update = \action model -> (update action model, effects action model)
-    , inputs = [history.signal, data.signal, animate]
+    , inputs = [history.signal, data.signal, Swiping.animate]
     }
-
-animate : Signal (Action StoryId Story)
-animate = Swiping.animate
 
 effects : Action id a -> App id a -> Effects.Effects (Action id a)
 effects action app = case action of
     Back -> Effects.map (\_ -> NoAction) <| Effects.task History.back
-    AnimateItem time -> case app.discovery.itemPosition of
-        Leaving pos start end _ ->
-            if time > end then
-                Effects.task <| Task.succeed
-                <| if pos < 0 then
-                    Pass
-                else if pos > 0 then
-                    Favourite
+    Animate time window -> case app.location of
+        Viewing _ view -> case view.photoPosition of
+            Leaving window pos start end _ ->
+                if time > end then
+                    Effects.task <| Task.succeed
+                    <| if pos < 0 then
+                        NextPhoto
+                    else if pos > 0 then
+                        PrevPhoto 
+                    else
+                        NoAction
                 else
-                    NoAction
-            else
-                Effects.none
+                    Effects.none
+            _ -> Effects.none
+        Discovering -> case app.discovery.itemPosition of
+            Leaving window pos start end _ ->
+                if time > end then
+                    Effects.task <| Task.succeed
+                    <| if pos < 0 then
+                        Pass
+                    else if pos > 0 then
+                        Favourite
+                    else
+                        NoAction
+                else
+                    Effects.none
+            _ -> Effects.none
         _ -> Effects.none
     _ -> Effects.none
 
@@ -74,9 +86,9 @@ view : Signal.Address (Action StoryId Story) -> App StoryId Story -> Html
 view address app = case app.location of
     Discovering -> Discover.view address app
         <| navigation app.location address
-    Viewing storyId   -> div [class "app"]
+    Viewing storyId itemView -> div [class "app"]
         [ navigation app.location address
-        , Story.view address <| getStory app storyId
+        , Story.view address (getStory app storyId) itemView
         ]
     ViewingFavourites -> div [class "app"]
         [ navigation app.location address
@@ -88,7 +100,7 @@ navigation location address = nav [class "navigation"]
     [ case location of
         Discovering ->
             button [onClick address ViewFavourites] [i [class "fa fa-heart fa-2x"] []]
-        Viewing _ ->
+        Viewing _ _ ->
             button [onClick address Back] [i [class "fa fa-angle-left fa-3x"] []]
         ViewingFavourites ->
             button [onClick address Discover] [i [class "fa fa-map fa-2x"] []]
@@ -99,30 +111,34 @@ update : Action StoryId Story -> App StoryId Story -> App StoryId Story
 update action app = case app.location of
     Discovering ->
         case action of
-            Discover         -> {app | location = Discovering}
-            View story'      -> {app | location = Viewing story'}
-            ViewFavourites   -> {app | location = ViewingFavourites}
-            AnimateItem time -> {app | discovery = animateItem app.discovery time}
-            MoveItem pos     -> {app | discovery = moveItem app.discovery pos}
-            Favourite        -> {app | location = Discovering, discovery = favouriteItem app.discovery}
-            Pass             -> {app | location = Discovering, discovery = passItem app.discovery}
-            LoadItem id item -> {app | items = addItem id item app.items}
-            LoadItems items  -> {app | items = addItems Story.id items app.items, discovery = loadItems app.discovery items Story.id}
-            _                -> app
+            Discover            -> {app | location = Discovering}
+            View story'         -> {app | location = Viewing story' initialItemView}
+            ViewFavourites      -> {app | location = ViewingFavourites}
+            Animate time window -> {app | discovery = animateItem app.discovery time window}
+            MoveItem pos        -> {app | discovery = moveItem app.discovery pos}
+            Favourite           -> {app | location = Discovering, discovery = favouriteItem app.discovery}
+            Pass                -> {app | location = Discovering, discovery = passItem app.discovery}
+            LoadItem id item    -> {app | items = addItem id item app.items}
+            LoadItems items     -> {app | items = addItems Story.id items app.items, discovery = loadItems app.discovery items Story.id}
+            _                   -> app
 
-    Viewing story ->
+    Viewing story view ->
         case action of
-            Discover         -> {app | location = Discovering}
-            View story'      -> {app | location = Viewing story'}
-            ViewFavourites   -> {app | location = ViewingFavourites}
-            LoadItem id item -> {app | items = addItem id item app.items}
-            LoadItems items  -> {app | items = addItems Story.id items app.items, discovery = loadItems app.discovery items Story.id}
-            _                -> app
+            Discover            -> {app | location = Discovering}
+            View story'         -> {app | location = Viewing story' initialItemView}
+            ViewFavourites      -> {app | location = ViewingFavourites}
+            Animate time window -> {app | location = Viewing story {view | photoPosition = Swiping.animateStep time window view.photoPosition}}
+            MovePhoto pos       -> {app | location = Viewing story {view | photoPosition = pos}}
+            PrevPhoto           -> {app | location = Viewing story {view | photoIndex = view.photoIndex-1, photoPosition = Static}}
+            NextPhoto           -> {app | location = Viewing story {view | photoIndex = view.photoIndex+1, photoPosition = Static}}
+            LoadItem id item    -> {app | items = addItem id item app.items}
+            LoadItems items     -> {app | items = addItems Story.id items app.items, discovery = loadItems app.discovery items Story.id}
+            _                   -> app
 
     ViewingFavourites ->
         case action of
             Discover         -> {app | location = Discovering}
-            View story'      -> {app | location = Viewing story'}
+            View story'      -> {app | location = Viewing story' initialItemView}
             ViewFavourites   -> {app | location = ViewingFavourites}
             LoadItem id item -> {app | items = addItem id item app.items}
             LoadItems items  -> {app | items = addItems Story.id items app.items, discovery = loadItems app.discovery items Story.id}
@@ -150,8 +166,8 @@ passItem app =
     , itemPosition = Static
     }
 
-animateItem : Discovery a -> Time -> Discovery a
-animateItem discovery time = {discovery | itemPosition = Swiping.animateStep time discovery.itemPosition}
+animateItem : Discovery a -> Time -> Window -> Discovery a
+animateItem discovery time window = {discovery | itemPosition = Swiping.animateStep time window discovery.itemPosition}
 
 moveItem : Discovery a -> ItemPosition -> Discovery a
 moveItem discovery pos = {discovery | itemPosition = pos}
@@ -186,6 +202,9 @@ getStory app = Data.getItem app
 
 initialApp : App StoryId Story
 initialApp = {location = Discovering, discovery = initialDiscovery, items = Dict.empty}
+
+initialItemView : ItemView
+initialItemView = {photoIndex = 0, photoPosition = Static}
 
 initialDiscovery =
     { item = Loading

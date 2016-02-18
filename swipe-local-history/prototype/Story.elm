@@ -1,7 +1,8 @@
-module Story (view, id, title, blurb, photo) where
+module Story (view, id, title, blurb, photo, photos) where
 
 import Date exposing (Date)
 import Date.Format as Date
+import List.Extra as List
 
 import Html exposing (Html, div, h1, h2, h3, h4, blockquote, img, ul, li, span, a, i, text)
 import Html.Events exposing (onClick)
@@ -10,12 +11,23 @@ import Markdown
 
 import Types exposing (..)
 import Loading exposing (loading)
+import Swiping exposing (onSwipe, swipePhotoAction, itemSwipe, itemPos)
 
-view : Signal.Address (Action StoryId Story) -> RemoteData Story -> Html
-view address story = div [class "story"]
+view : Signal.Address (Action StoryId Story) -> RemoteData Story -> ItemView -> Html
+view address story item = div [class "story"]
     <| case story of
         Loaded (Succeeded story) ->
-            [ storyImage story
+            [ if (List.length <| photos story) > 1 then
+                    div
+                        ([class "photo-slide"] ++ onSwipe address (itemSwipe item.photoPosition) swipePhotoAction)
+                        [ div [class "photos"]
+                            <| List.map (storyImage story item.photoPosition) [item.photoIndex-1, item.photoIndex, item.photoIndex+1]
+                        , photoIndicators story item.photoIndex
+                        ]
+                else
+                    div
+                        [class "photos"]
+                        [storyImage story item.photoPosition item.photoIndex] 
             , h1 [class "title"] [text <| title story]
             ] ++ case story of
                 DiscoverStory story -> [loading]
@@ -37,6 +49,15 @@ view address story = div [class "story"]
         Loading ->
             [ loading ]
 
+photoIndicators story index = div
+    [class "photo-indicators"]
+    <| List.indexedMap (\index' _ ->
+        if index' == storyIndex index story then
+            i [class "fa fa-circle"] []
+        else
+            i [class "fa fa-circle-o"] []
+    ) <| photos story
+
 links story = let
         heritageUrl = "http://www.environment.nsw.gov.au/heritageapp/visit/ViewAttractionDetail.aspx?ID=" 
     in
@@ -55,12 +76,22 @@ link name url = a [href url]
         ]
     ]
 
-storyImage story = div
+photoPosition pos =
+    [ ("position", "relative")
+    , ("left", toString (Maybe.withDefault 0 <| itemPos pos) ++ "px")
+    ]
+
+storyImage story pos index = div
     [ class "image"
-    , style [ ("background-image", "url(\"" ++ photo story ++ "\")")
-            , ("background-repeat", "no-repeat")
-            , ("background-size", "cover")]
+    , style <|
+        [ ("background-image", "url(\"" ++ (Maybe.withDefault (photo story) <| List.getAt (photos story) <| storyIndex index story) ++ "\")")
+        , ("background-repeat", "no-repeat")
+        , ("background-size", "cover")
+        ] ++ photoPosition pos
     ] []
+
+storyIndex : Int -> Story -> Int
+storyIndex index story = index % (List.length <| photos story)
 
 formatDate : Dates -> Maybe String
 formatDate dates = case (dates.start, dates.end) of
@@ -89,3 +120,8 @@ photo : Story -> String
 photo story = case story of
     DiscoverStory story -> story.photo
     FullStory story -> Maybe.withDefault "" <| List.head story.photos
+
+photos : Story -> List String
+photos story = case story of
+    DiscoverStory story -> [story.photo]
+    FullStory story -> story.photos
