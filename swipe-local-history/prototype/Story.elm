@@ -67,11 +67,14 @@ photoPosition pos =
 storyImage story pos index = div
     [ class "image"
     , style <|
-        [ ("background-image", "url(\"" ++ (Maybe.withDefault (photo story) <| List.getAt (photos story) index) ++ "\")")
+        [ ("background-image", "url(\"" ++ (Maybe.withDefault (photo story) <| List.getAt (photos story) <| storyIndex index story) ++ "\")")
         , ("background-repeat", "no-repeat")
         , ("background-size", "cover")
         ] ++ photoPosition pos
     ] []
+
+storyIndex : Int -> Story -> Int
+storyIndex index story = index % (List.length <| photos story)
 
 formatDate : Dates -> Maybe String
 formatDate dates = case (dates.start, dates.end) of

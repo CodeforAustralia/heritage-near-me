@@ -13330,6 +13330,7 @@ Elm.Story.make = function (_elm) {
       } while (false);
       return $Maybe.Nothing;
    };
+   var storyIndex = F2(function (index,story) {    return A2($Basics._op["%"],index,$List.length(photos(story)));});
    var photoPosition = function (pos) {
       return _U.list([{ctor: "_Tuple2",_0: "position",_1: "relative"}
                      ,{ctor: "_Tuple2",_0: "left",_1: A2($Basics._op["++"],$Basics.toString(A2($Maybe.withDefault,0,$Swiping.itemPos(pos))),"px")}]);
@@ -13342,7 +13343,7 @@ Elm.Story.make = function (_elm) {
                        ,_0: "background-image"
                        ,_1: A2($Basics._op["++"],
                        "url(\"",
-                       A2($Basics._op["++"],A2($Maybe.withDefault,photo(story),A2($List$Extra.getAt,photos(story),index)),"\")"))}
+                       A2($Basics._op["++"],A2($Maybe.withDefault,photo(story),A2($List$Extra.getAt,photos(story),A2(storyIndex,index,story))),"\")"))}
                       ,{ctor: "_Tuple2",_0: "background-repeat",_1: "no-repeat"}
                       ,{ctor: "_Tuple2",_0: "background-size",_1: "cover"}]),
               photoPosition(pos)))]),
