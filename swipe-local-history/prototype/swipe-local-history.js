@@ -13371,51 +13371,72 @@ Elm.Story.make = function (_elm) {
               },
               story.sites))]));
    };
+   var photoIndicators = F2(function (story,index) {
+      return A2($Html.div,
+      _U.list([$Html$Attributes.$class("photo-indicators")]),
+      A2($List.indexedMap,
+      F2(function (index$,_p6) {
+         return _U.eq(index$,A2(storyIndex,index,story)) ? A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-circle")]),_U.list([])) : A2($Html.i,
+         _U.list([$Html$Attributes.$class("fa fa-circle-o")]),
+         _U.list([]));
+      }),
+      photos(story)));
+   });
    var view = F3(function (address,story,item) {
       return A2($Html.div,
       _U.list([$Html$Attributes.$class("story")]),
       function () {
-         var _p6 = story;
-         if (_p6.ctor === "Loaded") {
-               if (_p6._0.ctor === "Succeeded") {
-                     var _p12 = _p6._0._0;
+         var _p7 = story;
+         if (_p7.ctor === "Loaded") {
+               if (_p7._0.ctor === "Succeeded") {
+                     var _p14 = _p7._0._0;
                      return A2($Basics._op["++"],
                      _U.list([A2($Html.div,
                              A2($Basics._op["++"],
-                             _U.list([$Html$Attributes.$class("photos")]),
+                             _U.list([$Html$Attributes.$class("photo-slide")]),
                              A3($Swiping.onSwipe,address,$Swiping.itemSwipe(item.photoPosition),$Swiping.swipePhotoAction)),
-                             A2($List.map,A2(storyImage,_p12,item.photoPosition),_U.list([item.photoIndex - 1,item.photoIndex,item.photoIndex + 1])))
-                             ,A2($Html.h1,_U.list([$Html$Attributes.$class("title")]),_U.list([$Html.text(title(_p12))]))]),
+                             _U.list([A2($Html.div,
+                                     _U.list([$Html$Attributes.$class("photos")]),
+                                     A2($List.map,A2(storyImage,_p14,item.photoPosition),_U.list([item.photoIndex - 1,item.photoIndex,item.photoIndex + 1])))
+                                     ,function () {
+                                        var _p8 = photos(_p14);
+                                        if (_p8.ctor === "[]") {
+                                              return $Html.text("");
+                                           } else {
+                                              return A2(photoIndicators,_p14,item.photoIndex);
+                                           }
+                                     }()]))
+                             ,A2($Html.h1,_U.list([$Html$Attributes.$class("title")]),_U.list([$Html.text(title(_p14))]))]),
                      function () {
-                        var _p7 = _p12;
-                        if (_p7.ctor === "DiscoverStory") {
+                        var _p9 = _p14;
+                        if (_p9.ctor === "DiscoverStory") {
                               return _U.list([$Loading.loading]);
                            } else {
-                              var _p11 = _p7._0;
+                              var _p13 = _p9._0;
                               return _U.list([function () {
-                                                var _p8 = _p11.suburb;
-                                                if (_p8.ctor === "Just") {
-                                                      return A2($Html.h3,_U.list([$Html$Attributes.$class("suburb")]),_U.list([$Html.text(_p8._0)]));
+                                                var _p10 = _p13.suburb;
+                                                if (_p10.ctor === "Just") {
+                                                      return A2($Html.h3,_U.list([$Html$Attributes.$class("suburb")]),_U.list([$Html.text(_p10._0)]));
                                                    } else {
                                                       return $Html.text("");
                                                    }
                                              }()
                                              ,function () {
-                                                var _p9 = formatDate(_p11.dates);
-                                                if (_p9.ctor === "Just") {
-                                                      return A2($Html.h3,_U.list([$Html$Attributes.$class("date")]),_U.list([$Html.text(_p9._0)]));
+                                                var _p11 = formatDate(_p13.dates);
+                                                if (_p11.ctor === "Just") {
+                                                      return A2($Html.h3,_U.list([$Html$Attributes.$class("date")]),_U.list([$Html.text(_p11._0)]));
                                                    } else {
                                                       return $Html.text("");
                                                    }
                                              }()
-                                             ,A2($Html.blockquote,_U.list([]),_U.list([$Html.text(_p11.blurb)]))
-                                             ,$Markdown.toHtml(_p11.story)
+                                             ,A2($Html.blockquote,_U.list([]),_U.list([$Html.text(_p13.blurb)]))
+                                             ,$Markdown.toHtml(_p13.story)
                                              ,function () {
-                                                var _p10 = _p11.sites;
-                                                if (_p10.ctor === "[]") {
+                                                var _p12 = _p13.sites;
+                                                if (_p12.ctor === "[]") {
                                                       return $Html.text("");
                                                    } else {
-                                                      return links(_p11);
+                                                      return links(_p13);
                                                    }
                                              }()]);
                            }

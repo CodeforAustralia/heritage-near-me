@@ -254,6 +254,19 @@ html, body, body > div {
             background-position: center;
         }
 
+        .story .photo-indicators {
+            position: relative;
+            top: -10px;
+            z-index: 1;
+
+            text-align: center;
+            color: white;
+        }
+
+            .story .photo-indicators i {
+                margin: 3px;
+            }
+
     .story .title {
     }
 

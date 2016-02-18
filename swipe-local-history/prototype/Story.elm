@@ -18,8 +18,13 @@ view address story item = div [class "story"]
     <| case story of
         Loaded (Succeeded story) ->
             [ div
-                ([class "photos"] ++ onSwipe address (itemSwipe item.photoPosition) swipePhotoAction)
-                <| List.map (storyImage story item.photoPosition) [item.photoIndex-1, item.photoIndex, item.photoIndex+1]
+                ([class "photo-slide"] ++ onSwipe address (itemSwipe item.photoPosition) swipePhotoAction)
+                [ div [class "photos"]
+                    <| List.map (storyImage story item.photoPosition) [item.photoIndex-1, item.photoIndex, item.photoIndex+1]
+                , case photos story of
+                    [] -> text ""
+                    photos -> photoIndicators story item.photoIndex
+                ]
             , h1 [class "title"] [text <| title story]
             ] ++ case story of
                 DiscoverStory story -> [loading]
@@ -40,6 +45,15 @@ view address story item = div [class "story"]
             [ text "Something went wrong"]
         Loading ->
             [ loading ]
+
+photoIndicators story index = div
+    [class "photo-indicators"]
+    <| List.indexedMap (\index' _ ->
+        if index' == storyIndex index story then
+            i [class "fa fa-circle"] []
+        else
+            i [class "fa fa-circle-o"] []
+    ) <| photos story
 
 links story = let
         heritageUrl = "http://www.environment.nsw.gov.au/heritageapp/visit/ViewAttractionDetail.aspx?ID=" 
