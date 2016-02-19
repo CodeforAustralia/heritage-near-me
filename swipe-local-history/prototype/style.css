@@ -346,6 +346,9 @@ html, body, body > div {
     text-align: center;
 }
 
+.image {
+	background-color: #eee;
+}
 
 /* General contents */
 
