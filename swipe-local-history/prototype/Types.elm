@@ -26,6 +26,7 @@ type Action id a =
     | MovePhoto ItemPosition
     | PrevPhoto
     | NextPhoto
+    | JumpPhoto Int
     | View id
     | ViewFavourites
     | Back

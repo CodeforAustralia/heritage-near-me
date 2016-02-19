@@ -13008,6 +13008,7 @@ Elm.Types.make = function (_elm) {
    var Back = {ctor: "Back"};
    var ViewFavourites = {ctor: "ViewFavourites"};
    var View = function (a) {    return {ctor: "View",_0: a};};
+   var JumpPhoto = function (a) {    return {ctor: "JumpPhoto",_0: a};};
    var NextPhoto = {ctor: "NextPhoto"};
    var PrevPhoto = {ctor: "PrevPhoto"};
    var MovePhoto = function (a) {    return {ctor: "MovePhoto",_0: a};};
@@ -13042,6 +13043,7 @@ Elm.Types.make = function (_elm) {
                               ,MovePhoto: MovePhoto
                               ,PrevPhoto: PrevPhoto
                               ,NextPhoto: NextPhoto
+                              ,JumpPhoto: JumpPhoto
                               ,View: View
                               ,ViewFavourites: ViewFavourites
                               ,Back: Back
@@ -13283,6 +13285,7 @@ Elm.Story.make = function (_elm) {
    $Debug = Elm.Debug.make(_elm),
    $Html = Elm.Html.make(_elm),
    $Html$Attributes = Elm.Html.Attributes.make(_elm),
+   $Html$Events = Elm.Html.Events.make(_elm),
    $List = Elm.List.make(_elm),
    $List$Extra = Elm.List.Extra.make(_elm),
    $Loading = Elm.Loading.make(_elm),
@@ -13371,13 +13374,13 @@ Elm.Story.make = function (_elm) {
               },
               story.sites))]));
    };
-   var photoIndicators = F2(function (story,index) {
+   var photoIndicators = F3(function (address,story,index) {
       return A2($Html.div,
       _U.list([$Html$Attributes.$class("photo-indicators")]),
       A2($List.indexedMap,
       F2(function (index$,_p6) {
          return _U.eq(index$,A2(storyIndex,index,story)) ? A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-circle")]),_U.list([])) : A2($Html.i,
-         _U.list([$Html$Attributes.$class("fa fa-circle-o")]),
+         _U.list([$Html$Attributes.$class("fa fa-circle-o"),A2($Html$Events.onClick,address,$Types.JumpPhoto(index$))]),
          _U.list([]));
       }),
       photos(story)));
@@ -13398,7 +13401,7 @@ Elm.Story.make = function (_elm) {
                              _U.list([A2($Html.div,
                                      _U.list([$Html$Attributes.$class("photos")]),
                                      A2($List.map,A2(storyImage,_p13,item.photoPosition),_U.list([item.photoIndex - 1,item.photoIndex,item.photoIndex + 1])))
-                                     ,A2(photoIndicators,_p13,item.photoIndex)])) : A2($Html.div,
+                                     ,A3(photoIndicators,address,_p13,item.photoIndex)])) : A2($Html.div,
                              _U.list([$Html$Attributes.$class("photos")]),
                              _U.list([A3(storyImage,_p13,item.photoPosition,item.photoIndex)]))
                              ,A2($Html.h1,_U.list([$Html$Attributes.$class("title")]),_U.list([$Html.text(title(_p13))]))]),
@@ -13920,6 +13923,7 @@ Elm.Main.make = function (_elm) {
                 {location: A2($Types.Viewing,_p12,_U.update(_p13,{photoIndex: _p13.photoIndex - 1,photoPosition: $Types.Static}))});
               case "NextPhoto": return _U.update(app,
                 {location: A2($Types.Viewing,_p12,_U.update(_p13,{photoIndex: _p13.photoIndex + 1,photoPosition: $Types.Static}))});
+              case "JumpPhoto": return _U.update(app,{location: A2($Types.Viewing,_p12,_U.update(_p13,{photoIndex: _p10._0,photoPosition: $Types.Static}))});
               case "LoadItem": return _U.update(app,{items: A3(addItem,_p10._0,_p10._1,app.items)});
               case "LoadItems": var _p11 = _p10._0;
                 return _U.update(app,{items: A3(addItems,$Story.id,_p11,app.items),discovery: A3(loadItems,app.discovery,_p11,$Story.id)});

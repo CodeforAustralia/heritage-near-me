@@ -22,7 +22,7 @@ view address story item = div [class "story"]
                         ([class "photo-slide"] ++ onSwipe address (itemSwipe item.photoPosition) swipePhotoAction)
                         [ div [class "photos"]
                             <| List.map (storyImage story item.photoPosition) [item.photoIndex-1, item.photoIndex, item.photoIndex+1]
-                        , photoIndicators story item.photoIndex
+                        , photoIndicators address story item.photoIndex
                         ]
                 else
                     div
@@ -49,13 +49,13 @@ view address story item = div [class "story"]
         Loading ->
             [ loading ]
 
-photoIndicators story index = div
+photoIndicators address story index = div
     [class "photo-indicators"]
     <| List.indexedMap (\index' _ ->
         if index' == storyIndex index story then
             i [class "fa fa-circle"] []
         else
-            i [class "fa fa-circle-o"] []
+            i [class "fa fa-circle-o", onClick address <| JumpPhoto index'] []
     ) <| photos story
 
 links story = let

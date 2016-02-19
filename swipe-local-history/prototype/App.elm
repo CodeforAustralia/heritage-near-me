@@ -131,6 +131,7 @@ update action app = case app.location of
             MovePhoto pos       -> {app | location = Viewing story {view | photoPosition = pos}}
             PrevPhoto           -> {app | location = Viewing story {view | photoIndex = view.photoIndex-1, photoPosition = Static}}
             NextPhoto           -> {app | location = Viewing story {view | photoIndex = view.photoIndex+1, photoPosition = Static}}
+            JumpPhoto index     -> {app | location = Viewing story {view | photoIndex = index, photoPosition = Static}}
             LoadItem id item    -> {app | items = addItem id item app.items}
             LoadItems items     -> {app | items = addItems Story.id items app.items, discovery = loadItems app.discovery items Story.id}
             _                   -> app

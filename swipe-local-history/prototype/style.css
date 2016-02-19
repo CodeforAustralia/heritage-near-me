@@ -137,7 +137,7 @@ html, body, body > div {
                 }
 
             .discovery-story-details {
-				padding: 8px;				
+                padding: 8px;                
 
                 text-align: center;
 
@@ -265,6 +265,7 @@ html, body, body > div {
 
             .story .photo-indicators i {
                 margin: 3px;
+                cursor: pointer;
             }
 
     .story .title {
