@@ -13952,7 +13952,9 @@ Elm.Main.make = function (_elm) {
               }()
               ,A2($Html.div,
               _U.list([$Html$Attributes.$class("logo")]),
-              _U.list([A2($Html.img,_U.list([$Html$Attributes.src("images/logo.png")]),_U.list([]))]))]));
+              _U.list([A2($Html.a,
+              _U.list([$Html$Attributes.href("/")]),
+              _U.list([A2($Html.img,_U.list([$Html$Attributes.src("images/logo.png")]),_U.list([]))]))]))]));
    });
    var view = F2(function (address,app) {
       var _p17 = app.location;
