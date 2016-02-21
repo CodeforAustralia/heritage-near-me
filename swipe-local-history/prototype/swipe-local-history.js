@@ -13005,6 +13005,7 @@ Elm.Types.make = function (_elm) {
    var NoAction = {ctor: "NoAction"};
    var LoadItems = function (a) {    return {ctor: "LoadItems",_0: a};};
    var LoadItem = F2(function (a,b) {    return {ctor: "LoadItem",_0: a,_1: b};});
+   var LoadingItem = function (a) {    return {ctor: "LoadingItem",_0: a};};
    var Back = {ctor: "Back"};
    var ViewFavourites = {ctor: "ViewFavourites"};
    var View = function (a) {    return {ctor: "View",_0: a};};
@@ -13047,6 +13048,7 @@ Elm.Types.make = function (_elm) {
                               ,View: View
                               ,ViewFavourites: ViewFavourites
                               ,Back: Back
+                              ,LoadingItem: LoadingItem
                               ,LoadItem: LoadItem
                               ,LoadItems: LoadItems
                               ,NoAction: NoAction
@@ -13478,9 +13480,7 @@ Elm.Data.make = function (_elm) {
             return $default;
          }
    });
-   var findItem = F2(function (app,check) {
-      return A2($Maybe.withDefault,$Types.Loading,$List.head(A2($List.filter,A2(defaultMap,false,check),$Dict.values(app.items))));
-   });
+   var findItem = F2(function (app,check) {    return $List.head(A2($List.filter,A2(defaultMap,false,check),$Dict.values(app.items)));});
    var map = F2(function (f,data) {
       var _p1 = data;
       if (_p1.ctor === "Loaded") {
@@ -13493,9 +13493,11 @@ Elm.Data.make = function (_elm) {
             return $Types.Loading;
          }
    });
-   var isLoaded = function (data) {    var _p2 = data;if (_p2.ctor === "Loaded") {    return true;} else {    return false;}};
-   var isFullStory = function (story) {    var _p3 = story;if (_p3.ctor === "DiscoverStory") {    return false;} else {    return true;}};
-   var isDiscoverStory = function (story) {    var _p4 = story;if (_p4.ctor === "DiscoverStory") {    return true;} else {    return false;}};
+   var isLoading = function (data) {    var _p2 = data;if (_p2.ctor === "Loading") {    return true;} else {    return false;}};
+   var isItemLoading = F2(function (app,id) {    return A2($Maybe.withDefault,false,A2($Maybe.map,isLoading,A2($Dict.get,$Basics.toString(id),app.items)));});
+   var isLoaded = function (data) {    var _p3 = data;if (_p3.ctor === "Loaded") {    return true;} else {    return false;}};
+   var isFullStory = function (story) {    var _p4 = story;if (_p4.ctor === "DiscoverStory") {    return false;} else {    return true;}};
+   var isDiscoverStory = function (story) {    var _p5 = story;if (_p5.ctor === "DiscoverStory") {    return true;} else {    return false;}};
    var location = A3($Json$Decode.object2,
    F2(function (lat,lng) {    return {lat: lat,lng: lng};}),
    A2($Json$Decode._op[":="],"lat",$Json$Decode.string),
@@ -13506,8 +13508,8 @@ Elm.Data.make = function (_elm) {
    A2($Json$Decode._op[":="],"name",$Json$Decode.string));
    var dates = A3($Json$Decode.object2,
    F2(function (start,end) {
-      return {start: A2($Maybe.andThen,start,function (_p5) {    return $Result.toMaybe($Date.fromString(_p5));})
-             ,end: A2($Maybe.andThen,end,function (_p6) {    return $Result.toMaybe($Date.fromString(_p6));})};
+      return {start: A2($Maybe.andThen,start,function (_p6) {    return $Result.toMaybe($Date.fromString(_p6));})
+             ,end: A2($Maybe.andThen,end,function (_p7) {    return $Result.toMaybe($Date.fromString(_p7));})};
    }),
    $Json$Decode.maybe(A2($Json$Decode._op[":="],"start",$Json$Decode.string)),
    $Json$Decode.maybe(A2($Json$Decode._op[":="],"end",$Json$Decode.string)));
@@ -13546,8 +13548,8 @@ Elm.Data.make = function (_elm) {
    var url = function (subUrl) {    return A2($Http.url,A2($Basics._op["++"],"api/",subUrl),_U.list([]));};
    var fetchDiscoverStories = A2($Http.get,discoverStories,url("story_discover"));
    var fetchFullStory = function (storyId) {
-      var _p7 = storyId;
-      var id = _p7._0;
+      var _p8 = storyId;
+      var id = _p8._0;
       return A2($Task.andThen,
       A2($Task.map,
       $List.head,
@@ -13557,24 +13559,33 @@ Elm.Data.make = function (_elm) {
       });
    };
    var fetch = function (app) {
-      var _p8 = app.location;
-      switch (_p8.ctor)
-      {case "Discovering": return isLoaded(app.discovery.item) ? $Task.succeed($Types.NoAction) : A2($Task.onError,
-           A2($Task.map,function (_p9) {    return $Types.LoadItems($Types.Succeeded(_p9));},fetchDiscoverStories),
-           function (_p10) {
-              return $Task.succeed($Types.LoadItems($Types.Failed(_p10)));
-           });
-         case "Viewing": var _p13 = _p8._0;
-           return isLoaded(A2(getItem,app,_p13)) && $Basics.not(isLoaded(A2(findItem,
-           app,
-           function (story) {
-              return _U.eq($Story.id(story),_p13) && isDiscoverStory(story);
-           }))) ? $Task.succeed($Types.NoAction) : A2($Task.onError,
-           A2($Task.map,function (_p11) {    return A2($Types.LoadItem,_p13,$Types.Succeeded(_p11));},fetchFullStory(_p13)),
-           function (_p12) {
-              return $Task.succeed(A2($Types.LoadItem,_p13,$Types.Failed(_p12)));
-           });
-         default: return $Task.succeed($Types.NoAction);}
+      var _p9 = app.location;
+      switch (_p9.ctor)
+      {case "Discovering": return isLoaded(app.discovery.item) ? _U.list([]) : _U.list([A2($Task.onError,
+           A2($Task.map,function (_p10) {    return $Types.LoadItems($Types.Succeeded(_p10));},fetchDiscoverStories),
+           function (_p11) {
+              return $Task.succeed($Types.LoadItems($Types.Failed(_p11)));
+           })]);
+         case "Viewing": var _p15 = _p9._0;
+           var isLoading = A2(isItemLoading,app,_p15);
+           var fullStory = A2(findItem,app,function (story) {    return _U.eq($Story.id(story),_p15) && isFullStory(story);});
+           var discoverStory = A2(findItem,app,function (story) {    return _U.eq($Story.id(story),_p15) && isDiscoverStory(story);});
+           var _p12 = {ctor: "_Tuple3",_0: isLoading,_1: fullStory,_2: discoverStory};
+           if (_p12._1.ctor === "Just") {
+                 return _U.list([]);
+              } else {
+                 if (_p12._0 === true) {
+                       return _U.list([]);
+                    } else {
+                       return _U.list([$Task.succeed($Types.LoadingItem(_p15))
+                                      ,A2($Task.onError,
+                                      A2($Task.map,function (_p13) {    return A2($Types.LoadItem,_p15,$Types.Succeeded(_p13));},fetchFullStory(_p15)),
+                                      function (_p14) {
+                                         return $Task.succeed(A2($Types.LoadItem,_p15,$Types.Failed(_p14)));
+                                      })]);
+                    }
+              }
+         default: return _U.list([]);}
    };
    return _elm.Data.values = {_op: _op,fetch: fetch,map: map,defaultMap: defaultMap,getItem: getItem};
 };
@@ -13852,6 +13863,7 @@ Elm.Main.make = function (_elm) {
             return items;
          }
    });
+   var loadingItem = F2(function (id,items) {    return A3($Dict.insert,$Basics.toString(id),$Types.Loading,items);});
    var loadItems = F3(function (discovery,items,getId) {
       var ids = A3($Data.defaultMap,_U.list([]),$List.map(getId),$Types.Loaded(items));
       return _U.update(discovery,
@@ -13905,6 +13917,7 @@ Elm.Main.make = function (_elm) {
               case "MoveItem": return _U.update(app,{discovery: A2(moveItem,app.discovery,_p8._0)});
               case "Favourite": return _U.update(app,{location: $Types.Discovering,discovery: favouriteItem(app.discovery)});
               case "Pass": return _U.update(app,{location: $Types.Discovering,discovery: passItem(app.discovery)});
+              case "LoadingItem": return _U.update(app,{items: A2(loadingItem,_p8._0,app.items)});
               case "LoadItem": return _U.update(app,{items: A3(addItem,_p8._0,_p8._1,app.items)});
               case "LoadItems": var _p9 = _p8._0;
                 return _U.update(app,{items: A3(addItems,$Story.id,_p9,app.items),discovery: A3(loadItems,app.discovery,_p9,$Story.id)});
@@ -13924,6 +13937,7 @@ Elm.Main.make = function (_elm) {
               case "NextPhoto": return _U.update(app,
                 {location: A2($Types.Viewing,_p12,_U.update(_p13,{photoIndex: _p13.photoIndex + 1,photoPosition: $Types.Static}))});
               case "JumpPhoto": return _U.update(app,{location: A2($Types.Viewing,_p12,_U.update(_p13,{photoIndex: _p10._0,photoPosition: $Types.Static}))});
+              case "LoadingItem": return _U.update(app,{items: A2(loadingItem,_p10._0,app.items)});
               case "LoadItem": return _U.update(app,{items: A3(addItem,_p10._0,_p10._1,app.items)});
               case "LoadItems": var _p11 = _p10._0;
                 return _U.update(app,{items: A3(addItems,$Story.id,_p11,app.items),discovery: A3(loadItems,app.discovery,_p11,$Story.id)});
@@ -13933,6 +13947,7 @@ Elm.Main.make = function (_elm) {
            {case "Discover": return _U.update(app,{location: $Types.Discovering});
               case "View": return _U.update(app,{location: A2($Types.Viewing,_p14._0,initialItemView)});
               case "ViewFavourites": return _U.update(app,{location: $Types.ViewingFavourites});
+              case "LoadingItem": return _U.update(app,{items: A2(loadingItem,_p14._0,app.items)});
               case "LoadItem": return _U.update(app,{items: A3(addItem,_p14._0,_p14._1,app.items)});
               case "LoadItems": var _p15 = _p14._0;
                 return _U.update(app,{items: A3(addItems,$Story.id,_p15,app.items),discovery: A3(loadItems,app.discovery,_p15,$Story.id)});
@@ -14014,7 +14029,14 @@ Elm.Main.make = function (_elm) {
    var routeTasks = Elm.Native.Task.make(_elm).performSignal("routeTasks",
    $RouteHash.start({prefix: $RouteHash.defaultPrefix,address: history.address,models: app.model,delta2update: $Route.url,location2action: $Route.action}));
    var fetchData = Elm.Native.Task.make(_elm).performSignal("fetchData",
-   A2($Signal.map,function (fetch) {    return A2($Task.andThen,fetch,$Signal.send(data.address));},A2($Signal.map,$Data.fetch,app.model)));
+   A2($Signal.map,
+   function (actions) {
+      return A3($List.foldl,
+      F2(function (action,prevAction) {    return A2($Task.andThen,action,$Signal.send(data.address));}),
+      $Task.succeed({ctor: "_Tuple0"}),
+      actions);
+   },
+   A2($Signal.map,$Data.fetch,app.model)));
    var main = app.html;
    return _elm.Main.values = {_op: _op
                              ,main: main
@@ -14030,6 +14052,7 @@ Elm.Main.make = function (_elm) {
                              ,animateItem: animateItem
                              ,moveItem: moveItem
                              ,loadItems: loadItems
+                             ,loadingItem: loadingItem
                              ,addItems: addItems
                              ,addItem: addItem
                              ,getStory: getStory

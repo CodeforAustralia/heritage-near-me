@@ -80,7 +80,11 @@ data = Signal.mailbox NoAction
 
 port fetchData : Signal (Task () ())
 port fetchData = Signal.map Data.fetch app.model
-    |> Signal.map (\fetch -> fetch `Task.andThen` (Signal.send data.address))
+    |> Signal.map (\actions ->
+        List.foldl (\action prevAction ->
+            action `Task.andThen` (Signal.send data.address)
+        ) (Task.succeed ()) actions
+    )
 
 view : Signal.Address (Action StoryId Story) -> App StoryId Story -> Html
 view address app = case app.location of
@@ -118,6 +122,7 @@ update action app = case app.location of
             MoveItem pos        -> {app | discovery = moveItem app.discovery pos}
             Favourite           -> {app | location = Discovering, discovery = favouriteItem app.discovery}
             Pass                -> {app | location = Discovering, discovery = passItem app.discovery}
+            LoadingItem id      -> {app | items = loadingItem id app.items}
             LoadItem id item    -> {app | items = addItem id item app.items}
             LoadItems items     -> {app | items = addItems Story.id items app.items, discovery = loadItems app.discovery items Story.id}
             _                   -> app
@@ -132,6 +137,7 @@ update action app = case app.location of
             PrevPhoto           -> {app | location = Viewing story {view | photoIndex = view.photoIndex-1, photoPosition = Static}}
             NextPhoto           -> {app | location = Viewing story {view | photoIndex = view.photoIndex+1, photoPosition = Static}}
             JumpPhoto index     -> {app | location = Viewing story {view | photoIndex = index, photoPosition = Static}}
+            LoadingItem id      -> {app | items = loadingItem id app.items}
             LoadItem id item    -> {app | items = addItem id item app.items}
             LoadItems items     -> {app | items = addItems Story.id items app.items, discovery = loadItems app.discovery items Story.id}
             _                   -> app
@@ -141,6 +147,7 @@ update action app = case app.location of
             Discover         -> {app | location = Discovering}
             View story'      -> {app | location = Viewing story' initialItemView}
             ViewFavourites   -> {app | location = ViewingFavourites}
+            LoadingItem id   -> {app | items = loadingItem id app.items}
             LoadItem id item -> {app | items = addItem id item app.items}
             LoadItems items  -> {app | items = addItems Story.id items app.items, discovery = loadItems app.discovery items Story.id}
             _                -> app
@@ -181,6 +188,9 @@ loadItems discovery items getId = let
           items = (Maybe.withDefault [] << List.tail) ids
         , item = Loaded <| Succeeded <| List.head ids
         }
+
+loadingItem : id -> Dict String (RemoteData a) -> Dict String (RemoteData a)
+loadingItem id items = Dict.insert (toString id) Loading items
 
 addItems : (a -> id) -> LoadedData (List a) -> Dict String (RemoteData a) -> Dict String (RemoteData a)
 addItems getId loaded items = case loaded of

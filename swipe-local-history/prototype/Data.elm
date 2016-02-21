@@ -12,23 +12,32 @@ import Story
 url : String -> String
 url subUrl = Http.url ("api/"++subUrl) []
 
-fetch : App StoryId Story -> Task () (Action StoryId Story)
+fetch : App StoryId Story -> List (Task () (Action StoryId Story))
 fetch app = case app.location of
     Discovering ->
         if isLoaded app.discovery.item then
-            Task.succeed NoAction
+            []
         else
-            Task.map (LoadItems << Succeeded) fetchDiscoverStories
-            `Task.onError`
-                (Task.succeed << LoadItems << Failed)
+            [ Task.map (LoadItems << Succeeded) fetchDiscoverStories
+                  `Task.onError`
+              (Task.succeed << LoadItems << Failed)
+            ]
     Viewing storyId _ ->
-        if (isLoaded <| getItem app storyId) && (not <| isLoaded <| findItem app (\story -> Story.id story == storyId && isDiscoverStory story)) then
-            Task.succeed NoAction
-        else
-            Task.map (LoadItem storyId << Succeeded) (fetchFullStory storyId)
-            `Task.onError`
-                (Task.succeed << LoadItem storyId << Failed)
-    _ -> Task.succeed NoAction
+        let
+            discoverStory = findItem app (\story -> Story.id story == storyId && isDiscoverStory story)
+            fullStory = findItem app (\story -> Story.id story == storyId && isFullStory story)
+            isLoading = isItemLoading app storyId
+        in
+            case (isLoading, fullStory, discoverStory) of
+                (_, Just story, _) -> []
+                (True, Nothing, _) -> []
+                (False, Nothing, _) ->
+                    [ Task.succeed <| LoadingItem storyId
+                    , Task.map (LoadItem storyId << Succeeded) (fetchFullStory storyId)
+                        `Task.onError`
+                      (Task.succeed << LoadItem storyId << Failed)
+                    ]
+    _ -> []
 
 fetchDiscoverStories : Task Http.Error (List Story)
 fetchDiscoverStories = Http.get discoverStories <| url "story_discover"
@@ -122,6 +131,11 @@ isLoaded data = case data of
     Loaded _ -> True
     _ -> False
 
+isLoading : RemoteData a -> Bool
+isLoading data = case data of
+    Loading -> True
+    _ -> False
+
 map : (a -> b) -> RemoteData a -> RemoteData b
 map f data = case data of
     Loaded (Succeeded x) -> Loaded <| Succeeded <| f x
@@ -137,8 +151,12 @@ getItem : App id a -> id -> RemoteData a
 getItem app id = Maybe.withDefault Loading
     <| Dict.get (toString id) app.items
 
-findItem : App id a -> (a -> Bool) -> RemoteData a
-findItem app check = Maybe.withDefault Loading
-    <| List.head
+isItemLoading : App id a -> id -> Bool
+isItemLoading app id = Maybe.withDefault False
+    <| Maybe.map isLoading
+    <| Dict.get (toString id) app.items
+
+findItem : App id a -> (a -> Bool) -> Maybe (RemoteData a)
+findItem app check = List.head
     <| List.filter (defaultMap False check)
     <| Dict.values app.items
