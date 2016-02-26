@@ -47,8 +47,8 @@ CREATE SCHEMA hnm
 			min(site.suburb) AS suburb,
 			json_agg(photo.photo) AS photos,
 			json_object('{start, end}', ARRAY[to_char(story.dateStart, 'YYYY-MM-DD'), to_char(story.dateEnd, 'YYYY-MM-DD')]) AS dates,
-			json_agg(json_object('{id, name}', ARRAY[to_char(site.heritageItemId, '9999999'), site.name])) AS sites,
-			json_agg(json_object('{lat, lng}', ARRAY[site.latitude, site.longitude])) AS locations
+			json_agg(DISTINCT json_object('{id, name}', ARRAY[to_char(site.heritageItemId, '9999999'), site.name])::jsonb) AS sites,
+			json_agg(DISTINCT json_object('{lat, lng}', ARRAY[site.latitude, site.longitude])::jsonb) AS locations
 		FROM story
 		LEFT JOIN story_photo ON story_photo.story_id = story.id
 		LEFT JOIN photo       ON story_photo.photo_id = photo.id
