@@ -18,7 +18,7 @@ view address app topNav = div [class "app screen-size discovery"]
         Loaded (Succeeded item) -> case item of
             Just id -> case getItem app id of
                 Loaded (Succeeded story) -> viewStory address story app.discovery.itemPosition
-                Loaded (Failed err) -> text "Something went wrong"
+                Loaded (Failed err) -> noStory "Something went wrong"
                 Loading -> div [class "discovery-empty"] [loading]
             Nothing -> noStory "No more stories left!"
         Loaded (Failed err) -> noStory "Something went wrong"

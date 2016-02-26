@@ -49,13 +49,13 @@ discoverStory : Json.Decoder Story
 discoverStory = Json.object4
     (\id title blurb photo -> DiscoverStory
         { id = StoryId id
-        , title = title
-        , blurb = blurb
+        , title = Maybe.withDefault "" title
+        , blurb = Maybe.withDefault "" blurb
         , photo = photo
         })
     ("id" := Json.int)
-    ("title" := Json.string)
-    ("blurb" := Json.string)
+    (Json.maybe ("title" := Json.string))
+    (Json.maybe ("blurb" := Json.string))
     ("photo" := Json.oneOf [Json.string, Json.null ""])
 
 fetchFullStory : StoryId -> Task Http.Error Story
@@ -75,25 +75,25 @@ fullStories = Json.list fullStory
 
 fullStory : Json.Decoder Story
 fullStory = ("id" := Json.int) `andThen` \id -> Json.object8
-    (\title blurb suburb dates photos story sites locations -> FullStory
+    (\title blurb suburb story dates photos sites locations -> FullStory
         { id = StoryId id
-        , title = title
-        , blurb = blurb
+        , title = Maybe.withDefault "" title
+        , blurb = Maybe.withDefault "" blurb
         , suburb = suburb
-        , dates = dates
+        , story = Maybe.withDefault "This story hasn't been written yet!" story
+        , dates = Maybe.withDefault {start = Nothing, end = Nothing} dates
         , photos = photos
-        , story = story
         , sites = List.filterMap identity sites
         , locations = List.filterMap identity locations
         })
-    ("title" := Json.string)
-    ("blurb" := Json.string)
+    (Json.maybe ("title" := Json.string))
+    (Json.maybe ("blurb" := Json.string))
     (Json.maybe ("suburb" := Json.string))
-    ("dates" := dates)
+    (Json.maybe ("story" := Json.string))
+    (Json.maybe ("dates" := dates))
     ("photos" := Json.list (Json.oneOf [Json.string, Json.null ""]))
-    ("story" := Json.string)
-    ("sites" := Json.list (Json.maybe site))
-    ("locations" := Json.list (Json.maybe location))
+    ("sites" := Json.list site)
+    ("locations" := Json.list location)
 
 dates : Json.Decoder Dates
 dates = Json.object2
@@ -104,17 +104,17 @@ dates = Json.object2
     (Json.maybe ("start" := Json.string))
     (Json.maybe ("end" := Json.string))
 
-site : Json.Decoder Site
+site : Json.Decoder (Maybe Site)
 site = Json.object2
-    (\id name -> {id = id, name = name})
-    ("id" := Json.string)
-    ("name" := Json.string)
+    (Maybe.map2 (\id name -> {id = id, name = name}))
+    (Json.maybe ("id" := Json.string))
+    (Json.maybe ("name" := Json.string))
 
-location : Json.Decoder LatLng
+location : Json.Decoder (Maybe LatLng)
 location = Json.object2
-    (\lat lng -> {lat = lat, lng = lng})
-    ("lat" := Json.string)
-    ("lng" := Json.string)
+    (Maybe.map2 (\lat lng -> {lat = lat, lng = lng}))
+    (Json.maybe ("lat" := Json.string))
+    (Json.maybe ("lng" := Json.string))
 
 isDiscoverStory : Story -> Bool
 isDiscoverStory story = case story of

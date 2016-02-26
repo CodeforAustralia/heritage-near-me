@@ -13499,13 +13499,13 @@ Elm.Data.make = function (_elm) {
    var isFullStory = function (story) {    var _p4 = story;if (_p4.ctor === "DiscoverStory") {    return false;} else {    return true;}};
    var isDiscoverStory = function (story) {    var _p5 = story;if (_p5.ctor === "DiscoverStory") {    return true;} else {    return false;}};
    var location = A3($Json$Decode.object2,
-   F2(function (lat,lng) {    return {lat: lat,lng: lng};}),
-   A2($Json$Decode._op[":="],"lat",$Json$Decode.string),
-   A2($Json$Decode._op[":="],"lng",$Json$Decode.string));
+   $Maybe.map2(F2(function (lat,lng) {    return {lat: lat,lng: lng};})),
+   $Json$Decode.maybe(A2($Json$Decode._op[":="],"lat",$Json$Decode.string)),
+   $Json$Decode.maybe(A2($Json$Decode._op[":="],"lng",$Json$Decode.string)));
    var site = A3($Json$Decode.object2,
-   F2(function (id,name) {    return {id: id,name: name};}),
-   A2($Json$Decode._op[":="],"id",$Json$Decode.string),
-   A2($Json$Decode._op[":="],"name",$Json$Decode.string));
+   $Maybe.map2(F2(function (id,name) {    return {id: id,name: name};})),
+   $Json$Decode.maybe(A2($Json$Decode._op[":="],"id",$Json$Decode.string)),
+   $Json$Decode.maybe(A2($Json$Decode._op[":="],"name",$Json$Decode.string)));
    var dates = A3($Json$Decode.object2,
    F2(function (start,end) {
       return {start: A2($Maybe.andThen,start,function (_p6) {    return $Result.toMaybe($Date.fromString(_p6));})
@@ -13517,32 +13517,34 @@ Elm.Data.make = function (_elm) {
    A2($Json$Decode._op[":="],"id",$Json$Decode.$int),
    function (id) {
       return A9($Json$Decode.object8,
-      F8(function (title,blurb,suburb,dates,photos,story,sites,locations) {
+      F8(function (title,blurb,suburb,story,dates,photos,sites,locations) {
          return $Types.FullStory({id: $Types.StoryId(id)
-                                 ,title: title
-                                 ,blurb: blurb
+                                 ,title: A2($Maybe.withDefault,"",title)
+                                 ,blurb: A2($Maybe.withDefault,"",blurb)
                                  ,suburb: suburb
-                                 ,dates: dates
+                                 ,story: A2($Maybe.withDefault,"This story hasn\'t been written yet!",story)
+                                 ,dates: A2($Maybe.withDefault,{start: $Maybe.Nothing,end: $Maybe.Nothing},dates)
                                  ,photos: photos
-                                 ,story: story
                                  ,sites: A2($List.filterMap,$Basics.identity,sites)
                                  ,locations: A2($List.filterMap,$Basics.identity,locations)});
       }),
-      A2($Json$Decode._op[":="],"title",$Json$Decode.string),
-      A2($Json$Decode._op[":="],"blurb",$Json$Decode.string),
+      $Json$Decode.maybe(A2($Json$Decode._op[":="],"title",$Json$Decode.string)),
+      $Json$Decode.maybe(A2($Json$Decode._op[":="],"blurb",$Json$Decode.string)),
       $Json$Decode.maybe(A2($Json$Decode._op[":="],"suburb",$Json$Decode.string)),
-      A2($Json$Decode._op[":="],"dates",dates),
+      $Json$Decode.maybe(A2($Json$Decode._op[":="],"story",$Json$Decode.string)),
+      $Json$Decode.maybe(A2($Json$Decode._op[":="],"dates",dates)),
       A2($Json$Decode._op[":="],"photos",$Json$Decode.list($Json$Decode.oneOf(_U.list([$Json$Decode.string,$Json$Decode.$null("")])))),
-      A2($Json$Decode._op[":="],"story",$Json$Decode.string),
-      A2($Json$Decode._op[":="],"sites",$Json$Decode.list($Json$Decode.maybe(site))),
-      A2($Json$Decode._op[":="],"locations",$Json$Decode.list($Json$Decode.maybe(location))));
+      A2($Json$Decode._op[":="],"sites",$Json$Decode.list(site)),
+      A2($Json$Decode._op[":="],"locations",$Json$Decode.list(location)));
    });
    var fullStories = $Json$Decode.list(fullStory);
    var discoverStory = A5($Json$Decode.object4,
-   F4(function (id,title,blurb,photo) {    return $Types.DiscoverStory({id: $Types.StoryId(id),title: title,blurb: blurb,photo: photo});}),
+   F4(function (id,title,blurb,photo) {
+      return $Types.DiscoverStory({id: $Types.StoryId(id),title: A2($Maybe.withDefault,"",title),blurb: A2($Maybe.withDefault,"",blurb),photo: photo});
+   }),
    A2($Json$Decode._op[":="],"id",$Json$Decode.$int),
-   A2($Json$Decode._op[":="],"title",$Json$Decode.string),
-   A2($Json$Decode._op[":="],"blurb",$Json$Decode.string),
+   $Json$Decode.maybe(A2($Json$Decode._op[":="],"title",$Json$Decode.string)),
+   $Json$Decode.maybe(A2($Json$Decode._op[":="],"blurb",$Json$Decode.string)),
    A2($Json$Decode._op[":="],"photo",$Json$Decode.oneOf(_U.list([$Json$Decode.string,$Json$Decode.$null("")]))));
    var discoverStories = $Json$Decode.list(discoverStory);
    var url = function (subUrl) {    return A2($Http.url,A2($Basics._op["++"],"api/",subUrl),_U.list([]));};
@@ -13690,7 +13692,7 @@ Elm.Discover.make = function (_elm) {
                                          if (_p3._0.ctor === "Succeeded") {
                                                return A3(viewStory,address,_p3._0._0,app.discovery.itemPosition);
                                             } else {
-                                               return $Html.text("Something went wrong");
+                                               return noStory("Something went wrong");
                                             }
                                       } else {
                                          return A2($Html.div,_U.list([$Html$Attributes.$class("discovery-empty")]),_U.list([$Loading.loading]));
