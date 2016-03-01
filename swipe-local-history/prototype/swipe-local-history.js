@@ -13461,13 +13461,13 @@ Elm.Data.make = function (_elm) {
    $Date = Elm.Date.make(_elm),
    $Debug = Elm.Debug.make(_elm),
    $Dict = Elm.Dict.make(_elm),
+   $Effects = Elm.Effects.make(_elm),
    $Http = Elm.Http.make(_elm),
    $Json$Decode = Elm.Json.Decode.make(_elm),
    $List = Elm.List.make(_elm),
    $Maybe = Elm.Maybe.make(_elm),
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm),
-   $Story = Elm.Story.make(_elm),
    $Task = Elm.Task.make(_elm),
    $Types = Elm.Types.make(_elm);
    var _op = {};
@@ -13549,9 +13549,14 @@ Elm.Data.make = function (_elm) {
    var discoverStories = $Json$Decode.list(discoverStory);
    var url = function (subUrl) {    return A2($Http.url,A2($Basics._op["++"],"api/",subUrl),_U.list([]));};
    var fetchDiscoverStories = A2($Http.get,discoverStories,url("story_discover"));
+   var fetchStories = $Effects.task(A2($Task.onError,
+   A2($Task.map,function (_p8) {    return $Types.LoadItems($Types.Succeeded(_p8));},fetchDiscoverStories),
+   function (_p9) {
+      return $Task.succeed($Types.LoadItems($Types.Failed(_p9)));
+   }));
    var fetchFullStory = function (storyId) {
-      var _p8 = storyId;
-      var id = _p8._0;
+      var _p10 = storyId;
+      var id = _p10._0;
       return A2($Task.andThen,
       A2($Task.map,
       $List.head,
@@ -13560,36 +13565,14 @@ Elm.Data.make = function (_elm) {
          return A2($Maybe.withDefault,$Task.fail(A2($Http.BadResponse,404,"Story with given id was not found")),A2($Maybe.map,$Task.succeed,storyId));
       });
    };
-   var fetch = function (app) {
-      var _p9 = app.location;
-      switch (_p9.ctor)
-      {case "Discovering": return isLoaded(app.discovery.item) ? _U.list([]) : _U.list([A2($Task.onError,
-           A2($Task.map,function (_p10) {    return $Types.LoadItems($Types.Succeeded(_p10));},fetchDiscoverStories),
-           function (_p11) {
-              return $Task.succeed($Types.LoadItems($Types.Failed(_p11)));
-           })]);
-         case "Viewing": var _p15 = _p9._0;
-           var isLoading = A2(isItemLoading,app,_p15);
-           var fullStory = A2(findItem,app,function (story) {    return _U.eq($Story.id(story),_p15) && isFullStory(story);});
-           var discoverStory = A2(findItem,app,function (story) {    return _U.eq($Story.id(story),_p15) && isDiscoverStory(story);});
-           var _p12 = {ctor: "_Tuple3",_0: isLoading,_1: fullStory,_2: discoverStory};
-           if (_p12._1.ctor === "Just") {
-                 return _U.list([]);
-              } else {
-                 if (_p12._0 === true) {
-                       return _U.list([]);
-                    } else {
-                       return _U.list([$Task.succeed($Types.LoadingItem(_p15))
-                                      ,A2($Task.onError,
-                                      A2($Task.map,function (_p13) {    return A2($Types.LoadItem,_p15,$Types.Succeeded(_p13));},fetchFullStory(_p15)),
-                                      function (_p14) {
-                                         return $Task.succeed(A2($Types.LoadItem,_p15,$Types.Failed(_p14)));
-                                      })]);
-                    }
-              }
-         default: return _U.list([]);}
+   var fetchStory = function (storyId) {
+      return $Effects.task(A2($Task.onError,
+      A2($Task.map,function (_p11) {    return A2($Types.LoadItem,storyId,$Types.Succeeded(_p11));},fetchFullStory(storyId)),
+      function (_p12) {
+         return $Task.succeed(A2($Types.LoadItem,storyId,$Types.Failed(_p12)));
+      }));
    };
-   return _elm.Data.values = {_op: _op,fetch: fetch,map: map,defaultMap: defaultMap,getItem: getItem};
+   return _elm.Data.values = {_op: _op,fetchStories: fetchStories,fetchStory: fetchStory,map: map,defaultMap: defaultMap,getItem: getItem};
 };
 Elm.Discover = Elm.Discover || {};
 Elm.Discover.make = function (_elm) {
@@ -14000,7 +13983,9 @@ Elm.Main.make = function (_elm) {
    var effects = F2(function (action,app) {
       var _p18 = action;
       switch (_p18.ctor)
-      {case "Back": return A2($Effects.map,function (_p19) {    return $Types.NoAction;},$Effects.task($History.back));
+      {case "Discover": return _U.eq(app.discovery,initialDiscovery) ? $Data.fetchStories : $Effects.none;
+         case "View": return $Data.fetchStory(_p18._0);
+         case "Back": return A2($Effects.map,function (_p19) {    return $Types.NoAction;},$Effects.task($History.back));
          case "Animate": var _p25 = _p18._0;
            var _p20 = app.location;
            switch (_p20.ctor)
@@ -14030,15 +14015,6 @@ Elm.Main.make = function (_elm) {
    var tasks = Elm.Native.Task.make(_elm).performSignal("tasks",app.tasks);
    var routeTasks = Elm.Native.Task.make(_elm).performSignal("routeTasks",
    $RouteHash.start({prefix: $RouteHash.defaultPrefix,address: history.address,models: app.model,delta2update: $Route.url,location2action: $Route.action}));
-   var fetchData = Elm.Native.Task.make(_elm).performSignal("fetchData",
-   A2($Signal.map,
-   function (actions) {
-      return A3($List.foldl,
-      F2(function (action,prevAction) {    return A2($Task.andThen,action,$Signal.send(data.address));}),
-      $Task.succeed({ctor: "_Tuple0"}),
-      actions);
-   },
-   A2($Signal.map,$Data.fetch,app.model)));
    var main = app.html;
    return _elm.Main.values = {_op: _op
                              ,main: main

@@ -27,8 +27,10 @@ app = StartApp.start
     , inputs = [history.signal, data.signal, Swiping.animate]
     }
 
-effects : Action id a -> App id a -> Effects.Effects (Action id a)
+effects : Action StoryId Story -> App StoryId Story -> Effects.Effects (Action StoryId Story)
 effects action app = case action of
+    Discover -> if app.discovery == initialDiscovery then Data.fetchStories else Effects.none
+    View storyId -> Data.fetchStory storyId
     Back -> Effects.map (\_ -> NoAction) <| Effects.task History.back
     Animate time window -> case app.location of
         Viewing _ view -> case view.photoPosition of
@@ -77,14 +79,6 @@ port routeTasks = RouteHash.start
 
 data : Signal.Mailbox (Action StoryId Story)
 data = Signal.mailbox NoAction
-
-port fetchData : Signal (Task () ())
-port fetchData = Signal.map Data.fetch app.model
-    |> Signal.map (\actions ->
-        List.foldl (\action prevAction ->
-            action `Task.andThen` (Signal.send data.address)
-        ) (Task.succeed ()) actions
-    )
 
 view : Signal.Address (Action StoryId Story) -> App StoryId Story -> Html
 view address app = case app.location of

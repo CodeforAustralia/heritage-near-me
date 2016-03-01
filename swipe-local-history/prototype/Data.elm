@@ -1,9 +1,10 @@
-module Data (fetch, map, defaultMap, getItem) where
+module Data (fetchStories, fetchStory, map, defaultMap, getItem) where
 
 import Json.Decode as Json exposing ((:=), andThen)
 import Date exposing (Date)
 import Dict exposing (Dict)
 import Task exposing (Task)
+import Effects exposing (Effects, Never)
 import Http
 
 import Types exposing (..)
@@ -12,32 +13,15 @@ import Story
 url : String -> String
 url subUrl = Http.url ("api/"++subUrl) []
 
-fetch : App StoryId Story -> List (Task () (Action StoryId Story))
-fetch app = case app.location of
-    Discovering ->
-        if isLoaded app.discovery.item then
-            []
-        else
-            [ Task.map (LoadItems << Succeeded) fetchDiscoverStories
-                  `Task.onError`
-              (Task.succeed << LoadItems << Failed)
-            ]
-    Viewing storyId _ ->
-        let
-            discoverStory = findItem app (\story -> Story.id story == storyId && isDiscoverStory story)
-            fullStory = findItem app (\story -> Story.id story == storyId && isFullStory story)
-            isLoading = isItemLoading app storyId
-        in
-            case (isLoading, fullStory, discoverStory) of
-                (_, Just story, _) -> []
-                (True, Nothing, _) -> []
-                (False, Nothing, _) ->
-                    [ Task.succeed <| LoadingItem storyId
-                    , Task.map (LoadItem storyId << Succeeded) (fetchFullStory storyId)
-                        `Task.onError`
-                      (Task.succeed << LoadItem storyId << Failed)
-                    ]
-    _ -> []
+fetchStories : Effects (Action StoryId Story)
+fetchStories = Effects.task <|
+    Task.map (LoadItems << Succeeded) fetchDiscoverStories
+    `Task.onError` (Task.succeed << LoadItems << Failed)
+
+fetchStory : StoryId -> Effects (Action StoryId Story)
+fetchStory storyId = Effects.task <|
+    Task.map (LoadItem storyId << Succeeded) (fetchFullStory storyId)
+    `Task.onError` (Task.succeed << LoadItem storyId << Failed)
 
 fetchDiscoverStories : Task Http.Error (List Story)
 fetchDiscoverStories = Http.get discoverStories <| url "story_discover"
