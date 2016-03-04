@@ -7483,6 +7483,77 @@ Elm.List.Extra.make = function (_elm) {
                                    ,lift3: lift3
                                    ,lift4: lift4};
 };
+Elm.String = Elm.String || {};
+Elm.String.Split = Elm.String.Split || {};
+Elm.String.Split.make = function (_elm) {
+   "use strict";
+   _elm.String = _elm.String || {};
+   _elm.String.Split = _elm.String.Split || {};
+   if (_elm.String.Split.values) return _elm.String.Split.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $String = Elm.String.make(_elm);
+   var _op = {};
+   var chunksOfRight = F2(function (k,s) {
+      var k2 = 2 * k;
+      var chunksOfR = function (s$) {
+         return _U.cmp($String.length(s$),k2) > 0 ? A2($List._op["::"],A2($String.right,k,s$),chunksOfR(A2($String.dropRight,k,s$))) : A2($List._op["::"],
+         A2($String.right,k,s$),
+         _U.list([A2($String.dropRight,k,s$)]));
+      };
+      var len = $String.length(s);
+      return _U.cmp(len,k2) > 0 ? $List.reverse(chunksOfR(s)) : _U.cmp(len,k) > 0 ? A2($List._op["::"],
+      A2($String.dropRight,k,s),
+      _U.list([A2($String.right,k,s)])) : _U.list([s]);
+   });
+   var chunksOfLeft = F2(function (k,s) {
+      var len = $String.length(s);
+      return _U.cmp(len,k) > 0 ? A2($List._op["::"],A2($String.left,k,s),A2(chunksOfLeft,k,A2($String.dropLeft,k,s))) : _U.list([s]);
+   });
+   return _elm.String.Split.values = {_op: _op,chunksOfLeft: chunksOfLeft,chunksOfRight: chunksOfRight};
+};
+Elm.Number = Elm.Number || {};
+Elm.Number.Format = Elm.Number.Format || {};
+Elm.Number.Format.make = function (_elm) {
+   "use strict";
+   _elm.Number = _elm.Number || {};
+   _elm.Number.Format = _elm.Number.Format || {};
+   if (_elm.Number.Format.values) return _elm.Number.Format.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $String = Elm.String.make(_elm),
+   $String$Split = Elm.String.Split.make(_elm);
+   var _op = {};
+   var prettyInt = F2(function (sep,n) {
+      var ni = $Basics.abs(n);
+      var nis = A2($String.join,$String.fromChar(sep),A2($String$Split.chunksOfRight,3,$Basics.toString(ni)));
+      return _U.cmp(n,0) < 0 ? A2($String.cons,_U.chr("-"),nis) : nis;
+   });
+   var pretty = F3(function (decimals,sep,n) {
+      var decpow = Math.pow(10,decimals);
+      var nshift = n * $Basics.toFloat(decpow);
+      var nshifti = $Basics.round(nshift);
+      var nshifti$ = $Basics.abs(nshifti);
+      var ni = nshifti$ / decpow | 0;
+      var nf = nshifti$ - ni * decpow;
+      var nfs = $Basics.toString(nf);
+      var nflen = $String.length(nfs);
+      return A2($String.append,
+      _U.cmp(nshifti,0) < 0 ? A2(prettyInt,sep,0 - ni) : A2(prettyInt,sep,ni),
+      A2($String.cons,_U.chr("."),A3($String.padLeft,decimals,_U.chr("0"),nfs)));
+   });
+   return _elm.Number.Format.values = {_op: _op,pretty: pretty,prettyInt: prettyInt};
+};
 Elm.Native = Elm.Native || {};
 Elm.Native.History = {};
 Elm.Native.History.make = function(localRuntime){
@@ -13312,15 +13383,27 @@ Elm.Story.make = function (_elm) {
    $Loading = Elm.Loading.make(_elm),
    $Markdown = Elm.Markdown.make(_elm),
    $Maybe = Elm.Maybe.make(_elm),
+   $Number$Format = Elm.Number.Format.make(_elm),
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm),
    $Swiping = Elm.Swiping.make(_elm),
    $Types = Elm.Types.make(_elm);
    var _op = {};
+   var digits = F2(function (n,f) {
+      var base = 10;
+      var places = $Basics.ceiling(A2($Basics.logBase,base,f)) - n;
+      return _U.cmp(places,0) < 0 ? n : $Basics.round(f / $Basics.toFloat(Math.pow(base,places))) * Math.pow(base,places);
+   });
+   var distanceFormat = function (dist) {
+      return _U.cmp(dist,10) < 0 ? "Here" : _U.cmp(dist,1000) < 0 ? A2($Basics._op["++"],$Basics.toString(A2(digits,1,dist)),"m") : _U.cmp(dist,
+      5000) < 0 ? A2($Basics._op["++"],A3($Number$Format.pretty,1,_U.chr(","),dist / 1000),"km") : _U.cmp(dist,10000) < 0 ? A2($Basics._op["++"],
+      $Basics.toString(A2(digits,1,dist / 1000)),
+      "km") : A2($Basics._op["++"],$Basics.toString(A2(digits,2,dist / 1000)),"km");
+   };
    var distance = function (story) {
       var _p0 = story;
       if (_p0.ctor === "DiscoverStory") {
-            return A2($Maybe.map,function (d) {    return A2($Basics._op["++"],$Basics.toString($Basics.floor(d)),"m");},_p0._0.distance);
+            return A2($Maybe.map,distanceFormat,_p0._0.distance);
          } else {
             return $Maybe.Nothing;
          }

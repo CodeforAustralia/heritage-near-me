@@ -8,6 +8,7 @@ import Html exposing (Html, div, h1, h2, h3, h4, blockquote, img, ul, li, span, 
 import Html.Events exposing (onClick)
 import Html.Attributes as Attr exposing (..)
 import Markdown
+import Number.Format
 
 import Types exposing (..)
 import Loading exposing (loading)
@@ -128,5 +129,27 @@ photos story = case story of
 
 distance : Story -> Maybe String
 distance story = case story of
-    DiscoverStory story -> Maybe.map (\d -> toString (floor d) ++ "m") story.distance
+    DiscoverStory story -> Maybe.map distanceFormat story.distance
     FullStory story -> Nothing
+
+distanceFormat : Float -> String
+distanceFormat dist = if dist < 10 then
+        "Here"
+    else if dist < 1000 then
+        toString (digits 1 dist) ++ "m"
+    else if dist < 5000 then
+        Number.Format.pretty 1 ',' (dist / 1000) ++ "km"
+    else if dist < 10000 then
+        toString (digits 1 (dist / 1000)) ++ "km"
+    else
+        toString (digits 2 (dist / 1000)) ++ "km"
+
+digits : Int -> Float -> Int
+digits n f = let
+        base = 10
+        places = ceiling (logBase base f) - n
+    in
+        if places < 0 then
+            n
+        else
+            (round (f / toFloat (base^places))) * base^places
