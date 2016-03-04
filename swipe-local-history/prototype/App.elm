@@ -24,12 +24,12 @@ app = StartApp.start
     { init = (initialApp, Effects.none)
     , view = view
     , update = \action model -> (update action model, effects action model)
-    , inputs = [history.signal, data.signal, Swiping.animate]
+    , inputs = [history.signal, data.signal, Swiping.animate, userLocation]
     }
 
 effects : Action StoryId Story -> App StoryId Story -> Effects.Effects (Action StoryId Story)
 effects action app = case action of
-    Discover -> if app.discovery == initialDiscovery then Data.fetchStories else Effects.none
+    UpdateLocation latlng -> if app.discovery == initialDiscovery then Data.fetchStories latlng else Effects.none
     View storyId -> Data.fetchStory storyId
     Back -> Effects.map (\_ -> NoAction) <| Effects.task History.back
     Animate time window -> case app.location of
@@ -76,6 +76,11 @@ port routeTasks = RouteHash.start
     , delta2update = Route.url
     , location2action = Route.action
     }
+
+port geolocation : Signal (Float, Float)
+
+userLocation : Signal (Action id item)
+userLocation = Signal.map (\(lat, lng) -> UpdateLocation {lat = toString lat, lng = toString lng}) geolocation
 
 data : Signal.Mailbox (Action StoryId Story)
 data = Signal.mailbox NoAction

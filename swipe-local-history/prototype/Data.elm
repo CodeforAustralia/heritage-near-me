@@ -13,9 +13,9 @@ import Story
 url : String -> String
 url subUrl = Http.url ("api/"++subUrl) []
 
-fetchStories : Effects (Action StoryId Story)
-fetchStories = Effects.task <|
-    Task.map (LoadItems << Succeeded) fetchDiscoverStories
+fetchStories : LatLng -> Effects (Action StoryId Story)
+fetchStories pos = Effects.task <|
+    Task.map (LoadItems << Succeeded) (fetchDiscoverStories pos)
     `Task.onError` (Task.succeed << LoadItems << Failed)
 
 fetchStory : StoryId -> Effects (Action StoryId Story)
@@ -23,12 +23,12 @@ fetchStory storyId = Effects.task <|
     Task.map (LoadItem storyId << Succeeded) (fetchFullStory storyId)
     `Task.onError` (Task.succeed << LoadItem storyId << Failed)
 
-fetchDiscoverStories : Task Http.Error (List Story)
-fetchDiscoverStories = Http.send Http.defaultSettings
+fetchDiscoverStories : LatLng -> Task Http.Error (List Story)
+fetchDiscoverStories pos = Http.send Http.defaultSettings
     { verb = "POST"
     , headers = [("Content-Type", "application/json")]
     , url = url "rpc/nearby_stories"
-    , body = Http.string """{"lat": "-33.8122", "lng": "150.9969"}"""
+    , body = Http.string <| "{\"lat\": \""++pos.lat++"\", \"lng\": \""++pos.lng++"\"}"
     }
    |> Http.fromJson discoverStories
 

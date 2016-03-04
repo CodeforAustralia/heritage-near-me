@@ -13107,6 +13107,7 @@ Elm.Types.make = function (_elm) {
    var Favourite = {ctor: "Favourite"};
    var MoveItem = function (a) {    return {ctor: "MoveItem",_0: a};};
    var Animate = F2(function (a,b) {    return {ctor: "Animate",_0: a,_1: b};});
+   var UpdateLocation = function (a) {    return {ctor: "UpdateLocation",_0: a};};
    var Discover = {ctor: "Discover"};
    var ViewingFavourites = {ctor: "ViewingFavourites"};
    var Viewing = F2(function (a,b) {    return {ctor: "Viewing",_0: a,_1: b};});
@@ -13127,6 +13128,7 @@ Elm.Types.make = function (_elm) {
                               ,DiscoverStory: DiscoverStory
                               ,FullStory: FullStory
                               ,Discover: Discover
+                              ,UpdateLocation: UpdateLocation
                               ,Animate: Animate
                               ,MoveItem: MoveItem
                               ,Favourite: Favourite
@@ -13663,19 +13665,25 @@ Elm.Data.make = function (_elm) {
    $Json$Decode.maybe(A2($Json$Decode._op[":="],"distance",$Json$Decode.$float)));
    var discoverStories = $Json$Decode.list(discoverStory);
    var url = function (subUrl) {    return A2($Http.url,A2($Basics._op["++"],"api/",subUrl),_U.list([]));};
-   var fetchDiscoverStories = A2($Http.fromJson,
-   discoverStories,
-   A2($Http.send,
-   $Http.defaultSettings,
-   {verb: "POST"
-   ,headers: _U.list([{ctor: "_Tuple2",_0: "Content-Type",_1: "application/json"}])
-   ,url: url("rpc/nearby_stories")
-   ,body: $Http.string("{\"lat\": \"-33.8122\", \"lng\": \"150.9969\"}")}));
-   var fetchStories = $Effects.task(A2($Task.onError,
-   A2($Task.map,function (_p8) {    return $Types.LoadItems($Types.Succeeded(_p8));},fetchDiscoverStories),
-   function (_p9) {
-      return $Task.succeed($Types.LoadItems($Types.Failed(_p9)));
-   }));
+   var fetchDiscoverStories = function (pos) {
+      return A2($Http.fromJson,
+      discoverStories,
+      A2($Http.send,
+      $Http.defaultSettings,
+      {verb: "POST"
+      ,headers: _U.list([{ctor: "_Tuple2",_0: "Content-Type",_1: "application/json"}])
+      ,url: url("rpc/nearby_stories")
+      ,body: $Http.string(A2($Basics._op["++"],
+      "{\"lat\": \"",
+      A2($Basics._op["++"],pos.lat,A2($Basics._op["++"],"\", \"lng\": \"",A2($Basics._op["++"],pos.lng,"\"}")))))}));
+   };
+   var fetchStories = function (pos) {
+      return $Effects.task(A2($Task.onError,
+      A2($Task.map,function (_p8) {    return $Types.LoadItems($Types.Succeeded(_p8));},fetchDiscoverStories(pos)),
+      function (_p9) {
+         return $Task.succeed($Types.LoadItems($Types.Failed(_p9)));
+      }));
+   };
    var fetchFullStory = function (storyId) {
       var _p10 = storyId;
       var id = _p10._0;
@@ -14111,28 +14119,41 @@ Elm.Main.make = function (_elm) {
                    app.discovery.favourites))]));}
    });
    var data = $Signal.mailbox($Types.NoAction);
+   var geolocation = Elm.Native.Port.make(_elm).inboundSignal("geolocation",
+   "( Float, Float )",
+   function (v) {
+      return typeof v === "object" && v instanceof Array ? {ctor: "_Tuple2"
+                                                           ,_0: typeof v[0] === "number" ? v[0] : _U.badPort("a number",v[0])
+                                                           ,_1: typeof v[1] === "number" ? v[1] : _U.badPort("a number",v[1])} : _U.badPort("an array",v);
+   });
+   var userLocation = A2($Signal.map,
+   function (_p18) {
+      var _p19 = _p18;
+      return $Types.UpdateLocation({lat: $Basics.toString(_p19._0),lng: $Basics.toString(_p19._1)});
+   },
+   geolocation);
    var history = $Signal.mailbox($Types.NoAction);
    var effects = F2(function (action,app) {
-      var _p18 = action;
-      switch (_p18.ctor)
-      {case "Discover": return _U.eq(app.discovery,initialDiscovery) ? $Data.fetchStories : $Effects.none;
-         case "View": return $Data.fetchStory(_p18._0);
-         case "Back": return A2($Effects.map,function (_p19) {    return $Types.NoAction;},$Effects.task($History.back));
-         case "Animate": var _p25 = _p18._0;
-           var _p20 = app.location;
-           switch (_p20.ctor)
-           {case "Viewing": var _p21 = _p20._1.photoPosition;
-                if (_p21.ctor === "Leaving") {
-                      var _p22 = _p21._1;
-                      return _U.cmp(_p25,_p21._3) > 0 ? $Effects.task($Task.succeed(_U.cmp(_p22,0) < 0 ? $Types.NextPhoto : _U.cmp(_p22,
+      var _p20 = action;
+      switch (_p20.ctor)
+      {case "UpdateLocation": return _U.eq(app.discovery,initialDiscovery) ? $Data.fetchStories(_p20._0) : $Effects.none;
+         case "View": return $Data.fetchStory(_p20._0);
+         case "Back": return A2($Effects.map,function (_p21) {    return $Types.NoAction;},$Effects.task($History.back));
+         case "Animate": var _p27 = _p20._0;
+           var _p22 = app.location;
+           switch (_p22.ctor)
+           {case "Viewing": var _p23 = _p22._1.photoPosition;
+                if (_p23.ctor === "Leaving") {
+                      var _p24 = _p23._1;
+                      return _U.cmp(_p27,_p23._3) > 0 ? $Effects.task($Task.succeed(_U.cmp(_p24,0) < 0 ? $Types.NextPhoto : _U.cmp(_p24,
                       0) > 0 ? $Types.PrevPhoto : $Types.NoAction)) : $Effects.none;
                    } else {
                       return $Effects.none;
                    }
-              case "Discovering": var _p23 = app.discovery.itemPosition;
-                if (_p23.ctor === "Leaving") {
-                      var _p24 = _p23._1;
-                      return _U.cmp(_p25,_p23._3) > 0 ? $Effects.task($Task.succeed(_U.cmp(_p24,0) < 0 ? $Types.Pass : _U.cmp(_p24,
+              case "Discovering": var _p25 = app.discovery.itemPosition;
+                if (_p25.ctor === "Leaving") {
+                      var _p26 = _p25._1;
+                      return _U.cmp(_p27,_p25._3) > 0 ? $Effects.task($Task.succeed(_U.cmp(_p26,0) < 0 ? $Types.Pass : _U.cmp(_p26,
                       0) > 0 ? $Types.Favourite : $Types.NoAction)) : $Effects.none;
                    } else {
                       return $Effects.none;
@@ -14143,7 +14164,7 @@ Elm.Main.make = function (_elm) {
    var app = $StartApp.start({init: {ctor: "_Tuple2",_0: initialApp,_1: $Effects.none}
                              ,view: view
                              ,update: F2(function (action,model) {    return {ctor: "_Tuple2",_0: A2(update,action,model),_1: A2(effects,action,model)};})
-                             ,inputs: _U.list([history.signal,data.signal,$Swiping.animate])});
+                             ,inputs: _U.list([history.signal,data.signal,$Swiping.animate,userLocation])});
    var tasks = Elm.Native.Task.make(_elm).performSignal("tasks",app.tasks);
    var routeTasks = Elm.Native.Task.make(_elm).performSignal("routeTasks",
    $RouteHash.start({prefix: $RouteHash.defaultPrefix,address: history.address,models: app.model,delta2update: $Route.url,location2action: $Route.action}));
@@ -14153,6 +14174,7 @@ Elm.Main.make = function (_elm) {
                              ,app: app
                              ,effects: effects
                              ,history: history
+                             ,userLocation: userLocation
                              ,data: data
                              ,view: view
                              ,navigation: navigation

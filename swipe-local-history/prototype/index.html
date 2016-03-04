@@ -27,6 +27,20 @@
             }, 0);
         });
 
-        Elm.fullscreen(Elm.Main);
+        // Start app
+        var app = Elm.fullscreen(Elm.Main, {
+            geolocation: [0,0],
+        });
+
+        // Set up user geolocation
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(updateLocation);
+        } else {
+            
+        }
+
+        function updateLocation(position) {
+            app.ports.geolocation.send([position.coords.latitude, position.coords.longitude]);
+        }
     </script>
 </html>
