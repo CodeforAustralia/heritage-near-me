@@ -68,6 +68,7 @@ type Story =
         , title : String
         , blurb : String
         , photo : String
+        , distance : Maybe Float
         }
     | FullStory
         { id : StoryId

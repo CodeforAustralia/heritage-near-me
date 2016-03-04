@@ -1,4 +1,4 @@
-module Story (view, id, title, blurb, photo, photos) where
+module Story (view, id, title, blurb, photo, photos, distance) where
 
 import Date exposing (Date)
 import Date.Format as Date
@@ -125,3 +125,8 @@ photos : Story -> List String
 photos story = case story of
     DiscoverStory story -> [story.photo]
     FullStory story -> story.photos
+
+distance : Story -> Maybe String
+distance story = case story of
+    DiscoverStory story -> Maybe.map (\d -> toString (floor d) ++ "m") story.distance
+    FullStory story -> Nothing

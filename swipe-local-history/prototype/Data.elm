@@ -24,23 +24,31 @@ fetchStory storyId = Effects.task <|
     `Task.onError` (Task.succeed << LoadItem storyId << Failed)
 
 fetchDiscoverStories : Task Http.Error (List Story)
-fetchDiscoverStories = Http.get discoverStories <| url "story_discover"
+fetchDiscoverStories = Http.send Http.defaultSettings
+    { verb = "POST"
+    , headers = [("Content-Type", "application/json")]
+    , url = url "rpc/nearby_stories"
+    , body = Http.string """{"lat": "-33.8122", "lng": "150.9969"}"""
+    }
+   |> Http.fromJson discoverStories
 
 discoverStories : Json.Decoder (List Story)
 discoverStories = Json.list discoverStory
 
 discoverStory : Json.Decoder Story
-discoverStory = Json.object4
-    (\id title blurb photo -> DiscoverStory
+discoverStory = Json.object5
+    (\id title blurb photo distance -> DiscoverStory
         { id = StoryId id
         , title = Maybe.withDefault "" title
         , blurb = Maybe.withDefault "" blurb
         , photo = photo
+        , distance = distance
         })
     ("id" := Json.int)
     (Json.maybe ("title" := Json.string))
     (Json.maybe ("blurb" := Json.string))
     ("photo" := Json.oneOf [Json.string, Json.null ""])
+    (Json.maybe ("distance" := Json.float))
 
 fetchFullStory : StoryId -> Task Http.Error Story
 fetchFullStory storyId = let

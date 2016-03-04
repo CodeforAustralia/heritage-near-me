@@ -148,6 +148,10 @@ html, body, body > div {
                     color: white;
                 }
 
+                .discovery-story-details .distance {
+                    text-align: left;
+                }
+
     .discovery-navigation {
         display: flex;
         flex: 0 0 80px;
