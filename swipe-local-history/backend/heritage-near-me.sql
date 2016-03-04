@@ -55,6 +55,37 @@ CREATE SCHEMA hnm
 		LEFT JOIN story_site  ON story_site.story_id  = story.id
 		LEFT JOIN site        ON story_site.site_id   = site.id
 		GROUP BY story.id
+;
+
+CREATE OR REPLACE FUNCTION hnm.nearby_stories(lat TEXT, lng TEXT)
+	RETURNS TABLE (
+		id INTEGER,
+		title TEXT,
+		blurb TEXT,
+		photo TEXT,
+		distance FLOAT
+	) AS
+$$
+BEGIN
+	RETURN QUERY
+	SELECT
+		story.id, story.title, story.blurb,
+		MIN(photo.photo),
+		MIN(ST_Distance_Sphere(
+			ST_GeomFromText('POINT('||site.longitude||' '||site.latitude||')'),
+			ST_GeomFromText('POINT('||$2||' '||$1||')')
+		)) AS distance
+	FROM story
+	LEFT JOIN story_photo ON story_photo.story_id = story.id
+	LEFT JOIN photo       ON story_photo.photo_id = photo.id
+	LEFT JOIN story_site  ON story_site.story_id  = story.id
+	LEFT JOIN site        ON story_site.site_id   = site.id
+	GROUP BY story.id
+	ORDER BY distance ASC;
+END;
+$$
+LANGUAGE plpgsql VOLATILE
+COST 100;
 
 GRANT SELECT ON story TO postgres;
 GRANT SELECT ON photo TO postgres;
