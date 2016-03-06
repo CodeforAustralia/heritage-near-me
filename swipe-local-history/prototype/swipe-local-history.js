@@ -13665,7 +13665,13 @@ Elm.Data.make = function (_elm) {
    $Json$Decode.maybe(A2($Json$Decode._op[":="],"distance",$Json$Decode.$float)));
    var discoverStories = $Json$Decode.list(discoverStory);
    var url = function (subUrl) {    return A2($Http.url,A2($Basics._op["++"],"api/",subUrl),_U.list([]));};
-   var fetchDiscoverStories = function (pos) {
+   var fetchDiscoverStories = A2($Http.get,discoverStories,url("story_discover"));
+   var fetchStories = $Effects.task(A2($Task.onError,
+   A2($Task.map,function (_p8) {    return $Types.LoadItems($Types.Succeeded(_p8));},fetchDiscoverStories),
+   function (_p9) {
+      return $Task.succeed($Types.LoadItems($Types.Failed(_p9)));
+   }));
+   var fetchNearStories = function (pos) {
       return A2($Http.fromJson,
       discoverStories,
       A2($Http.send,
@@ -13677,16 +13683,16 @@ Elm.Data.make = function (_elm) {
       "{\"lat\": \"",
       A2($Basics._op["++"],pos.lat,A2($Basics._op["++"],"\", \"lng\": \"",A2($Basics._op["++"],pos.lng,"\"}")))))}));
    };
-   var fetchStories = function (pos) {
+   var fetchNearbyStories = function (pos) {
       return $Effects.task(A2($Task.onError,
-      A2($Task.map,function (_p8) {    return $Types.LoadItems($Types.Succeeded(_p8));},fetchDiscoverStories(pos)),
-      function (_p9) {
-         return $Task.succeed($Types.LoadItems($Types.Failed(_p9)));
+      A2($Task.map,function (_p10) {    return $Types.LoadItems($Types.Succeeded(_p10));},fetchNearStories(pos)),
+      function (_p11) {
+         return $Task.succeed($Types.LoadItems($Types.Failed(_p11)));
       }));
    };
    var fetchFullStory = function (storyId) {
-      var _p10 = storyId;
-      var id = _p10._0;
+      var _p12 = storyId;
+      var id = _p12._0;
       return A2($Task.andThen,
       A2($Task.map,
       $List.head,
@@ -13697,12 +13703,18 @@ Elm.Data.make = function (_elm) {
    };
    var fetchStory = function (storyId) {
       return $Effects.task(A2($Task.onError,
-      A2($Task.map,function (_p11) {    return A2($Types.LoadItem,storyId,$Types.Succeeded(_p11));},fetchFullStory(storyId)),
-      function (_p12) {
-         return $Task.succeed(A2($Types.LoadItem,storyId,$Types.Failed(_p12)));
+      A2($Task.map,function (_p13) {    return A2($Types.LoadItem,storyId,$Types.Succeeded(_p13));},fetchFullStory(storyId)),
+      function (_p14) {
+         return $Task.succeed(A2($Types.LoadItem,storyId,$Types.Failed(_p14)));
       }));
    };
-   return _elm.Data.values = {_op: _op,fetchStories: fetchStories,fetchStory: fetchStory,map: map,defaultMap: defaultMap,getItem: getItem};
+   return _elm.Data.values = {_op: _op
+                             ,fetchNearbyStories: fetchNearbyStories
+                             ,fetchStories: fetchStories
+                             ,fetchStory: fetchStory
+                             ,map: map
+                             ,defaultMap: defaultMap
+                             ,getItem: getItem};
 };
 Elm.Discover = Elm.Discover || {};
 Elm.Discover.make = function (_elm) {
@@ -13950,6 +13962,8 @@ Elm.Main.make = function (_elm) {
    $Html = Elm.Html.make(_elm),
    $Html$Attributes = Elm.Html.Attributes.make(_elm),
    $Html$Events = Elm.Html.Events.make(_elm),
+   $Json$Decode = Elm.Json.Decode.make(_elm),
+   $Json$Encode = Elm.Json.Encode.make(_elm),
    $List = Elm.List.make(_elm),
    $Maybe = Elm.Maybe.make(_elm),
    $Result = Elm.Result.make(_elm),
@@ -14119,27 +14133,31 @@ Elm.Main.make = function (_elm) {
                    app.discovery.favourites))]));}
    });
    var data = $Signal.mailbox($Types.NoAction);
-   var geolocation = Elm.Native.Port.make(_elm).inboundSignal("geolocation",
-   "( Float, Float )",
-   function (v) {
-      return typeof v === "object" && v instanceof Array ? {ctor: "_Tuple2"
-                                                           ,_0: typeof v[0] === "number" ? v[0] : _U.badPort("a number",v[0])
-                                                           ,_1: typeof v[1] === "number" ? v[1] : _U.badPort("a number",v[1])} : _U.badPort("an array",v);
-   });
+   var latLng = A3($Json$Decode.object2,
+   F2(function (lat,lng) {    return {lat: $Basics.toString(lat),lng: $Basics.toString(lng)};}),
+   A2($Json$Decode._op[":="],"lat",$Json$Decode.$float),
+   A2($Json$Decode._op[":="],"lng",$Json$Decode.$float));
+   var geolocation = Elm.Native.Port.make(_elm).inboundSignal("geolocation","Json.Encode.Value",function (v) {    return v;});
    var userLocation = A2($Signal.map,
    function (_p18) {
-      var _p19 = _p18;
-      return $Types.UpdateLocation({lat: $Basics.toString(_p19._0),lng: $Basics.toString(_p19._1)});
+      return $Types.UpdateLocation($Result.toMaybe(A2($Json$Decode.decodeValue,latLng,_p18)));
    },
    geolocation);
    var history = $Signal.mailbox($Types.NoAction);
    var effects = F2(function (action,app) {
-      var _p20 = action;
-      switch (_p20.ctor)
-      {case "UpdateLocation": return _U.eq(app.discovery,initialDiscovery) ? $Data.fetchStories(_p20._0) : $Effects.none;
-         case "View": return $Data.fetchStory(_p20._0);
+      var _p19 = action;
+      switch (_p19.ctor)
+      {case "UpdateLocation": if (_U.eq(app.discovery,initialDiscovery)) {
+                 var _p20 = _p19._0;
+                 if (_p20.ctor === "Just") {
+                       return $Data.fetchNearbyStories(_p20._0);
+                    } else {
+                       return $Data.fetchStories;
+                    }
+              } else return $Effects.none;
+         case "View": return $Data.fetchStory(_p19._0);
          case "Back": return A2($Effects.map,function (_p21) {    return $Types.NoAction;},$Effects.task($History.back));
-         case "Animate": var _p27 = _p20._0;
+         case "Animate": var _p27 = _p19._0;
            var _p22 = app.location;
            switch (_p22.ctor)
            {case "Viewing": var _p23 = _p22._1.photoPosition;
@@ -14174,6 +14192,7 @@ Elm.Main.make = function (_elm) {
                              ,app: app
                              ,effects: effects
                              ,history: history
+                             ,latLng: latLng
                              ,userLocation: userLocation
                              ,data: data
                              ,view: view

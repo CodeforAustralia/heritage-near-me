@@ -19,7 +19,7 @@ type Location id =
 
 type Action id a =
       Discover
-    | UpdateLocation LatLng
+    | UpdateLocation (Maybe LatLng)
     | Animate Time Window
     | MoveItem ItemPosition
     | Favourite

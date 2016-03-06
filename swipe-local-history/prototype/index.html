@@ -29,18 +29,25 @@
 
         // Start app
         var app = Elm.fullscreen(Elm.Main, {
-            geolocation: [0,0],
+            geolocation: null,
         });
 
         // Set up user geolocation
         if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(updateLocation);
+            navigator.geolocation.getCurrentPosition(updateLocation, noLocation);
         } else {
-            
+            noLocation();
         }
 
         function updateLocation(position) {
-            app.ports.geolocation.send([position.coords.latitude, position.coords.longitude]);
+                app.ports.geolocation.send({
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude
+                });
+        }
+        
+        function noLocation() {
+            app.ports.geolocation.send({});
         }
     </script>
 </html>

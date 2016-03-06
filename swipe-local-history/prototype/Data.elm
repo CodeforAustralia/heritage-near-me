@@ -1,4 +1,4 @@
-module Data (fetchStories, fetchStory, map, defaultMap, getItem) where
+module Data (fetchNearbyStories, fetchStories, fetchStory, map, defaultMap, getItem) where
 
 import Json.Decode as Json exposing ((:=), andThen)
 import Date exposing (Date)
@@ -13,9 +13,14 @@ import Story
 url : String -> String
 url subUrl = Http.url ("api/"++subUrl) []
 
-fetchStories : LatLng -> Effects (Action StoryId Story)
-fetchStories pos = Effects.task <|
-    Task.map (LoadItems << Succeeded) (fetchDiscoverStories pos)
+fetchNearbyStories : LatLng -> Effects (Action StoryId Story)
+fetchNearbyStories pos = Effects.task <|
+    Task.map (LoadItems << Succeeded) (fetchNearStories pos)
+    `Task.onError` (Task.succeed << LoadItems << Failed)
+
+fetchStories : Effects (Action StoryId Story)
+fetchStories = Effects.task <|
+    Task.map (LoadItems << Succeeded) fetchDiscoverStories
     `Task.onError` (Task.succeed << LoadItems << Failed)
 
 fetchStory : StoryId -> Effects (Action StoryId Story)
@@ -23,8 +28,11 @@ fetchStory storyId = Effects.task <|
     Task.map (LoadItem storyId << Succeeded) (fetchFullStory storyId)
     `Task.onError` (Task.succeed << LoadItem storyId << Failed)
 
-fetchDiscoverStories : LatLng -> Task Http.Error (List Story)
-fetchDiscoverStories pos = Http.send Http.defaultSettings
+fetchDiscoverStories : Task Http.Error (List Story)
+fetchDiscoverStories = Http.get discoverStories <| url "story_discover"
+
+fetchNearStories : LatLng -> Task Http.Error (List Story)
+fetchNearStories pos = Http.send Http.defaultSettings
     { verb = "POST"
     , headers = [("Content-Type", "application/json")]
     , url = url "rpc/nearby_stories"

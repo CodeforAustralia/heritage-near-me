@@ -4,6 +4,8 @@ import Html.Events exposing (onClick)
 import Time exposing (Time)
 import Task exposing (Task)
 import Dict exposing (Dict)
+import Json.Encode
+import Json.Decode as Json exposing ((:=))
 import Effects
 import History
 import RouteHash
@@ -29,7 +31,13 @@ app = StartApp.start
 
 effects : Action StoryId Story -> App StoryId Story -> Effects.Effects (Action StoryId Story)
 effects action app = case action of
-    UpdateLocation latlng -> if app.discovery == initialDiscovery then Data.fetchStories latlng else Effects.none
+    UpdateLocation loc ->
+        if app.discovery == initialDiscovery then
+            case loc of
+                Just latlng -> Data.fetchNearbyStories latlng
+                Nothing -> Data.fetchStories
+        else
+            Effects.none
     View storyId -> Data.fetchStory storyId
     Back -> Effects.map (\_ -> NoAction) <| Effects.task History.back
     Animate time window -> case app.location of
@@ -77,10 +85,15 @@ port routeTasks = RouteHash.start
     , location2action = Route.action
     }
 
-port geolocation : Signal (Float, Float)
+port geolocation : Signal Json.Encode.Value
+
+latLng : Json.Decoder LatLng
+latLng = Json.object2 (\lat lng -> {lat = toString lat, lng = toString lng})
+        ("lat" := Json.float)
+        ("lng" := Json.float)
 
 userLocation : Signal (Action id item)
-userLocation = Signal.map (\(lat, lng) -> UpdateLocation {lat = toString lat, lng = toString lng}) geolocation
+userLocation = Signal.map (UpdateLocation << Result.toMaybe << Json.decodeValue latLng) geolocation
 
 data : Signal.Mailbox (Action StoryId Story)
 data = Signal.mailbox NoAction
