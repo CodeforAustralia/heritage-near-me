@@ -149,7 +149,7 @@ html, body, body > div {
                 }
 
                 .discovery-story-details .distance {
-                    text-align: left;
+                    margin: 0px;
                 }
 
     .discovery-navigation {
