@@ -1,4 +1,4 @@
-module Data (fetchStories, fetchStory, map, defaultMap, getItem) where
+module Data (fetchNearbyStories, fetchStories, fetchStory, map, defaultMap, getItem) where
 
 import Json.Decode as Json exposing ((:=), andThen)
 import Date exposing (Date)
@@ -13,6 +13,11 @@ import Story
 url : String -> String
 url subUrl = Http.url ("api/"++subUrl) []
 
+fetchNearbyStories : LatLng -> Effects (Action StoryId Story)
+fetchNearbyStories pos = Effects.task <|
+    Task.map (LoadItems << Succeeded) (fetchNearStories pos)
+    `Task.onError` (Task.succeed << LoadItems << Failed)
+
 fetchStories : Effects (Action StoryId Story)
 fetchStories = Effects.task <|
     Task.map (LoadItems << Succeeded) fetchDiscoverStories
@@ -26,21 +31,32 @@ fetchStory storyId = Effects.task <|
 fetchDiscoverStories : Task Http.Error (List Story)
 fetchDiscoverStories = Http.get discoverStories <| url "story_discover"
 
+fetchNearStories : LatLng -> Task Http.Error (List Story)
+fetchNearStories pos = Http.send Http.defaultSettings
+    { verb = "POST"
+    , headers = [("Content-Type", "application/json")]
+    , url = url "rpc/nearby_stories"
+    , body = Http.string <| "{\"lat\": \""++pos.lat++"\", \"lng\": \""++pos.lng++"\"}"
+    }
+   |> Http.fromJson discoverStories
+
 discoverStories : Json.Decoder (List Story)
 discoverStories = Json.list discoverStory
 
 discoverStory : Json.Decoder Story
-discoverStory = Json.object4
-    (\id title blurb photo -> DiscoverStory
+discoverStory = Json.object5
+    (\id title blurb photo distance -> DiscoverStory
         { id = StoryId id
         , title = Maybe.withDefault "" title
         , blurb = Maybe.withDefault "" blurb
         , photo = photo
+        , distance = distance
         })
     ("id" := Json.int)
     (Json.maybe ("title" := Json.string))
     (Json.maybe ("blurb" := Json.string))
     ("photo" := Json.oneOf [Json.string, Json.null ""])
+    (Json.maybe ("distance" := Json.float))
 
 fetchFullStory : StoryId -> Task Http.Error Story
 fetchFullStory storyId = let

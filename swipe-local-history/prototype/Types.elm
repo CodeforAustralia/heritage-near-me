@@ -19,6 +19,7 @@ type Location id =
 
 type Action id a =
       Discover
+    | UpdateLocation (Maybe LatLng)
     | Animate Time Window
     | MoveItem ItemPosition
     | Favourite
@@ -68,6 +69,7 @@ type Story =
         , title : String
         , blurb : String
         , photo : String
+        , distance : Maybe Float
         }
     | FullStory
         { id : StoryId
