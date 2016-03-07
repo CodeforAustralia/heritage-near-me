@@ -13645,7 +13645,7 @@ Elm.Data.make = function (_elm) {
       $Json$Decode.maybe(A2($Json$Decode._op[":="],"suburb",$Json$Decode.string)),
       $Json$Decode.maybe(A2($Json$Decode._op[":="],"story",$Json$Decode.string)),
       $Json$Decode.maybe(A2($Json$Decode._op[":="],"dates",dates)),
-      A2($Json$Decode._op[":="],"photos",$Json$Decode.list($Json$Decode.oneOf(_U.list([$Json$Decode.string,$Json$Decode.$null("")])))),
+      A2($Json$Decode._op[":="],"photos",$Json$Decode.list($Json$Decode.oneOf(_U.list([$Json$Decode.string,$Json$Decode.$null("images/unavailable.jpg")])))),
       A2($Json$Decode._op[":="],"sites",$Json$Decode.list(site)),
       A2($Json$Decode._op[":="],"locations",$Json$Decode.list(location)));
    });
@@ -13661,7 +13661,7 @@ Elm.Data.make = function (_elm) {
    A2($Json$Decode._op[":="],"id",$Json$Decode.$int),
    $Json$Decode.maybe(A2($Json$Decode._op[":="],"title",$Json$Decode.string)),
    $Json$Decode.maybe(A2($Json$Decode._op[":="],"blurb",$Json$Decode.string)),
-   A2($Json$Decode._op[":="],"photo",$Json$Decode.oneOf(_U.list([$Json$Decode.string,$Json$Decode.$null("")]))),
+   A2($Json$Decode._op[":="],"photo",$Json$Decode.oneOf(_U.list([$Json$Decode.string,$Json$Decode.$null("images/unavailable.jpg")]))),
    $Json$Decode.maybe(A2($Json$Decode._op[":="],"distance",$Json$Decode.$float)));
    var discoverStories = $Json$Decode.list(discoverStory);
    var url = function (subUrl) {    return A2($Http.url,A2($Basics._op["++"],"api/",subUrl),_U.list([]));};

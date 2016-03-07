@@ -55,7 +55,7 @@ discoverStory = Json.object5
     ("id" := Json.int)
     (Json.maybe ("title" := Json.string))
     (Json.maybe ("blurb" := Json.string))
-    ("photo" := Json.oneOf [Json.string, Json.null ""])
+    ("photo" := Json.oneOf [Json.string, Json.null "images/unavailable.jpg"])
     (Json.maybe ("distance" := Json.float))
 
 fetchFullStory : StoryId -> Task Http.Error Story
@@ -91,7 +91,7 @@ fullStory = ("id" := Json.int) `andThen` \id -> Json.object8
     (Json.maybe ("suburb" := Json.string))
     (Json.maybe ("story" := Json.string))
     (Json.maybe ("dates" := dates))
-    ("photos" := Json.list (Json.oneOf [Json.string, Json.null ""]))
+    ("photos" := Json.list (Json.oneOf [Json.string, Json.null "images/unavailable.jpg"]))
     ("sites" := Json.list site)
     ("locations" := Json.list location)
 
