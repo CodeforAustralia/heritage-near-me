@@ -207,9 +207,12 @@ loadingItem id items = Dict.insert (toString id) Loading items
 addItems : (a -> id) -> LoadedData (List a) -> Dict String (RemoteData a) -> Dict String (RemoteData a)
 addItems getId loaded items = case loaded of
     Succeeded loadedItems -> List.foldl
-        (\loadedItem items -> Dict.insert
+        (\loadedItem items -> Dict.update
             (toString <| getId loadedItem)
-            (Loaded <| Succeeded <| loadedItem)
+            (\old -> case old of
+                Nothing -> Just <| Loaded <| Succeeded <| loadedItem
+                Just item -> Just item
+            )
             items)
         items
         loadedItems
