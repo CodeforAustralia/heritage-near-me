@@ -66,6 +66,9 @@ viewStory address story pos = div
         , div [class "discovery-story-details"]
             [ h2 [class "title"] [text <| Story.title story]
             , p [] [text <| Story.blurb story]
+            , case Story.distance story of
+                Just distance -> p [class "distance"] [i [class "fa fa-map-marker"] [], text " ", text distance]
+                Nothing -> text ""
             ]
         ]
     ]

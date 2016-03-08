@@ -7483,6 +7483,77 @@ Elm.List.Extra.make = function (_elm) {
                                    ,lift3: lift3
                                    ,lift4: lift4};
 };
+Elm.String = Elm.String || {};
+Elm.String.Split = Elm.String.Split || {};
+Elm.String.Split.make = function (_elm) {
+   "use strict";
+   _elm.String = _elm.String || {};
+   _elm.String.Split = _elm.String.Split || {};
+   if (_elm.String.Split.values) return _elm.String.Split.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $String = Elm.String.make(_elm);
+   var _op = {};
+   var chunksOfRight = F2(function (k,s) {
+      var k2 = 2 * k;
+      var chunksOfR = function (s$) {
+         return _U.cmp($String.length(s$),k2) > 0 ? A2($List._op["::"],A2($String.right,k,s$),chunksOfR(A2($String.dropRight,k,s$))) : A2($List._op["::"],
+         A2($String.right,k,s$),
+         _U.list([A2($String.dropRight,k,s$)]));
+      };
+      var len = $String.length(s);
+      return _U.cmp(len,k2) > 0 ? $List.reverse(chunksOfR(s)) : _U.cmp(len,k) > 0 ? A2($List._op["::"],
+      A2($String.dropRight,k,s),
+      _U.list([A2($String.right,k,s)])) : _U.list([s]);
+   });
+   var chunksOfLeft = F2(function (k,s) {
+      var len = $String.length(s);
+      return _U.cmp(len,k) > 0 ? A2($List._op["::"],A2($String.left,k,s),A2(chunksOfLeft,k,A2($String.dropLeft,k,s))) : _U.list([s]);
+   });
+   return _elm.String.Split.values = {_op: _op,chunksOfLeft: chunksOfLeft,chunksOfRight: chunksOfRight};
+};
+Elm.Number = Elm.Number || {};
+Elm.Number.Format = Elm.Number.Format || {};
+Elm.Number.Format.make = function (_elm) {
+   "use strict";
+   _elm.Number = _elm.Number || {};
+   _elm.Number.Format = _elm.Number.Format || {};
+   if (_elm.Number.Format.values) return _elm.Number.Format.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $String = Elm.String.make(_elm),
+   $String$Split = Elm.String.Split.make(_elm);
+   var _op = {};
+   var prettyInt = F2(function (sep,n) {
+      var ni = $Basics.abs(n);
+      var nis = A2($String.join,$String.fromChar(sep),A2($String$Split.chunksOfRight,3,$Basics.toString(ni)));
+      return _U.cmp(n,0) < 0 ? A2($String.cons,_U.chr("-"),nis) : nis;
+   });
+   var pretty = F3(function (decimals,sep,n) {
+      var decpow = Math.pow(10,decimals);
+      var nshift = n * $Basics.toFloat(decpow);
+      var nshifti = $Basics.round(nshift);
+      var nshifti$ = $Basics.abs(nshifti);
+      var ni = nshifti$ / decpow | 0;
+      var nf = nshifti$ - ni * decpow;
+      var nfs = $Basics.toString(nf);
+      var nflen = $String.length(nfs);
+      return A2($String.append,
+      _U.cmp(nshifti,0) < 0 ? A2(prettyInt,sep,0 - ni) : A2(prettyInt,sep,ni),
+      A2($String.cons,_U.chr("."),A3($String.padLeft,decimals,_U.chr("0"),nfs)));
+   });
+   return _elm.Number.Format.values = {_op: _op,pretty: pretty,prettyInt: prettyInt};
+};
 Elm.Native = Elm.Native || {};
 Elm.Native.History = {};
 Elm.Native.History.make = function(localRuntime){
@@ -13114,6 +13185,7 @@ Elm.Types.make = function (_elm) {
    var Favourite = {ctor: "Favourite"};
    var MoveItem = function (a) {    return {ctor: "MoveItem",_0: a};};
    var Animate = F2(function (a,b) {    return {ctor: "Animate",_0: a,_1: b};});
+   var UpdateLocation = function (a) {    return {ctor: "UpdateLocation",_0: a};};
    var Discover = {ctor: "Discover"};
    var ViewingFavourites = {ctor: "ViewingFavourites"};
    var Viewing = F2(function (a,b) {    return {ctor: "Viewing",_0: a,_1: b};});
@@ -13134,6 +13206,7 @@ Elm.Types.make = function (_elm) {
                               ,DiscoverStory: DiscoverStory
                               ,FullStory: FullStory
                               ,Discover: Discover
+                              ,UpdateLocation: UpdateLocation
                               ,Animate: Animate
                               ,MoveItem: MoveItem
                               ,Favourite: Favourite
@@ -13385,45 +13458,65 @@ Elm.Story.make = function (_elm) {
    $Loading = Elm.Loading.make(_elm),
    $Markdown = Elm.Markdown.make(_elm),
    $Maybe = Elm.Maybe.make(_elm),
+   $Number$Format = Elm.Number.Format.make(_elm),
    $Remote$Data = Elm.Remote.Data.make(_elm),
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm),
    $Swiping = Elm.Swiping.make(_elm),
    $Types = Elm.Types.make(_elm);
    var _op = {};
-   var photos = function (story) {    var _p0 = story;if (_p0.ctor === "DiscoverStory") {    return _U.list([_p0._0.photo]);} else {    return _p0._0.photos;}};
-   var photo = function (story) {
-      var _p1 = story;
-      if (_p1.ctor === "DiscoverStory") {
-            return _p1._0.photo;
+   var digits = F2(function (n,f) {
+      var base = 10;
+      var places = $Basics.ceiling(A2($Basics.logBase,base,f)) - n;
+      return _U.cmp(places,0) < 0 ? n : $Basics.round(f / $Basics.toFloat(Math.pow(base,places))) * Math.pow(base,places);
+   });
+   var distanceFormat = function (dist) {
+      return _U.cmp(dist,10) < 0 ? "Here" : _U.cmp(dist,1000) < 0 ? A2($Basics._op["++"],$Basics.toString(A2(digits,1,dist)),"m") : _U.cmp(dist,
+      5000) < 0 ? A2($Basics._op["++"],A3($Number$Format.pretty,1,_U.chr(","),dist / 1000),"km") : _U.cmp(dist,10000) < 0 ? A2($Basics._op["++"],
+      $Basics.toString(A2(digits,1,dist / 1000)),
+      "km") : A2($Basics._op["++"],$Basics.toString(A2(digits,2,dist / 1000)),"km");
+   };
+   var distance = function (story) {
+      var _p0 = story;
+      if (_p0.ctor === "DiscoverStory") {
+            return A2($Maybe.map,distanceFormat,_p0._0.distance);
          } else {
-            return A2($Maybe.withDefault,"",$List.head(_p1._0.photos));
+            return $Maybe.Nothing;
          }
    };
-   var blurb = function (story) {    var _p2 = story;if (_p2.ctor === "DiscoverStory") {    return _p2._0.blurb;} else {    return _p2._0.blurb;}};
-   var title = function (story) {    var _p3 = story;if (_p3.ctor === "DiscoverStory") {    return _p3._0.title;} else {    return _p3._0.title;}};
-   var id = function (story) {    var _p4 = story;if (_p4.ctor === "DiscoverStory") {    return _p4._0.id;} else {    return _p4._0.id;}};
+   var photos = function (story) {    var _p1 = story;if (_p1.ctor === "DiscoverStory") {    return _U.list([_p1._0.photo]);} else {    return _p1._0.photos;}};
+   var photo = function (story) {
+      var _p2 = story;
+      if (_p2.ctor === "DiscoverStory") {
+            return _p2._0.photo;
+         } else {
+            return A2($Maybe.withDefault,"",$List.head(_p2._0.photos));
+         }
+   };
+   var blurb = function (story) {    var _p3 = story;if (_p3.ctor === "DiscoverStory") {    return _p3._0.blurb;} else {    return _p3._0.blurb;}};
+   var title = function (story) {    var _p4 = story;if (_p4.ctor === "DiscoverStory") {    return _p4._0.title;} else {    return _p4._0.title;}};
+   var id = function (story) {    var _p5 = story;if (_p5.ctor === "DiscoverStory") {    return _p5._0.id;} else {    return _p5._0.id;}};
    var formatDate = function (dates) {
-      var _p5 = {ctor: "_Tuple2",_0: dates.start,_1: dates.end};
-      _v5_3: do {
-         if (_p5.ctor === "_Tuple2") {
-               if (_p5._0.ctor === "Nothing") {
-                     if (_p5._1.ctor === "Just") {
-                           return $Maybe.Just(A2($Date$Format.format,"%Y",_p5._1._0));
+      var _p6 = {ctor: "_Tuple2",_0: dates.start,_1: dates.end};
+      _v6_3: do {
+         if (_p6.ctor === "_Tuple2") {
+               if (_p6._0.ctor === "Nothing") {
+                     if (_p6._1.ctor === "Just") {
+                           return $Maybe.Just(A2($Date$Format.format,"%Y",_p6._1._0));
                         } else {
-                           break _v5_3;
+                           break _v6_3;
                         }
                   } else {
-                     if (_p5._1.ctor === "Nothing") {
-                           return $Maybe.Just(A2($Date$Format.format,"%Y",_p5._0._0));
+                     if (_p6._1.ctor === "Nothing") {
+                           return $Maybe.Just(A2($Date$Format.format,"%Y",_p6._0._0));
                         } else {
                            return $Maybe.Just(A2($Basics._op["++"],
-                           A2($Date$Format.format,"%Y",_p5._0._0),
-                           A2($Basics._op["++"]," - ",A2($Date$Format.format,"%Y",_p5._1._0))));
+                           A2($Date$Format.format,"%Y",_p6._0._0),
+                           A2($Basics._op["++"]," - ",A2($Date$Format.format,"%Y",_p6._1._0))));
                         }
                   }
             } else {
-               break _v5_3;
+               break _v6_3;
             }
       } while (false);
       return $Maybe.Nothing;
@@ -13473,7 +13566,7 @@ Elm.Story.make = function (_elm) {
       return A2($Html.div,
       _U.list([$Html$Attributes.$class("photo-indicators")]),
       A2($List.indexedMap,
-      F2(function (index$,_p6) {
+      F2(function (index$,_p7) {
          return _U.eq(index$,A2(storyIndex,index,story)) ? A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-circle")]),_U.list([])) : A2($Html.i,
          _U.list([$Html$Attributes.$class("fa fa-circle-o"),A2($Html$Events.onClick,address,$Types.JumpPhoto(index$))]),
          _U.list([]));
@@ -13484,51 +13577,51 @@ Elm.Story.make = function (_elm) {
       return A2($Html.div,
       _U.list([$Html$Attributes.$class("story")]),
       function () {
-         var _p7 = story;
-         switch (_p7.ctor)
-         {case "Loaded": var _p13 = _p7._0;
+         var _p8 = story;
+         switch (_p8.ctor)
+         {case "Loaded": var _p14 = _p8._0;
               return A2($Basics._op["++"],
-              _U.list([_U.cmp($List.length(photos(_p13)),1) > 0 ? A2($Html.div,
+              _U.list([_U.cmp($List.length(photos(_p14)),1) > 0 ? A2($Html.div,
                       A2($Basics._op["++"],
                       _U.list([$Html$Attributes.$class("photo-slide")]),
                       A3($Swiping.onSwipe,address,$Swiping.itemSwipe(item.photoPosition),$Swiping.swipePhotoAction)),
                       _U.list([A2($Html.div,
                               _U.list([$Html$Attributes.$class("photos")]),
-                              A2($List.map,A2(storyImage,_p13,item.photoPosition),_U.list([item.photoIndex - 1,item.photoIndex,item.photoIndex + 1])))
-                              ,A3(photoIndicators,address,_p13,item.photoIndex)])) : A2($Html.div,
+                              A2($List.map,A2(storyImage,_p14,item.photoPosition),_U.list([item.photoIndex - 1,item.photoIndex,item.photoIndex + 1])))
+                              ,A3(photoIndicators,address,_p14,item.photoIndex)])) : A2($Html.div,
                       _U.list([$Html$Attributes.$class("photos")]),
-                      _U.list([A3(storyImage,_p13,item.photoPosition,item.photoIndex)]))
-                      ,A2($Html.h1,_U.list([$Html$Attributes.$class("title")]),_U.list([$Html.text(title(_p13))]))]),
+                      _U.list([A3(storyImage,_p14,item.photoPosition,item.photoIndex)]))
+                      ,A2($Html.h1,_U.list([$Html$Attributes.$class("title")]),_U.list([$Html.text(title(_p14))]))]),
               function () {
-                 var _p8 = _p13;
-                 if (_p8.ctor === "DiscoverStory") {
+                 var _p9 = _p14;
+                 if (_p9.ctor === "DiscoverStory") {
                        return _U.list([$Loading.loading]);
                     } else {
-                       var _p12 = _p8._0;
+                       var _p13 = _p9._0;
                        return _U.list([function () {
-                                         var _p9 = _p12.suburb;
-                                         if (_p9.ctor === "Just") {
-                                               return A2($Html.h3,_U.list([$Html$Attributes.$class("suburb")]),_U.list([$Html.text(_p9._0)]));
-                                            } else {
-                                               return $Html.text("");
-                                            }
-                                      }()
-                                      ,function () {
-                                         var _p10 = formatDate(_p12.dates);
+                                         var _p10 = _p13.suburb;
                                          if (_p10.ctor === "Just") {
-                                               return A2($Html.h3,_U.list([$Html$Attributes.$class("date")]),_U.list([$Html.text(_p10._0)]));
+                                               return A2($Html.h3,_U.list([$Html$Attributes.$class("suburb")]),_U.list([$Html.text(_p10._0)]));
                                             } else {
                                                return $Html.text("");
                                             }
                                       }()
-                                      ,A2($Html.blockquote,_U.list([]),_U.list([$Html.text(_p12.blurb)]))
-                                      ,$Markdown.toHtml(_p12.story)
                                       ,function () {
-                                         var _p11 = _p12.sites;
-                                         if (_p11.ctor === "[]") {
+                                         var _p11 = formatDate(_p13.dates);
+                                         if (_p11.ctor === "Just") {
+                                               return A2($Html.h3,_U.list([$Html$Attributes.$class("date")]),_U.list([$Html.text(_p11._0)]));
+                                            } else {
+                                               return $Html.text("");
+                                            }
+                                      }()
+                                      ,A2($Html.blockquote,_U.list([]),_U.list([$Html.text(_p13.blurb)]))
+                                      ,$Markdown.toHtml(_p13.story)
+                                      ,function () {
+                                         var _p12 = _p13.sites;
+                                         if (_p12.ctor === "[]") {
                                                return $Html.text("");
                                             } else {
-                                               return links(_p12);
+                                               return links(_p13);
                                             }
                                       }()]);
                     }
@@ -13537,7 +13630,7 @@ Elm.Story.make = function (_elm) {
             default: return _U.list([$Loading.loading]);}
       }());
    });
-   return _elm.Story.values = {_op: _op,view: view,id: id,title: title,blurb: blurb,photo: photo,photos: photos};
+   return _elm.Story.values = {_op: _op,view: view,id: id,title: title,blurb: blurb,photo: photo,photos: photos,distance: distance};
 };
 Elm.Data = Elm.Data || {};
 Elm.Data.make = function (_elm) {
@@ -13594,21 +13687,38 @@ Elm.Data.make = function (_elm) {
       $Json$Decode.maybe(A2($Json$Decode._op[":="],"suburb",$Json$Decode.string)),
       $Json$Decode.maybe(A2($Json$Decode._op[":="],"story",$Json$Decode.string)),
       $Json$Decode.maybe(A2($Json$Decode._op[":="],"dates",dates)),
-      A2($Json$Decode._op[":="],"photos",$Json$Decode.list($Json$Decode.oneOf(_U.list([$Json$Decode.string,$Json$Decode.$null("")])))),
+      A2($Json$Decode._op[":="],"photos",$Json$Decode.list($Json$Decode.oneOf(_U.list([$Json$Decode.string,$Json$Decode.$null("images/unavailable.jpg")])))),
       A2($Json$Decode._op[":="],"sites",$Json$Decode.list(site)),
       A2($Json$Decode._op[":="],"locations",$Json$Decode.list(location)));
    });
    var fullStories = $Json$Decode.list(fullStory);
-   var discoverStory = A5($Json$Decode.object4,
-   F4(function (id,title,blurb,photo) {
-      return $Types.DiscoverStory({id: $Types.StoryId(id),title: A2($Maybe.withDefault,"",title),blurb: A2($Maybe.withDefault,"",blurb),photo: photo});
+   var discoverStory = A6($Json$Decode.object5,
+   F5(function (id,title,blurb,photo,distance) {
+      return $Types.DiscoverStory({id: $Types.StoryId(id)
+                                  ,title: A2($Maybe.withDefault,"",title)
+                                  ,blurb: A2($Maybe.withDefault,"",blurb)
+                                  ,photo: photo
+                                  ,distance: distance});
    }),
    A2($Json$Decode._op[":="],"id",$Json$Decode.$int),
    $Json$Decode.maybe(A2($Json$Decode._op[":="],"title",$Json$Decode.string)),
    $Json$Decode.maybe(A2($Json$Decode._op[":="],"blurb",$Json$Decode.string)),
-   A2($Json$Decode._op[":="],"photo",$Json$Decode.oneOf(_U.list([$Json$Decode.string,$Json$Decode.$null("")]))));
+   A2($Json$Decode._op[":="],"photo",$Json$Decode.oneOf(_U.list([$Json$Decode.string,$Json$Decode.$null("images/unavailable.jpg")]))),
+   $Json$Decode.maybe(A2($Json$Decode._op[":="],"distance",$Json$Decode.$float)));
    var discoverStories = $Json$Decode.list(discoverStory);
    var url = function (subUrl) {    return A2($Http.url,A2($Basics._op["++"],"api/",subUrl),_U.list([]));};
+   var requestNearbyStories = function (pos) {
+      return A2($Http.fromJson,
+      discoverStories,
+      A2($Http.send,
+      $Http.defaultSettings,
+      {verb: "POST"
+      ,headers: _U.list([{ctor: "_Tuple2",_0: "Content-Type",_1: "application/json"}])
+      ,url: url("rpc/nearby_stories")
+      ,body: $Http.string(A2($Basics._op["++"],
+      "{\"lat\": \"",
+      A2($Basics._op["++"],pos.lat,A2($Basics._op["++"],"\", \"lng\": \"",A2($Basics._op["++"],pos.lng,"\"}")))))}));
+   };
    var requestStories = A2($Http.get,discoverStories,url("story_discover"));
    var requestStory = function (storyId) {
       var _p2 = storyId;
@@ -13622,7 +13732,7 @@ Elm.Data.make = function (_elm) {
       });
    };
    var getItem = F2(function (id,app) {    return A2($Remote$DataStore.get,id,app.items);});
-   return _elm.Data.values = {_op: _op,requestStories: requestStories,requestStory: requestStory,getItem: getItem};
+   return _elm.Data.values = {_op: _op,requestNearbyStories: requestNearbyStories,requestStories: requestStories,requestStory: requestStory,getItem: getItem};
 };
 Elm.Discover = Elm.Discover || {};
 Elm.Discover.make = function (_elm) {
@@ -13684,7 +13794,17 @@ Elm.Discover.make = function (_elm) {
               ,A2($Html.div,
               _U.list([$Html$Attributes.$class("discovery-story-details")]),
               _U.list([A2($Html.h2,_U.list([$Html$Attributes.$class("title")]),_U.list([$Html.text($Story.title(story))]))
-                      ,A2($Html.p,_U.list([]),_U.list([$Html.text($Story.blurb(story))]))]))]))]));
+                      ,A2($Html.p,_U.list([]),_U.list([$Html.text($Story.blurb(story))]))
+                      ,function () {
+                         var _p1 = $Story.distance(story);
+                         if (_p1.ctor === "Just") {
+                               return A2($Html.p,
+                               _U.list([$Html$Attributes.$class("distance")]),
+                               _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-map-marker")]),_U.list([])),$Html.text(" "),$Html.text(_p1._0)]));
+                            } else {
+                               return $Html.text("");
+                            }
+                      }()]))]))]));
    });
    var noStory = function (message) {
       return A2($Html.div,_U.list([$Html$Attributes.$class("discovery-empty")]),_U.list([A2($Html.h2,_U.list([]),_U.list([$Html.text(message)]))]));
@@ -13716,13 +13836,13 @@ Elm.Discover.make = function (_elm) {
       _U.list([$Html$Attributes.$class("app screen-size discovery")]),
       _U.list([topNav
               ,function () {
-                 var _p1 = app.discovery.item;
-                 switch (_p1.ctor)
-                 {case "Loaded": var _p2 = _p1._0;
-                      if (_p2.ctor === "Just") {
-                            var _p3 = A2($Data.getItem,_p2._0,app);
-                            switch (_p3.ctor)
-                            {case "Loaded": return A3(viewStory,address,_p3._0,app.discovery.itemPosition);
+                 var _p2 = app.discovery.item;
+                 switch (_p2.ctor)
+                 {case "Loaded": var _p3 = _p2._0;
+                      if (_p3.ctor === "Just") {
+                            var _p4 = A2($Data.getItem,_p3._0,app);
+                            switch (_p4.ctor)
+                            {case "Loaded": return A3(viewStory,address,_p4._0,app.discovery.itemPosition);
                                case "Failed": return noStory("Something went wrong");
                                default: return A2($Html.div,_U.list([$Html$Attributes.$class("discovery-empty")]),_U.list([$Loading.loading]));}
                          } else {
@@ -13850,6 +13970,9 @@ Elm.Main.make = function (_elm) {
    $Html = Elm.Html.make(_elm),
    $Html$Attributes = Elm.Html.Attributes.make(_elm),
    $Html$Events = Elm.Html.Events.make(_elm),
+   $Http = Elm.Http.make(_elm),
+   $Json$Decode = Elm.Json.Decode.make(_elm),
+   $Json$Encode = Elm.Json.Encode.make(_elm),
    $List = Elm.List.make(_elm),
    $Maybe = Elm.Maybe.make(_elm),
    $Remote$Data = Elm.Remote.Data.make(_elm),
@@ -13868,6 +13991,26 @@ Elm.Main.make = function (_elm) {
    var initialDiscovery = {item: $Remote$Data.Loading,itemPosition: $Types.Static,items: _U.list([]),favourites: _U.list([]),passes: _U.list([])};
    var initialItemView = {photoIndex: 0,photoPosition: $Types.Static};
    var initialApp = {location: $Types.Discovering,discovery: initialDiscovery,items: $Remote$DataStore.empty};
+   var fetchDiscover = function (request) {
+      return $Effects.task(A2($Task.onError,
+      A2($Task.andThen,
+      request,
+      function (stories) {
+         return $Task.succeed(A2($Types.LoadDiscoveryData,
+         $Remote$Data.Loaded(A2($List.map,$Story.id,stories)),
+         function (store) {
+            return A3($List.foldl,
+            F2(function (story,store) {
+               return A3($Remote$DataStore.update,$Story.id(story),function (old) {    return $Maybe.Just($Remote$Data.Loaded(story));},store);
+            }),
+            store,
+            stories);
+         }));
+      }),
+      function (error) {
+         return $Task.succeed(A2($Types.LoadDiscoveryData,$Remote$Data.Failed(error),$Basics.identity));
+      }));
+   };
    var updateDiscoverableItems = F2(function (discovery,items) {
       return _U.eq(discovery,initialDiscovery) ? _U.update(discovery,
       {item: A2($Remote$Data.map,$List.head,items),items: A2($Maybe.withDefault,_U.list([]),$Remote$Data.get(items))}) : discovery;
@@ -13985,58 +14128,58 @@ Elm.Main.make = function (_elm) {
                    A2($List.filterMap,$Remote$Data.get,A2($List.map,function (id) {    return A2($Data.getItem,id,app);},app.discovery.favourites)))]));}
    });
    var data = $Signal.mailbox($Types.NoAction);
+   var latLng = A3($Json$Decode.object2,
+   F2(function (lat,lng) {    return {lat: $Basics.toString(lat),lng: $Basics.toString(lng)};}),
+   A2($Json$Decode._op[":="],"lat",$Json$Decode.$float),
+   A2($Json$Decode._op[":="],"lng",$Json$Decode.$float));
+   var geolocation = Elm.Native.Port.make(_elm).inboundSignal("geolocation","Json.Encode.Value",function (v) {    return v;});
+   var userLocation = A2($Signal.map,
+   function (_p12) {
+      return $Types.UpdateLocation($Result.toMaybe(A2($Json$Decode.decodeValue,latLng,_p12)));
+   },
+   geolocation);
    var history = $Signal.mailbox($Types.NoAction);
    var effects = F2(function (action,app) {
-      var _p12 = action;
-      switch (_p12.ctor)
-      {case "Discover": return _U.eq(app.discovery,initialDiscovery) ? $Effects.task(A2($Task.onError,
-           A2($Task.andThen,
-           $Data.requestStories,
-           function (stories) {
-              return $Task.succeed(A2($Types.LoadDiscoveryData,
-              $Remote$Data.Loaded(A2($List.map,$Story.id,stories)),
-              function (store) {
-                 return A3($List.foldl,
-                 F2(function (story,store) {
-                    return A3($Remote$DataStore.update,$Story.id(story),function (old) {    return $Maybe.Just($Remote$Data.Loaded(story));},store);
-                 }),
-                 store,
-                 stories);
-              }));
-           }),
-           function (error) {
-              return $Task.succeed(A2($Types.LoadDiscoveryData,$Remote$Data.Failed(error),$Basics.identity));
-           })) : $Effects.none;
-         case "View": var _p13 = _p12._0;
+      var _p13 = action;
+      switch (_p13.ctor)
+      {case "View": var _p14 = _p13._0;
            return $Effects.task(A2($Task.onError,
            A2($Task.andThen,
-           $Data.requestStory(_p13),
+           $Data.requestStory(_p14),
            function (value) {
-              return $Task.succeed($Types.LoadData(A2($Remote$DataStore.update,_p13,function (old) {    return $Maybe.Just($Remote$Data.Loaded(value));})));
+              return $Task.succeed($Types.LoadData(A2($Remote$DataStore.update,_p14,function (old) {    return $Maybe.Just($Remote$Data.Loaded(value));})));
            }),
            function (error) {
               return $Task.succeed($Types.LoadData(A2($Remote$DataStore.update,
-              _p13,
+              _p14,
               function (old) {
                  return $Maybe.Just(A2($Maybe.withDefault,$Remote$Data.Failed(error),old));
               })));
            }));
-         case "Back": return A2($Effects.map,function (_p14) {    return $Types.NoAction;},$Effects.task($History.back));
-         case "Animate": var _p20 = _p12._0;
-           var _p15 = app.location;
-           switch (_p15.ctor)
-           {case "Viewing": var _p16 = _p15._1.photoPosition;
-                if (_p16.ctor === "Leaving") {
-                      var _p17 = _p16._1;
-                      return _U.cmp(_p20,_p16._3) > 0 ? $Effects.task($Task.succeed(_U.cmp(_p17,0) < 0 ? $Types.NextPhoto : _U.cmp(_p17,
+         case "UpdateLocation": if (_U.eq(app.discovery,initialDiscovery)) {
+                 var _p15 = _p13._0;
+                 if (_p15.ctor === "Just") {
+                       return fetchDiscover($Data.requestNearbyStories(_p15._0));
+                    } else {
+                       return fetchDiscover($Data.requestStories);
+                    }
+              } else return $Effects.none;
+         case "Back": return A2($Effects.map,function (_p16) {    return $Types.NoAction;},$Effects.task($History.back));
+         case "Animate": var _p22 = _p13._0;
+           var _p17 = app.location;
+           switch (_p17.ctor)
+           {case "Viewing": var _p18 = _p17._1.photoPosition;
+                if (_p18.ctor === "Leaving") {
+                      var _p19 = _p18._1;
+                      return _U.cmp(_p22,_p18._3) > 0 ? $Effects.task($Task.succeed(_U.cmp(_p19,0) < 0 ? $Types.NextPhoto : _U.cmp(_p19,
                       0) > 0 ? $Types.PrevPhoto : $Types.NoAction)) : $Effects.none;
                    } else {
                       return $Effects.none;
                    }
-              case "Discovering": var _p18 = app.discovery.itemPosition;
-                if (_p18.ctor === "Leaving") {
-                      var _p19 = _p18._1;
-                      return _U.cmp(_p20,_p18._3) > 0 ? $Effects.task($Task.succeed(_U.cmp(_p19,0) < 0 ? $Types.Pass : _U.cmp(_p19,
+              case "Discovering": var _p20 = app.discovery.itemPosition;
+                if (_p20.ctor === "Leaving") {
+                      var _p21 = _p20._1;
+                      return _U.cmp(_p22,_p20._3) > 0 ? $Effects.task($Task.succeed(_U.cmp(_p21,0) < 0 ? $Types.Pass : _U.cmp(_p21,
                       0) > 0 ? $Types.Favourite : $Types.NoAction)) : $Effects.none;
                    } else {
                       return $Effects.none;
@@ -14047,7 +14190,7 @@ Elm.Main.make = function (_elm) {
    var app = $StartApp.start({init: {ctor: "_Tuple2",_0: initialApp,_1: $Effects.none}
                              ,view: view
                              ,update: F2(function (action,model) {    return {ctor: "_Tuple2",_0: A2(update,action,model),_1: A2(effects,action,model)};})
-                             ,inputs: _U.list([history.signal,data.signal,$Swiping.animate])});
+                             ,inputs: _U.list([history.signal,data.signal,$Swiping.animate,userLocation])});
    var tasks = Elm.Native.Task.make(_elm).performSignal("tasks",app.tasks);
    var routeTasks = Elm.Native.Task.make(_elm).performSignal("routeTasks",
    $RouteHash.start({prefix: $RouteHash.defaultPrefix,address: history.address,models: app.model,delta2update: $Route.url,location2action: $Route.action}));
@@ -14057,6 +14200,8 @@ Elm.Main.make = function (_elm) {
                              ,app: app
                              ,effects: effects
                              ,history: history
+                             ,latLng: latLng
+                             ,userLocation: userLocation
                              ,data: data
                              ,view: view
                              ,navigation: navigation
@@ -14066,6 +14211,7 @@ Elm.Main.make = function (_elm) {
                              ,animateItem: animateItem
                              ,moveItem: moveItem
                              ,updateDiscoverableItems: updateDiscoverableItems
+                             ,fetchDiscover: fetchDiscover
                              ,initialApp: initialApp
                              ,initialItemView: initialItemView
                              ,initialDiscovery: initialDiscovery};

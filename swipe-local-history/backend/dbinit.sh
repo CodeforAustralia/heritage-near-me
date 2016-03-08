@@ -3,4 +3,5 @@
 INIT_SQL=$1
 
 su postgres -c "createdb hnm"
+su postgres -c "psql hnm -c 'CREATE EXTENSION postgis;'"
 su postgres -c "psql hnm -f $INIT_SQL"

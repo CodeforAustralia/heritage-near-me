@@ -1,4 +1,4 @@
-module Data (requestStories, requestStory, getItem) where
+module Data (requestNearbyStories, requestStories, requestStory, getItem) where
 
 import Json.Decode as Json exposing ((:=), andThen)
 import Date exposing (Date)
@@ -17,6 +17,15 @@ getItem id app = Remote.DataStore.get id app.items
 
 url : String -> String
 url subUrl = Http.url ("api/"++subUrl) []
+
+requestNearbyStories : LatLng -> Task Http.Error (List Story)
+requestNearbyStories pos = Http.send Http.defaultSettings
+    { verb = "POST"
+    , headers = [("Content-Type", "application/json")]
+    , url = url "rpc/nearby_stories"
+    , body = Http.string <| "{\"lat\": \""++pos.lat++"\", \"lng\": \""++pos.lng++"\"}"
+    }
+   |> Http.fromJson discoverStories
 
 requestStories : Task Http.Error (List Story)
 requestStories = Http.get discoverStories <| url "story_discover"
@@ -37,17 +46,19 @@ discoverStories : Json.Decoder (List Story)
 discoverStories = Json.list discoverStory
 
 discoverStory : Json.Decoder Story
-discoverStory = Json.object4
-    (\id title blurb photo -> DiscoverStory
+discoverStory = Json.object5
+    (\id title blurb photo distance -> DiscoverStory
         { id = StoryId id
         , title = Maybe.withDefault "" title
         , blurb = Maybe.withDefault "" blurb
         , photo = photo
+        , distance = distance
         })
     ("id" := Json.int)
     (Json.maybe ("title" := Json.string))
     (Json.maybe ("blurb" := Json.string))
-    ("photo" := Json.oneOf [Json.string, Json.null ""])
+    ("photo" := Json.oneOf [Json.string, Json.null "images/unavailable.jpg"])
+    (Json.maybe ("distance" := Json.float))
 
 fullStories : Json.Decoder (List Story)
 fullStories = Json.list fullStory
@@ -70,7 +81,7 @@ fullStory = ("id" := Json.int) `andThen` \id -> Json.object8
     (Json.maybe ("suburb" := Json.string))
     (Json.maybe ("story" := Json.string))
     (Json.maybe ("dates" := dates))
-    ("photos" := Json.list (Json.oneOf [Json.string, Json.null ""]))
+    ("photos" := Json.list (Json.oneOf [Json.string, Json.null "images/unavailable.jpg"]))
     ("sites" := Json.list site)
     ("locations" := Json.list location)
 

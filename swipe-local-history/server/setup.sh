@@ -4,9 +4,15 @@ FRONTEND="swipe-local-history/prototype"
 BACKEND="swipe-local-history/backend" 
 SERVER="swipe-local-history/server" 
 
+# PostGIS sources
+sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt trusty-pgdg main" >> /etc/apt/sources.list'
+wget --quiet -O - http://apt.postgresql.org/pub/repos/apt/ACCC4CF8.asc | sudo apt-key add -
+sudo apt-get update
+
 sudo apt-get install nginx -y
 sudo apt-get install git -y
 sudo apt-get install postgresql postgresql-contrib -y
+sudo apt-get install postgresql-9.4-postgis-2.1 postgresql-contrib-9.4 -y
 sudo apt-get install daemon -y
 
 cd heritage-near-me

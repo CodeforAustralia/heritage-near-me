@@ -4,6 +4,9 @@ import Html.Events exposing (onClick)
 import Time exposing (Time)
 import Task exposing (Task)
 import Dict exposing (Dict)
+import Http
+import Json.Encode
+import Json.Decode as Json exposing ((:=))
 import Effects
 import History
 import RouteHash
@@ -26,32 +29,24 @@ app = StartApp.start
     { init = (initialApp, Effects.none)
     , view = view
     , update = \action model -> (update action model, effects action model)
-    , inputs = [history.signal, data.signal, Swiping.animate]
+    , inputs = [history.signal, data.signal, Swiping.animate, userLocation]
     }
 
 effects : Action StoryId Story -> App StoryId Story -> Effects.Effects (Action StoryId Story)
 effects action app = case action of
-    Discover -> if app.discovery == initialDiscovery then
-            Effects.task
-                <| Data.requestStories
-                `Task.andThen`
-                    (\stories ->
-                        (\store -> List.foldl
-                            (\story store -> Remote.DataStore.update (Story.id story) (\old -> Just <| Loaded story) store)
-                            store
-                            stories)
-                        |> LoadDiscoveryData (Loaded <| List.map Story.id stories)
-                        |> Task.succeed)
-                `Task.onError`
-                    (\error -> LoadDiscoveryData (Failed error) identity |> Task.succeed)
-        else
-            Effects.none
     View storyId -> Effects.task
         <| Data.requestStory storyId
         `Task.andThen`
             (\value -> Remote.DataStore.update storyId (\old -> Just <| Loaded value) |> LoadData |> Task.succeed)
         `Task.onError`
             (\error -> Remote.DataStore.update storyId (\old -> Just <| Maybe.withDefault (Failed error) old) |> LoadData |> Task.succeed)
+    UpdateLocation loc ->
+        if app.discovery == initialDiscovery then
+            case loc of
+                Just latlng -> fetchDiscover <| Data.requestNearbyStories latlng
+                Nothing -> fetchDiscover <| Data.requestStories
+        else
+            Effects.none
     Back -> Effects.map (\_ -> NoAction) <| Effects.task History.back
     Animate time window -> case app.location of
         Viewing _ view -> case view.photoPosition of
@@ -97,6 +92,16 @@ port routeTasks = RouteHash.start
     , delta2update = Route.url
     , location2action = Route.action
     }
+
+port geolocation : Signal Json.Encode.Value
+
+latLng : Json.Decoder LatLng
+latLng = Json.object2 (\lat lng -> {lat = toString lat, lng = toString lng})
+        ("lat" := Json.float)
+        ("lng" := Json.float)
+
+userLocation : Signal (Action id item)
+userLocation = Signal.map (UpdateLocation << Result.toMaybe << Json.decodeValue latLng) geolocation
 
 data : Signal.Mailbox (Action StoryId Story)
 data = Signal.mailbox NoAction
@@ -202,6 +207,21 @@ updateDiscoverableItems discovery items =
         }
     else
         discovery
+
+fetchDiscover : Task Http.Error (List Story) -> Effects.Effects (Action StoryId Story)
+fetchDiscover request = Effects.task
+    <| request
+    `Task.andThen`
+        (\stories ->
+            (\store -> List.foldl
+                (\story store -> Remote.DataStore.update (Story.id story) (\old -> Just <| Loaded story) store)
+                store
+                stories)
+            |> LoadDiscoveryData (Loaded <| List.map Story.id stories)
+            |> Task.succeed)
+    `Task.onError`
+        (\error -> LoadDiscoveryData (Failed error) identity |> Task.succeed)
+
 
 initialApp : App StoryId Story
 initialApp = {location = Discovering, discovery = initialDiscovery, items = Remote.DataStore.empty}
