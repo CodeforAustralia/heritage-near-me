@@ -10,6 +10,8 @@ import RouteHash
 import StartApp
 
 import Types exposing (..)
+import Remote.Data exposing (RemoteData(..))
+import Remote.DataStore exposing (RemoteDataStore)
 import Route
 import Data
 import Discover
@@ -29,8 +31,27 @@ app = StartApp.start
 
 effects : Action StoryId Story -> App StoryId Story -> Effects.Effects (Action StoryId Story)
 effects action app = case action of
-    Discover -> if app.discovery == initialDiscovery then Data.fetchStories else Effects.none
-    View storyId -> Data.fetchStory storyId
+    Discover -> if app.discovery == initialDiscovery then
+            Effects.task
+                <| Data.requestStories
+                `Task.andThen`
+                    (\stories ->
+                        (\store -> List.foldl
+                            (\story store -> Remote.DataStore.update (Story.id story) (\old -> Just <| Loaded story) store)
+                            store
+                            stories)
+                        |> LoadDiscoveryData (Loaded <| List.map Story.id stories)
+                        |> Task.succeed)
+                `Task.onError`
+                    (\error -> LoadDiscoveryData (Failed error) identity |> Task.succeed)
+        else
+            Effects.none
+    View storyId -> Effects.task
+        <| Data.requestStory storyId
+        `Task.andThen`
+            (\value -> Remote.DataStore.update storyId (\old -> Just <| Loaded value) |> LoadData |> Task.succeed)
+        `Task.onError`
+            (\error -> Remote.DataStore.update storyId (\old -> Just <| Maybe.withDefault (Failed error) old) |> LoadData |> Task.succeed)
     Back -> Effects.map (\_ -> NoAction) <| Effects.task History.back
     Animate time window -> case app.location of
         Viewing _ view -> case view.photoPosition of
@@ -86,12 +107,14 @@ view address app = case app.location of
         <| navigation app.location address
     Viewing storyId itemView -> div [class "app"]
         [ navigation app.location address
-        , Story.view address (getStory app storyId) itemView
+        , Story.view address (Data.getItem storyId app) itemView
         ]
     ViewingFavourites -> div [class "app"]
         [ navigation app.location address
         , Favourites.view address
-            <| List.filterMap (\id -> Data.defaultMap Nothing Just <| getStory app id) app.discovery.favourites
+            <| List.filterMap Remote.Data.get
+            <| List.map (\id -> Data.getItem id app)
+            <| app.discovery.favourites
         ]
 
 navigation location address = nav [class "navigation"]
@@ -116,9 +139,9 @@ update action app = case app.location of
             MoveItem pos        -> {app | discovery = moveItem app.discovery pos}
             Favourite           -> {app | location = Discovering, discovery = favouriteItem app.discovery}
             Pass                -> {app | location = Discovering, discovery = passItem app.discovery}
-            LoadingItem id      -> {app | items = loadingItem id app.items}
-            LoadItem id item    -> {app | items = addItem id item app.items}
-            LoadItems items     -> {app | items = addItems Story.id items app.items, discovery = loadItems app.discovery items Story.id}
+            LoadData update     -> {app | items = update app.items}
+            LoadDiscoveryData
+                   items update -> {app | items = update app.items, discovery = updateDiscoverableItems app.discovery items}
             _                   -> app
 
     Viewing story view ->
@@ -131,9 +154,7 @@ update action app = case app.location of
             PrevPhoto           -> {app | location = Viewing story {view | photoIndex = view.photoIndex-1, photoPosition = Static}}
             NextPhoto           -> {app | location = Viewing story {view | photoIndex = view.photoIndex+1, photoPosition = Static}}
             JumpPhoto index     -> {app | location = Viewing story {view | photoIndex = index, photoPosition = Static}}
-            LoadingItem id      -> {app | items = loadingItem id app.items}
-            LoadItem id item    -> {app | items = addItem id item app.items}
-            LoadItems items     -> {app | items = addItems Story.id items app.items, discovery = loadItems app.discovery items Story.id}
+            LoadData update     -> {app | items = update app.items}
             _                   -> app
 
     ViewingFavourites ->
@@ -141,18 +162,16 @@ update action app = case app.location of
             Discover         -> {app | location = Discovering}
             View story'      -> {app | location = Viewing story' initialItemView}
             ViewFavourites   -> {app | location = ViewingFavourites}
-            LoadingItem id   -> {app | items = loadingItem id app.items}
-            LoadItem id item -> {app | items = addItem id item app.items}
-            LoadItems items  -> {app | items = addItems Story.id items app.items, discovery = loadItems app.discovery items Story.id}
+            LoadData update     -> {app | items = update app.items}
             _                -> app
 
 favouriteItem : Discovery id -> Discovery id
 favouriteItem app =
     { app |
-      item = Loaded <| Succeeded <| List.head app.items
+      item = Loaded <| List.head app.items
     , items = (Maybe.withDefault [] << List.tail) app.items
     , favourites = case app.item of
-        Loaded (Succeeded (Just item)) -> app.favourites ++ [item]
+        Loaded (Just item) -> app.favourites ++ [item]
         _ -> app.favourites
     , itemPosition = Static
     }
@@ -160,10 +179,10 @@ favouriteItem app =
 passItem : Discovery a -> Discovery a
 passItem app =
     { app |
-      item = Loaded <| Succeeded <| List.head app.items
+      item = Loaded <| List.head app.items
     , items = (Maybe.withDefault [] << List.tail) app.items
     , passes = case app.item of
-        Loaded (Succeeded (Just item)) -> app.passes ++ [item]
+        Loaded (Just item) -> app.passes ++ [item]
         _ -> app.passes
     , itemPosition = Static
     }
@@ -174,39 +193,18 @@ animateItem discovery time window = {discovery | itemPosition = Swiping.animateS
 moveItem : Discovery a -> ItemPosition -> Discovery a
 moveItem discovery pos = {discovery | itemPosition = pos}
 
-loadItems : Discovery id -> LoadedData (List a) -> (a -> id) -> Discovery id
-loadItems discovery items getId = let
-        ids = Data.defaultMap [] (List.map getId) <| Loaded items
-    in
-        {discovery |
-          items = (Maybe.withDefault [] << List.tail) ids
-        , item = Loaded <| Succeeded <| List.head ids
+updateDiscoverableItems : Discovery id -> RemoteData (List id) -> Discovery id
+updateDiscoverableItems discovery items =
+    if discovery == initialDiscovery then
+        { discovery |
+          item = Remote.Data.map List.head items 
+        , items = Remote.Data.get items |> Maybe.withDefault []
         }
-
-loadingItem : id -> Dict String (RemoteData a) -> Dict String (RemoteData a)
-loadingItem id items = Dict.insert (toString id) Loading items
-
-addItems : (a -> id) -> LoadedData (List a) -> Dict String (RemoteData a) -> Dict String (RemoteData a)
-addItems getId loaded items = case loaded of
-    Succeeded loadedItems -> List.foldl
-        (\loadedItem items -> Dict.insert
-            (toString <| getId loadedItem)
-            (Loaded <| Succeeded <| loadedItem)
-            items)
-        items
-        loadedItems
-    _ -> items
-
-addItem : id -> LoadedData a -> Dict String (RemoteData a) -> Dict String (RemoteData a)
-addItem id loaded items = case loaded of
-    Succeeded item -> Dict.insert (toString id) (Loaded <| Succeeded <| item) items
-    Failed item -> Dict.insert (toString id) (Loaded <| Failed <| item) items
-
-getStory : App StoryId Story -> StoryId -> RemoteData Story
-getStory app = Data.getItem app
+    else
+        discovery
 
 initialApp : App StoryId Story
-initialApp = {location = Discovering, discovery = initialDiscovery, items = Dict.empty}
+initialApp = {location = Discovering, discovery = initialDiscovery, items = Remote.DataStore.empty}
 
 initialItemView : ItemView
 initialItemView = {photoIndex = 0, photoPosition = Static}

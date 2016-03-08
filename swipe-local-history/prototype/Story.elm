@@ -10,13 +10,14 @@ import Html.Attributes as Attr exposing (..)
 import Markdown
 
 import Types exposing (..)
+import Remote.Data exposing (RemoteData(..))
 import Loading exposing (loading)
 import Swiping exposing (onSwipe, swipePhotoAction, itemSwipe, itemPos)
 
 view : Signal.Address (Action StoryId Story) -> RemoteData Story -> ItemView -> Html
 view address story item = div [class "story"]
     <| case story of
-        Loaded (Succeeded story) ->
+        Loaded story ->
             [ if (List.length <| photos story) > 1 then
                     div
                         ([class "photo-slide"] ++ onSwipe address (itemSwipe item.photoPosition) swipePhotoAction)
@@ -44,7 +45,7 @@ view address story item = div [class "story"]
                         [] -> text ""
                         _ -> links story
                     ]
-        Loaded (Failed _) ->
+        Failed _ ->
             [ text "Something went wrong"]
         Loading ->
             [ loading ]

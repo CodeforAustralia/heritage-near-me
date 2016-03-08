@@ -9,19 +9,20 @@ import Types exposing (..)
 import Loading exposing (loading)
 import Swiping exposing (itemSwipe, itemPos, onSwipe, swipeAction)
 import Data exposing (getItem)
+import Remote.Data exposing (RemoteData(..))
 import Story
 
 view : Signal.Address (Action StoryId Story) -> App StoryId Story -> Html -> Html
 view address app topNav = div [class "app screen-size discovery"]
     [ topNav
     , case app.discovery.item of
-        Loaded (Succeeded item) -> case item of
-            Just id -> case getItem app id of
-                Loaded (Succeeded story) -> viewStory address story app.discovery.itemPosition
-                Loaded (Failed err) -> noStory "Something went wrong"
+        Loaded item -> case item of
+            Just id -> case getItem id app of
+                Loaded story -> viewStory address story app.discovery.itemPosition
+                Failed err -> noStory "Something went wrong"
                 Loading -> div [class "discovery-empty"] [loading]
             Nothing -> noStory "No more stories left!"
-        Loaded (Failed err) -> noStory "Something went wrong"
+        Failed err -> noStory "Something went wrong"
         Loading -> div [class "discovery-empty"] [loading]
     , navigation address
     ]
