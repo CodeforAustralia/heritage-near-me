@@ -1,7 +1,6 @@
 import Html exposing (Html)
 import Time exposing (Time)
 import Task exposing (Task)
-import Dict exposing (Dict)
 import Json.Encode
 import Json.Decode as Json exposing ((:=))
 import Http
@@ -17,7 +16,6 @@ import Route
 import Data
 import View exposing (view)
 import Story
-import Favourites
 import Swiping
 
 {-| The HTML view created by the app -}
@@ -27,6 +25,7 @@ main = app.html
 {-| The app.
 Consists of inputs, HTML views and functions which update and produce effects based on inputs.
 -}
+app : StartApp.App (App StoryId Story)
 app = StartApp.start
     { init = (initialApp, Effects.none)
     , view = view
@@ -204,6 +203,7 @@ initialItemView : ItemView
 initialItemView = {photoIndex = 0, photoPosition = Static}
 
 {-| The initial state of items being discovered -}
+initialDiscovery : Discovery id
 initialDiscovery =
     { item = Loading
     , itemPosition = Static
