@@ -12,6 +12,7 @@ import Data exposing (getItem)
 import Remote.Data exposing (RemoteData(..))
 import Story
 
+{-| The main HTML view for discovering stories -}
 view : Signal.Address (Action StoryId Story) -> App StoryId Story -> Html -> Html
 view address app topNav = div [class "app screen-size discovery"]
     [ topNav
@@ -27,6 +28,7 @@ view address app topNav = div [class "app screen-size discovery"]
     , navigation address
     ]
 
+{-| The navigation controls for discovering stories -}
 navigation : Signal.Address (Action StoryId Story) -> Html
 navigation address = nav [class "discovery-navigation"]
     [ button [onClick address Pass]
@@ -45,9 +47,11 @@ navigation address = nav [class "discovery-navigation"]
             ]]
     ]
 
+{-| The HTML view for when no stories are available for whatever reason -}
 noStory : String -> Html
 noStory message = div [class "discovery-empty"] [h2 [] [text message]]
 
+{-| The HTML view for an individual story -}
 viewStory : Signal.Address (Action StoryId Story) -> Story -> ItemPosition -> Html
 viewStory address story pos = div
     ([ onClick address <| View <| Story.id story
@@ -73,6 +77,7 @@ viewStory address story pos = div
         ]
     ]
 
+{- The image for a story -}
 storyImage story content = div
     [ class "image"
     , style [ ("background-image", "url(\"" ++ Story.photo story ++ "\")")
@@ -80,6 +85,9 @@ storyImage story content = div
             , ("background-size", "cover")]
     ] content
 
+{- The style for the HTML view of a story.
+It positions the story based on where the story is being swipe/animated
+-}
 styleStory : ItemPosition -> List (String, String)
 styleStory pos = case itemPos pos of
     Just p ->
