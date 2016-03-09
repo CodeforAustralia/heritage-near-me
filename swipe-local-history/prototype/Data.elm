@@ -12,12 +12,15 @@ import Remote.Data exposing (RemoteData)
 import Remote.DataStore
 import Story
 
+{-| A function to retrieve an item from the app's data store -}
 getItem : id -> App id a -> RemoteData a
 getItem id app = Remote.DataStore.get id app.items
 
+{-| A function to create an API url from a given sub url -}
 url : String -> String
 url subUrl = Http.url ("api/"++subUrl) []
 
+{-| Http Request for Discovery stories with distances from current location -}
 requestNearbyStories : LatLng -> Task Http.Error (List Story)
 requestNearbyStories pos = Http.send Http.defaultSettings
     { verb = "POST"
@@ -27,9 +30,11 @@ requestNearbyStories pos = Http.send Http.defaultSettings
     }
    |> Http.fromJson discoverStories
 
+{-| Http Request for Discovery stories -}
 requestStories : Task Http.Error (List Story)
 requestStories = Http.get discoverStories <| url "story_discover"
 
+{-| Http Request for a given Story Id -}
 requestStory : StoryId -> Task Http.Error Story
 requestStory storyId = let
         (StoryId id) = storyId
@@ -42,9 +47,11 @@ requestStory storyId = let
             (Task.fail <| Http.BadResponse 404 "Story with given id was not found")
             <| Maybe.map Task.succeed storyId)
 
+{-| List of Discover Stories JSON Decoder -}
 discoverStories : Json.Decoder (List Story)
 discoverStories = Json.list discoverStory
 
+{-| Discover Story JSON decoder -}
 discoverStory : Json.Decoder Story
 discoverStory = Json.object5
     (\id title blurb photo distance -> DiscoverStory
@@ -60,9 +67,14 @@ discoverStory = Json.object5
     ("photo" := Json.oneOf [Json.string, Json.null "images/unavailable.jpg"])
     (Json.maybe ("distance" := Json.float))
 
+{- List of Stories JSON Decoder -}
 fullStories : Json.Decoder (List Story)
 fullStories = Json.list fullStory
 
+{-| Story JSON decoder
+
+Note that we have to join two decoder funtions since there is no `Json.Decode.object9` function
+-}
 fullStory : Json.Decoder Story
 fullStory = ("id" := Json.int) `andThen` \id -> Json.object8
     (\title blurb suburb story dates photos sites locations -> FullStory
@@ -85,6 +97,7 @@ fullStory = ("id" := Json.int) `andThen` \id -> Json.object8
     ("sites" := Json.list site)
     ("locations" := Json.list location)
 
+{-| Dates JSON decoder -}
 dates : Json.Decoder Dates
 dates = Json.object2
     (\start end ->
@@ -94,12 +107,14 @@ dates = Json.object2
     (Json.maybe ("start" := Json.string))
     (Json.maybe ("end" := Json.string))
 
+{-| Site JSON decoder -}
 site : Json.Decoder (Maybe Site)
 site = Json.object2
     (Maybe.map2 (\id name -> {id = id, name = name}))
     (Json.maybe ("id" := Json.string))
     (Json.maybe ("name" := Json.string))
 
+{-| Location JSON decoder -}
 location : Json.Decoder (Maybe LatLng)
 location = Json.object2
     (Maybe.map2 (\lat lng -> {lat = lat, lng = lng}))
