@@ -14186,13 +14186,13 @@ Elm.Main.make = function (_elm) {
       return app;
    });
    var data = $Signal.mailbox($Types.NoAction);
+   var history = $Signal.mailbox($Types.NoAction);
    var latLng = A3($Json$Decode.object2,
    F2(function (lat,lng) {    return {lat: $Basics.toString(lat),lng: $Basics.toString(lng)};}),
    A2($Json$Decode._op[":="],"lat",$Json$Decode.$float),
    A2($Json$Decode._op[":="],"lng",$Json$Decode.$float));
    var geolocation = Elm.Native.Port.make(_elm).inboundSignal("geolocation","Json.Encode.Value",function (v) {    return v;});
    var userLocation = A2($Signal.map,function (_p8) {    return $Types.UpdateLocation($Result.toMaybe(A2($Json$Decode.decodeValue,latLng,_p8)));},geolocation);
-   var history = $Signal.mailbox($Types.NoAction);
    var effects = F2(function (action,app) {
       var _p9 = action;
       switch (_p9.ctor)
@@ -14240,9 +14240,9 @@ Elm.Main.make = function (_elm) {
                              ,main: main
                              ,app: app
                              ,effects: effects
-                             ,history: history
-                             ,latLng: latLng
                              ,userLocation: userLocation
+                             ,latLng: latLng
+                             ,history: history
                              ,data: data
                              ,update: update
                              ,favouriteItem: favouriteItem

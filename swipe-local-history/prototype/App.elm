@@ -2,9 +2,9 @@ import Html exposing (Html)
 import Time exposing (Time)
 import Task exposing (Task)
 import Dict exposing (Dict)
-import Http
 import Json.Encode
 import Json.Decode as Json exposing ((:=))
+import Http
 import Effects
 import History
 import RouteHash
@@ -76,6 +76,21 @@ effects action app = case action of
 port tasks : Signal (Task.Task Effects.Never ())
 port tasks = app.tasks
 
+{-| Location from browser -}
+port geolocation : Signal Json.Encode.Value
+
+{-| Signal with Actions to update the user's location.
+If `Nothing` then the user has disallowed geolocation.
+-}
+userLocation : Signal (Action id a)
+userLocation = Signal.map (UpdateLocation << Result.toMaybe << Json.decodeValue latLng) geolocation
+
+{-| Latitude/Longitude JSON decoder -}
+latLng : Json.Decoder LatLng
+latLng = Json.object2 (\lat lng -> {lat = toString lat, lng = toString lng})
+        ("lat" := Json.float)
+        ("lng" := Json.float)
+
 history : Signal.Mailbox (Action StoryId Story)
 history = Signal.mailbox NoAction
 
@@ -87,16 +102,6 @@ port routeTasks = RouteHash.start
     , delta2update = Route.url
     , location2action = Route.action
     }
-
-port geolocation : Signal Json.Encode.Value
-
-latLng : Json.Decoder LatLng
-latLng = Json.object2 (\lat lng -> {lat = toString lat, lng = toString lng})
-        ("lat" := Json.float)
-        ("lng" := Json.float)
-
-userLocation : Signal (Action id item)
-userLocation = Signal.map (UpdateLocation << Result.toMaybe << Json.decodeValue latLng) geolocation
 
 data : Signal.Mailbox (Action StoryId Story)
 data = Signal.mailbox NoAction
@@ -127,6 +132,7 @@ update action app = case (app.location, action) of
     -- Do nothing for the rest of the actions
     (_, _)                                    -> app
 
+favouriteItem : Discovery a -> Discovery a
 favouriteItem app =
     { app |
       item = Loaded <| List.head app.items
