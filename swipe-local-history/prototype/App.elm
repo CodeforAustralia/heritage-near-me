@@ -1,6 +1,4 @@
-import Html exposing (Html, div, nav, img, button, a, i, text)
-import Html.Attributes exposing (class, src, href)
-import Html.Events exposing (onClick)
+import Html exposing (Html)
 import Time exposing (Time)
 import Task exposing (Task)
 import Dict exposing (Dict)
@@ -17,7 +15,7 @@ import Remote.Data exposing (RemoteData(..))
 import Remote.DataStore exposing (RemoteDataStore)
 import Route
 import Data
-import Discover
+import View exposing (view)
 import Story
 import Favourites
 import Swiping
@@ -102,33 +100,6 @@ userLocation = Signal.map (UpdateLocation << Result.toMaybe << Json.decodeValue 
 
 data : Signal.Mailbox (Action StoryId Story)
 data = Signal.mailbox NoAction
-
-view : Signal.Address (Action StoryId Story) -> App StoryId Story -> Html
-view address app = case app.location of
-    Discovering -> Discover.view address app
-        <| navigation app.location address
-    Viewing storyId itemView -> div [class "app"]
-        [ navigation app.location address
-        , Story.view address (Data.getItem storyId app) itemView
-        ]
-    ViewingFavourites -> div [class "app"]
-        [ navigation app.location address
-        , Favourites.view address
-            <| List.filterMap Remote.Data.get
-            <| List.map (\id -> Data.getItem id app)
-            <| app.discovery.favourites
-        ]
-
-navigation location address = nav [class "navigation"]
-    [ case location of
-        Discovering ->
-            button [onClick address ViewFavourites] [i [class "fa fa-heart fa-2x"] []]
-        Viewing _ _ ->
-            button [onClick address Back] [i [class "fa fa-angle-left fa-3x"] []]
-        ViewingFavourites ->
-            button [onClick address Discover] [i [class "fa fa-map fa-2x"] []]
-    , div [class "logo"] [a [href "/"] [img [src "images/logo.png"] []]]
-    ]
 
 {- This function updates the state of the app
 based on the given action and previous state of the app
