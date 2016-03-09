@@ -1,4 +1,4 @@
-module Data (fetchNearbyStories, fetchStories, fetchStory, map, defaultMap, getItem) where
+module Data (requestNearbyStories, requestStories, requestStory, getItem, updateStory) where
 
 import Json.Decode as Json exposing ((:=), andThen)
 import Date exposing (Date)
@@ -8,31 +8,31 @@ import Effects exposing (Effects, Never)
 import Http
 
 import Types exposing (..)
+import Remote.Data exposing (RemoteData(..))
+import Remote.DataStore
 import Story
 
+{-| A function to retrieve an item from the app's data store -}
+getItem : id -> App id a -> RemoteData a
+getItem id app = Remote.DataStore.get id app.items
+
+{-| A function to update a story in the data store -}
+updateStory : RemoteData Story -> Maybe (RemoteData Story) -> Maybe (RemoteData Story)
+updateStory newStory oldStory = case (Remote.Data.get newStory, oldStory `Maybe.andThen` Remote.Data.get) of
+            -- Only load full stories over the top of discover stories and not the other way around
+            (Just newStory', Just oldStory') -> case (newStory', oldStory') of
+                (FullStory story, _) -> Just <| Loaded <| FullStory <| story
+                (DiscoverStory story, DiscoverStory _) -> Just <| Loaded <| DiscoverStory story
+                _ -> oldStory
+            _ -> Just newStory
+
+{-| A function to create an API url from a given sub url -}
 url : String -> String
 url subUrl = Http.url ("api/"++subUrl) []
 
-fetchNearbyStories : LatLng -> Effects (Action StoryId Story)
-fetchNearbyStories pos = Effects.task <|
-    Task.map (LoadItems << Succeeded) (fetchNearStories pos)
-    `Task.onError` (Task.succeed << LoadItems << Failed)
-
-fetchStories : Effects (Action StoryId Story)
-fetchStories = Effects.task <|
-    Task.map (LoadItems << Succeeded) fetchDiscoverStories
-    `Task.onError` (Task.succeed << LoadItems << Failed)
-
-fetchStory : StoryId -> Effects (Action StoryId Story)
-fetchStory storyId = Effects.task <|
-    Task.map (LoadItem storyId << Succeeded) (fetchFullStory storyId)
-    `Task.onError` (Task.succeed << LoadItem storyId << Failed)
-
-fetchDiscoverStories : Task Http.Error (List Story)
-fetchDiscoverStories = Http.get discoverStories <| url "story_discover"
-
-fetchNearStories : LatLng -> Task Http.Error (List Story)
-fetchNearStories pos = Http.send Http.defaultSettings
+{-| Http Request for Discovery stories with distances from current location -}
+requestNearbyStories : LatLng -> Task Http.Error (List Story)
+requestNearbyStories pos = Http.send Http.defaultSettings
     { verb = "POST"
     , headers = [("Content-Type", "application/json")]
     , url = url "rpc/nearby_stories"
@@ -40,9 +40,28 @@ fetchNearStories pos = Http.send Http.defaultSettings
     }
    |> Http.fromJson discoverStories
 
+{-| Http Request for Discovery stories -}
+requestStories : Task Http.Error (List Story)
+requestStories = Http.get discoverStories <| url "story_discover"
+
+{-| Http Request for a given Story Id -}
+requestStory : StoryId -> Task Http.Error Story
+requestStory storyId = let
+        (StoryId id) = storyId
+    in
+        (Task.map List.head
+        <| Http.get fullStories
+        <| Http.url (url "story_details") [("id", "eq." ++ toString id)])
+        `Task.andThen`
+            (\storyId -> Maybe.withDefault
+            (Task.fail <| Http.BadResponse 404 "Story with given id was not found")
+            <| Maybe.map Task.succeed storyId)
+
+{-| List of Discover Stories JSON Decoder -}
 discoverStories : Json.Decoder (List Story)
 discoverStories = Json.list discoverStory
 
+{-| Discover Story JSON decoder -}
 discoverStory : Json.Decoder Story
 discoverStory = Json.object5
     (\id title blurb photo distance -> DiscoverStory
@@ -58,21 +77,14 @@ discoverStory = Json.object5
     ("photo" := Json.oneOf [Json.string, Json.null "images/unavailable.jpg"])
     (Json.maybe ("distance" := Json.float))
 
-fetchFullStory : StoryId -> Task Http.Error Story
-fetchFullStory storyId = let
-        (StoryId id) = storyId
-    in
-        (Task.map List.head
-        <| Http.get fullStories
-        <| Http.url (url "story_details") [("id", "eq." ++ toString id)])
-        `Task.andThen`
-            (\storyId -> Maybe.withDefault
-            (Task.fail <| Http.BadResponse 404 "Story with given id was not found")
-            <| Maybe.map Task.succeed storyId)
-
+{- List of Stories JSON Decoder -}
 fullStories : Json.Decoder (List Story)
 fullStories = Json.list fullStory
 
+{-| Story JSON decoder
+
+Note that we have to join two decoder funtions since there is no `Json.Decode.object9` function
+-}
 fullStory : Json.Decoder Story
 fullStory = ("id" := Json.int) `andThen` \id -> Json.object8
     (\title blurb suburb story dates photos sites locations -> FullStory
@@ -95,6 +107,7 @@ fullStory = ("id" := Json.int) `andThen` \id -> Json.object8
     ("sites" := Json.list site)
     ("locations" := Json.list location)
 
+{-| Dates JSON decoder -}
 dates : Json.Decoder Dates
 dates = Json.object2
     (\start end ->
@@ -104,59 +117,16 @@ dates = Json.object2
     (Json.maybe ("start" := Json.string))
     (Json.maybe ("end" := Json.string))
 
+{-| Site JSON decoder -}
 site : Json.Decoder (Maybe Site)
 site = Json.object2
     (Maybe.map2 (\id name -> {id = id, name = name}))
     (Json.maybe ("id" := Json.string))
     (Json.maybe ("name" := Json.string))
 
+{-| Location JSON decoder -}
 location : Json.Decoder (Maybe LatLng)
 location = Json.object2
     (Maybe.map2 (\lat lng -> {lat = lat, lng = lng}))
     (Json.maybe ("lat" := Json.string))
     (Json.maybe ("lng" := Json.string))
-
-isDiscoverStory : Story -> Bool
-isDiscoverStory story = case story of
-    DiscoverStory story -> True
-    FullStory story -> False
-
-isFullStory : Story -> Bool
-isFullStory story = case story of
-    DiscoverStory story -> False
-    FullStory story -> True
-
-isLoaded : RemoteData a -> Bool
-isLoaded data = case data of
-    Loaded _ -> True
-    _ -> False
-
-isLoading : RemoteData a -> Bool
-isLoading data = case data of
-    Loading -> True
-    _ -> False
-
-map : (a -> b) -> RemoteData a -> RemoteData b
-map f data = case data of
-    Loaded (Succeeded x) -> Loaded <| Succeeded <| f x
-    Loaded (Failed x) -> Loaded <| Failed x
-    Loading -> Loading
-
-defaultMap : b -> (a -> b) -> RemoteData a -> b
-defaultMap default f data = case data of
-    Loaded (Succeeded x) -> f x
-    _ -> default
-
-getItem : App id a -> id -> RemoteData a
-getItem app id = Maybe.withDefault Loading
-    <| Dict.get (toString id) app.items
-
-isItemLoading : App id a -> id -> Bool
-isItemLoading app id = Maybe.withDefault False
-    <| Maybe.map isLoading
-    <| Dict.get (toString id) app.items
-
-findItem : App id a -> (a -> Bool) -> Maybe (RemoteData a)
-findItem app check = List.head
-    <| List.filter (defaultMap False check)
-    <| Dict.values app.items

@@ -1,6 +1,7 @@
-module Types (App, Location(..), Discovery, ItemView, Favourites, StoryId(..), Story(..), Site, LatLng, Dates, Action(..), RemoteData(..), LoadedData(..), ItemPosition(..), Window) where
+module Types (App, Location(..), Discovery, ItemView, Favourites, StoryId(..), Story(..), Site, LatLng, Dates, Action(..), ItemPosition(..), Window) where
 
-import Http
+import Remote.DataStore exposing (RemoteDataStore)
+import Remote.Data exposing (RemoteData)
 import Date exposing (Date)
 import Dict exposing (Dict)
 import Swipe exposing (SwipeState)
@@ -9,7 +10,7 @@ import Time exposing (Time)
 type alias App id a =
     { location : Location id
     , discovery : Discovery id
-    , items : Dict String (RemoteData a)
+    , items : RemoteDataStore id a
     }
 
 type Location id =
@@ -31,13 +32,9 @@ type Action id a =
     | View id
     | ViewFavourites
     | Back
-    | LoadingItem id
-    | LoadItem id (LoadedData a)
-    | LoadItems (LoadedData (List a))
+    | LoadData (RemoteDataStore id a -> RemoteDataStore id a)
+    | LoadDiscoveryData (RemoteData (List id)) (RemoteDataStore id a -> RemoteDataStore id a)
     | NoAction
-
-type RemoteData a = Loading | Loaded (LoadedData a)
-type LoadedData a = Succeeded a | Failed Http.Error
 
 type ItemPosition = Static
     | Swiping SwipeState
