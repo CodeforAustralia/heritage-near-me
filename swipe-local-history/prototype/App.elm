@@ -130,44 +130,32 @@ navigation location address = nav [class "navigation"]
     , div [class "logo"] [a [href "/"] [img [src "images/logo.png"] []]]
     ]
 
-update : Action StoryId Story -> App StoryId Story -> App StoryId Story
-update action app = case app.location of
-    Discovering ->
-        case action of
-            Discover            -> {app | location = Discovering}
-            View story'         -> {app | location = Viewing story' initialItemView}
-            ViewFavourites      -> {app | location = ViewingFavourites}
-            Animate time window -> {app | discovery = animateItem app.discovery time window}
-            MoveItem pos        -> {app | discovery = moveItem app.discovery pos}
-            Favourite           -> {app | location = Discovering, discovery = favouriteItem app.discovery}
-            Pass                -> {app | location = Discovering, discovery = passItem app.discovery}
-            LoadData update     -> {app | items = update app.items}
-            LoadDiscoveryData
-                   items update -> {app | items = update app.items, discovery = updateDiscoverableItems app.discovery items}
-            _                   -> app
+{- This function updates the state of the app
+based on the given action and previous state of the app
+-}
+update : Action id a -> App id a -> App id a
+update action app = case (app.location, action) of
+    -- Discovering location Actions
+    (Discovering, Animate time window)        -> {app | discovery = animateItem app.discovery time window}
+    (Discovering, MoveItem pos)               -> {app | discovery = moveItem app.discovery pos}
+    (Discovering, Favourite)                  -> {app | location = Discovering, discovery = favouriteItem app.discovery}
+    (Discovering, Pass)                       -> {app | location = Discovering, discovery = passItem app.discovery}
+    -- Viewing location actions
+    (Viewing item view, Animate time window)  -> {app | location = Viewing item {view | photoPosition = Swiping.animateStep time window view.photoPosition}}
+    (Viewing item view, MovePhoto pos)        -> {app | location = Viewing item {view | photoPosition = pos}}
+    (Viewing item view, PrevPhoto)            -> {app | location = Viewing item {view | photoIndex = view.photoIndex-1, photoPosition = Static}}
+    (Viewing item view, NextPhoto)            -> {app | location = Viewing item {view | photoIndex = view.photoIndex+1, photoPosition = Static}}
+    (Viewing item view, JumpPhoto index)      -> {app | location = Viewing item {view | photoIndex = index, photoPosition = Static}}
+    -- Location change actions
+    (_, Discover)                             -> {app | location = Discovering}
+    (_, View story')                          -> {app | location = Viewing story' initialItemView}
+    (_, ViewFavourites)                       -> {app | location = ViewingFavourites}
+    -- Data update actions
+    (_, LoadData update)                      -> {app | items = update app.items}
+    (_, LoadDiscoveryData items update)       -> {app | items = update app.items, discovery = updateDiscoverableItems app.discovery items}
+    -- Do nothing for the rest of the actions
+    (_, _)                                    -> app
 
-    Viewing story view ->
-        case action of
-            Discover            -> {app | location = Discovering}
-            View story'         -> {app | location = Viewing story' initialItemView}
-            ViewFavourites      -> {app | location = ViewingFavourites}
-            Animate time window -> {app | location = Viewing story {view | photoPosition = Swiping.animateStep time window view.photoPosition}}
-            MovePhoto pos       -> {app | location = Viewing story {view | photoPosition = pos}}
-            PrevPhoto           -> {app | location = Viewing story {view | photoIndex = view.photoIndex-1, photoPosition = Static}}
-            NextPhoto           -> {app | location = Viewing story {view | photoIndex = view.photoIndex+1, photoPosition = Static}}
-            JumpPhoto index     -> {app | location = Viewing story {view | photoIndex = index, photoPosition = Static}}
-            LoadData update     -> {app | items = update app.items}
-            _                   -> app
-
-    ViewingFavourites ->
-        case action of
-            Discover         -> {app | location = Discovering}
-            View story'      -> {app | location = Viewing story' initialItemView}
-            ViewFavourites   -> {app | location = ViewingFavourites}
-            LoadData update     -> {app | items = update app.items}
-            _                -> app
-
-favouriteItem : Discovery id -> Discovery id
 favouriteItem app =
     { app |
       item = Loaded <| List.head app.items
