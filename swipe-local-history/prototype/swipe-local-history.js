@@ -13480,51 +13480,51 @@ Elm.Story.make = function (_elm) {
       $Basics.toString(A2(digits,1,dist / 1000)),
       "km") : A2($Basics._op["++"],$Basics.toString(A2(digits,2,dist / 1000)),"km");
    };
-   var distance = function (story) {
-      var _p0 = story;
-      if (_p0.ctor === "DiscoverStory") {
-            return A2($Maybe.map,distanceFormat,_p0._0.distance);
-         } else {
-            return $Maybe.Nothing;
-         }
-   };
-   var photos = function (story) {    var _p1 = story;if (_p1.ctor === "DiscoverStory") {    return _U.list([_p1._0.photo]);} else {    return _p1._0.photos;}};
-   var photo = function (story) {
-      var _p2 = story;
-      if (_p2.ctor === "DiscoverStory") {
-            return _p2._0.photo;
-         } else {
-            return A2($Maybe.withDefault,"",$List.head(_p2._0.photos));
-         }
-   };
-   var blurb = function (story) {    var _p3 = story;if (_p3.ctor === "DiscoverStory") {    return _p3._0.blurb;} else {    return _p3._0.blurb;}};
-   var title = function (story) {    var _p4 = story;if (_p4.ctor === "DiscoverStory") {    return _p4._0.title;} else {    return _p4._0.title;}};
-   var id = function (story) {    var _p5 = story;if (_p5.ctor === "DiscoverStory") {    return _p5._0.id;} else {    return _p5._0.id;}};
    var formatDate = function (dates) {
-      var _p6 = {ctor: "_Tuple2",_0: dates.start,_1: dates.end};
-      _v6_3: do {
-         if (_p6.ctor === "_Tuple2") {
-               if (_p6._0.ctor === "Nothing") {
-                     if (_p6._1.ctor === "Just") {
-                           return $Maybe.Just(A2($Date$Format.format,"%Y",_p6._1._0));
+      var _p0 = {ctor: "_Tuple2",_0: dates.start,_1: dates.end};
+      _v0_3: do {
+         if (_p0.ctor === "_Tuple2") {
+               if (_p0._0.ctor === "Nothing") {
+                     if (_p0._1.ctor === "Just") {
+                           return $Maybe.Just(A2($Date$Format.format,"%Y",_p0._1._0));
                         } else {
-                           break _v6_3;
+                           break _v0_3;
                         }
                   } else {
-                     if (_p6._1.ctor === "Nothing") {
-                           return $Maybe.Just(A2($Date$Format.format,"%Y",_p6._0._0));
+                     if (_p0._1.ctor === "Nothing") {
+                           return $Maybe.Just(A2($Date$Format.format,"%Y",_p0._0._0));
                         } else {
                            return $Maybe.Just(A2($Basics._op["++"],
-                           A2($Date$Format.format,"%Y",_p6._0._0),
-                           A2($Basics._op["++"]," - ",A2($Date$Format.format,"%Y",_p6._1._0))));
+                           A2($Date$Format.format,"%Y",_p0._0._0),
+                           A2($Basics._op["++"]," - ",A2($Date$Format.format,"%Y",_p0._1._0))));
                         }
                   }
             } else {
-               break _v6_3;
+               break _v0_3;
             }
       } while (false);
       return $Maybe.Nothing;
    };
+   var distance = function (story) {
+      var _p1 = story;
+      if (_p1.ctor === "DiscoverStory") {
+            return A2($Maybe.map,distanceFormat,_p1._0.distance);
+         } else {
+            return $Maybe.Nothing;
+         }
+   };
+   var photos = function (story) {    var _p2 = story;if (_p2.ctor === "DiscoverStory") {    return _U.list([_p2._0.photo]);} else {    return _p2._0.photos;}};
+   var photo = function (story) {
+      var _p3 = story;
+      if (_p3.ctor === "DiscoverStory") {
+            return _p3._0.photo;
+         } else {
+            return A2($Maybe.withDefault,"",$List.head(_p3._0.photos));
+         }
+   };
+   var blurb = function (story) {    var _p4 = story;if (_p4.ctor === "DiscoverStory") {    return _p4._0.blurb;} else {    return _p4._0.blurb;}};
+   var title = function (story) {    var _p5 = story;if (_p5.ctor === "DiscoverStory") {    return _p5._0.title;} else {    return _p5._0.title;}};
+   var id = function (story) {    var _p6 = story;if (_p6.ctor === "DiscoverStory") {    return _p6._0.id;} else {    return _p6._0.id;}};
    var storyIndex = F2(function (index,story) {    return A2($Basics._op["%"],index,$List.length(photos(story)));});
    var photoPosition = function (pos) {
       return _U.list([{ctor: "_Tuple2",_0: "position",_1: "relative"}
