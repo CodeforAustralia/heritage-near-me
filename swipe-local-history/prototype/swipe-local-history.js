@@ -14185,7 +14185,6 @@ Elm.Main.make = function (_elm) {
       } while (false);
       return app;
    });
-   var data = $Signal.mailbox($Types.NoAction);
    var history = $Signal.mailbox($Types.NoAction);
    var latLng = A3($Json$Decode.object2,
    F2(function (lat,lng) {    return {lat: $Basics.toString(lat),lng: $Basics.toString(lng)};}),
@@ -14231,7 +14230,7 @@ Elm.Main.make = function (_elm) {
    var app = $StartApp.start({init: {ctor: "_Tuple2",_0: initialApp,_1: $Effects.none}
                              ,view: $View.view
                              ,update: F2(function (action,model) {    return {ctor: "_Tuple2",_0: A2(update,action,model),_1: A2(effects,action,model)};})
-                             ,inputs: _U.list([history.signal,data.signal,$Swiping.animate,userLocation])});
+                             ,inputs: _U.list([history.signal,$Swiping.animate,userLocation])});
    var tasks = Elm.Native.Task.make(_elm).performSignal("tasks",app.tasks);
    var routeTasks = Elm.Native.Task.make(_elm).performSignal("routeTasks",
    $RouteHash.start({prefix: $RouteHash.defaultPrefix,address: history.address,models: app.model,delta2update: $Route.url,location2action: $Route.action}));
@@ -14243,7 +14242,6 @@ Elm.Main.make = function (_elm) {
                              ,userLocation: userLocation
                              ,latLng: latLng
                              ,history: history
-                             ,data: data
                              ,update: update
                              ,favouriteItem: favouriteItem
                              ,passItem: passItem

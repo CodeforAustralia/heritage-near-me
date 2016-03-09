@@ -27,7 +27,7 @@ app = StartApp.start
     { init = (initialApp, Effects.none)
     , view = view
     , update = \action model -> (update action model, effects action model)
-    , inputs = [history.signal, data.signal, Swiping.animate, userLocation]
+    , inputs = [history.signal, Swiping.animate, userLocation]
     }
 
 effects : Action StoryId Story -> App StoryId Story -> Effects.Effects (Action StoryId Story)
@@ -102,9 +102,6 @@ port routeTasks = RouteHash.start
     , delta2update = Route.url
     , location2action = Route.action
     }
-
-data : Signal.Mailbox (Action StoryId Story)
-data = Signal.mailbox NoAction
 
 {- This function updates the state of the app
 based on the given action and previous state of the app
