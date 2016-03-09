@@ -13735,8 +13735,37 @@ Elm.Data.make = function (_elm) {
          return A2($Maybe.withDefault,$Task.fail(A2($Http.BadResponse,404,"Story with given id was not found")),A2($Maybe.map,$Task.succeed,storyId));
       });
    };
+   var updateStory = F2(function (newStory,oldStory) {
+      var _p3 = {ctor: "_Tuple2",_0: $Remote$Data.get(newStory),_1: A2($Maybe.andThen,oldStory,$Remote$Data.get)};
+      if (_p3.ctor === "_Tuple2" && _p3._0.ctor === "Just" && _p3._1.ctor === "Just") {
+            var _p4 = {ctor: "_Tuple2",_0: _p3._0._0,_1: _p3._1._0};
+            _v1_2: do {
+               if (_p4.ctor === "_Tuple2") {
+                     if (_p4._0.ctor === "FullStory") {
+                           return $Maybe.Just($Remote$Data.Loaded($Types.FullStory(_p4._0._0)));
+                        } else {
+                           if (_p4._1.ctor === "DiscoverStory") {
+                                 return $Maybe.Just($Remote$Data.Loaded($Types.DiscoverStory(_p4._0._0)));
+                              } else {
+                                 break _v1_2;
+                              }
+                        }
+                  } else {
+                     break _v1_2;
+                  }
+            } while (false);
+            return oldStory;
+         } else {
+            return $Maybe.Just(newStory);
+         }
+   });
    var getItem = F2(function (id,app) {    return A2($Remote$DataStore.get,id,app.items);});
-   return _elm.Data.values = {_op: _op,requestNearbyStories: requestNearbyStories,requestStories: requestStories,requestStory: requestStory,getItem: getItem};
+   return _elm.Data.values = {_op: _op
+                             ,requestNearbyStories: requestNearbyStories
+                             ,requestStories: requestStories
+                             ,requestStory: requestStory
+                             ,getItem: getItem
+                             ,updateStory: updateStory};
 };
 Elm.Discover = Elm.Discover || {};
 Elm.Discover.make = function (_elm) {
@@ -14072,9 +14101,7 @@ Elm.Main.make = function (_elm) {
    var initialItemView = {photoIndex: 0,photoPosition: $Types.Static};
    var initialApp = {location: $Types.Discovering,discovery: initialDiscovery,items: $Remote$DataStore.empty};
    var fetchDiscover = function (request) {
-      var update = function (story) {
-         return A2($Remote$DataStore.update,$Story.id(story),function (old) {    return $Maybe.Just($Remote$Data.Loaded(story));});
-      };
+      var update = function (story) {    return A2($Remote$DataStore.update,$Story.id(story),$Data.updateStory($Remote$Data.Loaded(story)));};
       return $Effects.task(A2($Task.onError,
       A2($Task.andThen,
       request,
@@ -14195,7 +14222,7 @@ Elm.Main.make = function (_elm) {
    var effects = F2(function (action,app) {
       var _p9 = action;
       switch (_p9.ctor)
-      {case "View": return $Effects.task(A2($Task.map,$Types.LoadData,A2($Remote$DataStore.fetchInsert,_p9._0,$Data.requestStory)));
+      {case "View": return $Effects.task(A2($Task.map,$Types.LoadData,A3($Remote$DataStore.fetch,_p9._0,$Data.requestStory,$Data.updateStory)));
          case "UpdateLocation": if (_U.eq(app.discovery,initialDiscovery)) {
                  var _p10 = _p9._0;
                  if (_p10.ctor === "Just") {

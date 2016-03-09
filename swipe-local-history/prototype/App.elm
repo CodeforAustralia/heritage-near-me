@@ -34,7 +34,7 @@ effects : Action StoryId Story -> App StoryId Story -> Effects.Effects (Action S
 effects action app = case action of
     View storyId -> Effects.task
         <| Task.map LoadData
-        <| Remote.DataStore.fetchInsert storyId Data.requestStory
+        <| Remote.DataStore.fetch storyId Data.requestStory Data.updateStory
     UpdateLocation loc ->
         if app.discovery == initialDiscovery then
             case loc of
@@ -169,7 +169,7 @@ updateDiscoverableItems discovery items =
 
 fetchDiscover : Task Http.Error (List Story) -> Effects.Effects (Action StoryId Story)
 fetchDiscover request = let
-        update story = Remote.DataStore.update (Story.id story) (\old -> Just <| Loaded story)
+        update story = Remote.DataStore.update (Story.id story) (Data.updateStory <| Loaded story)
     in
         Effects.task
             <| request

@@ -1,4 +1,4 @@
-module Data (requestNearbyStories, requestStories, requestStory, getItem) where
+module Data (requestNearbyStories, requestStories, requestStory, getItem, updateStory) where
 
 import Json.Decode as Json exposing ((:=), andThen)
 import Date exposing (Date)
@@ -8,13 +8,23 @@ import Effects exposing (Effects, Never)
 import Http
 
 import Types exposing (..)
-import Remote.Data exposing (RemoteData)
+import Remote.Data exposing (RemoteData(..))
 import Remote.DataStore
 import Story
 
 {-| A function to retrieve an item from the app's data store -}
 getItem : id -> App id a -> RemoteData a
 getItem id app = Remote.DataStore.get id app.items
+
+{-| A function to update a story in the data store -}
+updateStory : RemoteData Story -> Maybe (RemoteData Story) -> Maybe (RemoteData Story)
+updateStory newStory oldStory = case (Remote.Data.get newStory, oldStory `Maybe.andThen` Remote.Data.get) of
+            -- Only load full stories over the top of discover stories and not the other way around
+            (Just newStory', Just oldStory') -> case (newStory', oldStory') of
+                (FullStory story, _) -> Just <| Loaded <| FullStory <| story
+                (DiscoverStory story, DiscoverStory _) -> Just <| Loaded <| DiscoverStory story
+                _ -> oldStory
+            _ -> Just newStory
 
 {-| A function to create an API url from a given sub url -}
 url : String -> String
