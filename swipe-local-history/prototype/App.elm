@@ -35,11 +35,8 @@ app = StartApp.start
 effects : Action StoryId Story -> App StoryId Story -> Effects.Effects (Action StoryId Story)
 effects action app = case action of
     View storyId -> Effects.task
-        <| Data.requestStory storyId
-        `Task.andThen`
-            (\value -> Remote.DataStore.update storyId (\old -> Just <| Loaded value) |> LoadData |> Task.succeed)
-        `Task.onError`
-            (\error -> Remote.DataStore.update storyId (\old -> Just <| Maybe.withDefault (Failed error) old) |> LoadData |> Task.succeed)
+        <| Task.map LoadData
+        <| Remote.DataStore.fetchInsert storyId Data.requestStory
     UpdateLocation loc ->
         if app.discovery == initialDiscovery then
             case loc of
@@ -209,18 +206,18 @@ updateDiscoverableItems discovery items =
         discovery
 
 fetchDiscover : Task Http.Error (List Story) -> Effects.Effects (Action StoryId Story)
-fetchDiscover request = Effects.task
-    <| request
-    `Task.andThen`
-        (\stories ->
-            (\store -> List.foldl
-                (\story store -> Remote.DataStore.update (Story.id story) (\old -> Just <| Loaded story) store)
-                store
-                stories)
-            |> LoadDiscoveryData (Loaded <| List.map Story.id stories)
-            |> Task.succeed)
-    `Task.onError`
-        (\error -> LoadDiscoveryData (Failed error) identity |> Task.succeed)
+fetchDiscover request = let
+        update story = Remote.DataStore.update (Story.id story) (\old -> Just <| Loaded story)
+    in
+        Effects.task
+            <| request
+            `Task.andThen`
+                (\stories ->
+                    (\store -> List.foldl update store stories)
+                    |> LoadDiscoveryData (Loaded <| List.map Story.id stories)
+                    |> Task.succeed)
+            `Task.onError`
+                (\error -> LoadDiscoveryData (Failed error) identity |> Task.succeed)
 
 
 initialApp : App StoryId Story

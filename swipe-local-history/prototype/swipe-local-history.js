@@ -13106,6 +13106,7 @@ Elm.Remote.DataStore.make = function (_elm) {
    $Basics = Elm.Basics.make(_elm),
    $Debug = Elm.Debug.make(_elm),
    $Dict = Elm.Dict.make(_elm),
+   $Effects = Elm.Effects.make(_elm),
    $Http = Elm.Http.make(_elm),
    $List = Elm.List.make(_elm),
    $Maybe = Elm.Maybe.make(_elm),
@@ -13119,15 +13120,22 @@ Elm.Remote.DataStore.make = function (_elm) {
    var RemoteDataStore = function (a) {    return {ctor: "RemoteDataStore",_0: a};};
    var empty = RemoteDataStore($Dict.empty);
    var update = F3(function (id,alter,_p4) {    var _p5 = _p4;return RemoteDataStore(A3($Dict.update,$Basics.toString(id),alter,_p5._0));});
-   var fetch = F4(function (id,request,alter,store) {
+   var fetch = F3(function (id,request,alter) {
       return A2($Task.onError,
-      A2($Task.andThen,request(id),function (value) {    return $Task.succeed(A3(update,id,alter($Remote$Data.Loaded(value)),store));}),
+      A2($Task.andThen,request(id),function (value) {    return $Task.succeed(A2(update,id,alter($Remote$Data.Loaded(value))));}),
       function (error) {
-         return $Task.succeed(A3(update,id,alter($Remote$Data.Failed(error)),store));
+         return $Task.succeed(A2(update,id,alter($Remote$Data.Failed(error))));
       });
    });
-   var fetchInsert = F3(function (id,request,store) {
-      return A4(fetch,id,request,F2(function (newValue,oldValue) {    return $Maybe.Just(newValue);}),store);
+   var fetchInsert = F2(function (id,request) {
+      return A3(fetch,
+      id,
+      request,
+      F2(function (newValue,oldValue) {
+         return $Remote$Data.isLoaded(newValue) ? $Maybe.Just(newValue) : A2($Maybe.withDefault,
+         false,
+         A2($Maybe.map,$Remote$Data.isFailed,oldValue)) ? $Maybe.Just(newValue) : oldValue;
+      }));
    });
    return _elm.Remote.DataStore.values = {_op: _op
                                          ,empty: empty
@@ -14142,44 +14150,31 @@ Elm.Main.make = function (_elm) {
    var effects = F2(function (action,app) {
       var _p13 = action;
       switch (_p13.ctor)
-      {case "View": var _p14 = _p13._0;
-           return $Effects.task(A2($Task.onError,
-           A2($Task.andThen,
-           $Data.requestStory(_p14),
-           function (value) {
-              return $Task.succeed($Types.LoadData(A2($Remote$DataStore.update,_p14,function (old) {    return $Maybe.Just($Remote$Data.Loaded(value));})));
-           }),
-           function (error) {
-              return $Task.succeed($Types.LoadData(A2($Remote$DataStore.update,
-              _p14,
-              function (old) {
-                 return $Maybe.Just(A2($Maybe.withDefault,$Remote$Data.Failed(error),old));
-              })));
-           }));
+      {case "View": return $Effects.task(A2($Task.map,$Types.LoadData,A2($Remote$DataStore.fetchInsert,_p13._0,$Data.requestStory)));
          case "UpdateLocation": if (_U.eq(app.discovery,initialDiscovery)) {
-                 var _p15 = _p13._0;
-                 if (_p15.ctor === "Just") {
-                       return fetchDiscover($Data.requestNearbyStories(_p15._0));
+                 var _p14 = _p13._0;
+                 if (_p14.ctor === "Just") {
+                       return fetchDiscover($Data.requestNearbyStories(_p14._0));
                     } else {
                        return fetchDiscover($Data.requestStories);
                     }
               } else return $Effects.none;
-         case "Back": return A2($Effects.map,function (_p16) {    return $Types.NoAction;},$Effects.task($History.back));
-         case "Animate": var _p22 = _p13._0;
-           var _p17 = app.location;
-           switch (_p17.ctor)
-           {case "Viewing": var _p18 = _p17._1.photoPosition;
-                if (_p18.ctor === "Leaving") {
-                      var _p19 = _p18._1;
-                      return _U.cmp(_p22,_p18._3) > 0 ? $Effects.task($Task.succeed(_U.cmp(_p19,0) < 0 ? $Types.NextPhoto : _U.cmp(_p19,
+         case "Back": return A2($Effects.map,function (_p15) {    return $Types.NoAction;},$Effects.task($History.back));
+         case "Animate": var _p21 = _p13._0;
+           var _p16 = app.location;
+           switch (_p16.ctor)
+           {case "Viewing": var _p17 = _p16._1.photoPosition;
+                if (_p17.ctor === "Leaving") {
+                      var _p18 = _p17._1;
+                      return _U.cmp(_p21,_p17._3) > 0 ? $Effects.task($Task.succeed(_U.cmp(_p18,0) < 0 ? $Types.NextPhoto : _U.cmp(_p18,
                       0) > 0 ? $Types.PrevPhoto : $Types.NoAction)) : $Effects.none;
                    } else {
                       return $Effects.none;
                    }
-              case "Discovering": var _p20 = app.discovery.itemPosition;
-                if (_p20.ctor === "Leaving") {
-                      var _p21 = _p20._1;
-                      return _U.cmp(_p22,_p20._3) > 0 ? $Effects.task($Task.succeed(_U.cmp(_p21,0) < 0 ? $Types.Pass : _U.cmp(_p21,
+              case "Discovering": var _p19 = app.discovery.itemPosition;
+                if (_p19.ctor === "Leaving") {
+                      var _p20 = _p19._1;
+                      return _U.cmp(_p21,_p19._3) > 0 ? $Effects.task($Task.succeed(_U.cmp(_p20,0) < 0 ? $Types.Pass : _U.cmp(_p20,
                       0) > 0 ? $Types.Favourite : $Types.NoAction)) : $Effects.none;
                    } else {
                       return $Effects.none;
