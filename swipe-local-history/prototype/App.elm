@@ -106,6 +106,16 @@ effects action app = case action of
                 Nothing -> fetchDiscover <| Data.requestStories
         else
             Effects.none
+    Favourite -> case app.discovery.item of
+            (Loaded (Just storyId)) -> Effects.task
+                <| Data.favouriteStory storyId True
+                `Task.andThen` \_ -> Task.succeed NoAction
+            _ -> Effects.none
+    Pass -> case app.discovery.item of
+            (Loaded (Just storyId)) -> Effects.task
+                <| Data.favouriteStory storyId False
+                `Task.andThen` \_ -> Task.succeed NoAction
+            _ -> Effects.none
     Back -> Effects.map (\_ -> NoAction) <| Effects.task History.back
     Animate time window -> case app.location of
         Viewing _ view -> case view.photoPosition of

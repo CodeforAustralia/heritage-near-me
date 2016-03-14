@@ -1,4 +1,4 @@
-module Data (requestNearbyStories, requestStories, requestStory, viewStory, getItem, updateStory) where
+module Data (requestNearbyStories, requestStories, requestStory, viewStory, favouriteStory, getItem, updateStory) where
 
 import Json.Decode as Json exposing ((:=), andThen)
 import Date.Format
@@ -71,6 +71,18 @@ viewStory (StoryId story) = Native.TimeTask.getCurrentTime
         , headers = [("Content-Type", "application/json")]
         , url = url "views"
         , body = Http.string <| "{\"datetime\": \""++timestamp time++"\", \"story_id\": \""++toString story++"\"}"
+        }
+    |> Task.toResult
+
+{-| Http request to indicate a story is being viewed -}
+favouriteStory : StoryId -> Bool -> Task Never (Result Http.RawError Http.Response)
+favouriteStory (StoryId story) favourited = Native.TimeTask.getCurrentTime
+    `Task.andThen` \time ->
+        Http.send Http.defaultSettings
+        { verb = "POST"
+        , headers = [("Content-Type", "application/json")]
+        , url = url "favourites"
+        , body = Http.string <| "{\"datetime\": \""++timestamp time++"\", \"story_id\": \""++toString story++"\", \"favourited\": \""++toString favourited++"\"}"
         }
     |> Task.toResult
 

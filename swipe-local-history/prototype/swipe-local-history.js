@@ -14834,26 +14834,53 @@ Elm.Data.make = function (_elm) {
          A2($Basics._op["++"],$Basics.toString(_p5._0),"\"}")))))}));
       });
    };
+   var favouriteStory = F2(function (_p6,favourited) {
+      var _p7 = _p6;
+      return A2($Task.andThen,
+      $Native$TimeTask.getCurrentTime,
+      function (time) {
+         return $Task.toResult(A2($Http.send,
+         $Http.defaultSettings,
+         {verb: "POST"
+         ,headers: _U.list([{ctor: "_Tuple2"
+                            ,_0: "Content-Type"
+                            ,_1: "application/json"}])
+         ,url: url("favourites")
+         ,body: $Http.string(A2($Basics._op["++"],
+         "{\"datetime\": \"",
+         A2($Basics._op["++"],
+         timestamp(time),
+         A2($Basics._op["++"],
+         "\", \"story_id\": \"",
+         A2($Basics._op["++"],
+         $Basics.toString(_p7._0),
+         A2($Basics._op["++"],
+         "\", \"favourited\": \"",
+         A2($Basics._op["++"],
+         $Basics.toString(favourited),
+         "\"}")))))))}));
+      });
+   });
    var updateStory = F2(function (newStory,oldStory) {
-      var _p6 = {ctor: "_Tuple2"
+      var _p8 = {ctor: "_Tuple2"
                 ,_0: $Remote$Data.get(newStory)
                 ,_1: A2($Maybe.andThen,oldStory,$Remote$Data.get)};
-      if (_p6.ctor === "_Tuple2" && _p6._0.ctor === "Just" && _p6._1.ctor === "Just")
+      if (_p8.ctor === "_Tuple2" && _p8._0.ctor === "Just" && _p8._1.ctor === "Just")
       {
-            var _p7 = {ctor: "_Tuple2",_0: _p6._0._0,_1: _p6._1._0};
-            _v2_2: do {
-               if (_p7.ctor === "_Tuple2") {
-                     if (_p7._0.ctor === "FullStory") {
-                           return $Maybe.Just($Remote$Data.Loaded($Types.FullStory(_p7._0._0)));
+            var _p9 = {ctor: "_Tuple2",_0: _p8._0._0,_1: _p8._1._0};
+            _v3_2: do {
+               if (_p9.ctor === "_Tuple2") {
+                     if (_p9._0.ctor === "FullStory") {
+                           return $Maybe.Just($Remote$Data.Loaded($Types.FullStory(_p9._0._0)));
                         } else {
-                           if (_p7._1.ctor === "DiscoverStory") {
-                                 return $Maybe.Just($Remote$Data.Loaded($Types.DiscoverStory(_p7._0._0)));
+                           if (_p9._1.ctor === "DiscoverStory") {
+                                 return $Maybe.Just($Remote$Data.Loaded($Types.DiscoverStory(_p9._0._0)));
                               } else {
-                                 break _v2_2;
+                                 break _v3_2;
                               }
                         }
                   } else {
-                     break _v2_2;
+                     break _v3_2;
                   }
             } while (false);
             return oldStory;
@@ -14869,6 +14896,7 @@ Elm.Data.make = function (_elm) {
                              ,requestStories: requestStories
                              ,requestStory: requestStory
                              ,viewStory: viewStory
+                             ,favouriteStory: favouriteStory
                              ,getItem: getItem
                              ,updateStory: updateStory};
 };
@@ -15402,30 +15430,50 @@ Elm.Main.make = function (_elm) {
                        return fetchDiscover($Data.requestStories);
                     }
               } else return $Effects.none;
+         case "Favourite": var _p8 = app.discovery.item;
+           if (_p8.ctor === "Loaded" && _p8._0.ctor === "Just") {
+                 return $Effects.task(A2($Task.andThen,
+                 A2($Data.favouriteStory,_p8._0._0,true),
+                 function (_p9) {
+                    return $Task.succeed($Types.NoAction);
+                 }));
+              } else {
+                 return $Effects.none;
+              }
+         case "Pass": var _p10 = app.discovery.item;
+           if (_p10.ctor === "Loaded" && _p10._0.ctor === "Just") {
+                 return $Effects.task(A2($Task.andThen,
+                 A2($Data.favouriteStory,_p10._0._0,false),
+                 function (_p11) {
+                    return $Task.succeed($Types.NoAction);
+                 }));
+              } else {
+                 return $Effects.none;
+              }
          case "Back": return A2($Effects.map,
-           function (_p8) {
+           function (_p12) {
               return $Types.NoAction;
            },
            $Effects.task($History.back));
-         case "Animate": var _p14 = _p4._0;
-           var _p9 = app.location;
-           switch (_p9.ctor)
-           {case "Viewing": var _p10 = _p9._1.photoPosition;
-                if (_p10.ctor === "Leaving") {
-                      var _p11 = _p10._1;
-                      return _U.cmp(_p14,
-                      _p10._3) > 0 ? $Effects.task($Task.succeed(_U.cmp(_p11,
-                      0) < 0 ? $Types.NextPhoto : _U.cmp(_p11,
+         case "Animate": var _p18 = _p4._0;
+           var _p13 = app.location;
+           switch (_p13.ctor)
+           {case "Viewing": var _p14 = _p13._1.photoPosition;
+                if (_p14.ctor === "Leaving") {
+                      var _p15 = _p14._1;
+                      return _U.cmp(_p18,
+                      _p14._3) > 0 ? $Effects.task($Task.succeed(_U.cmp(_p15,
+                      0) < 0 ? $Types.NextPhoto : _U.cmp(_p15,
                       0) > 0 ? $Types.PrevPhoto : $Types.NoAction)) : $Effects.none;
                    } else {
                       return $Effects.none;
                    }
-              case "Discovering": var _p12 = app.discovery.itemPosition;
-                if (_p12.ctor === "Leaving") {
-                      var _p13 = _p12._1;
-                      return _U.cmp(_p14,
-                      _p12._3) > 0 ? $Effects.task($Task.succeed(_U.cmp(_p13,
-                      0) < 0 ? $Types.Pass : _U.cmp(_p13,
+              case "Discovering": var _p16 = app.discovery.itemPosition;
+                if (_p16.ctor === "Leaving") {
+                      var _p17 = _p16._1;
+                      return _U.cmp(_p18,
+                      _p16._3) > 0 ? $Effects.task($Task.succeed(_U.cmp(_p17,
+                      0) < 0 ? $Types.Pass : _U.cmp(_p17,
                       0) > 0 ? $Types.Favourite : $Types.NoAction)) : $Effects.none;
                    } else {
                       return $Effects.none;
@@ -15434,98 +15482,98 @@ Elm.Main.make = function (_elm) {
          default: return $Effects.none;}
    });
    var update = F2(function (action,app) {
-      var _p15 = {ctor: "_Tuple2",_0: app.location,_1: action};
-      _v7_14: do {
-         switch (_p15._1.ctor)
-         {case "MoveItem": if (_p15._0.ctor === "Discovering") {
+      var _p19 = {ctor: "_Tuple2",_0: app.location,_1: action};
+      _v9_14: do {
+         switch (_p19._1.ctor)
+         {case "MoveItem": if (_p19._0.ctor === "Discovering") {
                     return _U.update(app,
-                    {discovery: A2(moveItem,app.discovery,_p15._1._0)});
+                    {discovery: A2(moveItem,app.discovery,_p19._1._0)});
                  } else {
-                    break _v7_14;
+                    break _v9_14;
                  }
-            case "Favourite": if (_p15._0.ctor === "Discovering") {
+            case "Favourite": if (_p19._0.ctor === "Discovering") {
                     return _U.update(app,
                     {location: $Types.Discovering
                     ,discovery: favouriteItem(app.discovery)});
                  } else {
-                    break _v7_14;
+                    break _v9_14;
                  }
-            case "Pass": if (_p15._0.ctor === "Discovering") {
+            case "Pass": if (_p19._0.ctor === "Discovering") {
                     return _U.update(app,
                     {location: $Types.Discovering
                     ,discovery: passItem(app.discovery)});
                  } else {
-                    break _v7_14;
+                    break _v9_14;
                  }
-            case "Animate": switch (_p15._0.ctor)
+            case "Animate": switch (_p19._0.ctor)
               {case "Discovering": return _U.update(app,
                    {discovery: A3(animateItem,
                    app.discovery,
-                   _p15._1._0,
-                   _p15._1._1)});
-                 case "Viewing": var _p16 = _p15._0._1;
+                   _p19._1._0,
+                   _p19._1._1)});
+                 case "Viewing": var _p20 = _p19._0._1;
                    return _U.update(app,
                    {location: A2($Types.Viewing,
-                   _p15._0._0,
-                   _U.update(_p16,
+                   _p19._0._0,
+                   _U.update(_p20,
                    {photoPosition: A3($Swiping.animateStep,
-                   _p15._1._0,
-                   _p15._1._1,
-                   _p16.photoPosition)}))});
-                 default: break _v7_14;}
-            case "MovePhoto": if (_p15._0.ctor === "Viewing") {
+                   _p19._1._0,
+                   _p19._1._1,
+                   _p20.photoPosition)}))});
+                 default: break _v9_14;}
+            case "MovePhoto": if (_p19._0.ctor === "Viewing") {
                     return _U.update(app,
                     {location: A2($Types.Viewing,
-                    _p15._0._0,
-                    _U.update(_p15._0._1,{photoPosition: _p15._1._0}))});
+                    _p19._0._0,
+                    _U.update(_p19._0._1,{photoPosition: _p19._1._0}))});
                  } else {
-                    break _v7_14;
+                    break _v9_14;
                  }
-            case "PrevPhoto": if (_p15._0.ctor === "Viewing") {
-                    var _p17 = _p15._0._1;
+            case "PrevPhoto": if (_p19._0.ctor === "Viewing") {
+                    var _p21 = _p19._0._1;
                     return _U.update(app,
                     {location: A2($Types.Viewing,
-                    _p15._0._0,
-                    _U.update(_p17,
-                    {photoIndex: _p17.photoIndex - 1
+                    _p19._0._0,
+                    _U.update(_p21,
+                    {photoIndex: _p21.photoIndex - 1
                     ,photoPosition: $Types.Static}))});
                  } else {
-                    break _v7_14;
+                    break _v9_14;
                  }
-            case "NextPhoto": if (_p15._0.ctor === "Viewing") {
-                    var _p18 = _p15._0._1;
+            case "NextPhoto": if (_p19._0.ctor === "Viewing") {
+                    var _p22 = _p19._0._1;
                     return _U.update(app,
                     {location: A2($Types.Viewing,
-                    _p15._0._0,
-                    _U.update(_p18,
-                    {photoIndex: _p18.photoIndex + 1
+                    _p19._0._0,
+                    _U.update(_p22,
+                    {photoIndex: _p22.photoIndex + 1
                     ,photoPosition: $Types.Static}))});
                  } else {
-                    break _v7_14;
+                    break _v9_14;
                  }
-            case "JumpPhoto": if (_p15._0.ctor === "Viewing") {
+            case "JumpPhoto": if (_p19._0.ctor === "Viewing") {
                     return _U.update(app,
                     {location: A2($Types.Viewing,
-                    _p15._0._0,
-                    _U.update(_p15._0._1,
-                    {photoIndex: _p15._1._0,photoPosition: $Types.Static}))});
+                    _p19._0._0,
+                    _U.update(_p19._0._1,
+                    {photoIndex: _p19._1._0,photoPosition: $Types.Static}))});
                  } else {
-                    break _v7_14;
+                    break _v9_14;
                  }
             case "Discover": return _U.update(app,
               {location: $Types.Discovering});
             case "View": return _U.update(app,
-              {location: A2($Types.Viewing,_p15._1._0,initialItemView)});
+              {location: A2($Types.Viewing,_p19._1._0,initialItemView)});
             case "ViewFavourites": return _U.update(app,
               {location: $Types.ViewingFavourites});
             case "LoadData": return _U.update(app,
-              {items: _p15._1._0(app.items)});
+              {items: _p19._1._0(app.items)});
             case "LoadDiscoveryData": return _U.update(app,
-              {items: _p15._1._1(app.items)
+              {items: _p19._1._1(app.items)
               ,discovery: A2(updateDiscoverableItems,
               app.discovery,
-              _p15._1._0)});
-            default: break _v7_14;}
+              _p19._1._0)});
+            default: break _v9_14;}
       } while (false);
       return app;
    });
@@ -15542,10 +15590,10 @@ Elm.Main.make = function (_elm) {
       return v;
    });
    var userLocation = A2($Signal.map,
-   function (_p19) {
+   function (_p23) {
       return $Types.UpdateLocation($Result.toMaybe(A2($Json$Decode.decodeValue,
       latLng,
-      _p19)));
+      _p23)));
    },
    geolocation);
    var history = $Signal.mailbox($Types.NoAction);
