@@ -7,6 +7,7 @@
         "."
     ],
     "exposed-modules": [],
+    "native-modules": true,
     "dependencies": {
         "Dandandan/Easing": "2.0.2 <= v < 3.0.0",
         "circuithub/elm-list-extra": "3.9.0 <= v < 4.0.0",
@@ -19,8 +20,8 @@
         "evancz/elm-markdown": "2.0.1 <= v < 3.0.0",
         "evancz/start-app": "2.0.0 <= v < 3.0.0",
         "kennib/elm-swipe": "3.0.0 <= v < 4.0.0",
-        "mgold/elm-date-format": "1.1.2 <= v < 2.0.0",
-        "rgrempel/elm-route-hash": "1.0.5 <= v < 2.0.0"
+        "rgrempel/elm-route-hash": "1.0.5 <= v < 2.0.0",
+        "rluiten/elm-date-extra": "3.0.0 <= v < 4.0.0"
     },
     "elm-version": "0.16.0 <= v < 0.17.0"
 }

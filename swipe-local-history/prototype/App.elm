@@ -97,7 +97,8 @@ effects : Action StoryId Story -> App StoryId Story -> Effects.Effects (Action S
 effects action app = case action of
     View storyId -> Effects.task
         <| Task.map LoadData
-        <| Remote.DataStore.fetch storyId Data.requestStory Data.updateStory
+        <| Data.viewStory storyId
+        `Task.andThen` \_ -> Remote.DataStore.fetch storyId Data.requestStory Data.updateStory
     UpdateLocation loc ->
         if app.discovery == initialDiscovery then
             case loc of
