@@ -1,6 +1,9 @@
-module Data (requestNearbyStories, requestStories, requestStory, getItem, updateStory) where
+module Data (requestNearbyStories, requestStories, requestStory, viewStory, favouriteStory, getItem, updateStory) where
 
 import Json.Decode as Json exposing ((:=), andThen)
+import Date.Format
+import Date.Config.Config_en_au as AuDate
+import Time exposing (Time)
 import Date exposing (Date)
 import Dict exposing (Dict)
 import Task exposing (Task)
@@ -11,6 +14,8 @@ import Types exposing (..)
 import Remote.Data exposing (RemoteData(..))
 import Remote.DataStore
 import Story
+
+import Native.TimeTask
 
 {-| A function to retrieve an item from the app's data store -}
 getItem : id -> App id a -> RemoteData a
@@ -38,7 +43,7 @@ requestNearbyStories pos = Http.send Http.defaultSettings
     , url = url "rpc/nearby_stories"
     , body = Http.string <| "{\"lat\": \""++pos.lat++"\", \"lng\": \""++pos.lng++"\"}"
     }
-   |> Http.fromJson discoverStories
+    |> Http.fromJson discoverStories
 
 {-| Http Request for Discovery stories -}
 requestStories : Task Http.Error (List Story)
@@ -56,6 +61,39 @@ requestStory storyId = let
             (\storyId -> Maybe.withDefault
             (Task.fail <| Http.BadResponse 404 "Story with given id was not found")
             <| Maybe.map Task.succeed storyId)
+
+{-| Http request to indicate a story is being viewed -}
+viewStory : StoryId -> Task Never (Result Http.RawError Http.Response)
+viewStory (StoryId story) = Native.TimeTask.getCurrentTime
+    `Task.andThen` \time ->
+        Http.send Http.defaultSettings
+        { verb = "POST"
+        , headers = [("Content-Type", "application/json")]
+        , url = url "views"
+        , body = Http.string <| "{\"datetime\": \""++timestamp time++"\", \"story_id\": \""++toString story++"\"}"
+        }
+    |> Task.toResult
+
+{-| Http request to indicate a story is being viewed -}
+favouriteStory : StoryId -> Bool -> Task Never (Result Http.RawError Http.Response)
+favouriteStory (StoryId story) favourited = Native.TimeTask.getCurrentTime
+    `Task.andThen` \time ->
+        Http.send Http.defaultSettings
+        { verb = "POST"
+        , headers = [("Content-Type", "application/json")]
+        , url = url "favourites"
+        , body = Http.string <| "{\"datetime\": \""++timestamp time++"\", \"story_id\": \""++toString story++"\", \"favourited\": \""++toString favourited++"\"}"
+        }
+    |> Task.toResult
+
+{-| Format a time as a postgres ISO timestamp -}
+timestamp : Time -> String
+timestamp time = 
+    let
+        isoFormat = "%Y-%m-%d %H:%M:%S"
+        isoDatetime = (Date.Format.format AuDate.config isoFormat << Date.fromTime) time
+    in
+        "'" ++ isoDatetime ++ "'"
 
 {-| List of Discover Stories JSON Decoder -}
 discoverStories : Json.Decoder (List Story)

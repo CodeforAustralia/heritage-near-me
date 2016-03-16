@@ -33,6 +33,19 @@ CREATE TABLE IF NOT EXISTS story_site (
 	site_id SERIAL REFERENCES site (id)
 );
 
+CREATE TABLE IF NOT EXISTS favourites (
+	id SERIAL PRIMARY KEY,
+	datetime TIMESTAMP WITHOUT TIME ZONE,
+	story_id SERIAL REFERENCES story (id),
+	favourited BOOLEAN
+);
+
+CREATE TABLE IF NOT EXISTS views (
+	id SERIAL PRIMARY KEY,
+	datetime TIMESTAMP WITHOUT TIME ZONE,
+	story_id SERIAL REFERENCES story (id)
+);
+
 CREATE SCHEMA hnm
 	CREATE VIEW story_discover AS
 		SELECT DISTINCT ON (story.id)
@@ -55,7 +68,22 @@ CREATE SCHEMA hnm
 		LEFT JOIN story_site  ON story_site.story_id  = story.id
 		LEFT JOIN site        ON story_site.site_id   = site.id
 		GROUP BY story.id
+
+	CREATE VIEW stats AS
+		SELECT
+			story.id, story.title,
+			SUM(CASE WHEN views.id IS NOT null THEN 1 ELSE 0 END) AS views,
+			SUM(CASE WHEN favourited IS NOT null THEN 1 ELSE 0 END) AS total_swipes,
+			SUM(CASE WHEN favourited = true THEN 1 ELSE 0 END) AS favourites,
+			SUM(CASE WHEN favourited = false THEN 1 ELSE 0 END) AS passes
+		FROM story
+		LEFT JOIN favourites ON favourites.story_id = story.id
+		LEFT JOIN views      ON views.story_id      = story.id
+		GROUP BY story.id
 ;
+
+	CREATE VIEW hnm.favourites AS SELECT * FROM favourites;
+	CREATE VIEW hnm.views AS SELECT * FROM views;
 
 CREATE OR REPLACE FUNCTION hnm.nearby_stories(lat TEXT, lng TEXT)
 	RETURNS TABLE (
@@ -92,6 +120,20 @@ GRANT SELECT ON photo TO postgres;
 GRANT SELECT ON story_photo TO postgres;
 GRANT SELECT ON site TO postgres;
 GRANT SELECT ON story_site TO postgres;
+
+GRANT SELECT ON hnm.favourites TO postgres;
+GRANT INSERT ON hnm.favourites TO postgres;
+GRANT SELECT ON favourites TO postgres;
+GRANT INSERT ON favourites TO postgres;
+GRANT USAGE ON favourites_id_seq TO postgres;
+
+GRANT SELECT ON hnm.views TO postgres;
+GRANT INSERT ON hnm.views TO postgres;
+GRANT SELECT ON views TO postgres;
+GRANT INSERT ON views TO postgres;
+GRANT USAGE ON views_id_seq TO postgres;
+
 GRANT ALL ON SCHEMA hnm TO postgres;
-GRANT ALL ON hnm.story_discover TO postgres;
-GRANT ALL ON hnm.story_details TO postgres;
+GRANT SELECT ON hnm.story_discover TO postgres;
+GRANT SELECT ON hnm.story_details TO postgres;
+GRANT SELECT ON hnm.stats TO postgres;

@@ -1,7 +1,8 @@
 module Story (view, id, title, blurb, photo, photos, distance) where
 
 import Date exposing (Date)
-import Date.Format as Date
+import Date.Format
+import Date.Config.Config_en_au as AuDate
 import List.Extra as List
 
 import Html exposing (Html, div, h1, h2, h3, h4, blockquote, img, ul, li, span, a, i, text)
@@ -143,11 +144,15 @@ distance story = case story of
 {-| Format a story's date range -}
 formatDate : Dates -> Maybe String
 formatDate dates = case (dates.start, dates.end) of
-    (Just start, Nothing) -> Just <| Date.format "%Y" start
-    (Nothing, Just end) -> Just <| Date.format "%Y" end
+    (Just start, Nothing) -> Just <| dateFormat "%Y" start
+    (Nothing, Just end) -> Just <| dateFormat "%Y" end
     (Just start, Just end) -> Just
-        <| Date.format "%Y" start ++ " - " ++ Date.format "%Y" end
+        <| dateFormat "%Y" start ++ " - " ++ dateFormat "%Y" end
     _ -> Nothing
+
+{-| Function for formatting a generic date -}
+dateFormat : String -> Date -> String
+dateFormat = Date.Format.format AuDate.config 
 
 {-| Format a distance in meters -}
 distanceFormat : Float -> String
