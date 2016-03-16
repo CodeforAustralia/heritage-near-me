@@ -4,6 +4,8 @@ $(function () {
             $('.loading').remove();
         }, 500);
 
+        viewChart($('#views-chart'), stories);
+
         stories.forEach(function(story) {
             var element = $('<li></li>').appendTo('#favourites');
             var chart = $('<div></div>')
@@ -70,4 +72,29 @@ $(function () {
             colors: ['#417505', '#a52105'],
         });
     }
+
+    function viewChart(element, stories) {
+        element.highcharts({
+            chart: {
+                height: 600,
+                plotBackgroundColor: null,
+                plotBorderWidth: 0,
+                plotShadow: false
+            },
+            title: {
+                text: 'Story views',
+            },
+            series: [{
+                type: 'column',
+                name: 'Story',
+                data: stories.map(function(story) {
+                    return [story.title, story.views];
+                }),
+            }],
+            yAxis: {
+                allowDecimals: false,
+            }
+        });
+    }
+
 });
