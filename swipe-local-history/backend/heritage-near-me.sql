@@ -69,17 +69,30 @@ CREATE SCHEMA hnm
 		LEFT JOIN site        ON story_site.site_id   = site.id
 		GROUP BY story.id
 
+	CREATE VIEW favourite_stats AS
+		SELECT
+			story_id,
+			SUM(CASE WHEN favourited IS NOT null THEN 1 ELSE 0 END) AS total_choices,
+			SUM(CASE WHEN favourited = true THEN 1 ELSE 0 END) AS favourites,
+			SUM(CASE WHEN favourited = false THEN 1 ELSE 0 END) AS passes
+		FROM favourites
+		GROUP BY story_id
+
+	CREATE VIEW view_stats AS
+		SELECT
+			story_id,
+			SUM(CASE WHEN views.id IS NOT null THEN 1 ELSE 0 END) AS views
+		FROM views
+		GROUP BY story_id
+
 	CREATE VIEW stats AS
 		SELECT
 			story.id, story.title,
-			SUM(CASE WHEN views.id IS NOT null THEN 1 ELSE 0 END) AS views,
-			SUM(CASE WHEN favourited IS NOT null THEN 1 ELSE 0 END) AS total_swipes,
-			SUM(CASE WHEN favourited = true THEN 1 ELSE 0 END) AS favourites,
-			SUM(CASE WHEN favourited = false THEN 1 ELSE 0 END) AS passes
+			total_choices, favourites, passes,
+			views
 		FROM story
-		LEFT JOIN favourites ON favourites.story_id = story.id
-		LEFT JOIN views      ON views.story_id      = story.id
-		GROUP BY story.id
+		LEFT JOIN favourite_stats ON favourite_stats.story_id = story.id
+		LEFT JOIN view_stats      ON view_stats.story_id      = story.id
 ;
 
 	CREATE VIEW hnm.favourites AS SELECT * FROM favourites;
@@ -136,4 +149,6 @@ GRANT USAGE ON views_id_seq TO postgres;
 GRANT ALL ON SCHEMA hnm TO postgres;
 GRANT SELECT ON hnm.story_discover TO postgres;
 GRANT SELECT ON hnm.story_details TO postgres;
+GRANT SELECT ON hnm.view_stats TO postgres;
+GRANT SELECT ON hnm.favourite_stats TO postgres;
 GRANT SELECT ON hnm.stats TO postgres;
