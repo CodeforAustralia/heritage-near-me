@@ -5,11 +5,18 @@
         <script src="https://code.highcharts.com/modules/no-data-to-display.js"></script>
         <script src="stats.js"></script>
         <title>Heritage Near Me Stats</title>
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+        <link rel="stylesheet" type="text/css" href="stats.css">
     </head>
     <body>
-        <select id="story">
-            <option value="null">Select a story</option>
-        </select>
-        <div id="chart" style="min-width: 310px; height: 400px; max-width: 100%; margin: 0 auto"></div>
+        <h1>Stats</h1>
+
+        <h2>Views</h2>
+        <i class="loading fa fa-circle-o-notch fa-spin fa-3x"></i>
+        <div id="views-chart"></div>
+
+        <h2>Favourites</h2>
+        <i class="loading fa fa-circle-o-notch fa-spin fa-3x"></i>
+        <ul id="favourites"></ul>
     </body>
 </html>

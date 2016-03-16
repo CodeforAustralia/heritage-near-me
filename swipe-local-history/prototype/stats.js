@@ -1,56 +1,62 @@
 $(function () {
-    $('#story').change(function() {
-        var storyIndex = $(this).val()
-        if (storyIndex === null) {
-            $('#chart').empty();
-        } else {
-            var story = $('#story').data('stories')[storyIndex];
-            loadChart(story);
-        }
-    });
-
     $.get('/api/stats', function(stories) {
-        $('#story').data('stories', stories);
-        stories.forEach(function(story, index) {
-            $('<option></option')
-                .appendTo('#story')
-                .val(index)
-                .text(story.title);
+        setTimeout(function() {
+            $('.loading').remove();
+        }, 500);
+
+        stories.forEach(function(story) {
+            var element = $('<li></li>').appendTo('#favourites');
+            var chart = $('<div></div>')
+                .css('display', 'inline-block')
+                .appendTo(element);
+            var title = $('<h3></h3>')
+                .text(story.title)
+                .css('display', 'inline-block')
+                .appendTo(element);
+
+            setTimeout(function() {
+                favouriteChart(chart, story);
+            }, 600);
         });
     });
 
-    function loadChart(story) {
-        console.log(story);
-        $('#chart').highcharts({
+    function favouriteChart(element, story) {
+        element.highcharts({
             chart: {
+                height: 150,
+                width: 200,
                 plotBackgroundColor: null,
                 plotBorderWidth: 0,
                 plotShadow: false
             },
             title: {
-                text: "'" + story.title + "'<br>Favourites",
-                align: 'center',
-                verticalAlign: 'middle',
-                y: 40
+                text: '',
             },
             plotOptions: {
                 pie: {
                     dataLabels: {
                         enabled: true,
-                        distance: -50,
+                        distance: -10,
                         style: {
                             fontWeight: 'bold',
-                            color: 'white',
-                            textShadow: '0px 1px 2px black'
+                            color: '#555',
                         }
                     },
                     startAngle: -90,
                     endAngle: 90,
-                    center: ['50%', '75%']
+                    size: '160%',
+                    center: ['50%', '100%']
                 }
             },
             lang: {
                 noData: "No one has interacted with this story yet",
+            },
+            noData: {
+                useHTML: true,
+                style: {
+                    'width': '100%',
+                    'white-space': 'nowrap',
+                },
             },
             series: [{
                 type: 'pie',
@@ -61,7 +67,7 @@ $(function () {
                     ['Passes', story.passes]
                 ] : [],
             }],
-            colors: ['#417505', '#754105'],
+            colors: ['#417505', '#a52105'],
         });
     }
 });

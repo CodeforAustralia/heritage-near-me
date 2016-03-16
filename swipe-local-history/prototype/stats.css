@@ -1,0 +1,12 @@
+#favourites ul {
+    list-decoration: none;
+}
+
+#favourites li {
+    display: flex;
+    align-items: center;
+}
+
+#favourites li h3 {
+    margin-left: 15px;
+}
