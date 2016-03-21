@@ -95,6 +95,10 @@ CREATE SCHEMA hnm
 		LEFT JOIN view_stats      ON view_stats.story_id      = story.id
 ;
 
+	CREATE VIEW hnm.story AS SELECT * FROM story;
+	CREATE VIEW hnm.story_site AS SELECT * FROM story_site;
+	CREATE VIEW hnm.story_photo AS SELECT * FROM story_photo;
+
 	CREATE VIEW hnm.favourites AS SELECT * FROM favourites;
 	CREATE VIEW hnm.views AS SELECT * FROM views;
 
@@ -152,3 +156,16 @@ GRANT SELECT ON hnm.story_details TO postgres;
 GRANT SELECT ON hnm.view_stats TO postgres;
 GRANT SELECT ON hnm.favourite_stats TO postgres;
 GRANT SELECT ON hnm.stats TO postgres;
+
+-- These permissions need to be given to a password protected role in the future
+GRANT ALL ON hnm.story TO postgres;
+GRANT ALL ON story TO postgres;
+GRANT USAGE ON story_id_seq TO postgres;
+
+GRANT ALL ON hnm.story_site TO postgres;
+GRANT ALL ON story_site TO postgres;
+GRANT USAGE ON story_site_id_seq TO postgres;
+
+GRANT ALL ON hnm.story_photo TO postgres;
+GRANT ALL ON story_photo TO postgres;
+GRANT USAGE ON story_photo_id_seq TO postgres;
