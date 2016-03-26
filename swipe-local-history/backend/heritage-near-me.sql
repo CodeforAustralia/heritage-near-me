@@ -4,7 +4,8 @@ CREATE TABLE IF NOT EXISTS story (
 	blurb TEXT,
 	story TEXT,
 	dateStart DATE,
-	dateEnd DATE
+	dateEnd DATE,
+	published BOOLEAN
 );
 
 CREATE TABLE IF NOT EXISTS photo (
@@ -53,6 +54,7 @@ CREATE SCHEMA hnm
 		FROM story
 		LEFT JOIN story_photo ON story_photo.story_id = story.id
 		LEFT JOIN photo       ON story_photo.photo_id = photo.id
+		WHERE story.published
 
 	CREATE VIEW story_details AS
 		SELECT
@@ -67,6 +69,7 @@ CREATE SCHEMA hnm
 		LEFT JOIN photo       ON story_photo.photo_id = photo.id
 		LEFT JOIN story_site  ON story_site.story_id  = story.id
 		LEFT JOIN site        ON story_site.site_id   = site.id
+		WHERE story.published
 		GROUP BY story.id
 
 	CREATE VIEW favourite_stats AS
@@ -93,9 +96,10 @@ CREATE SCHEMA hnm
 		FROM story
 		LEFT JOIN favourite_stats ON favourite_stats.story_id = story.id
 		LEFT JOIN view_stats      ON view_stats.story_id      = story.id
+		WHERE story.published
 ;
 
-	CREATE VIEW hnm.story AS SELECT * FROM story;
+	CREATE VIEW hnm.story AS SELECT * FROM story WHERE published;
 	CREATE VIEW hnm.story_site AS SELECT * FROM story_site;
 	CREATE VIEW hnm.story_photo AS SELECT * FROM story_photo;
 
@@ -125,6 +129,7 @@ BEGIN
 	LEFT JOIN photo       ON story_photo.photo_id = photo.id
 	LEFT JOIN story_site  ON story_site.story_id  = story.id
 	LEFT JOIN site        ON story_site.site_id   = site.id
+	WHERE story.published
 	GROUP BY story.id
 	ORDER BY distance ASC;
 END;
@@ -139,7 +144,8 @@ CREATE FUNCTION hnm.update_stories(stories JSON)
 		blurb TEXT,
 		story TEXT,
 		date_start DATE,
-		date_end DATE
+		date_end DATE,
+		published BOOLEAN
 	) AS
 $$
 BEGIN
@@ -152,7 +158,8 @@ BEGIN
 			REPLACE(new.blurb, '\n', E'\n') AS blurb,
 			REPLACE(new.story, '\n', E'\n') AS story,
 			CASE WHEN NULLIF(new.date_start, '') IS NULL THEN NULL ELSE to_date(new.date_start, 'yyyy') END AS date_start,
-			CASE WHEN NULLIF(new.date_end, '') IS NULL THEN NULL ELSE to_date(new.date_end, 'yyyy') END AS date_end
+			CASE WHEN NULLIF(new.date_end, '') IS NULL THEN NULL ELSE to_date(new.date_end, 'yyyy') END AS date_end,
+			COALESCE(NULLIF(new.published, '')::BOOLEAN, FALSE) AS published
 		FROM json_to_recordset(stories)
 		AS new(
 			id TEXT,
@@ -160,18 +167,19 @@ BEGIN
 			blurb TEXT,
 			story TEXT,
 			date_start TEXT,
-			date_end TEXT
+			date_end TEXT,
+			published TEXT
 		)
 	),
 
-	inserted AS (INSERT INTO story (title, blurb, story, dateStart, dateEnd) (
+	inserted AS (INSERT INTO story (title, blurb, story, dateStart, dateEnd, published) (
 		SELECT
-			new.title, new.blurb, new.story, new.date_start, new.date_end
+			new.title, new.blurb, new.story, new.date_start, new.date_end, new.published
 		FROM new
 		WHERE new.id IS NULL
 	) RETURNING *),
 
-	updated AS (INSERT INTO story (id, title, blurb, story, dateStart, dateEnd) (
+	updated AS (INSERT INTO story (id, title, blurb, story, dateStart, dateEnd, published) (
 		SELECT new.*
 		FROM new
 		WHERE new.id IS NOT NULL
@@ -181,7 +189,8 @@ BEGIN
 		blurb = excluded.blurb,
 		story = excluded.story,
 		dateStart = excluded.dateStart,
-		dateEnd = excluded.dateEnd
+		dateEnd = excluded.dateEnd,
+		published = excluded.published
 	RETURNING *),
 
 	results AS (SELECT
@@ -190,7 +199,8 @@ BEGIN
 			COALESCE(inserted.blurb, updated.blurb, new.blurb),
 			COALESCE(inserted.story, updated.story, new.story),
 			COALESCE(inserted.dateStart, updated.dateStart),
-			COALESCE(inserted.dateEnd, updated.dateEnd)
+			COALESCE(inserted.dateEnd, updated.dateEnd),
+			COALESCE(inserted.published, updated.published, new.published)
 		FROM new
 		LEFT JOIN inserted
 			ON inserted.title = new.title
