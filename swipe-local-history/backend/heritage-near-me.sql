@@ -132,6 +132,84 @@ $$
 LANGUAGE plpgsql VOLATILE
 COST 100;
 
+CREATE FUNCTION hnm.update_stories(stories JSON)
+	RETURNS TABLE (
+		story_id INTEGER,
+		title TEXT,
+		blurb TEXT,
+		story TEXT,
+		date_start DATE,
+		date_end DATE
+	) AS
+$$
+BEGIN
+	RETURN QUERY
+	WITH
+
+	new AS (SELECT *
+		FROM json_to_recordset(stories)
+		AS new(
+			id TEXT,
+			title TEXT,
+			blurb TEXT,
+			story TEXT,
+			date_start TEXT,
+			date_end TEXT
+		)
+	),
+
+	inserted AS (INSERT INTO story (title, blurb, story, dateStart, dateEnd) (
+		SELECT
+			new.title,
+			new.blurb,
+			new.story,
+			CASE WHEN NULLIF(new.date_start, '') IS NULL THEN NULL ELSE to_date(new.date_start, 'yyyy') END AS date_start,
+			CASE WHEN NULLIF(new.date_end, '') IS NULL THEN NULL ELSE to_date(new.date_end, 'yyyy') END AS date_end
+		FROM new
+		WHERE NULLIF(new.id, '') IS NULL
+	) RETURNING *),
+
+	updated AS (INSERT INTO story (id, title, blurb, story, dateStart, dateEnd) (
+		SELECT
+			new.id::INTEGER AS id,
+			new.title,
+			new.blurb,
+			new.story,
+			CASE WHEN NULLIF(new.date_start, '') IS NULL THEN NULL ELSE to_date(new.date_start, 'yyyy') END AS date_start,
+			CASE WHEN NULLIF(new.date_end, '') IS NULL THEN NULL ELSE to_date(new.date_end, 'yyyy') END AS date_end
+		FROM new
+		WHERE NULLIF(new.id, '') IS NOT NULL
+	)
+	ON CONFLICT (id) DO UPDATE SET
+		title = excluded.title,
+		blurb = excluded.blurb,
+		story = excluded.story,
+		dateStart = excluded.dateStart,
+		dateEnd = excluded.dateEnd
+	RETURNING *),
+
+	results AS (SELECT
+			COALESCE(inserted.id, updated.id, NULLIF(new.id, '')::INTEGER),
+			COALESCE(inserted.title, updated.title, new.title),
+			COALESCE(inserted.blurb, updated.blurb, new.blurb),
+			COALESCE(inserted.story, updated.story, new.story),
+			COALESCE(inserted.dateStart, updated.dateStart),
+			COALESCE(inserted.dateEnd, updated.dateEnd)
+		FROM new
+		LEFT JOIN inserted
+			ON inserted.title = new.title
+			AND inserted.blurb = new.blurb
+			AND inserted.story = new.story
+		LEFT JOIN updated
+			ON updated.id = NULLIF(new.id, '')::INTEGER
+	)
+
+	SELECT * FROM results;
+END;
+$$
+LANGUAGE plpgsql
+COST 100;
+
 GRANT SELECT ON story TO postgres;
 GRANT SELECT ON photo TO postgres;
 GRANT SELECT ON story_photo TO postgres;

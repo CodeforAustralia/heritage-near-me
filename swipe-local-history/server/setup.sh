@@ -12,7 +12,7 @@ sudo apt-get update
 sudo apt-get install nginx -y
 sudo apt-get install git -y
 sudo apt-get install postgresql postgresql-contrib -y
-sudo apt-get install postgresql-9.4-postgis-2.1 postgresql-contrib-9.4 -y
+sudo apt-get install postgresql-9.5-postgis-2.2 postgresql-contrib-9.5 -y
 sudo apt-get install daemon -y
 
 cd heritage-near-me

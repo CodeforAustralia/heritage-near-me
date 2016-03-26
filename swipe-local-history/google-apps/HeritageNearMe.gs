@@ -1,5 +1,5 @@
 function apiRequest(method, subUrl, headers, payload) {
-  var url = 'http://27.33.71.166:8000/api/'+subUrl;
+  var url = 'http://heritagenear.me:8000/api/'+subUrl;
   var options = {
     'method': method,
     'headers': headers,
@@ -12,4 +12,8 @@ function apiRequest(method, subUrl, headers, payload) {
 
 function bulkInsert(subUrl, data) {
   return apiRequest('POST', subUrl, {'Content-Type': 'text/csv'}, data);
+}
+
+function procedure(subUrl, data) {
+  return apiRequest('POST', 'rpc/'+subUrl, {'Content-Type': 'application/json'}, JSON.stringify(data));
 }
