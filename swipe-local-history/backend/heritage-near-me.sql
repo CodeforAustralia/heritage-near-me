@@ -149,8 +149,8 @@ BEGIN
 	new AS (SELECT
 			NULLIF(new.id, '')::INTEGER AS id,
 			new.title AS title,
-			new.blurb AS blurb,
-			new.story AS story,
+			REPLACE(new.blurb, '\n', E'\n') AS blurb,
+			REPLACE(new.story, '\n', E'\n') AS story,
 			CASE WHEN NULLIF(new.date_start, '') IS NULL THEN NULL ELSE to_date(new.date_start, 'yyyy') END AS date_start,
 			CASE WHEN NULLIF(new.date_end, '') IS NULL THEN NULL ELSE to_date(new.date_end, 'yyyy') END AS date_end
 		FROM json_to_recordset(stories)
