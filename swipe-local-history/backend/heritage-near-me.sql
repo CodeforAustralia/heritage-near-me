@@ -146,7 +146,13 @@ BEGIN
 	RETURN QUERY
 	WITH
 
-	new AS (SELECT *
+	new AS (SELECT
+			NULLIF(new.id, '')::INTEGER AS id,
+			new.title AS title,
+			new.blurb AS blurb,
+			new.story AS story,
+			CASE WHEN NULLIF(new.date_start, '') IS NULL THEN NULL ELSE to_date(new.date_start, 'yyyy') END AS date_start,
+			CASE WHEN NULLIF(new.date_end, '') IS NULL THEN NULL ELSE to_date(new.date_end, 'yyyy') END AS date_end
 		FROM json_to_recordset(stories)
 		AS new(
 			id TEXT,
@@ -160,25 +166,15 @@ BEGIN
 
 	inserted AS (INSERT INTO story (title, blurb, story, dateStart, dateEnd) (
 		SELECT
-			new.title,
-			new.blurb,
-			new.story,
-			CASE WHEN NULLIF(new.date_start, '') IS NULL THEN NULL ELSE to_date(new.date_start, 'yyyy') END AS date_start,
-			CASE WHEN NULLIF(new.date_end, '') IS NULL THEN NULL ELSE to_date(new.date_end, 'yyyy') END AS date_end
+			new.title, new.blurb, new.story, new.date_start, new.date_end
 		FROM new
-		WHERE NULLIF(new.id, '') IS NULL
+		WHERE new.id IS NULL
 	) RETURNING *),
 
 	updated AS (INSERT INTO story (id, title, blurb, story, dateStart, dateEnd) (
-		SELECT
-			new.id::INTEGER AS id,
-			new.title,
-			new.blurb,
-			new.story,
-			CASE WHEN NULLIF(new.date_start, '') IS NULL THEN NULL ELSE to_date(new.date_start, 'yyyy') END AS date_start,
-			CASE WHEN NULLIF(new.date_end, '') IS NULL THEN NULL ELSE to_date(new.date_end, 'yyyy') END AS date_end
+		SELECT new.*
 		FROM new
-		WHERE NULLIF(new.id, '') IS NOT NULL
+		WHERE new.id IS NOT NULL
 	)
 	ON CONFLICT (id) DO UPDATE SET
 		title = excluded.title,
@@ -189,7 +185,7 @@ BEGIN
 	RETURNING *),
 
 	results AS (SELECT
-			COALESCE(inserted.id, updated.id, NULLIF(new.id, '')::INTEGER),
+			COALESCE(inserted.id, updated.id, new.id),
 			COALESCE(inserted.title, updated.title, new.title),
 			COALESCE(inserted.blurb, updated.blurb, new.blurb),
 			COALESCE(inserted.story, updated.story, new.story),
@@ -201,7 +197,7 @@ BEGIN
 			AND inserted.blurb = new.blurb
 			AND inserted.story = new.story
 		LEFT JOIN updated
-			ON updated.id = NULLIF(new.id, '')::INTEGER
+			ON updated.id = new.id
 	)
 
 	SELECT * FROM results;
