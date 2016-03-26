@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
+    <style>
+      body {
+        padding: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <section>
+      <p>Update the stories on the Heritage Near Me website</p>
+      <button id="update-all" name="update-all">Update all stories</button>
+      <p id="update-all-message"></p>
+    </section>
+    
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script>
+      $(function() {
+        $('#update-all').click(updateAll);
+      });
+      
+      function updateAll() {
+        this.disabled = true;
+        $('#update-all-message').text('');
+        google.script.run
+          .withSuccessHandler(
+            function(ids, element) {
+              $('#update-all-message')
+                .removeClass('error')
+                .text(ids.length + " stories successfully updated");
+              element.disabled = false;
+            })
+          .withFailureHandler(
+            function(msg, element) {
+              showError(msg, $('#update-all-message'));
+              $('#update-all-message').addClass('error');
+              element.disabled = false;
+            })
+          .withUserObject(this)
+          .submitStories();
+      }
+    </script>
+  </body>
+</html>
