@@ -242,14 +242,14 @@ GRANT SELECT ON hnm.favourite_stats TO postgres;
 GRANT SELECT ON hnm.stats TO postgres;
 
 -- These permissions need to be given to a password protected role in the future
-GRANT ALL ON hnm.story TO postgres;
-GRANT ALL ON story TO postgres;
+GRANT SELECT ON hnm.story TO postgres;
+GRANT SELECT ON story TO postgres;
 GRANT USAGE ON story_id_seq TO postgres;
 
-GRANT ALL ON hnm.story_site TO postgres;
-GRANT ALL ON story_site TO postgres;
+GRANT SELECT ON hnm.story_site TO postgres;
+GRANT SELECT ON story_site TO postgres;
 GRANT USAGE ON story_site_id_seq TO postgres;
 
-GRANT ALL ON hnm.story_photo TO postgres;
-GRANT ALL ON story_photo TO postgres;
+GRANT SELECT ON hnm.story_photo TO postgres;
+GRANT SELECT ON story_photo TO postgres;
 GRANT USAGE ON story_photo_id_seq TO postgres;
