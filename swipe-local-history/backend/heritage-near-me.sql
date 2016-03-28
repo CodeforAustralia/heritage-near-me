@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS story (
 	title TEXT,
 	blurb TEXT,
 	story TEXT,
+	author TEXT,
 	dateStart DATE,
 	dateEnd DATE
 );
@@ -31,6 +32,13 @@ CREATE TABLE IF NOT EXISTS story_site (
 	id SERIAL PRIMARY KEY,
 	story_id SERIAL REFERENCES story (id),
 	site_id SERIAL REFERENCES site (id)
+);
+
+CREATE TABLE IF NOT EXISTS link (
+	id SERIAL PRIMARY KEY,
+	story_id SERIAL REFERENCES story (id),
+	url TEXT,
+	label TEXT
 );
 
 CREATE TABLE IF NOT EXISTS favourites (
