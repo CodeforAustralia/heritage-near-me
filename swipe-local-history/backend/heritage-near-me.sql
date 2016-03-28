@@ -157,6 +157,7 @@ CREATE FUNCTION hnm.update_stories(stories JSON)
 		title TEXT,
 		blurb TEXT,
 		story TEXT,
+		author TEXT,
 		date_start DATE,
 		date_end DATE,
 		published BOOLEAN
@@ -171,6 +172,7 @@ BEGIN
 			new.title AS title,
 			REPLACE(new.blurb, '\n', E'\n') AS blurb,
 			REPLACE(new.story, '\n', E'\n') AS story,
+			new.author AS author,
 			CASE WHEN NULLIF(new.date_start, '') IS NULL THEN NULL ELSE to_date(new.date_start, 'yyyy') END AS date_start,
 			CASE WHEN NULLIF(new.date_end, '') IS NULL THEN NULL ELSE to_date(new.date_end, 'yyyy') END AS date_end,
 			COALESCE(NULLIF(new.published, '')::BOOLEAN, FALSE) AS published
@@ -180,20 +182,21 @@ BEGIN
 			title TEXT,
 			blurb TEXT,
 			story TEXT,
+			author TEXT,
 			date_start TEXT,
 			date_end TEXT,
 			published TEXT
 		)
 	),
 
-	inserted AS (INSERT INTO story (title, blurb, story, dateStart, dateEnd, published) (
+	inserted AS (INSERT INTO story (title, blurb, story, author, dateStart, dateEnd, published) (
 		SELECT
-			new.title, new.blurb, new.story, new.date_start, new.date_end, new.published
+			new.title, new.blurb, new.story, new.author, new.date_start, new.date_end, new.published
 		FROM new
 		WHERE new.id IS NULL
 	) RETURNING *),
 
-	updated AS (INSERT INTO story (id, title, blurb, story, dateStart, dateEnd, published) (
+	updated AS (INSERT INTO story (id, title, blurb, story, author, dateStart, dateEnd, published) (
 		SELECT new.*
 		FROM new
 		WHERE new.id IS NOT NULL
@@ -207,11 +210,12 @@ BEGIN
 		published = excluded.published
 	RETURNING *),
 
-	results AS (SELECT
+	stories AS (SELECT
 			COALESCE(inserted.id, updated.id, new.id),
 			COALESCE(inserted.title, updated.title, new.title),
 			COALESCE(inserted.blurb, updated.blurb, new.blurb),
 			COALESCE(inserted.story, updated.story, new.story),
+			COALESCE(inserted.author, updated.author, new.author),
 			COALESCE(inserted.dateStart, updated.dateStart),
 			COALESCE(inserted.dateEnd, updated.dateEnd),
 			COALESCE(inserted.published, updated.published, new.published)
@@ -224,7 +228,7 @@ BEGIN
 			ON updated.id = new.id
 	)
 
-	SELECT * FROM results;
+	SELECT * FROM stories;
 END;
 $$
 LANGUAGE plpgsql
