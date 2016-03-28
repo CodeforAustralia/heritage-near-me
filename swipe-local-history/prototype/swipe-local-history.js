@@ -13888,6 +13888,7 @@ Elm.Types.make = function (_elm) {
       return {width: a,height: b};
    });
    var Dates = F2(function (a,b) {    return {start: a,end: b};});
+   var Link = F2(function (a,b) {    return {url: a,label: b};});
    var Site = F2(function (a,b) {    return {id: a,name: b};});
    var LatLng = F2(function (a,b) {    return {lat: a,lng: b};});
    var FullStory = function (a) {
@@ -13966,6 +13967,7 @@ Elm.Types.make = function (_elm) {
                               ,Site: Site
                               ,LatLng: LatLng
                               ,Dates: Dates
+                              ,Link: Link
                               ,Window: Window
                               ,Discovering: Discovering
                               ,Viewing: Viewing
@@ -14475,29 +14477,57 @@ Elm.Story.make = function (_elm) {
                       _U.list([]))]))]));
    });
    var links = function (story) {
+      var links = A2($List.map,
+      function (link$) {
+         return A2($Html.li,
+         _U.list([]),
+         _U.list([A2(link,link$.label,link$.url)]));
+      },
+      story.links);
       var heritageUrl = "http://www.environment.nsw.gov.au/heritageapp/visit/ViewAttractionDetail.aspx?ID=";
+      var sites = A2($List.map,
+      function (site) {
+         return A2($Html.li,
+         _U.list([]),
+         _U.list([A2(link,
+         site.name,
+         A2($Basics._op["++"],heritageUrl,site.id))]));
+      },
+      story.sites);
+      var _p7 = A2($Basics._op["++"],sites,links);
+      if (_p7.ctor === "[]") {
+            return $Html.text("");
+         } else {
+            return A2($Html.div,
+            _U.list([$Html$Attributes.$class("links")]),
+            _U.list([A2($Html.h4,
+                    _U.list([]),
+                    _U.list([$Html.text("Further Reading")]))
+                    ,A2($Html.ul,
+                    _U.list([$Html$Attributes.$class("links")]),
+                    _p7)]));
+         }
+   };
+   var author = function (name) {
+      var license = $Html.a(_U.list([$Html$Attributes.rel("license")
+                                    ,$Html$Attributes.href("http://creativecommons.org/licenses/by/4.0/")]));
       return A2($Html.div,
-      _U.list([$Html$Attributes.$class("links")]),
-      _U.list([A2($Html.h4,
-              _U.list([]),
-              _U.list([$Html.text("Further Reading")]))
-              ,A2($Html.ul,
-              _U.list([$Html$Attributes.$class("links")]),
-              A2($List.map,
-              function (site) {
-                 return A2($Html.li,
-                 _U.list([]),
-                 _U.list([A2(link,
-                 site.name,
-                 A2($Basics._op["++"],heritageUrl,site.id))]));
-              },
-              story.sites))]));
+      _U.list([$Html$Attributes.$class("author")]),
+      _U.list([license(_U.list([A2($Html.img,
+              _U.list([$Html$Attributes.alt("Creative Commons License")
+                      ,$Html$Attributes.src("https://i.creativecommons.org/l/by/4.0/80x15.png")]),
+              _U.list([]))]))
+              ,A2($Html.br,_U.list([]),_U.list([]))
+              ,$Html.text("This work by ")
+              ,A2($Html.span,_U.list([]),_U.list([$Html.text(name)]))
+              ,$Html.text(" is licensed under a ")
+              ,license(_U.list([$Html.text("Creative Commons Attribution 4.0 International License")]))]));
    };
    var photoIndicators = F3(function (address,story,index) {
       return A2($Html.div,
       _U.list([$Html$Attributes.$class("photo-indicators")]),
       A2($List.indexedMap,
-      F2(function (index$,_p7) {
+      F2(function (index$,_p8) {
          return _U.eq(index$,A2(storyIndex,index,story)) ? A2($Html.i,
          _U.list([$Html$Attributes.$class("fa fa-circle")]),
          _U.list([])) : A2($Html.i,
@@ -14511,11 +14541,11 @@ Elm.Story.make = function (_elm) {
       return A2($Html.div,
       _U.list([$Html$Attributes.$class("story")]),
       function () {
-         var _p8 = story;
-         switch (_p8.ctor)
-         {case "Loaded": var _p14 = _p8._0;
+         var _p9 = story;
+         switch (_p9.ctor)
+         {case "Loaded": var _p15 = _p9._0;
               return A2($Basics._op["++"],
-              _U.list([_U.cmp($List.length(photos(_p14)),
+              _U.list([_U.cmp($List.length(photos(_p15)),
                       1) > 0 ? A2($Html.div,
                       A2($Basics._op["++"],
                       _U.list([$Html$Attributes.$class("photo-slide")]),
@@ -14526,60 +14556,61 @@ Elm.Story.make = function (_elm) {
                       _U.list([A2($Html.div,
                               _U.list([$Html$Attributes.$class("photos")]),
                               A2($List.map,
-                              A2(storyImage,_p14,item.photoPosition),
+                              A2(storyImage,_p15,item.photoPosition),
                               _U.list([item.photoIndex - 1
                                       ,item.photoIndex
                                       ,item.photoIndex + 1])))
                               ,A3(photoIndicators,
                               address,
-                              _p14,
+                              _p15,
                               item.photoIndex)])) : A2($Html.div,
                       _U.list([$Html$Attributes.$class("photos")]),
                       _U.list([A3(storyImage,
-                      _p14,
+                      _p15,
                       item.photoPosition,
                       item.photoIndex)]))
                       ,A2($Html.h1,
                       _U.list([$Html$Attributes.$class("title")]),
-                      _U.list([$Html.text(title(_p14))]))]),
+                      _U.list([$Html.text(title(_p15))]))]),
               function () {
-                 var _p9 = _p14;
-                 if (_p9.ctor === "DiscoverStory") {
+                 var _p10 = _p15;
+                 if (_p10.ctor === "DiscoverStory") {
                        return _U.list([$Loading.loading]);
                     } else {
-                       var _p13 = _p9._0;
+                       var _p14 = _p10._0;
                        return _U.list([function () {
-                                         var _p10 = _p13.suburb;
-                                         if (_p10.ctor === "Just") {
+                                         var _p11 = _p14.suburb;
+                                         if (_p11.ctor === "Just") {
                                                return A2($Html.h3,
                                                _U.list([$Html$Attributes.$class("suburb")]),
-                                               _U.list([$Html.text(_p10._0)]));
+                                               _U.list([$Html.text(_p11._0)]));
                                             } else {
                                                return $Html.text("");
                                             }
                                       }()
                                       ,function () {
-                                         var _p11 = formatDate(_p13.dates);
-                                         if (_p11.ctor === "Just") {
+                                         var _p12 = formatDate(_p14.dates);
+                                         if (_p12.ctor === "Just") {
                                                return A2($Html.h3,
                                                _U.list([$Html$Attributes.$class("date")]),
-                                               _U.list([$Html.text(_p11._0)]));
+                                               _U.list([$Html.text(_p12._0)]));
                                             } else {
                                                return $Html.text("");
                                             }
                                       }()
                                       ,A2($Html.blockquote,
                                       _U.list([]),
-                                      _U.list([$Html.text(_p13.blurb)]))
-                                      ,$Markdown.toHtml(_p13.story)
+                                      _U.list([$Html.text(_p14.blurb)]))
+                                      ,$Markdown.toHtml(_p14.story)
                                       ,function () {
-                                         var _p12 = _p13.sites;
-                                         if (_p12.ctor === "[]") {
-                                               return $Html.text("");
+                                         var _p13 = _p14.author;
+                                         if (_p13.ctor === "Just") {
+                                               return author(_p13._0);
                                             } else {
-                                               return links(_p13);
+                                               return author("Heritage Near Me");
                                             }
-                                      }()]);
+                                      }()
+                                      ,links(_p14)]);
                     }
               }());
             case "Failed":
@@ -14643,6 +14674,19 @@ Elm.Data.make = function (_elm) {
    $Time = Elm.Time.make(_elm),
    $Types = Elm.Types.make(_elm);
    var _op = {};
+   var link = A3($Json$Decode.object2,
+   F2(function (url,label) {
+      return {url: A2($Maybe.withDefault,"",url)
+             ,label: A2($Maybe.withDefault,
+             "",
+             $Maybe.oneOf(_U.list([label,url])))};
+   }),
+   $Json$Decode.maybe(A2($Json$Decode._op[":="],
+   "url",
+   $Json$Decode.string)),
+   $Json$Decode.maybe(A2($Json$Decode._op[":="],
+   "label",
+   $Json$Decode.string)));
    var location = A3($Json$Decode.object2,
    $Maybe.map2(F2(function (lat,lng) {
       return {lat: lat,lng: lng};
@@ -14683,52 +14727,78 @@ Elm.Data.make = function (_elm) {
    "end",
    $Json$Decode.string)));
    var fullStory = A2($Json$Decode.andThen,
-   A2($Json$Decode._op[":="],"id",$Json$Decode.$int),
-   function (id) {
-      return A9($Json$Decode.object8,
-      F8(function (title,
-      blurb,
-      suburb,
-      story,
-      dates,
-      photos,
-      sites,
-      locations) {
-         return $Types.FullStory({id: $Types.StoryId(id)
-                                 ,title: A2($Maybe.withDefault,"",title)
-                                 ,blurb: A2($Maybe.withDefault,"",blurb)
-                                 ,suburb: suburb
-                                 ,story: A2($Maybe.withDefault,
-                                 "This story hasn\'t been written yet!",
-                                 story)
-                                 ,dates: A2($Maybe.withDefault,
-                                 {start: $Maybe.Nothing,end: $Maybe.Nothing},
-                                 dates)
-                                 ,photos: photos
-                                 ,sites: A2($List.filterMap,$Basics.identity,sites)
-                                 ,locations: A2($List.filterMap,$Basics.identity,locations)});
-      }),
-      $Json$Decode.maybe(A2($Json$Decode._op[":="],
-      "title",
-      $Json$Decode.string)),
+   $Json$Decode.maybe(A2($Json$Decode._op[":="],
+   "title",
+   $Json$Decode.string)),
+   function (title) {
+      return A2($Json$Decode.andThen,
       $Json$Decode.maybe(A2($Json$Decode._op[":="],
       "blurb",
       $Json$Decode.string)),
-      $Json$Decode.maybe(A2($Json$Decode._op[":="],
-      "suburb",
-      $Json$Decode.string)),
-      $Json$Decode.maybe(A2($Json$Decode._op[":="],
-      "story",
-      $Json$Decode.string)),
-      $Json$Decode.maybe(A2($Json$Decode._op[":="],"dates",dates)),
-      A2($Json$Decode._op[":="],
-      "photos",
-      $Json$Decode.list($Json$Decode.oneOf(_U.list([$Json$Decode.string
-                                                   ,$Json$Decode.$null("images/unavailable.jpg")])))),
-      A2($Json$Decode._op[":="],"sites",$Json$Decode.list(site)),
-      A2($Json$Decode._op[":="],
-      "locations",
-      $Json$Decode.list(location)));
+      function (blurb) {
+         return A2($Json$Decode.andThen,
+         $Json$Decode.maybe(A2($Json$Decode._op[":="],
+         "suburb",
+         $Json$Decode.string)),
+         function (suburb) {
+            return A2($Json$Decode.andThen,
+            $Json$Decode.maybe(A2($Json$Decode._op[":="],
+            "story",
+            $Json$Decode.string)),
+            function (story) {
+               return A2($Json$Decode.andThen,
+               $Json$Decode.maybe(A2($Json$Decode._op[":="],
+               "author",
+               $Json$Decode.string)),
+               function (author) {
+                  return A2($Json$Decode.andThen,
+                  $Json$Decode.maybe(A2($Json$Decode._op[":="],"dates",dates)),
+                  function (dates) {
+                     return A2($Json$Decode.andThen,
+                     A2($Json$Decode._op[":="],
+                     "photos",
+                     $Json$Decode.list($Json$Decode.oneOf(_U.list([$Json$Decode.string
+                                                                  ,$Json$Decode.$null("images/unavailable.jpg")])))),
+                     function (photos) {
+                        return A2($Json$Decode.andThen,
+                        A2($Json$Decode._op[":="],"sites",$Json$Decode.list(site)),
+                        function (sites) {
+                           return A2($Json$Decode.andThen,
+                           A2($Json$Decode._op[":="],
+                           "locations",
+                           $Json$Decode.list(location)),
+                           function (locations) {
+                              return A2($Json$Decode.andThen,
+                              A2($Json$Decode._op[":="],"links",$Json$Decode.list(link)),
+                              function (links) {
+                                 return A2($Json$Decode.object1,
+                                 function (id) {
+                                    return $Types.FullStory({id: $Types.StoryId(id)
+                                                            ,title: A2($Maybe.withDefault,"",title)
+                                                            ,blurb: A2($Maybe.withDefault,"",blurb)
+                                                            ,suburb: suburb
+                                                            ,story: A2($Maybe.withDefault,
+                                                            "This story hasn\'t been written yet!",
+                                                            story)
+                                                            ,author: author
+                                                            ,dates: A2($Maybe.withDefault,
+                                                            {start: $Maybe.Nothing,end: $Maybe.Nothing},
+                                                            dates)
+                                                            ,photos: photos
+                                                            ,sites: A2($List.filterMap,$Basics.identity,sites)
+                                                            ,locations: A2($List.filterMap,$Basics.identity,locations)
+                                                            ,links: links});
+                                 },
+                                 A2($Json$Decode._op[":="],"id",$Json$Decode.$int));
+                              });
+                           });
+                        });
+                     });
+                  });
+               });
+            });
+         });
+      });
    });
    var fullStories = $Json$Decode.list(fullStory);
    var discoverStory = A6($Json$Decode.object5,

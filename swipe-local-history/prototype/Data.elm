@@ -121,29 +121,35 @@ fullStories = Json.list fullStory
 
 {-| Story JSON decoder
 
-Note that we have to join two decoder funtions since there is no `Json.Decode.object9` function
+Note that we have to chain several decoder funtions
 -}
 fullStory : Json.Decoder Story
-fullStory = ("id" := Json.int) `andThen` \id -> Json.object8
-    (\title blurb suburb story dates photos sites locations -> FullStory
+fullStory =
+    (Json.maybe ("title" := Json.string)) `andThen` \title ->
+    (Json.maybe ("blurb" := Json.string)) `andThen` \blurb ->
+    (Json.maybe ("suburb" := Json.string)) `andThen` \suburb ->
+    (Json.maybe ("story" := Json.string)) `andThen` \story ->
+    (Json.maybe ("author" := Json.string)) `andThen` \author ->
+    (Json.maybe ("dates" := dates)) `andThen` \dates ->
+    ("photos" := Json.list (Json.oneOf [Json.string, Json.null "images/unavailable.jpg"])) `andThen` \photos ->
+    ("sites" := Json.list site) `andThen` \sites ->
+    ("locations" := Json.list location) `andThen` \locations ->
+    ("links" := Json.list link) `andThen` \links ->
+    Json.object1
+    (\id -> FullStory
         { id = StoryId id
         , title = Maybe.withDefault "" title
         , blurb = Maybe.withDefault "" blurb
         , suburb = suburb
         , story = Maybe.withDefault "This story hasn't been written yet!" story
+        , author = author
         , dates = Maybe.withDefault {start = Nothing, end = Nothing} dates
         , photos = photos
         , sites = List.filterMap identity sites
         , locations = List.filterMap identity locations
+        , links = links
         })
-    (Json.maybe ("title" := Json.string))
-    (Json.maybe ("blurb" := Json.string))
-    (Json.maybe ("suburb" := Json.string))
-    (Json.maybe ("story" := Json.string))
-    (Json.maybe ("dates" := dates))
-    ("photos" := Json.list (Json.oneOf [Json.string, Json.null "images/unavailable.jpg"]))
-    ("sites" := Json.list site)
-    ("locations" := Json.list location)
+    ("id" := Json.int)
 
 {-| Dates JSON decoder -}
 dates : Json.Decoder Dates
@@ -168,3 +174,10 @@ location = Json.object2
     (Maybe.map2 (\lat lng -> {lat = lat, lng = lng}))
     (Json.maybe ("lat" := Json.string))
     (Json.maybe ("lng" := Json.string))
+
+{-| Link JSON decoder -}
+link : Json.Decoder Link
+link = Json.object2
+    (\url label -> {url = Maybe.withDefault "" url, label = Maybe.withDefault "" <| Maybe.oneOf [label, url]})
+    (Json.maybe ("url" := Json.string))
+    (Json.maybe ("label" := Json.string))

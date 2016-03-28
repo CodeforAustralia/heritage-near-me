@@ -1,4 +1,4 @@
-module Types (App, Location(..), Discovery, ItemView, Favourites, StoryId(..), Story(..), Site, LatLng, Dates, Action(..), ItemPosition(..), Window) where
+module Types (App, Location(..), Discovery, ItemView, Favourites, StoryId(..), Story(..), Site, LatLng, Dates, Link, Action(..), ItemPosition(..), Window) where
 
 import Remote.DataStore exposing (RemoteDataStore)
 import Remote.Data exposing (RemoteData)
@@ -76,8 +76,10 @@ type Story =
         , dates : Dates
         , photos : List String
         , story : String
+        , author : Maybe String
         , sites : List Site
         , locations : List LatLng
+        , links : List Link
         }
 
 type alias LatLng =
@@ -88,6 +90,11 @@ type alias LatLng =
 type alias Site =
     { id : String
     , name : String
+    }
+
+type alias Link =
+    { url : String
+    , label : String
     }
 
 type alias Dates =
