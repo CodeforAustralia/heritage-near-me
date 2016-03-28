@@ -14769,7 +14769,9 @@ Elm.Data.make = function (_elm) {
                            $Json$Decode.list(location)),
                            function (locations) {
                               return A2($Json$Decode.andThen,
-                              A2($Json$Decode._op[":="],"links",$Json$Decode.list(link)),
+                              $Json$Decode.maybe(A2($Json$Decode._op[":="],
+                              "links",
+                              $Json$Decode.list(link))),
                               function (links) {
                                  return A2($Json$Decode.object1,
                                  function (id) {
@@ -14787,7 +14789,7 @@ Elm.Data.make = function (_elm) {
                                                             ,photos: photos
                                                             ,sites: A2($List.filterMap,$Basics.identity,sites)
                                                             ,locations: A2($List.filterMap,$Basics.identity,locations)
-                                                            ,links: links});
+                                                            ,links: A2($Maybe.withDefault,_U.list([]),links)});
                                  },
                                  A2($Json$Decode._op[":="],"id",$Json$Decode.$int));
                               });

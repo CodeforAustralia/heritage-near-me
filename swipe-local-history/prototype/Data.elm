@@ -134,7 +134,7 @@ fullStory =
     ("photos" := Json.list (Json.oneOf [Json.string, Json.null "images/unavailable.jpg"])) `andThen` \photos ->
     ("sites" := Json.list site) `andThen` \sites ->
     ("locations" := Json.list location) `andThen` \locations ->
-    ("links" := Json.list link) `andThen` \links ->
+    (Json.maybe ("links" := Json.list link)) `andThen` \links ->
     Json.object1
     (\id -> FullStory
         { id = StoryId id
@@ -147,7 +147,7 @@ fullStory =
         , photos = photos
         , sites = List.filterMap identity sites
         , locations = List.filterMap identity locations
-        , links = links
+        , links = Maybe.withDefault [] links
         })
     ("id" := Json.int)
 
