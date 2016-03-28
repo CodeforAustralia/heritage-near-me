@@ -35,8 +35,9 @@
             })
           .withFailureHandler(
             function(msg, element) {
-              showError(msg, $('#update-all-message'));
-              $('#update-all-message').addClass('error');
+              $('#update-all-message')
+                .addClass('error')
+                .text(msg);
               element.disabled = false;
             })
           .withUserObject(this)
