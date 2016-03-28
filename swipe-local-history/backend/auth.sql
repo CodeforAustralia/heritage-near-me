@@ -86,5 +86,7 @@ grant admin to authenticator;
 grant usage on schema public, basic_auth to admin;
 grant usage on schema public, basic_auth to postgres;
 grant select on basic_auth.users to postgres;
-grant usage on schema public, hnm to admin;
-grant all privileges on story, story_id_seq, link, link_id_seq to admin;
+
+grant usage on schema hnm to admin;
+grant all privileges on story, story_id_seq, link, link_id_seq, story_site, story_site_id_seq to admin;
+grant select on site to admin;

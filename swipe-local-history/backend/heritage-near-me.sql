@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS story_photo (
 
 CREATE TABLE IF NOT EXISTS site (
 	id SERIAL PRIMARY KEY,
-	heritageItemId SERIAL,
+	heritageItemId TEXT,
 	name TEXT,
 	suburb TEXT,
 	latitude TEXT,
@@ -32,7 +32,8 @@ CREATE TABLE IF NOT EXISTS site (
 CREATE TABLE IF NOT EXISTS story_site (
 	id SERIAL PRIMARY KEY,
 	story_id SERIAL REFERENCES story (id),
-	site_id SERIAL REFERENCES site (id)
+	site_id SERIAL REFERENCES site (id),
+	UNIQUE (story_id, site_id)
 );
 
 CREATE TABLE IF NOT EXISTS link (
@@ -69,7 +70,7 @@ CREATE SCHEMA hnm
 			min(site.suburb) AS suburb,
 			json_agg(photo.photo) AS photos,
 			json_object('{start, end}', ARRAY[to_char(story.dateStart, 'YYYY-MM-DD'), to_char(story.dateEnd, 'YYYY-MM-DD')]) AS dates,
-			json_agg(DISTINCT json_object('{id, name}', ARRAY[to_char(site.heritageItemId, '9999999'), site.name])::jsonb) AS sites,
+			json_agg(DISTINCT json_object('{id, name}', ARRAY[site.heritageItemId, site.name])::jsonb) AS sites,
 			json_agg(DISTINCT json_object('{lat, lng}', ARRAY[site.latitude, site.longitude])::jsonb) AS locations,
 			json_agg(link.links)->>0 AS links
 		FROM story
@@ -171,7 +172,8 @@ BEGIN
 			CASE WHEN NULLIF(new.date_start, '') IS NULL THEN NULL ELSE to_date(new.date_start, 'yyyy') END AS date_start,
 			CASE WHEN NULLIF(new.date_end, '') IS NULL THEN NULL ELSE to_date(new.date_end, 'yyyy') END AS date_end,
 			COALESCE(NULLIF(new.published, '')::BOOLEAN, FALSE) AS published,
-			new.links AS links
+			new.links AS links,
+			new.heritage_sites AS heritage_sites
 		FROM json_to_recordset(stories)
 		AS new(
 			id TEXT,
@@ -182,7 +184,8 @@ BEGIN
 			date_start TEXT,
 			date_end TEXT,
 			published TEXT,
-			links JSON
+			links JSON,
+			heritage_sites JSON
 		)
 	),
 
@@ -217,7 +220,8 @@ BEGIN
 			COALESCE(inserted.dateStart, updated.dateStart) AS dateStart,
 			COALESCE(inserted.dateEnd, updated.dateEnd) AS dateEnd,
 			COALESCE(inserted.published, updated.published, new.published) AS published,
-			new.links AS links
+			new.links AS links,
+			new.heritage_sites AS heritage_sites
 		FROM new
 		LEFT JOIN inserted
 			ON inserted.title = new.title
@@ -226,6 +230,15 @@ BEGIN
 		LEFT JOIN updated
 			ON updated.id = new.id
 	),
+
+	updated_sites AS (INSERT INTO story_site (story_id, site_id)
+		SELECT stories.id, site.id
+		FROM stories
+		JOIN LATERAL unnest(ARRAY(SELECT json_array_elements_text(stories.heritage_sites))) AS heritage_site(id) ON TRUE
+		JOIN site ON site.heritageItemId = heritage_site.id
+		WHERE site.id IS NOT NULL
+	ON CONFLICT ON CONSTRAINT story_site_story_id_site_id_key DO NOTHING
+	RETURNING *),
 
 	links AS (INSERT INTO link (story_id, links)
 		SELECT
