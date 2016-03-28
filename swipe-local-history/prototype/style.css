@@ -283,6 +283,10 @@ html, body, body > div {
         font-weight: 300;
     }
 
+    .story .author {
+        text-align: center;
+    }
+
 /* Links list style */
 .link {
 

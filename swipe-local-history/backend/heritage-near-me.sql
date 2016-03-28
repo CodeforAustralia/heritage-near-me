@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS story (
 	title TEXT,
 	blurb TEXT,
 	story TEXT,
+	author TEXT,
 	dateStart DATE,
 	dateEnd DATE,
 	published BOOLEAN
@@ -34,6 +35,13 @@ CREATE TABLE IF NOT EXISTS story_site (
 	site_id SERIAL REFERENCES site (id)
 );
 
+CREATE TABLE IF NOT EXISTS link (
+	id SERIAL PRIMARY KEY,
+	story_id SERIAL REFERENCES story (id),
+	url TEXT,
+	label TEXT
+);
+
 CREATE TABLE IF NOT EXISTS favourites (
 	id SERIAL PRIMARY KEY,
 	datetime TIMESTAMP WITHOUT TIME ZONE,
@@ -58,17 +66,23 @@ CREATE SCHEMA hnm
 
 	CREATE VIEW story_details AS
 		SELECT
-			story.id, story.title, story.blurb, story.story,
+			story.id, story.title, story.blurb, story.story, story.author,
 			min(site.suburb) AS suburb,
 			json_agg(photo.photo) AS photos,
 			json_object('{start, end}', ARRAY[to_char(story.dateStart, 'YYYY-MM-DD'), to_char(story.dateEnd, 'YYYY-MM-DD')]) AS dates,
 			json_agg(DISTINCT json_object('{id, name}', ARRAY[to_char(site.heritageItemId, '9999999'), site.name])::jsonb) AS sites,
-			json_agg(DISTINCT json_object('{lat, lng}', ARRAY[site.latitude, site.longitude])::jsonb) AS locations
+			json_agg(DISTINCT json_object('{lat, lng}', ARRAY[site.latitude, site.longitude])::jsonb) AS locations,
+			CASE WHEN COUNT(link.id) = 0 THEN
+				'[]'
+			ELSE
+				json_agg(DISTINCT json_object('{url, label}', ARRAY[link.url, link.label])::jsonb)
+			END AS links
 		FROM story
 		LEFT JOIN story_photo ON story_photo.story_id = story.id
 		LEFT JOIN photo       ON story_photo.photo_id = photo.id
 		LEFT JOIN story_site  ON story_site.story_id  = story.id
 		LEFT JOIN site        ON story_site.site_id   = site.id
+		LEFT JOIN link        ON link.story_id        = site.id
 		WHERE story.published
 		GROUP BY story.id
 

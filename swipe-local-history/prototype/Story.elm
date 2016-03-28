@@ -5,7 +5,7 @@ import Date.Format
 import Date.Config.Config_en_au as AuDate
 import List.Extra as List
 
-import Html exposing (Html, div, h1, h2, h3, h4, blockquote, img, ul, li, span, a, i, text)
+import Html exposing (Html, div, h1, h2, h3, h4, blockquote, img, ul, li, br, span, a, i, text)
 import Html.Events exposing (onClick)
 import Html.Attributes as Attr exposing (..)
 import Markdown
@@ -46,9 +46,10 @@ view address story item = div [class "story"]
                         Nothing -> text ""
                     , blockquote [] [text story.blurb]
                     , Markdown.toHtml story.story
-                    , case story.sites of
-                        [] -> text ""
-                        _ -> links story
+                    , case story.author of
+                        Just authorName -> author authorName
+                        Nothing -> author "Heritage Near Me"
+                    , links story
                     ]
         Failed _ ->
             [ text "Something went wrong"]
@@ -65,15 +66,40 @@ photoIndicators address story index = div
             i [class "fa fa-circle-o", onClick address <| JumpPhoto index'] []
     ) <| photos story
 
+{-| The HTML for story authorship
+Includes Creative Commons attribution -}
+author name = let
+        license = a
+            [ rel "license"
+            , href "http://creativecommons.org/licenses/by/4.0/"
+            ]
+    in
+        div [class "author"]
+            [ license
+                [ img
+                    [ alt "Creative Commons License"
+                    , src "https://i.creativecommons.org/l/by/4.0/80x15.png"
+                    ] []
+                ]
+            , br [] []
+            , text "This work by "
+            , span [] [text name]
+            , text " is licensed under a "
+            , license [text "Creative Commons Attribution 4.0 International License"]
+            ]
+
 {-| The HTML for the links that appear at after the story -}
 links story = let
         heritageUrl = "http://www.environment.nsw.gov.au/heritageapp/visit/ViewAttractionDetail.aspx?ID=" 
+        sites = List.map (\site -> li [] [link site.name (heritageUrl ++ site.id)]) story.sites 
+        links = List.map (\link' -> li [] [link link'.label link'.url]) story.links 
     in
-        div [class "links"]
-            [ h4 [] [text "Further Reading"]
-            , ul [class "links"]
-                <| List.map (\site -> li [] [link site.name (heritageUrl ++ site.id)]) story.sites 
-            ] 
+        case sites ++ links of
+            [] -> text ""
+            links -> div [class "links"]
+                [ h4 [] [text "Further Reading"]
+                , ul [class "links"] links
+                ] 
 
 {-| The HTML for a single story link -}
 link : String -> String -> Html
