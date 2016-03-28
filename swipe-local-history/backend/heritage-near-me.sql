@@ -37,9 +37,8 @@ CREATE TABLE IF NOT EXISTS story_site (
 
 CREATE TABLE IF NOT EXISTS link (
 	id SERIAL PRIMARY KEY,
-	story_id SERIAL REFERENCES story (id),
-	url TEXT,
-	label TEXT
+	story_id SERIAL REFERENCES story (id) UNIQUE,
+	links JSON
 );
 
 CREATE TABLE IF NOT EXISTS favourites (
@@ -72,11 +71,7 @@ CREATE SCHEMA hnm
 			json_object('{start, end}', ARRAY[to_char(story.dateStart, 'YYYY-MM-DD'), to_char(story.dateEnd, 'YYYY-MM-DD')]) AS dates,
 			json_agg(DISTINCT json_object('{id, name}', ARRAY[to_char(site.heritageItemId, '9999999'), site.name])::jsonb) AS sites,
 			json_agg(DISTINCT json_object('{lat, lng}', ARRAY[site.latitude, site.longitude])::jsonb) AS locations,
-			CASE WHEN COUNT(link.id) = 0 THEN
-				'[]'
-			ELSE
-				json_agg(DISTINCT json_object('{url, label}', ARRAY[link.url, link.label])::jsonb)
-			END AS links
+			json_agg(link.links)->>0 AS links
 		FROM story
 		LEFT JOIN story_photo ON story_photo.story_id = story.id
 		LEFT JOIN photo       ON story_photo.photo_id = photo.id
@@ -175,7 +170,8 @@ BEGIN
 			new.author AS author,
 			CASE WHEN NULLIF(new.date_start, '') IS NULL THEN NULL ELSE to_date(new.date_start, 'yyyy') END AS date_start,
 			CASE WHEN NULLIF(new.date_end, '') IS NULL THEN NULL ELSE to_date(new.date_end, 'yyyy') END AS date_end,
-			COALESCE(NULLIF(new.published, '')::BOOLEAN, FALSE) AS published
+			COALESCE(NULLIF(new.published, '')::BOOLEAN, FALSE) AS published,
+			new.links AS links
 		FROM json_to_recordset(stories)
 		AS new(
 			id TEXT,
@@ -185,7 +181,8 @@ BEGIN
 			author TEXT,
 			date_start TEXT,
 			date_end TEXT,
-			published TEXT
+			published TEXT,
+			links JSON
 		)
 	),
 
@@ -197,7 +194,8 @@ BEGIN
 	) RETURNING *),
 
 	updated AS (INSERT INTO story (id, title, blurb, story, author, dateStart, dateEnd, published) (
-		SELECT new.*
+		SELECT
+			new.id, new.title, new.blurb, new.story, new.author, new.date_start, new.date_end, new.published
 		FROM new
 		WHERE new.id IS NOT NULL
 	)
@@ -211,14 +209,15 @@ BEGIN
 	RETURNING *),
 
 	stories AS (SELECT
-			COALESCE(inserted.id, updated.id, new.id),
-			COALESCE(inserted.title, updated.title, new.title),
-			COALESCE(inserted.blurb, updated.blurb, new.blurb),
-			COALESCE(inserted.story, updated.story, new.story),
-			COALESCE(inserted.author, updated.author, new.author),
-			COALESCE(inserted.dateStart, updated.dateStart),
-			COALESCE(inserted.dateEnd, updated.dateEnd),
-			COALESCE(inserted.published, updated.published, new.published)
+			COALESCE(inserted.id, updated.id, new.id) AS id,
+			COALESCE(inserted.title, updated.title, new.title) AS title,
+			COALESCE(inserted.blurb, updated.blurb, new.blurb) AS blurb,
+			COALESCE(inserted.story, updated.story, new.story) AS story,
+			COALESCE(inserted.author, updated.author, new.author) AS author,
+			COALESCE(inserted.dateStart, updated.dateStart) AS dateStart,
+			COALESCE(inserted.dateEnd, updated.dateEnd) AS dateEnd,
+			COALESCE(inserted.published, updated.published, new.published) AS published,
+			new.links AS links
 		FROM new
 		LEFT JOIN inserted
 			ON inserted.title = new.title
@@ -226,9 +225,17 @@ BEGIN
 			AND inserted.story = new.story
 		LEFT JOIN updated
 			ON updated.id = new.id
-	)
+	),
 
-	SELECT * FROM stories;
+	links AS (INSERT INTO link (story_id, links)
+		SELECT
+			stories.id, stories.links
+		FROM stories
+	ON CONFLICT ON CONSTRAINT link_story_id_key DO UPDATE SET
+		links = excluded.links
+	RETURNING *)
+
+	SELECT stories.id, stories.title, stories.blurb, stories.story, stories.author, stories.dateStart, stories.dateEnd, stories.published FROM stories;
 END;
 $$
 LANGUAGE plpgsql
