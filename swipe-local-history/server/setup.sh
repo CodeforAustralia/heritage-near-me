@@ -16,7 +16,7 @@ sudo apt-get install postgresql-9.4-postgis-2.1 postgresql-contrib-9.4 -y
 sudo apt-get install daemon -y
 
 cd heritage-near-me
-git remote add -f origin https://github.com/kennib/heritage-near-me.git
+git remote add -f origin https://github.com/CodeforAustralia/heritage-near-me.git
 git config core.sparseCheckout true
 echo $FRONTEND >> .git/info/sparse-checkout
 echo $BACKEND >> .git/info/sparse-checkout
