@@ -9,7 +9,7 @@ The app is centered about swiping through interesting stories.
 This allows those readers without any idea of their preferences to browse and let serendipity play a role in their interaction with heritage.
 
 ## Technical details
-All of the code for this app can be found at https://github.com/kennib/heritage-near-me/tree/master/swipe-local-history
+All of the code for this app can be found at https://github.com/CodeforAustralia/heritage-near-me/tree/master/swipe-local-history
 
 The app is a single page HTML5 web app.
 The front end of the app is powered by [Elm](http://elm-lang.org), a typed, functional language which compiles to JavaScript.
