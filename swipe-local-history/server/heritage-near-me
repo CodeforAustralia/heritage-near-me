@@ -1,3 +1,4 @@
+# nginx config to serve frontend and pass API requests onto port 3000
 server {
         root /usr/share/nginx/www;
         index index.html index.htm;
