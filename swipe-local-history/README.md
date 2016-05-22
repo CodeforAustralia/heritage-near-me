@@ -3,26 +3,22 @@
 Aka "OLD SKOOL FINDER" or "Old South Wales".
 
 ## About
-This app is designed to make local history and heritage more appealing.
-We're doing this by focussing the content on stories and people instead of places and things.
-And by bringing those elements to the front and center of the app.
-
-The app is centered about swiping through interesting stories.
-This allows those readers without any idea of their preferences to browse and let serendipity play a role in their interaction with heritage.
+This project is designed to make local history and heritage more appealing.
+We're doing this by allowing users to swipe through interesting stories and people instead of places and things. This allows users to browse and let serendipity play a role in their interaction with heritage, making it accessible to more people.
 
 
 ## Technical details
-All of the code for this app can be found at https://github.com/CodeforAustralia/heritage-near-me/tree/master/swipe-local-history
+The code for this project can be found at https://github.com/CodeforAustralia/heritage-near-me
 
-The app is a single page HTML5 web app.
-The front end of the app is powered by [Elm](http://elm-lang.org), a typed, functional language which compiles to JavaScript.
+The project presents a single page HTML5 web app.
+The front end is powered by [Elm](http://elm-lang.org), a typed, functional language which compiles to JavaScript.
 The back end is a [Postgres](http://www.postgresql.org) database with a [RESTful API](https://en.wikipedia.org/wiki/Representational_state_transfer) created by [Postgrest](http://postgrest.com).
-The API and single page app are pulled together by an [Nginx](http://nginx.org/en/) server.
+The API and front end are pulled together by an [Nginx](http://nginx.org/en/) server.
 
-The front end code can be found [here](prototype).
-The database schema can be found [here](backend/heritage-near-me.sql).
+The front end code can be found in the [prototype](prototype) directory.
+The database schema can be found in [backend/](backend/heritage-near-me.sql).
 The documentation for the REST API can be found [here](http://postgrest.com/api/reading/).
-The Nginx server config can be found [here](server/heritage-near-me).
+The Nginx server config can be found in [server/](server/heritage-near-me).
 
 
 ## Setup
