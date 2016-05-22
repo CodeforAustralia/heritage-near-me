@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-FRONTEND="swipe-local-history/prototype" 
-BACKEND="swipe-local-history/backend" 
-SERVER="swipe-local-history/server" 
+FRONTEND="prototype"
+BACKEND="backend"
+SERVER="server"
 
 # PostGIS sources
 sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt trusty-pgdg main" >> /etc/apt/sources.list'

@@ -54,7 +54,7 @@ Add that config file to `nginx`'s config. For installs provided by `homebrew` on
 
 ```
 cd /usr/local/etc/nginx/servers/
-ln -s ~/your-user/path/to/heritage-near-me/swipe-local-history/server/heritage-near-me
+ln -s ~/your-user/path/to/heritage-near-me/server/heritage-near-me
 ```
 
 The `root` directive of our nginx config says where to find the `prototype/` directory:
@@ -67,7 +67,7 @@ So set that up:
 
 ```
 cd /usr/local/var/nginx/
-ln -s ~/your-user/path/to/heritage-near-me/swipe-local-history/prototype hnm
+ln -s ~/your-user/path/to/heritage-near-me/prototype hnm
 ```
 
 `nginx` should be ready to go. Make sure `apache` is stopped if you have that on your dev machine (`sudo apachectl stop`) and start the server: `sudo nginx`. If you need to stop it later, run `sudo nginx -s stop`.
