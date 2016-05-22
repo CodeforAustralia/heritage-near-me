@@ -1,6 +1,6 @@
 # nginx config to serve frontend and pass API requests onto port 3000
 server {
-        root /usr/share/nginx/www;
+        root /usr/local/var/nginx/hnm;
         index index.html index.htm;
 
         server_name localhost;
