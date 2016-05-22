@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-INIT_SQL=$1
-
 createdb hnm
 psql hnm -c 'CREATE EXTENSION postgis;'
-psql hnm -f $INIT_SQL
+psql hnm -f heritage-near-me.sql
+psql hnm -f example-data.sql
+
