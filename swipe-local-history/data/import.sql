@@ -1,5 +1,8 @@
 BEGIN TRANSACTION;
 
+-- Clear out previous data if it exists (for a fresh start)
+-- DROP TABLE IF EXISTS site, story, story_site;
+
 -- Create temporary data tables
 CREATE TEMP TABLE temp_sites (
 	heritageItemId SERIAL,
@@ -33,29 +36,29 @@ DELETE FROM temp_stories
 ;
 
 -- Reset SERIAL ids
-SELECT setval(pg_get_serial_sequence('site', 'id'), coalesce(max(id),0) + 1, false) FROM site;
-SELECT setval(pg_get_serial_sequence('story', 'id'), coalesce(max(id),0) + 1, false) FROM story;
-SELECT setval(pg_get_serial_sequence('story_site', 'id'), coalesce(max(id),0) + 1, false) FROM story_site;
+-- SELECT setval(pg_get_serial_sequence('site', 'id'), coalesce(max(id),0) + 1, false) FROM temp_sites;
+-- SELECT setval(pg_get_serial_sequence('story', 'id'), coalesce(max(id),0) + 1, false) FROM temp_stories;
+-- SELECT setval(pg_get_serial_sequence('story_site', 'id'), coalesce(max(id),0) + 1, false) FROM story_site;
 
 -- Insert the data
-INSERT INTO site (heritageItemId, name, suburb, latitude, longitude) (
+CREATE TABLE site (heritageItemId, name, suburb, latitude, longitude) AS (
 	SELECT *
 	FROM temp_sites
 );
 
-INSERT INTO story (id, title, story) (
+CREATE TABLE story (id, title, story) AS (
 	SELECT *
 	FROM temp_stories
 );
 
 -- Link the sites and stories
-INSERT INTO story_site (story_id, site_id) (
-	SELECT story.id, site.id
+CREATE TABLE story_site (story_id, site_id) AS (
+	SELECT story.id, site.heritageItemId
 	FROM temp_stories AS story
 	LEFT JOIN site
 		ON site.heritageItemId = story.id
 	WHERE story.id IS NOT NULL
-	AND site.id IS NOT NULL
+	AND site.heritageItemId IS NOT NULL
 );
 
 COMMIT;
