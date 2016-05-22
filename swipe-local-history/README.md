@@ -1,6 +1,6 @@
 # Heritage Finder
 
-Aka "OLD SKOOL FINDER".
+Aka "OLD SKOOL FINDER" or "Old South Wales".
 
 ## About
 This app is designed to make local history and heritage more appealing.
