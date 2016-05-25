@@ -189,6 +189,14 @@ html, body, body > div {
             opacity: 1;
         }
 
+        .discovery-navigation button:first-child {
+            margin-right: 3em;
+        }
+
+        .discovery-navigation button:last-child {
+            margin-left: 3em;
+        }
+
         .discovery-navigation button:active {
             color:#0A3D78;
         }
