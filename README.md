@@ -72,6 +72,13 @@ ln -s ~/your-user/path/to/heritage-near-me/prototype hnm
 
 `nginx` should be ready to go. Make sure `apache` is stopped if you have that on your dev machine (`sudo apachectl stop`) and start the server: `sudo nginx`. If you need to stop it later, run `sudo nginx -s stop`.
 
+## Updating Elm files
+
+
+```
+npm install -g elm@0.16
+cd prototype && elm-package install && ./makeapp.sh
+```
 
 
 
