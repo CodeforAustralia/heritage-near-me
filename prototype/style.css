@@ -138,20 +138,24 @@ html, body, body > div {
                 }
 
             .discovery-story-details {
-                padding: 8px;                
-
-                text-align: center;
 
                 border-radius: 0px 0px 5px 5px;
-                background-color: rgba(0,0,0, 0.4);
 
                 font-family: "Proxima Nova","Open Sans","Gill Sans MT","Gill Sans",Corbel,Arial,sans-serif;
                 text-shadow: 1px 1px 0px black;
+
+                max-width: 500px;
+                margin: 0 auto;
+
 
                 flex: 1;
                 display: flex;
                 align-items: center;
             }
+                .discovery-story-details-inner {
+                    background-color: rgba(0,0,0, 0.4);
+                    padding: 1em;
+                }
                 .discovery-story-details .title {
                     color: white;
                     font-weight: 800;
@@ -162,7 +166,6 @@ html, body, body > div {
                 .discovery-story-details p {
                     font-weight: 100;
                     margin-top: 0;
-                    text-align: left;
                 }
 
                 .discovery-story-details p:first-of-type {
