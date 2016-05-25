@@ -143,13 +143,22 @@ html, body, body > div {
 
                 border-radius: 0px 0px 5px 5px;
                 background-color: rgba(0,0,0, 0.4);
+
+                font-family: "Proxima Nova","Open Sans","Gill Sans MT","Gill Sans",Corbel,Arial,sans-serif;
             }
                 .discovery-story-details .title {
                     color: white;
+                    font-weight: 800;
+
+                }
+
+                .discovery-story-details p {
+                    font-weight: 100;
                 }
 
                 .discovery-story-details .distance {
                     margin: 0px;
+
                 }
 
     .discovery-navigation {
