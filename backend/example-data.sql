@@ -19,8 +19,13 @@ By 1799 Phillip’s Government House had deteriorated so much that a new Governm
 INSERT INTO photo (id, photo) VALUES (1, 'http://acms.sl.nsw.gov.au/_DAMx/image/19/167/a128113h.jpg');
 INSERT INTO photo (id, photo) VALUES (2, 'http://dictionaryofsydney.org/files/full/98719481af038d3ed56f5f9160733914606b6a21');
 INSERT INTO photo (id, photo) VALUES (3, 'https://www.nationaltrust.org.au/wp-content/uploads/2015/09/Old-Government-House-01-Jonathan-Miller-1920x616.jpg');
+INSERT INTO photo (id, photo) VALUES (4, 'http://d2pt3kmt7dz3yl.cloudfront.net/images/269/large_df23f9bc.jpg');
+INSERT INTO photo (id, photo) VALUES (5, 'https://upload.wikimedia.org/wikipedia/commons/2/23/William_Bligh_-_Project_Gutenberg_eText_15411.jpg');
+
 
 INSERT INTO story_photo (story_id, photo_id) VALUES (1, 1);
+INSERT INTO story_photo (story_id, photo_id) VALUES (1, 4);
+INSERT INTO story_photo (story_id, photo_id) VALUES (1, 5);
 INSERT INTO story_photo (story_id, photo_id) VALUES (2, 2);
 INSERT INTO story_photo (story_id, photo_id) VALUES (3, 3);
 
