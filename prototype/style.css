@@ -152,15 +152,30 @@ html, body, body > div {
                 .discovery-story-details .title {
                     color: white;
                     font-weight: 800;
+                    margin-bottom: 0;
+                    text-align: left;
                 }
 
                 .discovery-story-details p {
                     font-weight: 100;
+                    margin-top: 0;
+                    text-align: left;
+                }
+
+                .discovery-story-details p:first-of-type {
+                    /* use gradient to create partial border
+                     * trick thanks to http://stackoverflow.com/a/27387261/1024811 */
+                    background-image: linear-gradient(to right, #FFF 1px, #FFF 40%, rgba(0,0,0,0) 40%);
+                    background-position: bottom;
+                    background-size: 100% 5px;
+                    background-repeat: no-repeat;
+                    padding-bottom: 25px;
+                    margin-bottom: 10px;
                 }
 
                 .discovery-story-details .distance {
                     margin: 0px;
-
+                    font-size: 18px;
                 }
 
     .discovery-navigation {
