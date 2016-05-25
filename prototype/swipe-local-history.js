@@ -14398,6 +14398,8 @@ Elm.Discover.make = function (_elm) {
               _U.list([])) : $Html.text("")]))
               ,A2($Html.div,
               _U.list([$Html$Attributes.$class("discovery-story-details")]),
+              _U.list([A2($Html.div,
+              _U.list([$Html$Attributes.$class("discovery-story-details-inner")]),
               _U.list([A2($Html.h2,_U.list([$Html$Attributes.$class("title")]),_U.list([$Html.text($Story.title(story))]))
                       ,A2($Html.p,_U.list([]),_U.list([$Html.text($Story.blurb(story))]))
                       ,function () {
@@ -14409,7 +14411,7 @@ Elm.Discover.make = function (_elm) {
                             } else {
                                return $Html.text("");
                             }
-                      }()]))]))]));
+                      }()]))]))]))]));
    });
    var noStory = function (message) {
       return A2($Html.div,_U.list([$Html$Attributes.$class("discovery-empty")]),_U.list([A2($Html.h2,_U.list([]),_U.list([$Html.text(message)]))]));

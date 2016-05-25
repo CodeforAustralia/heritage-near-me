@@ -124,7 +124,6 @@ html, body, body > div {
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                flex: 2;
             }
 
                 .discovery-story-image i {
@@ -148,6 +147,10 @@ html, body, body > div {
 
                 font-family: "Proxima Nova","Open Sans","Gill Sans MT","Gill Sans",Corbel,Arial,sans-serif;
                 text-shadow: 1px 1px 0px black;
+
+                flex: 1;
+                display: flex;
+                align-items: center;
             }
                 .discovery-story-details .title {
                     color: white;
