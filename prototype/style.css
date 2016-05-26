@@ -460,6 +460,8 @@ blockquote {
     font-size: 22px;
     font-weight: 400;
     color: #9B9B9B;
+    font-family:  Georgia, Cambria, 'Times New Roman', Times, serif;
+    font-style: italic;
 }
 
 button {
