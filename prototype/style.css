@@ -251,6 +251,7 @@ html, body, body > div {
     .favourites ul {
         list-style: none;
         -webkit-padding-start: 0px;
+        padding-left: 0; /* override firefox default */
     }
 
         .favourites li {
