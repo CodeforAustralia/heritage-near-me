@@ -14121,7 +14121,7 @@ Elm.Story.make = function (_elm) {
                                             }
                                       }()
                                       ,A2($Html.blockquote,_U.list([]),_U.list([$Html.text(_p13.blurb)]))
-                                      ,$Markdown.toHtml(_p13.story)
+                                      ,A2($Html.div,_U.list([$Html$Attributes.$class("passage")]),_U.list([$Markdown.toHtml(_p13.story)]))
                                       ,function () {
                                          var _p12 = _p13.sites;
                                          if (_p12.ctor === "[]") {
