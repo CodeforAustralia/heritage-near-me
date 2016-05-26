@@ -45,7 +45,7 @@ view address story item = div [class "story"]
                         Just date -> h3 [class "date"] [text date]
                         Nothing -> text ""
                     , blockquote [] [text story.blurb]
-                    , Markdown.toHtml story.story
+                    , div [class "passage"] [Markdown.toHtml story.story]
                     , case story.sites of
                         [] -> text ""
                         _ -> links story
