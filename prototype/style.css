@@ -281,7 +281,6 @@ html, body, body > div {
 .story {
     height: auto;
     min-height: 100vh;
-    padding: 16px;    
     margin-top: 65px; /* match height of navigation bar */
     background-color: #FCFCFC; /* just off white */
     color:black;
@@ -291,7 +290,6 @@ html, body, body > div {
         display: flex;
         justify-content: center;
         height: 300px;
-        margin: -16px;
         overflow: hidden;
     }
 
@@ -317,15 +315,35 @@ html, body, body > div {
                 cursor: pointer;
             }
 
+    .story .title, .story .suburb {
+        margin: 0;
+        background: #77a131;
+        text-align: left;
+        padding-left: 1rem;
+    }
     .story .title {
+        color: white;
+        text-shadow: 1px 1px 1px rgba(0,0,0,.5);
+        padding-top: 0.5rem;
+        font-weight: 800;
+        line-height: 1;
     }
 
     .story .suburb {
+        color: rgba(0,0,0,0.55);
+        padding-bottom: 0.5rem;
+        font-size: 14px;
+        font-weight: bold;
+        padding-top: 0.5rem;
     }
 
     .story .date {
         font-size: 22px;
         font-weight: 300;
+    }
+
+    .story .passage {
+        padding: 0 1rem;
     }
 
 /* Links list style */
@@ -432,7 +450,7 @@ h4 {
 }
 
 p {
-    font-size: 20px;
+    font-size: 18px;
     line-height: 1.2;
     font-weight: normal;
 }
