@@ -20,6 +20,9 @@ html, body, body > div {
     height: 100%;
 }
 
+.app {
+    overflow: auto;
+}
 .app.screen-size {
     display: flex;
     flex-direction: column;
@@ -29,9 +32,10 @@ html, body, body > div {
 /* Top of the page navigation */
 .navigation {
     background: #181717;
-    flex: 0 0 65px;
     height: 65px;
-    align-items: center;
+    position: fixed;
+    width: 100%;
+    z-index: 1;
 }
 
         .navigation button {
@@ -96,6 +100,7 @@ html, body, body > div {
         justify-content: flex-end;
         flex: 1 1 100%;
         margin: 0px 8px;
+        margin-top: 65px; /* match height of navigation bar */
         padding-top: 20px;
         padding-bottom: 20px;
 
@@ -278,6 +283,7 @@ html, body, body > div {
     padding: 16px;    
 
     background-color: white;
+    margin-top: 65px; /* match height of navigation bar */
     color:black;
 }
 
