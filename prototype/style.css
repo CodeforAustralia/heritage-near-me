@@ -281,9 +281,8 @@ html, body, body > div {
     height: auto;
     min-height: 100vh;
     padding: 16px;    
-
-    background-color: white;
     margin-top: 65px; /* match height of navigation bar */
+    background-color: #FCFCFC; /* just off white */
     color:black;
 }
 
