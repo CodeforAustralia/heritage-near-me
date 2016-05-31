@@ -72,6 +72,16 @@ ln -s ~/your-user/path/to/heritage-near-me/prototype hnm
 
 `nginx` should be ready to go. Make sure `apache` is stopped if you have that on your dev machine (`sudo apachectl stop`) and start the server: `sudo nginx`. If you need to stop it later, run `sudo nginx -s stop`.
 
+## Running PostgREST API as a service on Debian/Ubuntu
+
+```
+# prerequisite: postgrest binary from https://github.com/begriffs/postgrest/releases is installed as /usr/local/bin/postgrest, then:
+cp server/postgrest-defaults /etc/defaults/postgrest
+cp server/postgrest.init.d /etc/init.d/postgrest
+sudo service postgrest start
+```
+
+
 ## Updating Elm files
 
 

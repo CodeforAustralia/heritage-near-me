@@ -1,0 +1,30 @@
+# run service as
+POSTGREST_USER=postgres
+
+# log file
+POSTGREST_LOG=/var/log/postgrest/postgrest.log
+
+# database host
+#POSTGREST_DBHOST=localhost
+
+# database host
+#POSTGREST_DBPORT=5432
+
+# database to use
+POSTGREST_DBNAME=hnm
+
+# database user
+POSTGREST_DBUSER=postgres
+POSTGREST_ANON=postgres
+
+# database password
+#POSTGREST_DBPASS=
+
+# database pool
+#POSTGREST_POOL=10
+
+# jwt secret
+#POSTGREST_JWT_SECRET=secret
+
+# default schema
+POSTGREST_SCHEMA=hnm
