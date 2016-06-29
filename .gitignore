@@ -1,2 +1,5 @@
 .DS_Store
 prototype/elm-stuff
+*node_modules*
+*/node_modules/*
+*.log
