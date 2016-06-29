@@ -108,7 +108,8 @@ function populateDB (entries, postPopulateCallback) {
       client.query(getInsertStorySiteSQL(entry)).then(result => {
         // console.log("added story / site")
         const storyId = result.rows[0].new_story;
-        const insertPromises = entry.pictures.map((picUrl) => {
+        const photos = entry.pictures || [];
+        const insertPromises = photos.map((picUrl) => {
           // console.log(`inserting pic w/ url: '${picUrl}' for story '${storyId}'`);
           client.query(getInsertPhotoSQL(picUrl, storyId))
         })
