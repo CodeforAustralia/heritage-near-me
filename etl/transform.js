@@ -2,7 +2,10 @@
 
 "use strict"
 
-module.exports.cleanupHeritageRow = cleanupHeritageRow
+module.exports = {
+    cleanupHeritageRow: cleanupHeritageRow,
+    parsePictures: parsePictures
+}
 
 
  // string -> a valid Date, or null
@@ -29,6 +32,12 @@ function toDateOrNull (date) {
     }
 }
 
+function parsePictures (ps) { // ps = pictureS
+    // input is string w/ commas, newlines like "picUrl,picUrl\npicUrl\npicUrl,picUrl"
+    // blank lines are excluded from results
+    return ps.split(/,|\n/).map(s => s.trim()).filter((s) => s != "");
+}
+
 
 function cleanupHeritageRow (row) {
 
@@ -43,10 +52,6 @@ function cleanupHeritageRow (row) {
         }
     }
 
-    function parsePictures (ps) { // ps = pictureS
-        // input is string w/ commas, newlines like "picUrl,picUrl\npicUrl\npicUrl,picUrl"
-        return ps.split(/,|\n/).map(s => s.trim());
-    }
 
 
     // we can do this in carto
