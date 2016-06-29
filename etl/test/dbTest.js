@@ -143,13 +143,11 @@ function clean_db(next) {
     setTimeout(function () {
         console.log("cleaning test database after brief pause")
         exec("psql -L db.log testdb -f test/cleantestdb.sql", function(err) {
-            // exec('psql -L db.log -c "drop database testdb;"', function(err) {
-            // exec("sleep 2 && psql -L db.log -a -b -e -f test/droptestdb.sql", function(err) {
-                if (err !== null) {
-                  console.log("exec error: " + err)
-                }
-            })
-            next()
+            if (err !== null) {
+              console.log("exec error: " + err)
+            }
+        })
+        next()
     }, 500)
 
 }
