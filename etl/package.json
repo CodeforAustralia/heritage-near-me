@@ -1,0 +1,29 @@
+{
+  "name": "cfa-hnm-etl",
+  "version": "0.1.0",
+  "description": "Fetch data from Google Spreadsheets, put in database.",
+  "main": "app.js",
+  "scripts": {
+    "//": "mocha --debug --debug-brk",
+    "test": "cross-env  NODE_ENV=dev PGHOST=localhost PGPORT=5432 PGDATABASE=testdb mocha --compilers js:babel-register",
+    "start": "cross-env NODE_ENV=dev PGHOST=localhost PGPORT=5432 PGDATABASE=hnm    node app.js"
+  },
+  "author": "Peter W (@techieshark)",
+  "license": "ISC",
+  "dependencies": {
+    "cross-env": "^1.0.8",
+    "geocoder": "^0.2.2",
+    "massive": "^2.3.0",
+    "pg": "^5.1.0",
+    "pg-pool": "^1.2.1",
+    "sql-template-strings": "^2.0.2",
+    "tabletop": "^1.4.3"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.10.1",
+    "babel-preset-es2015": "^6.9.0",
+    "babel-register": "^6.9.0",
+    "chai": "^3.5.0",
+    "mocha": "^2.5.3"
+  }
+}
