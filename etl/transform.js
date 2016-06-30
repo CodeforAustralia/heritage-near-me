@@ -4,7 +4,8 @@
 
 module.exports = {
     cleanupHeritageRow: cleanupHeritageRow,
-    parsePictures: parsePictures
+    parsePictures: parsePictures,
+    parseLinks: parseLinks
 }
 
 
@@ -36,6 +37,23 @@ function parsePictures (ps) { // ps = pictureS
     // input is string w/ commas, newlines like "picUrl,picUrl\npicUrl\npicUrl,picUrl"
     // blank lines are excluded from results
     return ps.split(/,|\n/).map(s => s.trim()).filter((s) => s != "");
+}
+
+function head(array) {
+    return array.slice(0,1)[0]
+}
+function tail(array) {
+    return array.slice(1)
+}
+
+// String -> [ { url: String, title: String }]
+// input is string like "URL a description\nURL another description"
+function parseLinks (ls) { // ls = linkS
+    const lines = ls.split(/\n/).map((line) => line.trim()).filter((s) => s != "");
+    return lines.map((line) => {
+        const words = line.split(/\s/)
+        return { url: head(words), title: tail(words).join(" ") }
+    })
 }
 
 
@@ -75,6 +93,7 @@ function cleanupHeritageRow (row) {
         suburb: row["Location/Suburb"],
         address: row["Street Address"],
         // latitude / longitude: geocode location
+        links: parseLinks(row["Links & Further Reading"]),
         pictures: parsePictures(row["Images"]), // should be an array of urls
         // links: unused right now, generated based on heritage id
     };
