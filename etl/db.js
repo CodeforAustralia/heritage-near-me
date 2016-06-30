@@ -58,8 +58,8 @@ function getInsertSiteQuery(entry) {
 function getInsertStorySiteSQL (entry) {
   const q = SQL`
     WITH add_story AS (
-      INSERT INTO story (title, blurb, story, dateStart, dateEnd)
-      VALUES (${entry.title}, ${entry.blurb}, ${entry.story}, ${entry.dateStart}, ${entry.dateEnd})
+      INSERT INTO story (title, blurb, story, quote, dateStart, dateEnd)
+      VALUES (${entry.title}, ${entry.blurb}, ${entry.story}, ${entry.quote}, ${entry.dateStart}, ${entry.dateEnd})
       RETURNING id AS new_story
       )
     , add_site AS (`

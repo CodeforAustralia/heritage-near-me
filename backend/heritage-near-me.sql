@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS story (
 	title TEXT,
 	blurb TEXT,
 	story TEXT,
+	quote TEXT,
 	dateStart DATE,
 	dateEnd DATE
 );

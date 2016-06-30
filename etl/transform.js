@@ -85,6 +85,7 @@ function cleanupHeritageRow (row) {
         title: row["Story Title/Tagline"],
         blurb: row["Introduction"],
         story: row["Story Body"],
+        quote: row["Extract Quote"],
         dateStart: years[0],
         dateEnd: years[1],
         // site elements
