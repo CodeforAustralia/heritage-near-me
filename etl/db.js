@@ -100,6 +100,11 @@ function getInsertPhotoSQL (picUrl, storyId) {
   SELECT new_photo_id AS photo_id from add_photo;`
 }
 
+function getInsertLinksSQL (linkUrl, linkTitle, storyID) {
+  return SQL`
+    INSERT INTO links (link_url, link_title, story_id)
+    VALUES (${linkUrl}, ${linkTitle}, ${storyID})`
+}
 
 function populateDB (entries, postPopulateCallback) {
   for (let entry of entries) {
@@ -107,13 +112,19 @@ function populateDB (entries, postPopulateCallback) {
       // console.log("sql: inserting story + site")
       client.query(getInsertStorySiteSQL(entry)).then(result => {
         // console.log("added story / site")
-        const storyId = result.rows[0].new_story;
+        const storyID = result.rows[0].new_story;
         const photos = entry.pictures || [];
-        const insertPromises = photos.map((picUrl) => {
+        const links = entry.links || [];
+        const insertPicPromises = photos.map((picUrl) => {
           // console.log(`inserting pic w/ url: '${picUrl}' for story '${storyId}'`);
-          client.query(getInsertPhotoSQL(picUrl, storyId))
+          client.query(getInsertPhotoSQL(picUrl, storyID))
         })
-        return Promise.all(insertPromises)
+
+        const insertLinkPromises = links.map((link) => {
+          client.query(getInsertLinksSQL (link.url, link.title, storyID))
+        })
+
+        return Promise.all(insertPicPromises.concat(insertLinkPromises))
       })
       .then(() => {
         console.log("done a story, releasing client #" + clientCount)

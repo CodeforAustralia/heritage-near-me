@@ -33,6 +33,13 @@ CREATE TABLE IF NOT EXISTS story_site (
 	site_id SERIAL REFERENCES site (id)
 );
 
+CREATE TABLE IF NOT EXISTS links (
+	id SERIAL PRIMARY KEY,
+	story_id SERIAL REFERENCES story (id),
+	link_url TEXT,
+	link_title TEXT
+);
+
 CREATE TABLE IF NOT EXISTS favourites (
 	id SERIAL PRIMARY KEY,
 	datetime TIMESTAMP WITHOUT TIME ZONE,

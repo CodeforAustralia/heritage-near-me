@@ -9,7 +9,7 @@ let expect = require("chai").expect,
 
 
 // it should populate data with one row of test data
-describe("db.js#populate()", function() {
+describe("db.js#load()", function() {
     // this.timeout(20000)
 
     before(function(done) {
@@ -46,7 +46,7 @@ describe("db.js#populate()", function() {
             address: "test-address",
             // latitude / longitude: geocode location
             // pics
-            pictures: ["http://example.com/test.jpg"]
+            pictures: ["http://example.com/test.jpg\nhttp://example.com/test2.jpg"]
         }]
         db.load(entriesFull, function verifyAdd () {
             // verify we've added it
@@ -113,15 +113,37 @@ describe("db.js#populate()", function() {
                 }
 
                 expect(result.rows).to.have.length.above(0);
+                testDone();
+            });
+        });
+    })
+
+
+    it("adds links to stories", function(testDone) {
+        const uniqueValue = "another-unique-value"
+        let entries = [{
+            blurb: uniqueValue,
+            links: [
+                {url: "http://a.gov/b.html", title: "Link A"},
+                {url: "http://b.gov/c.html", title: "Link C"}
+            ]
+        }]
+
+        // after insertion, "Link A" and "Link C" should exist.
+        db.load(entries, function () {
+            db.pool.query(SQL`SELECT * FROM links WHERE story_id = (SELECT id FROM story WHERE blurb = ${uniqueValue})`, function (err, result) {
+                if (err) {
+                  return console.error("error running query", err)
+                }
+
+                expect(result.rows).to.have.length(2);
 
                 // last test, close db
                 db.end(() => testDone())
-
-                // testDone()
-            });
-        });
-
+            })
+        })
     })
+
 })
 
 
@@ -142,7 +164,7 @@ function prepare_db(next){
 function clean_db(next) {
     setTimeout(function () {
         console.log("cleaning test database after brief pause")
-        exec("psql -L db.log testdb -f test/cleantestdb.sql", function(err) {
+        exec("psql -L db.log -f test/cleantestdb.sql testdb", function(err) {
             if (err !== null) {
               console.log("exec error: " + err)
             }
