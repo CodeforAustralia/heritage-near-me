@@ -42,8 +42,13 @@ pool.on("error", function(error, client) {
   console.log(client)
 })
 
-let clientCount = 0;
+let acquireCount = 0
+pool.on("acquire", function (client) {
+  acquireCount++
+  console.log("db.js: client acquired from pool, bringing total number of acquires to: " + acquireCount)
+})
 
+let clientCount = 0;
 pool.on("connect", () => {
   clientCount++
   console.log("db.js: new client connected to database, number now connected: " + clientCount)
