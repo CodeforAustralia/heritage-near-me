@@ -14,19 +14,6 @@ const pool = new Pool()
 
 module.exports = {
   load: populateDB,
-  // close: close,
-  // getInsertSiteQuery: getInsertSiteQuery,
-  // getInsertStorySiteSQL: getInsertStorySiteSQL,
-  // getInsertPhotoSQL: getInsertPhotoSQL,
-  // testEntry: {
-  //   title: "e-title",
-  //   blurb: "e-blurb",
-  //   story: "e-story",
-  //   dateStart: "1990",
-  //   dateEnd: "2000",
-  //   name: "e-name",
-  //   suburb: "e-suburb"
-  // },
   pool: pool, // use this for queries, like: db.pool.query(SQL`SELECT * from site;`)
   end: end
 }
@@ -85,8 +72,6 @@ function getInsertStorySiteSQL (entry) {
       FROM add_story, add_site
       )
     SELECT * from add_story;`)
-    // console.log("sql: generated add site+story query: ")
-    // console.log(q);
     return q;
 }
 
@@ -135,13 +120,6 @@ function populateDB (entries, postPopulateCallback) {
         console.log("done a story, releasing client #" + clientCount)
         client.release()
         clientCount--
-        // if (clientCount == 0) {
-        //   // console.log("client count now 0; closing pool")
-        //   // pool.end() // bug - next time we call populateDB we need to re-open the pool...
-        // }
-        // console.log("calling callback after releasing client")
-        // debugger
-        // console.log(callback)
         postPopulateCallback()
       })
       .catch(e => {
@@ -151,11 +129,6 @@ function populateDB (entries, postPopulateCallback) {
     })
   }
 }
-
-// broken
-// function query (string, values, callback) {
-//   pool.query(string, values, () => callback())
-// }
 
 // close the pool of connections with the database
 // this can be used at the end of your application
