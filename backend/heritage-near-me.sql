@@ -24,6 +24,7 @@ CREATE TABLE IF NOT EXISTS site (
 	heritageItemId SERIAL,
 	name TEXT,
 	suburb TEXT,
+	address TEXT,
 	latitude TEXT,
 	longitude TEXT
 );
