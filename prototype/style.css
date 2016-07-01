@@ -13,7 +13,7 @@ body {
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#202527', endColorstr='#1D1D1D',GradientType=0 ); /* IE6-9 */
 
     color: white;
-    font-family: "Proxima Nova","Open Sans","Gill Sans MT","Gill Sans",Corbel,Arial,sans-serif;
+    font-family: "proxima-nova" /*typekit*/, "Proxima Nova","Open Sans",Corbel,Helvetica,Arial,sans-serif;
 }
 
 html, body, body > div {
