@@ -14124,23 +14124,25 @@ Elm.Story.make = function (_elm) {
                        return _U.list([$Loading.loading]);
                     } else {
                        var _p17 = _p11._0;
-                       return _U.list([A2($Html.div,_U.list([$Html$Attributes.$class("story-site")]),_U.list([$Html.text(sitesName(_p17.sites))]))
-                                      ,function () {
-                                         var _p12 = _p17.suburb;
-                                         if (_p12.ctor === "Just") {
-                                               return A2($Html.div,_U.list([$Html$Attributes.$class("story-suburb")]),_U.list([$Html.text(_p12._0)]));
-                                            } else {
-                                               return $Html.text("");
-                                            }
-                                      }()
-                                      ,function () {
-                                         var _p13 = formatDate(_p17.dates);
-                                         if (_p13.ctor === "Just") {
-                                               return A2($Html.div,_U.list([$Html$Attributes.$class("story-date")]),_U.list([$Html.text(_p13._0)]));
-                                            } else {
-                                               return $Html.text("");
-                                            }
-                                      }()
+                       return _U.list([A2($Html.div,
+                                      _U.list([$Html$Attributes.$class("story-meta")]),
+                                      _U.list([A2($Html.div,_U.list([$Html$Attributes.$class("story-site")]),_U.list([$Html.text(sitesName(_p17.sites))]))
+                                              ,function () {
+                                                 var _p12 = _p17.suburb;
+                                                 if (_p12.ctor === "Just") {
+                                                       return A2($Html.div,_U.list([$Html$Attributes.$class("story-suburb")]),_U.list([$Html.text(_p12._0)]));
+                                                    } else {
+                                                       return $Html.text("");
+                                                    }
+                                              }()
+                                              ,function () {
+                                                 var _p13 = formatDate(_p17.dates);
+                                                 if (_p13.ctor === "Just") {
+                                                       return A2($Html.div,_U.list([$Html$Attributes.$class("story-date")]),_U.list([$Html.text(_p13._0)]));
+                                                    } else {
+                                                       return $Html.text("");
+                                                    }
+                                              }()]))
                                       ,A2($Html.blockquote,_U.list([]),_U.list([$Html.text(_p17.blurb)]))
                                       ,function () {
                                          var _p14 = $List.head(_p17.locations);

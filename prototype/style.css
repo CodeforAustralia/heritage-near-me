@@ -303,7 +303,7 @@ html, body, body > div {
 
         .story .photo-indicators {
             position: relative;
-            top: -10px;
+            top: -25px;
             z-index: 1;
 
             text-align: center;
@@ -315,30 +315,48 @@ html, body, body > div {
                 cursor: pointer;
             }
 
-    .story .title, .story-suburb {
+    .story-meta {
         margin: 0;
+        padding-bottom: 8px;
         background: #77a131;
         text-align: left;
         padding-left: 1rem;
     }
+
+    .story-site, .story-suburb, .story-date {
+        display: inline-block;
+        margin-right: 1em;
+        font-size: 1em;
+    }
+
+
     .story .title {
+        background: #77a131;
         color: white;
-        text-shadow: 1px 1px 1px rgba(0,0,0,.5);
+        text-shadow: 1px 1px 1px rgba(0,0,0,.2);
+        margin: 0;
+        margin-top: -22px; /* compensate for photo-indicators */
         padding-top: 0.5rem;
+        padding-left: 1rem;
         font-weight: 800;
         line-height: 1;
+        text-align: left;
+    }
+
+    .story-site {
+        font-weight: 600;
+        color: #41571A;
     }
 
     .story-suburb {
         color: rgba(0,0,0,0.55);
-        padding-bottom: 0.5rem;
-        font-size: 14px;
+        /*padding-bottom: 0.5rem;*/
+/*        font-size: 14px;
         font-weight: bold;
-        padding-top: 0.5rem;
+        padding-top: 0.5rem;*/
     }
 
     .story-date {
-        font-size: 22px;
         font-weight: 300;
     }
 

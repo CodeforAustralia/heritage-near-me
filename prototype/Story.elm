@@ -37,14 +37,16 @@ view address story item = div [class "story"]
             , h1 [class "title"] [text <| title story]
             ] ++ case story of
                 DiscoverStory story -> [loading]
-                FullStory story ->
-                    [ div [class "story-site"] [text (sitesName story.sites)]
-                    , case story.suburb of
-                        Just suburb -> div [class "story-suburb"] [text suburb]
-                        Nothing -> text ""
-                    , case formatDate story.dates of
-                        Just date -> div [class "story-date"] [text date]
-                        Nothing -> text ""
+                FullStory story -> [
+                    div [class "story-meta"] [
+                        div [class "story-site"] [text (sitesName story.sites)]
+                        , case story.suburb of
+                            Just suburb -> div [class "story-suburb"] [text suburb]
+                            Nothing -> text ""
+                        , case formatDate story.dates of
+                            Just date -> div [class "story-date"] [text date]
+                            Nothing -> text ""
+                    ]
                     , blockquote [] [text story.blurb]
                     , case (List.head story.locations) of
                         Just latlng -> div [class "directions"] [a [href ("https://www.google.com/maps/dir/Current+Location/" ++ latlng.lat ++ "," ++ latlng.lng), target "_blank"] [text "Directions"]]
