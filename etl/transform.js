@@ -93,6 +93,7 @@ function cleanupHeritageRow (row) {
         name: row["Heritage Item Name"],
         suburb: row["Location/Suburb"],
         address: row["Street Address"],
+        location: {},
         // latitude / longitude: geocode location
         links: parseLinks(row["Links & Further Reading"]),
         pictures: parsePictures(row["Images"]), // should be an array of urls

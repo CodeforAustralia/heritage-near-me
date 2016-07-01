@@ -14,14 +14,11 @@ module.exports.fetch = fetchEntries;
 const Tabletop = require("tabletop");
 
 // callback and key are required
-function fetchEntries(callback, key = null, transformRow = null) {
-    Tabletop.init({ key: key || defaultKey,
+function fetchEntries(key, callback) {
+    Tabletop.init({ key: key,
                     callback: function(data, tabletop) {
                         console.log(data);
-                        // parse spreadsheet data into object
-                        callback((transformRow ? data.map(transformRow) : data), () => {
-                            console.log("added all data from sheet")
-                        });
+                        callback(data);
                     },
                     simpleSheet: true,
                     // debug: true
