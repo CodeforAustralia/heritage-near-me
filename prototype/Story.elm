@@ -38,7 +38,8 @@ view address story item = div [class "story"]
             ] ++ case story of
                 DiscoverStory story -> [loading]
                 FullStory story ->
-                    [ case story.suburb of
+                    [ div [class "story-site"] [text (sitesName story.sites)]
+                    , case story.suburb of
                         Just suburb -> h3 [class "suburb"] [text suburb]
                         Nothing -> text ""
                     , case formatDate story.dates of
