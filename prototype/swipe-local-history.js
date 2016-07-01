@@ -14085,27 +14085,27 @@ Elm.Story.make = function (_elm) {
       function () {
          var _p8 = story;
          switch (_p8.ctor)
-         {case "Loaded": var _p14 = _p8._0;
+         {case "Loaded": var _p16 = _p8._0;
               return A2($Basics._op["++"],
-              _U.list([_U.cmp($List.length(photos(_p14)),1) > 0 ? A2($Html.div,
+              _U.list([_U.cmp($List.length(photos(_p16)),1) > 0 ? A2($Html.div,
                       A2($Basics._op["++"],
                       _U.list([$Html$Attributes.$class("photo-slide")]),
                       A3($Swiping.onSwipe,address,$Swiping.itemSwipe(item.photoPosition),$Swiping.swipePhotoAction)),
                       _U.list([A2($Html.div,
                               _U.list([$Html$Attributes.$class("photos")]),
-                              A2($List.map,A2(storyImage,_p14,item.photoPosition),_U.list([item.photoIndex - 1,item.photoIndex,item.photoIndex + 1])))
-                              ,A3(photoIndicators,address,_p14,item.photoIndex)])) : A2($Html.div,
+                              A2($List.map,A2(storyImage,_p16,item.photoPosition),_U.list([item.photoIndex - 1,item.photoIndex,item.photoIndex + 1])))
+                              ,A3(photoIndicators,address,_p16,item.photoIndex)])) : A2($Html.div,
                       _U.list([$Html$Attributes.$class("photos")]),
-                      _U.list([A3(storyImage,_p14,item.photoPosition,item.photoIndex)]))
-                      ,A2($Html.h1,_U.list([$Html$Attributes.$class("title")]),_U.list([$Html.text(title(_p14))]))]),
+                      _U.list([A3(storyImage,_p16,item.photoPosition,item.photoIndex)]))
+                      ,A2($Html.h1,_U.list([$Html$Attributes.$class("title")]),_U.list([$Html.text(title(_p16))]))]),
               function () {
-                 var _p9 = _p14;
+                 var _p9 = _p16;
                  if (_p9.ctor === "DiscoverStory") {
                        return _U.list([$Loading.loading]);
                     } else {
-                       var _p13 = _p9._0;
+                       var _p15 = _p9._0;
                        return _U.list([function () {
-                                         var _p10 = _p13.suburb;
+                                         var _p10 = _p15.suburb;
                                          if (_p10.ctor === "Just") {
                                                return A2($Html.h3,_U.list([$Html$Attributes.$class("suburb")]),_U.list([$Html.text(_p10._0)]));
                                             } else {
@@ -14113,21 +14113,37 @@ Elm.Story.make = function (_elm) {
                                             }
                                       }()
                                       ,function () {
-                                         var _p11 = formatDate(_p13.dates);
+                                         var _p11 = formatDate(_p15.dates);
                                          if (_p11.ctor === "Just") {
                                                return A2($Html.h3,_U.list([$Html$Attributes.$class("date")]),_U.list([$Html.text(_p11._0)]));
                                             } else {
                                                return $Html.text("");
                                             }
                                       }()
-                                      ,A2($Html.blockquote,_U.list([]),_U.list([$Html.text(_p13.blurb)]))
-                                      ,A2($Html.div,_U.list([$Html$Attributes.$class("passage")]),_U.list([$Markdown.toHtml(_p13.story)]))
+                                      ,A2($Html.blockquote,_U.list([]),_U.list([$Html.text(_p15.blurb)]))
                                       ,function () {
-                                         var _p12 = _p13.sites;
-                                         if (_p12.ctor === "[]") {
+                                         var _p12 = $List.head(_p15.locations);
+                                         if (_p12.ctor === "Just") {
+                                               var _p13 = _p12._0;
+                                               return A2($Html.div,
+                                               _U.list([$Html$Attributes.$class("directions")]),
+                                               _U.list([A2($Html.a,
+                                               _U.list([$Html$Attributes.href(A2($Basics._op["++"],
+                                                       "https://www.google.com/maps/dir/Current+Location/",
+                                                       A2($Basics._op["++"],_p13.lat,A2($Basics._op["++"],",",_p13.lng))))
+                                                       ,$Html$Attributes.target("_blank")]),
+                                               _U.list([$Html.text("Directions")]))]));
+                                            } else {
+                                               return $Html.text("");
+                                            }
+                                      }()
+                                      ,A2($Html.div,_U.list([$Html$Attributes.$class("passage")]),_U.list([$Markdown.toHtml(_p15.story)]))
+                                      ,function () {
+                                         var _p14 = _p15.sites;
+                                         if (_p14.ctor === "[]") {
                                                return $Html.text("");
                                             } else {
-                                               return links(_p13);
+                                               return links(_p15);
                                             }
                                       }()]);
                     }

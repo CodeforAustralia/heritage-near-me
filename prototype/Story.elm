@@ -5,7 +5,7 @@ import Date.Format
 import Date.Config.Config_en_au as AuDate
 import List.Extra as List
 
-import Html exposing (Html, div, h1, h2, h3, h4, blockquote, img, ul, li, span, a, i, text)
+import Html exposing (Html, div, h1, h2, h3, h4, p, blockquote, img, ul, li, span, a, i, text)
 import Html.Events exposing (onClick)
 import Html.Attributes as Attr exposing (..)
 import Markdown
@@ -44,7 +44,13 @@ view address story item = div [class "story"]
                     , case formatDate story.dates of
                         Just date -> h3 [class "date"] [text date]
                         Nothing -> text ""
+                    , case distance story of
+                        Just distance -> p [class "distance"] [i [class "fa fa-map-marker"] [], text " ", text distance]
+                        Nothing -> text ""
                     , blockquote [] [text story.blurb]
+                    , case (List.head story.locations) of
+                        Just latlng -> div [class "directions"] [a [href ("https://www.google.com/maps/dir/Current+Location/" ++ latlng.lat ++ "," ++ latlng.lng), target "_blank"] [text "Directions"]]
+                        Nothing -> text ""
                     , div [class "passage"] [Markdown.toHtml story.story]
                     , case story.sites of
                         [] -> text ""
