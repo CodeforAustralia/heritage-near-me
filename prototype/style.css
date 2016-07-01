@@ -315,7 +315,7 @@ html, body, body > div {
                 cursor: pointer;
             }
 
-    .story .title, .story .suburb {
+    .story .title, .story-suburb {
         margin: 0;
         background: #77a131;
         text-align: left;
@@ -329,7 +329,7 @@ html, body, body > div {
         line-height: 1;
     }
 
-    .story .suburb {
+    .story-suburb {
         color: rgba(0,0,0,0.55);
         padding-bottom: 0.5rem;
         font-size: 14px;
@@ -337,7 +337,7 @@ html, body, body > div {
         padding-top: 0.5rem;
     }
 
-    .story .date {
+    .story-date {
         font-size: 22px;
         font-weight: 300;
     }

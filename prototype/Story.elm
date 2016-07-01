@@ -40,10 +40,10 @@ view address story item = div [class "story"]
                 FullStory story ->
                     [ div [class "story-site"] [text (sitesName story.sites)]
                     , case story.suburb of
-                        Just suburb -> h3 [class "suburb"] [text suburb]
+                        Just suburb -> div [class "story-suburb"] [text suburb]
                         Nothing -> text ""
                     , case formatDate story.dates of
-                        Just date -> h3 [class "date"] [text date]
+                        Just date -> div [class "story-date"] [text date]
                         Nothing -> text ""
                     , blockquote [] [text story.blurb]
                     , case (List.head story.locations) of
