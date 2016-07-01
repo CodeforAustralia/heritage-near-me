@@ -58,10 +58,15 @@ CREATE TABLE IF NOT EXISTS views (
 CREATE SCHEMA hnm
 	CREATE VIEW story_discover AS
 		SELECT DISTINCT ON (story.id)
-			story.id, story.title, story.blurb, photo.photo
+			story.id, story.title, story.blurb, photo.photo,
+			json_agg(DISTINCT json_object('{id, name}', ARRAY[to_char(site.heritageItemId, '9999999'), site.name])::jsonb) AS sites
 		FROM story
 		LEFT JOIN story_photo ON story_photo.story_id = story.id
 		LEFT JOIN photo       ON story_photo.photo_id = photo.id
+		LEFT JOIN story_site  ON story_site.story_id  = story.id
+		LEFT JOIN site        ON story_site.site_id   = site.id
+		GROUP BY (story.id, site.id, photo.id)
+
 
 	CREATE VIEW story_details AS
 		SELECT
@@ -113,7 +118,8 @@ CREATE OR REPLACE FUNCTION hnm.nearby_stories(lat TEXT, lng TEXT)
 		title TEXT,
 		blurb TEXT,
 		photo TEXT,
-		distance FLOAT
+		distance FLOAT,
+		sites JSONB
 	) AS
 $$
 BEGIN
@@ -124,7 +130,8 @@ BEGIN
 		MIN(ST_Distance_Sphere(
 			ST_GeomFromText('POINT('||site.longitude||' '||site.latitude||')'),
 			ST_GeomFromText('POINT('||$2||' '||$1||')')
-		)) AS distance
+		)) AS distance,
+		jsonb_agg(DISTINCT json_object('{id, name}', ARRAY[to_char(site.heritageItemId, '9999999'), site.name])::jsonb) AS sites
 	FROM story
 	LEFT JOIN story_photo ON story_photo.story_id = story.id
 	LEFT JOIN photo       ON story_photo.photo_id = photo.id

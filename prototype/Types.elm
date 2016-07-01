@@ -65,6 +65,7 @@ type Story =
         { id : StoryId
         , title : String
         , blurb : String
+        , sites : List Site
         , photo : String
         , distance : Maybe Float
         }

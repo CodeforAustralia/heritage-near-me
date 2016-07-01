@@ -101,19 +101,21 @@ discoverStories = Json.list discoverStory
 
 {-| Discover Story JSON decoder -}
 discoverStory : Json.Decoder Story
-discoverStory = Json.object5
-    (\id title blurb photo distance -> DiscoverStory
+discoverStory = Json.object6
+    (\id title blurb photo distance sites -> DiscoverStory
         { id = StoryId id
         , title = Maybe.withDefault "" title
         , blurb = Maybe.withDefault "" blurb
         , photo = photo
         , distance = distance
+        , sites = List.filterMap identity sites
         })
     ("id" := Json.int)
     (Json.maybe ("title" := Json.string))
     (Json.maybe ("blurb" := Json.string))
     ("photo" := Json.oneOf [Json.string, Json.null "images/unavailable.jpg"])
     (Json.maybe ("distance" := Json.float))
+    ("sites" := Json.list site)
 
 {- List of Stories JSON Decoder -}
 fullStories : Json.Decoder (List Story)

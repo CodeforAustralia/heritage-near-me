@@ -1,4 +1,4 @@
-module Story (view, id, title, blurb, photo, photos, distance) where
+module Story (view, id, title, blurb, storySiteName, photo, photos, distance) where
 
 import Date exposing (Date)
 import Date.Format
@@ -125,6 +125,27 @@ blurb : Story -> String
 blurb story = case story of
     DiscoverStory story -> story.blurb
     FullStory story -> story.blurb
+
+
+{-| The associated site name of a story -}
+storySiteName : Story -> String
+storySiteName story =
+    case story of
+        DiscoverStory story ->
+            sitesName story.sites
+
+        FullStory story ->
+            sitesName story.sites
+
+
+{-| Provides site name (summary) for stories with one or more sites -}
+sitesName : List Site -> String
+sitesName sites =
+    case sites of
+        [] -> ""
+        [a] -> a.name
+        a :: _ -> "Multiple Sites"
+
 
 {-| The photo of a story -}
 photo : Story -> String

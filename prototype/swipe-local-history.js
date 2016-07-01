@@ -14024,9 +14024,29 @@ Elm.Story.make = function (_elm) {
             return A2($Maybe.withDefault,"",$List.head(_p3._0.photos));
          }
    };
-   var blurb = function (story) {    var _p4 = story;if (_p4.ctor === "DiscoverStory") {    return _p4._0.blurb;} else {    return _p4._0.blurb;}};
-   var title = function (story) {    var _p5 = story;if (_p5.ctor === "DiscoverStory") {    return _p5._0.title;} else {    return _p5._0.title;}};
-   var id = function (story) {    var _p6 = story;if (_p6.ctor === "DiscoverStory") {    return _p6._0.id;} else {    return _p6._0.id;}};
+   var sitesName = function (sites) {
+      var _p4 = sites;
+      if (_p4.ctor === "[]") {
+            return "";
+         } else {
+            if (_p4._1.ctor === "[]") {
+                  return _p4._0.name;
+               } else {
+                  return "Multiple Sites";
+               }
+         }
+   };
+   var storySiteName = function (story) {
+      var _p5 = story;
+      if (_p5.ctor === "DiscoverStory") {
+            return sitesName(_p5._0.sites);
+         } else {
+            return sitesName(_p5._0.sites);
+         }
+   };
+   var blurb = function (story) {    var _p6 = story;if (_p6.ctor === "DiscoverStory") {    return _p6._0.blurb;} else {    return _p6._0.blurb;}};
+   var title = function (story) {    var _p7 = story;if (_p7.ctor === "DiscoverStory") {    return _p7._0.title;} else {    return _p7._0.title;}};
+   var id = function (story) {    var _p8 = story;if (_p8.ctor === "DiscoverStory") {    return _p8._0.id;} else {    return _p8._0.id;}};
    var storyIndex = F2(function (index,story) {    return A2($Basics._op["%"],index,$List.length(photos(story)));});
    var photoPosition = function (pos) {
       return _U.list([{ctor: "_Tuple2",_0: "position",_1: "relative"}
@@ -14072,7 +14092,7 @@ Elm.Story.make = function (_elm) {
       return A2($Html.div,
       _U.list([$Html$Attributes.$class("photo-indicators")]),
       A2($List.indexedMap,
-      F2(function (index$,_p7) {
+      F2(function (index$,_p9) {
          return _U.eq(index$,A2(storyIndex,index,story)) ? A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-circle")]),_U.list([])) : A2($Html.i,
          _U.list([$Html$Attributes.$class("fa fa-circle-o"),A2($Html$Events.onClick,address,$Types.JumpPhoto(index$))]),
          _U.list([]));
@@ -14083,67 +14103,67 @@ Elm.Story.make = function (_elm) {
       return A2($Html.div,
       _U.list([$Html$Attributes.$class("story")]),
       function () {
-         var _p8 = story;
-         switch (_p8.ctor)
-         {case "Loaded": var _p16 = _p8._0;
+         var _p10 = story;
+         switch (_p10.ctor)
+         {case "Loaded": var _p18 = _p10._0;
               return A2($Basics._op["++"],
-              _U.list([_U.cmp($List.length(photos(_p16)),1) > 0 ? A2($Html.div,
+              _U.list([_U.cmp($List.length(photos(_p18)),1) > 0 ? A2($Html.div,
                       A2($Basics._op["++"],
                       _U.list([$Html$Attributes.$class("photo-slide")]),
                       A3($Swiping.onSwipe,address,$Swiping.itemSwipe(item.photoPosition),$Swiping.swipePhotoAction)),
                       _U.list([A2($Html.div,
                               _U.list([$Html$Attributes.$class("photos")]),
-                              A2($List.map,A2(storyImage,_p16,item.photoPosition),_U.list([item.photoIndex - 1,item.photoIndex,item.photoIndex + 1])))
-                              ,A3(photoIndicators,address,_p16,item.photoIndex)])) : A2($Html.div,
+                              A2($List.map,A2(storyImage,_p18,item.photoPosition),_U.list([item.photoIndex - 1,item.photoIndex,item.photoIndex + 1])))
+                              ,A3(photoIndicators,address,_p18,item.photoIndex)])) : A2($Html.div,
                       _U.list([$Html$Attributes.$class("photos")]),
-                      _U.list([A3(storyImage,_p16,item.photoPosition,item.photoIndex)]))
-                      ,A2($Html.h1,_U.list([$Html$Attributes.$class("title")]),_U.list([$Html.text(title(_p16))]))]),
+                      _U.list([A3(storyImage,_p18,item.photoPosition,item.photoIndex)]))
+                      ,A2($Html.h1,_U.list([$Html$Attributes.$class("title")]),_U.list([$Html.text(title(_p18))]))]),
               function () {
-                 var _p9 = _p16;
-                 if (_p9.ctor === "DiscoverStory") {
+                 var _p11 = _p18;
+                 if (_p11.ctor === "DiscoverStory") {
                        return _U.list([$Loading.loading]);
                     } else {
-                       var _p15 = _p9._0;
+                       var _p17 = _p11._0;
                        return _U.list([function () {
-                                         var _p10 = _p15.suburb;
-                                         if (_p10.ctor === "Just") {
-                                               return A2($Html.h3,_U.list([$Html$Attributes.$class("suburb")]),_U.list([$Html.text(_p10._0)]));
-                                            } else {
-                                               return $Html.text("");
-                                            }
-                                      }()
-                                      ,function () {
-                                         var _p11 = formatDate(_p15.dates);
-                                         if (_p11.ctor === "Just") {
-                                               return A2($Html.h3,_U.list([$Html$Attributes.$class("date")]),_U.list([$Html.text(_p11._0)]));
-                                            } else {
-                                               return $Html.text("");
-                                            }
-                                      }()
-                                      ,A2($Html.blockquote,_U.list([]),_U.list([$Html.text(_p15.blurb)]))
-                                      ,function () {
-                                         var _p12 = $List.head(_p15.locations);
+                                         var _p12 = _p17.suburb;
                                          if (_p12.ctor === "Just") {
-                                               var _p13 = _p12._0;
+                                               return A2($Html.h3,_U.list([$Html$Attributes.$class("suburb")]),_U.list([$Html.text(_p12._0)]));
+                                            } else {
+                                               return $Html.text("");
+                                            }
+                                      }()
+                                      ,function () {
+                                         var _p13 = formatDate(_p17.dates);
+                                         if (_p13.ctor === "Just") {
+                                               return A2($Html.h3,_U.list([$Html$Attributes.$class("date")]),_U.list([$Html.text(_p13._0)]));
+                                            } else {
+                                               return $Html.text("");
+                                            }
+                                      }()
+                                      ,A2($Html.blockquote,_U.list([]),_U.list([$Html.text(_p17.blurb)]))
+                                      ,function () {
+                                         var _p14 = $List.head(_p17.locations);
+                                         if (_p14.ctor === "Just") {
+                                               var _p15 = _p14._0;
                                                return A2($Html.div,
                                                _U.list([$Html$Attributes.$class("directions")]),
                                                _U.list([A2($Html.a,
                                                _U.list([$Html$Attributes.href(A2($Basics._op["++"],
                                                        "https://www.google.com/maps/dir/Current+Location/",
-                                                       A2($Basics._op["++"],_p13.lat,A2($Basics._op["++"],",",_p13.lng))))
+                                                       A2($Basics._op["++"],_p15.lat,A2($Basics._op["++"],",",_p15.lng))))
                                                        ,$Html$Attributes.target("_blank")]),
                                                _U.list([$Html.text("Directions")]))]));
                                             } else {
                                                return $Html.text("");
                                             }
                                       }()
-                                      ,A2($Html.div,_U.list([$Html$Attributes.$class("passage")]),_U.list([$Markdown.toHtml(_p15.story)]))
+                                      ,A2($Html.div,_U.list([$Html$Attributes.$class("passage")]),_U.list([$Markdown.toHtml(_p17.story)]))
                                       ,function () {
-                                         var _p14 = _p15.sites;
-                                         if (_p14.ctor === "[]") {
+                                         var _p16 = _p17.sites;
+                                         if (_p16.ctor === "[]") {
                                                return $Html.text("");
                                             } else {
-                                               return links(_p15);
+                                               return links(_p17);
                                             }
                                       }()]);
                     }
@@ -14152,7 +14172,15 @@ Elm.Story.make = function (_elm) {
             default: return _U.list([$Loading.loading]);}
       }());
    });
-   return _elm.Story.values = {_op: _op,view: view,id: id,title: title,blurb: blurb,photo: photo,photos: photos,distance: distance};
+   return _elm.Story.values = {_op: _op
+                              ,view: view
+                              ,id: id
+                              ,title: title
+                              ,blurb: blurb
+                              ,storySiteName: storySiteName
+                              ,photo: photo
+                              ,photos: photos
+                              ,distance: distance};
 };
 Elm.Native.TimeTask = {};
 Elm.Native.TimeTask.make = function(localRuntime) {
@@ -14241,19 +14269,21 @@ Elm.Data.make = function (_elm) {
       A2($Json$Decode._op[":="],"locations",$Json$Decode.list(location)));
    });
    var fullStories = $Json$Decode.list(fullStory);
-   var discoverStory = A6($Json$Decode.object5,
-   F5(function (id,title,blurb,photo,distance) {
+   var discoverStory = A7($Json$Decode.object6,
+   F6(function (id,title,blurb,photo,distance,sites) {
       return $Types.DiscoverStory({id: $Types.StoryId(id)
                                   ,title: A2($Maybe.withDefault,"",title)
                                   ,blurb: A2($Maybe.withDefault,"",blurb)
                                   ,photo: photo
-                                  ,distance: distance});
+                                  ,distance: distance
+                                  ,sites: A2($List.filterMap,$Basics.identity,sites)});
    }),
    A2($Json$Decode._op[":="],"id",$Json$Decode.$int),
    $Json$Decode.maybe(A2($Json$Decode._op[":="],"title",$Json$Decode.string)),
    $Json$Decode.maybe(A2($Json$Decode._op[":="],"blurb",$Json$Decode.string)),
    A2($Json$Decode._op[":="],"photo",$Json$Decode.oneOf(_U.list([$Json$Decode.string,$Json$Decode.$null("images/unavailable.jpg")]))),
-   $Json$Decode.maybe(A2($Json$Decode._op[":="],"distance",$Json$Decode.$float)));
+   $Json$Decode.maybe(A2($Json$Decode._op[":="],"distance",$Json$Decode.$float)),
+   A2($Json$Decode._op[":="],"sites",$Json$Decode.list(site)));
    var discoverStories = $Json$Decode.list(discoverStory);
    var timestamp = function (time) {
       var isoFormat = "%Y-%m-%d %H:%M:%S";
@@ -14417,7 +14447,7 @@ Elm.Discover.make = function (_elm) {
               _U.list([A2($Html.div,
               _U.list([$Html$Attributes.$class("discovery-story-details-inner")]),
               _U.list([A2($Html.h2,_U.list([$Html$Attributes.$class("title")]),_U.list([$Html.text($Story.title(story))]))
-                      ,A2($Html.p,_U.list([]),_U.list([$Html.text($Story.blurb(story))]))
+                      ,A2($Html.p,_U.list([]),_U.list([$Html.text($Story.storySiteName(story))]))
                       ,function () {
                          var _p1 = $Story.distance(story);
                          if (_p1.ctor === "Just") {
