@@ -36,25 +36,25 @@ view address story item = div [class "story"]
                         [storyImage story item.photoPosition item.photoIndex] 
             , h1 [class "title"] [text <| title story]
             ] ++ case story of
-                DiscoverStory story -> [loading]
-                FullStory story -> [
-                    div [class "story-meta"] [
-                        div [class "story-site"] [text (sitesName story.sites)]
-                        , case story.suburb of
-                            Just suburb -> div [class "story-suburb"] [text suburb]
+                DiscoverStory discoverStory -> [loading]
+                FullStory fullStory -> [
+                    div [class "fullStory-meta"] [
+                        div [class "fullStory-site"] [text (sitesName fullStory.sites)]
+                        , case fullStory.suburb of
+                            Just suburb -> div [class "fullStory-suburb"] [text suburb]
                             Nothing -> text ""
-                        , case formatDate story.dates of
-                            Just date -> div [class "story-date"] [text date]
+                        , case formatDate fullStory.dates of
+                            Just date -> div [class "fullStory-date"] [text date]
                             Nothing -> text ""
                     ]
-                    , blockquote [] [text story.blurb]
-                    , case (List.head story.locations) of
+                    , blockquote [] [text fullStory.blurb]
+                    , case (List.head fullStory.locations) of
                         Just latlng -> div [class "directions"] [a [href ("https://www.google.com/maps/dir/Current+Location/" ++ latlng.lat ++ "," ++ latlng.lng), target "_blank"] [text "Directions"]]
                         Nothing -> text ""
-                    , div [class "passage"] [Markdown.toHtml story.story]
-                    , case story.sites of
+                    , div [class "passage"] [Markdown.toHtml fullStory.story]
+                    , case fullStory.sites of
                         [] -> text ""
-                        _ -> links story
+                        _ -> links fullStory
                     ]
         Failed _ ->
             [ text "Something went wrong"]
@@ -123,6 +123,9 @@ title story = case story of
     DiscoverStory story -> story.title
     FullStory story -> story.title
 
+--title : {title: String} -> String
+--title s = s.title
+
 {-| The blurb of a story -}
 blurb : Story -> String
 blurb story = case story of
@@ -167,6 +170,7 @@ distance : Story -> Maybe String
 distance story = case story of
     DiscoverStory story -> Maybe.map distanceFormat story.distance
     FullStory story -> Nothing
+    --FullStory story -> Maybe.map distanceFormat story.distance
 
 {-| Format a story's date range -}
 formatDate : Dates -> Maybe String
