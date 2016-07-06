@@ -1,6 +1,7 @@
 module Data (requestNearbyStories, requestStories, requestStory, viewStory, favouriteStory, getItem, updateStory) where
 
 import Json.Decode as Json exposing ((:=), andThen)
+import Json.Decode.Extra exposing ((|:))
 import Date.Format
 import Date.Config.Config_en_au as AuDate
 import Time exposing (Time)
@@ -115,41 +116,43 @@ discoverStory = Json.object6
     (Json.maybe ("blurb" := Json.string))
     ("photo" := Json.oneOf [Json.string, Json.null "images/unavailable.jpg"])
     (Json.maybe ("distance" := Json.float))
-    ("sites" := Json.list site)
+    ("sites" := Json.list siteDecoder)
 
 {- List of Stories JSON Decoder -}
 fullStories : Json.Decoder (List Story)
-fullStories = Json.list fullStory
+fullStories = Json.list fullStoryDecoder
 
-{-| Story JSON decoder
+{-| Story JSON decoder -}
+fullStoryDecoder : Json.Decoder Story
+fullStoryDecoder =
+    Json.succeed
+        (\id title blurb suburb story dates photos sites locations distance -> FullStory
+            { id = StoryId id
+            , title = Maybe.withDefault "" title
+            , blurb = Maybe.withDefault "" blurb
+            , suburb = suburb
+            , dates = Maybe.withDefault {start = Nothing, end = Nothing} dates
+            , photos = photos
+            , story = story -- Maybe.withDefault "This story hasn't been written yet!" story
+            , sites = List.filterMap identity sites
+            , locations = List.filterMap identity locations
+            , distance = distance
+            })
+        |: ("id" := Json.int)
+        |: (Json.maybe ("title" := Json.string))
+        |: (Json.maybe ("blurb" := Json.string))
+        |: (Json.maybe ("suburb" := Json.string))
+        |: ("story" := Json.oneOf [Json.string, Json.null "This story hasn't been written yet!"])
+        |: (Json.maybe ("dates" := datesDecoder))
+        |: ("photos" := Json.list (Json.oneOf [Json.string, Json.null "images/unavailable.jpg"]))
+        |: ("sites" := Json.list siteDecoder)
+        |: ("locations" := Json.list locationDecoder)
+        |: (Json.maybe ("distance" := Json.float))
 
-Note that we have to join two decoder funtions since there is no `Json.Decode.object9` function
--}
-fullStory : Json.Decoder Story
-fullStory = ("id" := Json.int) `andThen` \id -> Json.object8
-    (\title blurb suburb story dates photos sites locations -> FullStory
-        { id = StoryId id
-        , title = Maybe.withDefault "" title
-        , blurb = Maybe.withDefault "" blurb
-        , suburb = suburb
-        , story = Maybe.withDefault "This story hasn't been written yet!" story
-        , dates = Maybe.withDefault {start = Nothing, end = Nothing} dates
-        , photos = photos
-        , sites = List.filterMap identity sites
-        , locations = List.filterMap identity locations
-        })
-    (Json.maybe ("title" := Json.string))
-    (Json.maybe ("blurb" := Json.string))
-    (Json.maybe ("suburb" := Json.string))
-    (Json.maybe ("story" := Json.string))
-    (Json.maybe ("dates" := dates))
-    ("photos" := Json.list (Json.oneOf [Json.string, Json.null "images/unavailable.jpg"]))
-    ("sites" := Json.list site)
-    ("locations" := Json.list location)
 
 {-| Dates JSON decoder -}
-dates : Json.Decoder Dates
-dates = Json.object2
+datesDecoder : Json.Decoder Dates
+datesDecoder = Json.object2
     (\start end ->
         { start = start `Maybe.andThen` (Date.fromString >> Result.toMaybe)
         , end = end `Maybe.andThen` (Date.fromString >> Result.toMaybe)
@@ -158,15 +161,15 @@ dates = Json.object2
     (Json.maybe ("end" := Json.string))
 
 {-| Site JSON decoder -}
-site : Json.Decoder (Maybe Site)
-site = Json.object2
+siteDecoder : Json.Decoder (Maybe Site)
+siteDecoder = Json.object2
     (Maybe.map2 (\id name -> {id = id, name = name}))
     (Json.maybe ("id" := Json.string))
     (Json.maybe ("name" := Json.string))
 
 {-| Location JSON decoder -}
-location : Json.Decoder (Maybe LatLng)
-location = Json.object2
+locationDecoder : Json.Decoder (Maybe LatLng)
+locationDecoder = Json.object2
     (Maybe.map2 (\lat lng -> {lat = lat, lng = lng}))
     (Json.maybe ("lat" := Json.string))
     (Json.maybe ("lng" := Json.string))
