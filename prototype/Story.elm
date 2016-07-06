@@ -1,4 +1,4 @@
-module Story (view, id, title, blurb, storySiteName, photo, photos, distance) where
+module Story (view, id, title, storySiteName, photo, photos, distance) where
 
 import Date exposing (Date)
 import Date.Format
