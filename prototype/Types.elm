@@ -79,6 +79,7 @@ type Story =
         , story : String
         , sites : List Site
         , locations : List LatLng
+        , distance : Maybe Float
         }
 
 type alias LatLng =
