@@ -169,8 +169,7 @@ photos story = case story of
 distance : Story -> Maybe String
 distance story = case story of
     DiscoverStory story -> Maybe.map distanceFormat story.distance
-    FullStory story -> Nothing
-    --FullStory story -> Maybe.map distanceFormat story.distance
+    FullStory story -> Maybe.map distanceFormat story.distance
 
 {-| Format a story's date range -}
 formatDate : Dates -> Maybe String
