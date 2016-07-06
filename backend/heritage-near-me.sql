@@ -112,7 +112,7 @@ CREATE SCHEMA hnm
 	CREATE VIEW hnm.favourites AS SELECT * FROM favourites;
 	CREATE VIEW hnm.views AS SELECT * FROM views;
 
-CREATE OR REPLACE FUNCTION hnm.nearby_stories(lat TEXT, lng TEXT)
+CREATE OR REPLACE FUNCTION hnm.story_discover_by_location(lat TEXT, lng TEXT)
 	RETURNS TABLE (
 		id INTEGER,
 		title TEXT,

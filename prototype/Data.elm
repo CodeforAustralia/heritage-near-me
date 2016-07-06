@@ -41,7 +41,7 @@ requestNearbyStories : LatLng -> Task Http.Error (List Story)
 requestNearbyStories pos = Http.send Http.defaultSettings
     { verb = "POST"
     , headers = [("Content-Type", "application/json")]
-    , url = url "rpc/nearby_stories"
+    , url = url "rpc/story_discover_by_location"
     , body = Http.string <| "{\"lat\": \""++pos.lat++"\", \"lng\": \""++pos.lng++"\"}"
     }
     |> Http.fromJson discoverStories
