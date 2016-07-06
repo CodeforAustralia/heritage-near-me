@@ -144,6 +144,47 @@ $$
 LANGUAGE plpgsql VOLATILE
 COST 100;
 
+
+-- TODO: make this actually use the view story_details (or a common view used by that as well, to reduce SQL code)
+CREATE OR REPLACE FUNCTION hnm.story_details_by_location(lat TEXT, lng TEXT)
+    RETURNS TABLE (
+        id INTEGER,
+        title TEXT,
+        blurb TEXT,
+        story TEXT,
+        suburb TEXT,
+        photos JSONB,
+        dates JSONB,
+        sites JSONB,
+        locations JSONB,
+        distance FLOAT
+    ) AS
+$$
+BEGIN
+    RETURN QUERY
+    SELECT
+        story.id, story.title, story.blurb, story.story,
+        MIN(site.suburb),
+		jsonb_agg(photo.photo) AS photos,
+		jsonb_object('{start, end}', ARRAY[to_char(story.dateStart, 'YYYY-MM-DD'), to_char(story.dateEnd, 'YYYY-MM-DD')]) AS dates,
+	    jsonb_agg(DISTINCT json_object('{id, name}', ARRAY[to_char(site.heritageItemId, '9999999'), site.name])::jsonb) AS sites,
+	   	jsonb_agg(DISTINCT json_object('{lat, lng}', ARRAY[site.latitude, site.longitude])::jsonb) AS locations,
+        MIN(ST_Distance_Sphere(
+            ST_GeomFromText('POINT('||site.longitude||' '||site.latitude||')'),
+            ST_GeomFromText('POINT('||$2||' '||$1||')')
+        )) AS distance
+    FROM story
+    LEFT JOIN story_photo ON story_photo.story_id = story.id
+    LEFT JOIN photo       ON story_photo.photo_id = photo.id
+    LEFT JOIN story_site  ON story_site.story_id  = story.id
+    LEFT JOIN site        ON story_site.site_id   = site.id
+    GROUP BY story.id
+    ORDER BY distance ASC;
+END;
+$$
+LANGUAGE plpgsql STABLE -- STABLE because we don't change the database and so long as the DB isn't changed, function results don't change.
+COST 100;
+
 -- GRANT SELECT ON story TO postgres;
 -- GRANT SELECT ON photo TO postgres;
 -- GRANT SELECT ON story_photo TO postgres;
