@@ -120,7 +120,7 @@ function populateDB (entries, postPopulateCallback) {
         console.log("done a story, releasing client #" + clientCount)
         client.release()
         clientCount--
-        postPopulateCallback()
+        if (typeof postPopulateCallback === "function") { postPopulateCallback() }
       })
       .catch(e => {
         client.release()
