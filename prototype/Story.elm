@@ -46,6 +46,9 @@ view address story item = div [class "story"]
                         , case formatDate fullStory.dates of
                             Just date -> div [class "fullStory-date"] [text date]
                             Nothing -> text ""
+                        ,  case distance story of
+                            Just distance -> p [class "fullStory-distance"] [i [class "fa fa-map-marker"] [], text " ", text distance]
+                            Nothing -> text "got-no-distance"
                     ]
                     , blockquote [] [text fullStory.blurb]
                     , case (List.head fullStory.locations) of
