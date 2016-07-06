@@ -117,6 +117,9 @@ id story = case story of
     DiscoverStory story -> story.id
     FullStory story -> story.id
 
+--id : { story | id : String } -> String
+--id story = story.id
+
 {-| The title of a story -}
 title : Story -> String
 title story = case story of
@@ -127,10 +130,15 @@ title story = case story of
 --title s = s.title
 
 {-| The blurb of a story -}
-blurb : Story -> String
-blurb story = case story of
-    DiscoverStory story -> story.blurb
-    FullStory story -> story.blurb
+--blurb : Story -> String
+--blurb story = case story of
+--    DiscoverStory story -> story.blurb
+--    FullStory story -> story.blurb
+
+{-| The blurb of a story -}
+--blurb : { x | blurb:String } -> String
+--blurb story =
+--    story.blurb
 
 
 {-| The associated site name of a story -}
