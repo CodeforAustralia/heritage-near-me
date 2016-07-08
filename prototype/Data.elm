@@ -33,22 +33,22 @@ updateStory newStory oldStory = case (Remote.Data.get newStory, oldStory `Maybe.
             _ -> Just newStory
 
 {-| A function to create an API url from a given sub url -}
-url : String -> String
-url subUrl = Http.url ("api/"++subUrl) []
+apiUrl : String -> String
+apiUrl subUrl = Http.url ("api/"++subUrl) []
 
 {-| Http Request for Discovery stories with distances from current location -}
 requestNearbyStories : LatLng -> Task Http.Error (List Story)
 requestNearbyStories pos = Http.send Http.defaultSettings
     { verb = "POST"
     , headers = [("Content-Type", "application/json")]
-    , url = url "rpc/story_discover_by_location"
+    , url = apiUrl "rpc/story_discover_by_location"
     , body = Http.string <| "{\"lat\": \""++pos.lat++"\", \"lng\": \""++pos.lng++"\"}"
     }
     |> Http.fromJson discoverStories
 
 {-| Http Request for Discovery stories -}
 requestStories : Task Http.Error (List Story)
-requestStories = Http.get discoverStories <| url "story_discover"
+requestStories = Http.get discoverStories <| apiUrl "story_discover"
 
 {-| Http Request for a given Story Id -}
 requestStory : StoryId -> Task Http.Error Story
@@ -57,7 +57,7 @@ requestStory storyId = let
     in
         (Task.map List.head
         <| Http.get fullStories
-        <| Http.url (url "story_details") [("id", "eq." ++ toString id)])
+        <| Http.url (apiUrl "story_details") [("id", "eq." ++ toString id)])
         `Task.andThen`
             (\storyId -> Maybe.withDefault
             (Task.fail <| Http.BadResponse 404 "Story with given id was not found")
@@ -70,7 +70,7 @@ viewStory (StoryId story) = Native.TimeTask.getCurrentTime
         Http.send Http.defaultSettings
         { verb = "POST"
         , headers = [("Content-Type", "application/json")]
-        , url = url "views"
+        , url = apiUrl "views"
         , body = Http.string <| "{\"datetime\": \""++timestamp time++"\", \"story_id\": \""++toString story++"\"}"
         }
     |> Task.toResult
@@ -82,7 +82,7 @@ favouriteStory (StoryId story) favourited = Native.TimeTask.getCurrentTime
         Http.send Http.defaultSettings
         { verb = "POST"
         , headers = [("Content-Type", "application/json")]
-        , url = url "favourites"
+        , url = apiUrl "favourites"
         , body = Http.string <| "{\"datetime\": \""++timestamp time++"\", \"story_id\": \""++toString story++"\", \"favourited\": \""++toString favourited++"\"}"
         }
     |> Task.toResult
