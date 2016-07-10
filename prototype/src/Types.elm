@@ -13,6 +13,7 @@ type alias App id a =
     , items : RemoteDataStore id a
     }
 
+-- Location is the screen / view / page the user is on
 type Location id =
       Discovering
     | Viewing id ItemView
