@@ -14385,7 +14385,7 @@ Elm.Data.make = function (_elm) {
       var isoDatetime = function (_p2) {    return A3($Date$Format.format,$Date$Config$Config_en_au.config,isoFormat,$Date.fromTime(_p2));}(time);
       return A2($Basics._op["++"],"\'",A2($Basics._op["++"],isoDatetime,"\'"));
    };
-   var url = function (subUrl) {    return A2($Http.url,A2($Basics._op["++"],"api/",subUrl),_U.list([]));};
+   var apiUrl = function (subUrl) {    return A2($Http.url,A2($Basics._op["++"],"api/",subUrl),_U.list([]));};
    var requestNearbyStories = function (pos) {
       return A2($Http.fromJson,
       discoverStories,
@@ -14393,19 +14393,21 @@ Elm.Data.make = function (_elm) {
       $Http.defaultSettings,
       {verb: "POST"
       ,headers: _U.list([{ctor: "_Tuple2",_0: "Content-Type",_1: "application/json"}])
-      ,url: url("rpc/story_discover_by_location")
+      ,url: apiUrl("rpc/story_discover_by_location")
       ,body: $Http.string(A2($Basics._op["++"],
       "{\"lat\": \"",
       A2($Basics._op["++"],pos.lat,A2($Basics._op["++"],"\", \"lng\": \"",A2($Basics._op["++"],pos.lng,"\"}")))))}));
    };
-   var requestStories = A2($Http.get,discoverStories,url("story_discover"));
+   var requestStories = A2($Http.get,discoverStories,apiUrl("story_discover"));
    var requestStory = function (storyId) {
       var _p3 = storyId;
       var id = _p3._0;
       return A2($Task.andThen,
       A2($Task.map,
       $List.head,
-      A2($Http.get,fullStories,A2($Http.url,url("story_details"),_U.list([{ctor: "_Tuple2",_0: "id",_1: A2($Basics._op["++"],"eq.",$Basics.toString(id))}])))),
+      A2($Http.get,
+      fullStories,
+      A2($Http.url,apiUrl("story_details"),_U.list([{ctor: "_Tuple2",_0: "id",_1: A2($Basics._op["++"],"eq.",$Basics.toString(id))}])))),
       function (storyId) {
          return A2($Maybe.withDefault,$Task.fail(A2($Http.BadResponse,404,"Story with given id was not found")),A2($Maybe.map,$Task.succeed,storyId));
       });
@@ -14419,7 +14421,7 @@ Elm.Data.make = function (_elm) {
          $Http.defaultSettings,
          {verb: "POST"
          ,headers: _U.list([{ctor: "_Tuple2",_0: "Content-Type",_1: "application/json"}])
-         ,url: url("views")
+         ,url: apiUrl("views")
          ,body: $Http.string(A2($Basics._op["++"],
          "{\"datetime\": \"",
          A2($Basics._op["++"],timestamp(time),A2($Basics._op["++"],"\", \"story_id\": \"",A2($Basics._op["++"],$Basics.toString(_p5._0),"\"}")))))}));
@@ -14434,7 +14436,7 @@ Elm.Data.make = function (_elm) {
          $Http.defaultSettings,
          {verb: "POST"
          ,headers: _U.list([{ctor: "_Tuple2",_0: "Content-Type",_1: "application/json"}])
-         ,url: url("favourites")
+         ,url: apiUrl("favourites")
          ,body: $Http.string(A2($Basics._op["++"],
          "{\"datetime\": \"",
          A2($Basics._op["++"],
