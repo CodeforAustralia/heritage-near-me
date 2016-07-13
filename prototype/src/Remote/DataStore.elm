@@ -7,7 +7,7 @@ import Effects
 
 import Remote.Data exposing (RemoteData(..), isLoading, isLoaded, isFailed)
 
-{-| The Romote Data Store module helps store remotely fetched data
+{-| The Remote Data Store module helps store remotely fetched data
 
 # Data Store
 
