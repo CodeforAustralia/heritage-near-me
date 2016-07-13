@@ -164,7 +164,7 @@ passItem : Discovery a -> Discovery a
 passItem app =
     { app |
       item = Loaded <| List.head app.items
-    , items = (Maybe.withDefault [] << List.tail) app.items
+    , items = Maybe.withDefault [] (List.tail app.items)
     , passes = case app.item of
         Loaded (Just item) -> app.passes ++ [item]
         _ -> app.passes
