@@ -1,4 +1,4 @@
-module Types (App, Location(..), Discovery, ItemView, Favourites, StoryId(..), Story(..), Site, LatLng, Dates, Action(..), ItemPosition(..), Window) where
+module Types (AppModel, AppAction, Location(..), Discovery, ItemView, Favourites, StoryId(..), Story(..), Site, LatLng, Dates, Action(..), ItemPosition(..), Window) where
 
 import Remote.DataStore exposing (RemoteDataStore)
 import Remote.Data exposing (RemoteData)
@@ -6,6 +6,8 @@ import Date exposing (Date)
 import Dict exposing (Dict)
 import Swipe exposing (SwipeState)
 import Time exposing (Time)
+
+type alias AppModel = App StoryId Story
 
 type alias App id a =
     { location : Location id
@@ -18,6 +20,8 @@ type Location id =
       Discovering
     | Viewing id ItemView
     | ViewingFavourites
+
+type alias AppAction = Action StoryId Story
 
 type Action id a =
       Discover
