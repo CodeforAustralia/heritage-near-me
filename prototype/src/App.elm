@@ -25,13 +25,20 @@ main = app.html
 {-| The app.
 Consists of inputs, HTML views and functions which update and produce effects based on inputs.
 -}
-app : StartApp.App (App StoryId Story)
+app : StartApp.App AppModel
 app = StartApp.start
     { init = (initialApp, Effects.none)
     , view = view
-    , update = \action model -> (update action model, effects action model)
+    , update = update
     , inputs = [history.signal, Swiping.animate, userLocation]
     }
+
+-- Get the next (model, action) pair based on the current action and model.
+-- If it helps, note that an "action" is like a message ("do this action next") and, in fact,
+-- is replaced in the next version of Elm, 0.17, with Messages ("Msg"):
+-- https://github.com/elm-lang/elm-platform/blob/master/upgrade-docs/0.17.md#action-is-now-msg
+update: AppAction -> AppModel -> (AppModel, Effects.Effects AppAction)
+update action model = (updateModel action model, updateAction action model)
 
 {- Run app tasks -}
 port tasks : Signal (Task.Task Effects.Never ())
@@ -69,8 +76,8 @@ latLng = Json.object2 (\lat lng -> {lat = toString lat, lng = toString lng})
 {- This function updates the state of the app
 based on the given action and previous state of the app
 -}
-update : Action id a -> App id a -> App id a
-update action app = case (app.location, action) of
+updateModel : AppAction -> AppModel -> AppModel
+updateModel action app = case (app.location, action) of
     -- Discovering location Actions
     (Discovering, Animate time window)        -> {app | discovery = animateItem app.discovery time window}
     (Discovering, MoveItem pos)               -> {app | discovery = moveItem app.discovery pos}
@@ -93,8 +100,8 @@ update action app = case (app.location, action) of
     (_, _)                                    -> app
 
 {- Perform effectful actions based on actions and app state -}
-effects : Action StoryId Story -> App StoryId Story -> Effects.Effects (Action StoryId Story)
-effects action app = case action of
+updateAction : AppAction -> AppModel -> Effects.Effects AppAction
+updateAction action app = case action of
     View storyId -> Effects.task
         <| Task.map LoadData
         <| Data.viewStory storyId
@@ -206,7 +213,7 @@ fetchDiscover request = let
                 (\error -> LoadDiscoveryData (Failed error) identity |> Task.succeed)
 
 {-| The initial state of the app -}
-initialApp : App StoryId Story
+initialApp : AppModel
 initialApp = {location = Discovering, discovery = initialDiscovery, items = Remote.DataStore.empty}
 
 {-| The initial state of a singular item being viewed -}
