@@ -13,7 +13,7 @@ import Remote.Data exposing (RemoteData(..))
 import Story
 
 {-| The main HTML view for discovering stories -}
-view : Signal.Address (Action StoryId Story) -> App StoryId Story -> Html -> Html
+view : Signal.Address AppAction -> AppModel -> Html -> Html
 view address app topNav = div [class "app screen-size discovery"]
     [ topNav
     , case app.discovery.item of

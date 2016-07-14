@@ -15,7 +15,7 @@ action url = case url of
     _ -> [Discover]
 
 {-| Turn the difference between two app states into a browser URL -}
-url : App StoryId Story -> App StoryId Story -> Maybe HashUpdate
+url : AppModel -> AppModel -> Maybe HashUpdate
 url old new = if old.location /= new.location then
         Just <| case new.location of
             Discovering       -> RouteHash.set ["discover"]

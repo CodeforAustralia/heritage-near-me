@@ -17,7 +17,7 @@ import Favourites
 It takes the location from the app state and turns it into the view of the app.
 It also passes the address for UI actions (such as clicking and swiping) to the sub views.
 -}
-view : Signal.Address (Action StoryId Story) -> App StoryId Story -> Html
+view : Signal.Address AppAction -> AppModel -> Html
 view address app = case app.location of
     Discovering -> Discover.view address app
         <| navigation address app.location
