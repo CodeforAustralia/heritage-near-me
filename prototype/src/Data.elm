@@ -19,7 +19,7 @@ import Story
 import Native.TimeTask
 
 {-| A function to retrieve an item from the app's data store -}
-getItem : id -> App id a -> RemoteData a
+getItem : StoryId -> AppModel -> RemoteData Story
 getItem id app = Remote.DataStore.get id app.items
 
 {-| A function to update a story in the data store -}
