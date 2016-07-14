@@ -159,7 +159,7 @@ favouriteItem : Discovery a -> Discovery a
 favouriteItem app =
     { app |
       item = Loaded <| List.head app.items
-    , items = (Maybe.withDefault [] << List.tail) app.items
+    , items = Maybe.withDefault [] (List.tail app.items)
     , favourites = case app.item of
         Loaded (Just item) -> app.favourites ++ [item]
         _ -> app.favourites
