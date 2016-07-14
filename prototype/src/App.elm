@@ -18,6 +18,9 @@ import View exposing (view)
 import Story
 import Swiping
 
+-- Note: code below is documented with the Elm documentation format.
+-- http://package.elm-lang.org/help/documentation-format
+
 {-| The HTML view created by the app -}
 main : Signal Html
 main = app.html
