@@ -19,7 +19,7 @@ import Swiping exposing (onSwipe, swipePhotoAction, itemSwipe, itemPos)
 {-| The main HTML view for an individual story.
 Displays a simpler view if only part of the story is available.
 -} 
-view : Signal.Address (Action StoryId Story) -> RemoteData Story -> ItemView -> Html
+view : Signal.Address AppAction -> RemoteData Story -> ItemView -> Html
 view address story item = div [class "story"]
     <| case story of
         Loaded story ->

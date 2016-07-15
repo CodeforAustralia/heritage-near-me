@@ -58,7 +58,7 @@ port routeTasks = RouteHash.start
     }
 
 {-| Keep track of the effect of browser history on the app -}
-history : Signal.Mailbox (Action StoryId Story)
+history : Signal.Mailbox AppAction
 history = Signal.mailbox NoAction
 
 {-| Location from browser -}
@@ -201,7 +201,7 @@ updateDiscoverableItems discovery items =
         discovery
 
 {-| Take a HTTP request and create an action to update the app with new discovery stories -}
-fetchDiscover : Task Http.Error (List Story) -> Effects.Effects (Action StoryId Story)
+fetchDiscover : Task Http.Error (List Story) -> Effects.Effects AppAction
 fetchDiscover request = let
         update story = Remote.DataStore.update (Story.id story) (Data.updateStory <| Loaded story)
     in

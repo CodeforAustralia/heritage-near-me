@@ -7,7 +7,7 @@ import RouteHash exposing (HashUpdate)
 import Types exposing (..)
 
 {-| Turn a browser URL into an action to update the app -}
-action : List String -> List (Action StoryId Story)
+action : List String -> List AppAction
 action url = case url of
     "discover"::_ -> [Discover]
     "favourites"::_ -> [ViewFavourites]

@@ -29,7 +29,7 @@ view address app topNav = div [class "app screen-size discovery"]
     ]
 
 {-| The navigation controls for discovering stories -}
-navigation : Signal.Address (Action StoryId Story) -> Html
+navigation : Signal.Address AppAction -> Html
 navigation address = nav [class "discovery-navigation"]
     [ button [onClick address Pass]
         [span [class "fa-stack fa-3x"]
@@ -48,7 +48,7 @@ noStory : String -> Html
 noStory message = div [class "discovery-empty"] [h2 [] [text message]]
 
 {-| The HTML view for an individual story -}
-viewStory : Signal.Address (Action StoryId Story) -> Story -> ItemPosition -> Html
+viewStory : Signal.Address AppAction -> Story -> ItemPosition -> Html
 viewStory address story pos = div
     ([ onClick address <| View <| Story.id story
     , class "discovery-story"

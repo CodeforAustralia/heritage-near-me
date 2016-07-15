@@ -8,7 +8,7 @@ import Types exposing (..)
 import Story
 
 {-| The main HTML view for looking at a user's favourite stories -}
-view : Signal.Address (Action StoryId Story) -> Favourites Story -> Html
+view : Signal.Address AppAction -> Favourites Story -> Html
 view address favourites = div [class "favourites"]
     [ h1 [] [text "Favourites"]
     , case favourites of
@@ -21,12 +21,12 @@ noStories : String -> Html
 noStories message = div [class "favourites-empty"] [h2 [] [text message]]
 
 {- The view for a list of favourites -}
-viewFavourites : Signal.Address (Action StoryId Story) -> Favourites Story -> Html
+viewFavourites : Signal.Address AppAction -> Favourites Story -> Html
 viewFavourites address favourites = ul []
     <| List.map (viewFavourite address) favourites
 
 {- The view for a single favourite story in a list of stories -}
-viewFavourite : Signal.Address (Action StoryId Story) -> Story -> Html
+viewFavourite : Signal.Address AppAction -> Story -> Html
 viewFavourite address favourite = li [onClick address <| View <| Story.id favourite]
     [ favouriteImage favourite
     , h2 [class "title"] [text <| Story.title favourite]
