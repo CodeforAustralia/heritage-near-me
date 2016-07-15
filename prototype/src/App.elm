@@ -67,7 +67,7 @@ port geolocation : Signal Json.Encode.Value
 {-| Signal with Actions to update the user's location.
 If `Nothing` then the user has disallowed geolocation.
 -}
-userLocation : Signal (Action id a)
+userLocation : Signal AppAction
 userLocation = Signal.map (UpdateLocation << Result.toMaybe << Json.decodeValue latLng) geolocation
 
 {-| Latitude/Longitude JSON decoder -}

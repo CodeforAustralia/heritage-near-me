@@ -1,4 +1,4 @@
-module Types (AppModel, AppAction, Location(..), Discovery, ItemView, Favourites, StoryId(..), Story(..), Site, LatLng, Dates, Action(..), ItemPosition(..), Window) where
+module Types (AppModel, AppAction, AppLocation, Location(..), Discovery, ItemView, Favourites, StoryId(..), Story(..), Site, LatLng, Dates, Action(..), ItemPosition(..), Window) where
 
 import Remote.DataStore exposing (RemoteDataStore)
 import Remote.Data exposing (RemoteData)
@@ -14,6 +14,8 @@ type alias App id a =
     , discovery : Discovery id
     , items : RemoteDataStore id a
     }
+
+type alias AppLocation = Location StoryId
 
 -- Location is the screen / view / page the user is on
 type Location id =

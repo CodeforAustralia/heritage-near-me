@@ -7,7 +7,7 @@ import Html.Events exposing (onClick)
 import Types exposing (..)
 
 {-| The top level navigation view for the app -}
-navigation : Signal.Address (Action id a) -> Location id -> Html
+navigation : Signal.Address AppAction -> AppLocation -> Html
 navigation address location = nav [class "navigation"]
     [ case location of
         Discovering ->

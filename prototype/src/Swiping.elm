@@ -10,7 +10,7 @@ import Window
 
 import Types exposing (..)
 
-animate : Signal (Action id a)
+animate : Signal AppAction
 animate = Signal.map2 Animate timeSoFar windowSize
 
 animateStep : Time -> Window -> ItemPosition -> ItemPosition
@@ -49,13 +49,13 @@ itemPos pos = case pos of
         Just <| ease easeOutCubic float pos 0 (end-start) (t-start)
     _ -> Nothing
 
-swipeActions : Signal (Action id a)
+swipeActions : Signal AppAction
 swipeActions = Signal.map3
     (\w h -> swipeAction {width = toFloat w, height = toFloat h})
     Window.width Window.height
     swipes
 
-swipeAction : Window -> Maybe SwipeState -> Action id a
+swipeAction : Window -> Maybe SwipeState -> AppAction
 swipeAction window swipe = case swipe of
     Just (End state) ->
         if abs (state.x1 - state.x0) > window.width/3 then
@@ -65,7 +65,7 @@ swipeAction window swipe = case swipe of
     Just swipe -> MoveItem <| Types.Swiping swipe
     Nothing -> NoAction
    
-swipePhotoAction : Window -> Maybe SwipeState -> Action id a
+swipePhotoAction : Window -> Maybe SwipeState -> AppAction
 swipePhotoAction window swipe = case swipe of
     Just (End state) ->
         if abs (state.x1 - state.x0) > window.width/3 then
