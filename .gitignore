@@ -3,3 +3,4 @@ prototype/elm-stuff
 *node_modules*
 */node_modules/*
 *.log
+prototype/documentation.json
