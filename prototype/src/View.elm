@@ -1,5 +1,11 @@
 module View (view) where
 
+{-| The module provides the main view for the app.
+
+@docs view
+
+-}
+
 import Html exposing (Html, div, nav, img, button, a, i, text)
 import Html.Attributes exposing (class, src, href)
 import Html.Events exposing (onClick)

@@ -20,7 +20,7 @@ import Http
 
 {-| Remote data has three states.
 
-It can be loading, and then either have loaded or failed to load
+It can be `Loading`, and then either have `Loaded` or `Failed` to load
 
 -}
 type RemoteData a = Loading | Loaded a | Failed Http.Error
