@@ -87,7 +87,7 @@ sudo service postgrest start
 
 ```
 npm install -g elm@0.16
-cd prototype && elm-package install && ./makeapp.sh
+cd prototype && elm-package install && make app
 ```
 
 
