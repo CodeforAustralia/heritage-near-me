@@ -4,3 +4,4 @@ prototype/elm-stuff
 */node_modules/*
 *.log
 prototype/documentation.json
+*.swp
