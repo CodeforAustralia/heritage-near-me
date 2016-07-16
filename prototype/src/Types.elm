@@ -17,7 +17,14 @@ type alias App id a =
 
 type alias AppLocation = Location StoryId
 
--- Location is the screen / view / page the user is on
+{-| Location is the screen / view / page the user is on.
+
+App screens:
+    * Discovering: the app home page where you get a summary of a story and the option to like or pass it.
+    * Viewing <story id>: You are looking at a particular story.
+    * ViewingFavourites: You are looking at your list of favourite stories.
+
+-}
 type Location id =
       Discovering
     | Viewing id ItemView
