@@ -1,3 +1,27 @@
+{-| The main / primary / top level application file. Start here.
+
+This file does a few important things:
+
+1. defines an `update` function to transform from one state (model,action) to another, and
+
+2. sets up inputs from the external world (browser geolocation, history, etc)
+   that might influence future app states.
+
+3. initializes the Elm app by way of `StartApp.start`, passing in the initial app model
+   `initialApp`, the `update` and `view` functions, and the inputs.
+
+See http://package.elm-lang.org/packages/evancz/start-app/2.0.0/StartApp for the general idea.
+
+Some helper functions are included also.
+-}
+
+{- Side note:
+If you aren't familiar with Elm, this is a comment;
+see [Elm Syntax](http://elm-lang.org/docs/syntax#comments) to learn about that and more.
+And note that comments with a vertical bar `{-| like this -}` are in [Elm documentation format](http://package.elm-lang.org/help/documentation-format).
+-}
+
+-- first let's import functions from some Elm library modules we'll need:
 import Html exposing (Html)
 import Time exposing (Time)
 import Task exposing (Task)
@@ -9,6 +33,7 @@ import History
 import RouteHash
 import StartApp
 
+-- and let's import some of our custom types and functions we'll need:
 import Types exposing (..)
 import Remote.Data exposing (RemoteData(..))
 import Remote.DataStore exposing (RemoteDataStore)
@@ -18,30 +43,56 @@ import View exposing (view)
 import Story
 import Swiping
 
--- Note: code below is documented with the Elm documentation format.
--- http://package.elm-lang.org/help/documentation-format
 
-{-| The HTML view created by the app -}
-main : Signal Html
-main = app.html
+{-| The initial state /model of the app
 
-{-| The app.
-Consists of inputs, HTML views and functions which update and produce effects based on inputs.
+We start the app with a bunch of empty / default values in `initialApp` and `initialDiscovery`.
+Give the file `Types.elm` a quick glance to familiarize yourself with
+custom types we'll see here, like `AppModel` (top level model) and
+`Discovering` (a screen within the web app, in this parlance, a `Location`), seen used below.
+
+-}
+initialApp : AppModel -- this reads as "initialApp is of ty"
+initialApp =
+    { location = Discovering,
+      discovery = initialDiscovery,
+      items = Remote.DataStore.empty,
+      latLng = Nothing
+    }
+
+{-| The initial (empty) state of items being discovered -}
+initialDiscovery : Discovery id
+initialDiscovery =
+    { item = Loading
+    , itemPosition = Static
+    , items = []
+    , favourites = []
+    , passes = []
+    }
+
+
+{-| Set up the app.
+
+The app consists of inputs, HTML views and functions which update and produce effects based on inputs.
+
 -}
 app : StartApp.App AppModel
 app = StartApp.start
     { init = (initialApp, Effects.none)
     , view = view
     , update = update
-    , inputs = [history.signal, Swiping.animate, userLocation]
+    , inputs = [history.signal, userLocation]
     }
+    --, inputs = [history.signal, Swiping.animate, userLocation]
 
--- Get the next (model, action) pair based on the current action and model.
--- If it helps, note that an "action" is like a message ("do this action next") and, in fact,
--- is replaced in the next version of Elm, 0.17, with Messages ("Msg"):
--- https://github.com/elm-lang/elm-platform/blob/master/upgrade-docs/0.17.md#action-is-now-msg
-update: AppAction -> AppModel -> (AppModel, Effects.Effects AppAction)
-update action model = (updateModel action model, updateAction action model)
+{-| The HTML view created by the app -}
+main : Signal Html
+main = app.html
+
+
+
+-----------------------------------------------  Set up some ports
+
 
 {- Run app tasks -}
 port tasks : Signal (Task.Task Effects.Never ())
@@ -68,20 +119,74 @@ port geolocation : Signal Json.Encode.Value
 If `Nothing` then the user has disallowed geolocation.
 -}
 userLocation : Signal AppAction
-userLocation = Signal.map (UpdateLocation << Result.toMaybe << Json.decodeValue latLng) geolocation
+userLocation = Signal.map (UpdateLocation << Result.toMaybe << Json.decodeValue (Debug.log "latlng:" latLng)) (Debug.log "geo: " geolocation)
 
 {-| Latitude/Longitude JSON decoder -}
 latLng : Json.Decoder LatLng
-latLng = Json.object2 (\lat lng -> {lat = toString lat, lng = toString lng})
+latLng = Json.object2 (\lat lng -> Debug.log "attempting LatLng json decode" {lat = toString lat, lng = toString lng})
         ("lat" := Json.float)
         ("lng" := Json.float)
 
-{- This function updates the state of the app
-based on the given action and previous state of the app
+
+
+--------------------------------------------  update function & friends
+
+
+{-| Update app state with the next (model, action) pair based on the current action and model.
+
+If it helps, note that an "action" is like a message ("do this action next") and, in fact,
+is replaced in the next version of Elm, 0.17, with Messages ("Msg"):
+https://github.com/elm-lang/elm-platform/blob/master/upgrade-docs/0.17.md#action-is-now-msg
+
+For example, if you first point your web browser to http://localhost/
+(assuming you're developing locally), the `Route.action` function passed
+into `RouteHash.start` will convert the URL into the default home
+location, and produce the `Discover` action (as of this writing,
+the home location is the Discovering page).  As a result, `update` is
+first called with `action == Discover` and `model == initialApp`.
+In the `updateAction` function further down, you'd notice that there isn't anything
+special to do in this case, and so we do nothing using Elm's underscore case which
+catches everything not already caught:  `_ -> Effects.none`. At this point,
+we're just sitting there with a spinning gif waiting for the user to let us
+get their location. It isn't until the user allows or blocks sharing of location
+that we'd get something we can work with:
+
+```
+    action == UpdateLocation (Just { lat = "-32.3223206", lng = "149.2251805" }),
+    model  == initialApp
+```
+
+from there, the `updateModel` function does nothing but the `updateAction` function
+uses the `Data.request...` functions to fetch stories from the API. Before long, the
+`updateModel` function has it's turn:
+
+```
+    action == LoadDiscoveryData (Loaded ([StoryId 6,StoryId 17,StoryId 1,StoryId 20,...]))
+    model == initialApp
+```
+
+and then somehow after that we're humming along.
+
+By the way, you can see that for yourself by replacing `update action model = (...)` below
+with:
+
+```
+    update action model = (updateModel (Debug.log "updateModel action:" action) (Debug.log "updateModel model:" model), updateAction (Debug.log "updateAction action:" action) (Debug.log "uA model:" model))
+```
+
+and viewing the console while starting the app.
+
+-}
+update: AppAction -> AppModel -> (AppModel, Effects.Effects AppAction)
+update action model = (updateModel (Debug.log "updateModel action:" action) (Debug.log "uM model:" model), updateAction (Debug.log "updateAction action:" action) (Debug.log "uA model:" model))
+
+
+{-| This function updates the state of the app based on the given action and previous state of the app
 -}
 updateModel : AppAction -> AppModel -> AppModel
 updateModel action app = case (app.location, action) of
     -- Discovering location Actions
+    --(Discovering, Animate time window)        -> {app}
     (Discovering, Animate time window)        -> {app | discovery = animateItem app.discovery time window}
     (Discovering, MoveItem pos)               -> {app | discovery = moveItem app.discovery pos}
     (Discovering, Favourite)                  -> {app | location = Discovering, discovery = favouriteItem app.discovery}
@@ -100,9 +205,11 @@ updateModel action app = case (app.location, action) of
     (_, LoadData update)                      -> {app | items = update app.items}
     (_, LoadDiscoveryData items update)       -> {app | items = update app.items, discovery = updateDiscoverableItems app.discovery items}
     -- Do nothing for the rest of the actions
-    (_, _)                                    -> app
+    (_, _)                                    -> (Debug.log "uM: (_,_)" app)
 
-{- Perform effectful actions based on actions and app state -}
+
+
+{-| Perform effectful actions based on actions and app state -}
 updateAction : AppAction -> AppModel -> Effects.Effects AppAction
 updateAction action app = case action of
     View storyId -> Effects.task
@@ -110,10 +217,14 @@ updateAction action app = case action of
         <| Data.viewStory storyId
         `Task.andThen` \_ -> Remote.DataStore.fetch storyId Data.requestStory Data.updateStory
     UpdateLocation loc ->
+        --if app.latLng == Nothing then
+        --    case loc of
+        --        Just latlng -> fetchDiscover <| Data.requestNearbyStories latlng
+        --        Nothing -> fetchDiscover <| Data.requestStories
         if app.discovery == initialDiscovery then
             case loc of
-                Just latlng -> fetchDiscover <| Data.requestNearbyStories latlng
-                Nothing -> fetchDiscover <| Data.requestStories
+                Just latlng -> Debug.log "UpdateLocation: got LatLng" fetchDiscover <| Data.requestNearbyStories latlng
+                Nothing -> Debug.log "UpdateLocation: got Nothing"  fetchDiscover <| Data.requestStories
         else
             Effects.none
     Favourite -> case app.discovery.item of
@@ -155,7 +266,12 @@ updateAction action app = case action of
                     Effects.none
             _ -> Effects.none
         _ -> Effects.none
-    _ -> Effects.none
+    _ -> (Debug.log "updateAction action triggered: " Effects.none)
+
+
+
+----------------------------------------------------  helpers
+
 
 {-| Add a viewed item to the list of favourite items -}
 favouriteItem : Discovery a -> Discovery a
@@ -169,6 +285,7 @@ favouriteItem app =
     , itemPosition = Static
     }
 
+
 {-| Add a viewed item to the list of passed items -}
 passItem : Discovery a -> Discovery a
 passItem app =
@@ -181,13 +298,17 @@ passItem app =
     , itemPosition = Static
     }
 
+
 {-| Animate items being discovered -}
 animateItem : Discovery a -> Time -> Window -> Discovery a
-animateItem discovery time window = {discovery | itemPosition = Swiping.animateStep time window discovery.itemPosition}
+animateItem discovery time window =
+    { discovery | itemPosition = Swiping.animateStep time window discovery.itemPosition }
+
 
 {-| Move items that are swiped while being discovered -}
 moveItem : Discovery a -> ItemPosition -> Discovery a
 moveItem discovery pos = {discovery | itemPosition = pos}
+
 
 {-| Update the app with new discovery stories -}
 updateDiscoverableItems : Discovery id -> RemoteData (List id) -> Discovery id
@@ -199,6 +320,7 @@ updateDiscoverableItems discovery items =
         }
     else
         discovery
+
 
 {-| Take a HTTP request and create an action to update the app with new discovery stories -}
 fetchDiscover : Task Http.Error (List Story) -> Effects.Effects AppAction
@@ -215,20 +337,9 @@ fetchDiscover request = let
             `Task.onError`
                 (\error -> LoadDiscoveryData (Failed error) identity |> Task.succeed)
 
-{-| The initial state of the app -}
-initialApp : AppModel
-initialApp = {location = Discovering, discovery = initialDiscovery, items = Remote.DataStore.empty}
 
 {-| The initial state of a singular item being viewed -}
 initialItemView : ItemView
 initialItemView = {photoIndex = 0, photoPosition = Static}
 
-{-| The initial state of items being discovered -}
-initialDiscovery : Discovery id
-initialDiscovery =
-    { item = Loading
-    , itemPosition = Static
-    , items = []
-    , favourites = []
-    , passes = []
-    }
+

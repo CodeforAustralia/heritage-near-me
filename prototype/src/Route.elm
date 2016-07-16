@@ -12,7 +12,7 @@ action url = case url of
     "discover"::_ -> [Discover]
     "favourites"::_ -> [ViewFavourites]
     "story"::storyId::_ -> [View <| StoryId <| Maybe.withDefault -1 <| Result.toMaybe <| String.toInt storyId]
-    _ -> [Discover]
+    _ -> Debug.log "converted url into default action: " [Discover]
 
 {-| Turn the difference between two app states into a browser URL -}
 url : AppModel -> AppModel -> Maybe HashUpdate
