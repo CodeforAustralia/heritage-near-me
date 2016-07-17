@@ -315,7 +315,7 @@ updateDiscoverableItems : Discovery id -> RemoteData (List id) -> Discovery id
 updateDiscoverableItems discovery items =
     if discovery == initialDiscovery then
         { discovery |
-          item = Remote.Data.map List.head items 
+          item = Remote.Data.map List.head items
         , items = Remote.Data.get items |> Maybe.withDefault []
         }
     else
