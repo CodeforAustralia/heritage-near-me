@@ -24,5 +24,10 @@
         "rgrempel/elm-route-hash": "1.0.5 <= v < 2.0.0",
         "rluiten/elm-date-extra": "3.0.0 <= v < 4.0.0"
     },
-    "elm-version": "0.16.0 <= v < 0.17.0"
+    "elm-version": "0.16.0 <= v < 0.17.0",
+    "sublime-build": {
+        "output": {
+            "path": "swipe-local-history.js"
+        }
+    }
 }
