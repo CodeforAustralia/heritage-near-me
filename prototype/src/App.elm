@@ -202,8 +202,8 @@ updateModel action app = case (app.location, action) of
     (_, View story')                          -> {app | location = Viewing story' initialItemView}
     (_, ViewFavourites)                       -> {app | location = ViewingFavourites}
     -- Data update actions
-    (_, LoadData update)                      -> {app | items = update app.items}
-    (_, LoadDiscoveryData items update)       -> {app | items = update app.items, discovery = updateDiscoverableItems app.discovery items}
+    (_, LoadData updateItems)                 -> {app | items = updateItems app.items}
+    (_, LoadDiscoveryData items updateItems)  -> {app | items = updateItems app.items, discovery = updateDiscoverableItems app.discovery items}
     -- Do nothing for the rest of the actions
     (_, _)                                    -> (Debug.log "uM: (_,_)" app)
 
