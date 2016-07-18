@@ -214,8 +214,10 @@ updateAction : AppAction -> AppModel -> Effects.Effects AppAction
 updateAction action app = case action of
     View storyId -> Effects.task
         <| Task.map LoadData
-        <| Data.viewStory storyId
+        <| Data.viewStory storyId -- log the view
         `Task.andThen` \_ -> Remote.DataStore.fetch storyId Data.requestStory Data.updateStory
+        -- which is all just to say,
+        -- View storyId -> Effects (LoadData (RemoteDataStore id a -> RemoteDataStore id a))
     UpdateLocation loc ->
         --if app.latLng == Nothing then
         --    case loc of
@@ -316,22 +318,60 @@ updateDiscoverableItems discovery items =
     if discovery == initialDiscovery then
         { discovery |
           item = Remote.Data.map List.head items
-        , items = Remote.Data.get items |> Maybe.withDefault []
+        , items = Remote.Data.get items |> tailOrEmptyList
         }
     else
         discovery
 
 
-{-| Take a HTTP request and create an action to update the app with new discovery stories -}
+{-| Get all but the first of the list, or an empty list if list itself was either Nothing or empty.
+
+Basically it's like List.tail but handles Maybes.
+
+```
+    tailOrEmptyList (Just [1,2,3]) == [2,3]
+    tailOrEmptyList (Just []) = []
+    tailOrEmptyList Nothing == []
+```
+-}
+tailOrEmptyList : Maybe (List a) -> List a
+tailOrEmptyList list = list `Maybe.andThen` List.tail |> Maybe.withDefault []
+
+
+{-| Take a HTTP request and create an action to update the app with new discovery stories.
+
+This function dynamically generates a function, unique to any given list of stories,
+which, when supplied with a remote data store will update that datastore with those stories.
+
+That generated function is turned into one of the `Action`s defined in Types.elm through
+the use of a type constructor like `LoadData`, so you
+can expect AppAction to be a type like this:
+```
+    LoadData (RemoteDataStore id a -> RemoteDataStore id a)
+```
+
+You could then use Elm's pattern matching in `updateModel` to catch the update action:
+
+```
+    case action of
+        LoadData updateItems-> {app | items = updateItems app.items}
+```
+
+-}
 fetchDiscover : Task Http.Error (List Story) -> Effects.Effects AppAction
-fetchDiscover request = let
-        update story = Remote.DataStore.update (Story.id story) (Data.updateStory <| Loaded story)
+fetchDiscover requestStoriesTask =
+    let
+        update_ story = Remote.DataStore.update (Story.id story) (Data.updateStory <| Loaded story)
+        -- update_ : Story -> RemoteDataStore StoryId Story -> RemoteDataStore StoryId Story
+        -- update_ story : RemoteDataStore StoryId Story -> RemoteDataStore StoryId Story
     in
         Effects.task
-            <| request
+            <| requestStoriesTask
             `Task.andThen`
-                (\stories ->
-                    (\store -> List.foldl update store stories)
+                (\stories -> -- create a function of type List Story -> Task a (Action StoryId Story)
+                    (\dataStore ->
+                        List.foldl update_ dataStore stories -- type: RemoteDataStore StoryId Story
+                    )
                     |> LoadDiscoveryData (Loaded <| List.map Story.id stories)
                     |> Task.succeed)
             `Task.onError`
