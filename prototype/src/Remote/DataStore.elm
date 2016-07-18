@@ -53,6 +53,11 @@ loaded (RemoteDataStore store) = Dict.values store
 The third argument to this function is a function that
 takes the fetched value, any value fetched previously with the same id,
 and returns the value which should be stored.
+
+Note that our `RemoteData` type stores the task's success: `Loaded value`
+or failure: `Failed error`, and hence this function ultimately returns
+a `Task` which can never fail:
+ `Task Effects.Never (RemoteDataStore id v -> RemoteDataStore id v)`.
 -}
 fetch : id
     -> (id -> Task Http.Error v)
