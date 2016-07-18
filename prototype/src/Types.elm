@@ -23,13 +23,20 @@ App screens:
     * Discovering: the app home page where you get a summary of a story and the option to like or pass it.
     * Viewing <story id>: You are looking at a particular story.
     * ViewingFavourites: You are looking at your list of favourite stories.
-
 -}
 type Location id =
       Discovering
     | Viewing id ItemView
     | ViewingFavourites
 
+
+{-| AppAction is just a shortcut for the `Action` type.
+
+It allows you to skip using the type parameters; that is, instead of saying
+a function takes an `Action id a` (where `id` would be a `StoryId` and
+`a` would just be a `Story`), you'll almost always just say the function
+takes an `AppAction`.
+-}
 type alias AppAction = Action StoryId Story
 
 type Action id a =
@@ -46,9 +53,12 @@ type Action id a =
     | View id
     | ViewFavourites
     | Back
-    | LoadData (RemoteDataStore id a -> RemoteDataStore id a)
-    | LoadDiscoveryData (RemoteData (List id)) (RemoteDataStore id a -> RemoteDataStore id a)
+    | LoadData UpdaterFunction
+    | LoadDiscoveryData (RemoteData (List id)) UpdaterFunction
     | NoAction
+
+type alias UpdaterFunction = (RemoteDataStore StoryId Story -> RemoteDataStore StoryId Story)
+
 
 type ItemPosition = Static
     | Swiping SwipeState
