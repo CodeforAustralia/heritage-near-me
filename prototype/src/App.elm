@@ -178,7 +178,7 @@ and viewing the console while starting the app.
 
 -}
 update: AppAction -> AppModel -> (AppModel, Effects.Effects AppAction)
-update action model = (updateModel (Debug.log "updateModel action:" action) (Debug.log "uM model:" model), updateAction (Debug.log "updateAction action:" action) (Debug.log "uA model:" model))
+update action model = (updateModel (Debug.log "updateModel action:" action) (Debug.log "updateModel model:" model), updateAction (Debug.log "updateAction action:" action) (Debug.log "updateAction model:" model))
 
 
 {-| This function updates the state of the app based on the given action and previous state of the app
