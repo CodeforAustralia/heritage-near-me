@@ -13,6 +13,7 @@ type alias App id a =
     { location : Location id
     , discovery : Discovery id
     , items : RemoteDataStore id a
+    , latLng : Maybe LatLng -- the browser's latitude,longitude coordinates, if we have them.
     }
 
 type alias AppLocation = Location StoryId
