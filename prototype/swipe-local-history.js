@@ -13724,6 +13724,8 @@ Elm.Types.make = function (_elm) {
    var Window = F2(function (a,b) {    return {width: a,height: b};});
    var Dates = F2(function (a,b) {    return {start: a,end: b};});
    var Site = F2(function (a,b) {    return {id: a,name: b};});
+   var Unavailable = {ctor: "Unavailable"};
+   var Position = function (a) {    return {ctor: "Position",_0: a};};
    var LatLng = F2(function (a,b) {    return {lat: a,lng: b};});
    var FullStory = function (a) {    return {ctor: "FullStory",_0: a};};
    var DiscoverStory = function (a) {    return {ctor: "DiscoverStory",_0: a};};
@@ -13755,7 +13757,7 @@ Elm.Types.make = function (_elm) {
    var ViewingFavourites = {ctor: "ViewingFavourites"};
    var Viewing = F2(function (a,b) {    return {ctor: "Viewing",_0: a,_1: b};});
    var Discovering = {ctor: "Discovering"};
-   var App = F3(function (a,b,c) {    return {location: a,discovery: b,items: c};});
+   var App = F4(function (a,b,c,d) {    return {location: a,discovery: b,items: c,latLng: d};});
    return _elm.Types.values = {_op: _op
                               ,Discovery: Discovery
                               ,ItemView: ItemView
@@ -14104,7 +14106,8 @@ Elm.Story.make = function (_elm) {
          }
    };
    var title = function (story) {    var _p6 = story;if (_p6.ctor === "DiscoverStory") {    return _p6._0.title;} else {    return _p6._0.title;}};
-   var id = function (story) {    var _p7 = story;if (_p7.ctor === "DiscoverStory") {    return _p7._0.id;} else {    return _p7._0.id;}};
+   var storyIdToStr = function (_p7) {    var _p8 = _p7;return $Basics.toString(_p8._0);};
+   var id = function (story) {    var _p9 = story;if (_p9.ctor === "DiscoverStory") {    return _p9._0.id;} else {    return _p9._0.id;}};
    var storyIndex = F2(function (index,story) {    return A2($Basics._op["%"],index,$List.length(photos(story)));});
    var photoPosition = function (pos) {
       return _U.list([{ctor: "_Tuple2",_0: "position",_1: "relative"}
@@ -14150,104 +14153,113 @@ Elm.Story.make = function (_elm) {
       return A2($Html.div,
       _U.list([$Html$Attributes.$class("photo-indicators")]),
       A2($List.indexedMap,
-      F2(function (index$,_p8) {
+      F2(function (index$,_p10) {
          return _U.eq(index$,A2(storyIndex,index,story)) ? A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-circle")]),_U.list([])) : A2($Html.i,
          _U.list([$Html$Attributes.$class("fa fa-circle-o"),A2($Html$Events.onClick,address,$Types.JumpPhoto(index$))]),
          _U.list([]));
       }),
       photos(story)));
    });
+   var log = function (anything) {    return A2($Debug.log,"",anything);};
    var view = F3(function (address,story,item) {
       return A2($Html.div,
       _U.list([$Html$Attributes.$class("story")]),
       function () {
-         var _p9 = story;
-         switch (_p9.ctor)
-         {case "Loaded": var _p18 = _p9._0;
+         var _p11 = story;
+         switch (_p11.ctor)
+         {case "Loaded": var _p20 = _p11._0;
               return A2($Basics._op["++"],
-              _U.list([_U.cmp($List.length(photos(_p18)),1) > 0 ? A2($Html.div,
+              _U.list([_U.cmp($List.length(photos(_p20)),1) > 0 ? A2($Html.div,
                       A2($Basics._op["++"],
                       _U.list([$Html$Attributes.$class("photo-slide")]),
                       A3($Swiping.onSwipe,address,$Swiping.itemSwipe(item.photoPosition),$Swiping.swipePhotoAction)),
                       _U.list([A2($Html.div,
                               _U.list([$Html$Attributes.$class("photos")]),
-                              A2($List.map,A2(storyImage,_p18,item.photoPosition),_U.list([item.photoIndex - 1,item.photoIndex,item.photoIndex + 1])))
-                              ,A3(photoIndicators,address,_p18,item.photoIndex)])) : A2($Html.div,
+                              A2($List.map,A2(storyImage,_p20,item.photoPosition),_U.list([item.photoIndex - 1,item.photoIndex,item.photoIndex + 1])))
+                              ,A3(photoIndicators,address,_p20,item.photoIndex)])) : A2($Html.div,
                       _U.list([$Html$Attributes.$class("photos")]),
-                      _U.list([A3(storyImage,_p18,item.photoPosition,item.photoIndex)]))
-                      ,A2($Html.h1,_U.list([$Html$Attributes.$class("title")]),_U.list([$Html.text(title(_p18))]))]),
+                      _U.list([A3(storyImage,_p20,item.photoPosition,item.photoIndex)]))
+                      ,A2($Html.h1,_U.list([$Html$Attributes.$class("title")]),_U.list([$Html.text(title(_p20))]))]),
               function () {
-                 var _p10 = _p18;
-                 if (_p10.ctor === "DiscoverStory") {
+                 var _p12 = _p20;
+                 if (_p12.ctor === "DiscoverStory") {
                        return _U.list([$Loading.loading]);
                     } else {
-                       var _p17 = _p10._0;
+                       var _p19 = _p12._0;
                        return _U.list([A2($Html.div,
                                       _U.list([$Html$Attributes.$class("fullStory-meta")]),
-                                      _U.list([A2($Html.div,_U.list([$Html$Attributes.$class("fullStory-site")]),_U.list([$Html.text(sitesName(_p17.sites))]))
+                                      _U.list([A2($Html.div,_U.list([$Html$Attributes.$class("fullStory-site")]),_U.list([$Html.text(sitesName(_p19.sites))]))
                                               ,function () {
-                                                 var _p11 = _p17.suburb;
-                                                 if (_p11.ctor === "Just") {
+                                                 var _p13 = _p19.suburb;
+                                                 if (_p13.ctor === "Just") {
                                                        return A2($Html.div,
                                                        _U.list([$Html$Attributes.$class("fullStory-suburb")]),
-                                                       _U.list([$Html.text(_p11._0)]));
+                                                       _U.list([$Html.text(_p13._0)]));
                                                     } else {
                                                        return $Html.text("");
                                                     }
                                               }()
                                               ,function () {
-                                                 var _p12 = formatDate(_p17.dates);
-                                                 if (_p12.ctor === "Just") {
-                                                       return A2($Html.div,_U.list([$Html$Attributes.$class("fullStory-date")]),_U.list([$Html.text(_p12._0)]));
+                                                 var _p14 = formatDate(_p19.dates);
+                                                 if (_p14.ctor === "Just") {
+                                                       return A2($Html.div,_U.list([$Html$Attributes.$class("fullStory-date")]),_U.list([$Html.text(_p14._0)]));
                                                     } else {
                                                        return $Html.text("");
                                                     }
                                               }()
                                               ,function () {
-                                                 var _p13 = distance(_p18);
-                                                 if (_p13.ctor === "Just") {
+                                                 var _p15 = distance(_p20);
+                                                 if (_p15.ctor === "Just") {
                                                        return A2($Html.p,
                                                        _U.list([$Html$Attributes.$class("fullStory-distance")]),
                                                        _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-map-marker")]),_U.list([]))
                                                                ,$Html.text(" ")
-                                                               ,$Html.text(_p13._0)]));
+                                                               ,$Html.text(_p15._0)]));
                                                     } else {
                                                        return $Html.text("got-no-distance");
                                                     }
                                               }()]))
-                                      ,A2($Html.blockquote,_U.list([]),_U.list([$Html.text(_p17.blurb)]))
+                                      ,A2($Html.blockquote,_U.list([]),_U.list([$Html.text(_p19.blurb)]))
                                       ,function () {
-                                         var _p14 = $List.head(_p17.locations);
-                                         if (_p14.ctor === "Just") {
-                                               var _p15 = _p14._0;
+                                         var _p16 = $List.head(_p19.locations);
+                                         if (_p16.ctor === "Just") {
+                                               var _p17 = _p16._0;
                                                return A2($Html.div,
                                                _U.list([$Html$Attributes.$class("directions")]),
                                                _U.list([A2($Html.a,
                                                _U.list([$Html$Attributes.href(A2($Basics._op["++"],
                                                        "https://www.google.com/maps/dir/Current+Location/",
-                                                       A2($Basics._op["++"],_p15.lat,A2($Basics._op["++"],",",_p15.lng))))
+                                                       A2($Basics._op["++"],_p17.lat,A2($Basics._op["++"],",",_p17.lng))))
                                                        ,$Html$Attributes.target("_blank")]),
                                                _U.list([$Html.text("Directions")]))]));
                                             } else {
                                                return $Html.text("");
                                             }
                                       }()
-                                      ,A2($Html.div,_U.list([$Html$Attributes.$class("passage")]),_U.list([$Markdown.toHtml(_p17.story)]))
+                                      ,A2($Html.div,_U.list([$Html$Attributes.$class("passage")]),_U.list([$Markdown.toHtml(_p19.story)]))
                                       ,function () {
-                                         var _p16 = _p17.sites;
-                                         if (_p16.ctor === "[]") {
+                                         var _p18 = _p19.sites;
+                                         if (_p18.ctor === "[]") {
                                                return $Html.text("");
                                             } else {
-                                               return links(_p17);
+                                               return links(_p19);
                                             }
                                       }()]);
                     }
               }());
-            case "Failed": return _U.list([$Html.text("Something went wrong")]);
+            case "Failed": return _U.list([$Html.text("Something went wrong: "),$Html.text($Basics.toString(log(_p11._0)))]);
             default: return _U.list([$Loading.loading]);}
       }());
    });
-   return _elm.Story.values = {_op: _op,view: view,id: id,title: title,storySiteName: storySiteName,photo: photo,photos: photos,distance: distance};
+   return _elm.Story.values = {_op: _op
+                              ,view: view
+                              ,id: id
+                              ,storyIdToStr: storyIdToStr
+                              ,title: title
+                              ,storySiteName: storySiteName
+                              ,photo: photo
+                              ,photos: photos
+                              ,distance: distance};
 };
 Elm.Native.TimeTask = {};
 Elm.Native.TimeTask.make = function(localRuntime) {
@@ -14293,6 +14305,7 @@ Elm.Data.make = function (_elm) {
    $Remote$DataStore = Elm.Remote.DataStore.make(_elm),
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm),
+   $Story = Elm.Story.make(_elm),
    $Task = Elm.Task.make(_elm),
    $Time = Elm.Time.make(_elm),
    $Types = Elm.Types.make(_elm);
@@ -14362,7 +14375,7 @@ Elm.Data.make = function (_elm) {
    A2($Json$Decode._op[":="],"sites",$Json$Decode.list(siteDecoder))),
    A2($Json$Decode._op[":="],"locations",$Json$Decode.list(locationDecoder))),
    $Json$Decode.maybe(A2($Json$Decode._op[":="],"distance",$Json$Decode.$float)));
-   var fullStories = $Json$Decode.list(fullStoryDecoder);
+   var fullStoriesDecoder = $Json$Decode.list(fullStoryDecoder);
    var discoverStory = A7($Json$Decode.object6,
    F6(function (id,title,blurb,photo,distance,sites) {
       return $Types.DiscoverStory({id: $Types.StoryId(id)
@@ -14384,35 +14397,59 @@ Elm.Data.make = function (_elm) {
       var isoDatetime = function (_p2) {    return A3($Date$Format.format,$Date$Config$Config_en_au.config,isoFormat,$Date.fromTime(_p2));}(time);
       return A2($Basics._op["++"],"\'",A2($Basics._op["++"],isoDatetime,"\'"));
    };
+   var storyNotFoundError = $Task.fail(A2($Http.BadResponse,404,"Story with given id was not found"));
    var apiUrl = function (subUrl) {    return A2($Http.url,A2($Basics._op["++"],"api/",subUrl),_U.list([]));};
+   var apiHttpPostRequest = F3(function (apiMethod,pos,maybeStory) {
+      var storyPart = function () {
+         var _p3 = maybeStory;
+         if (_p3.ctor === "Just") {
+               return A2($Basics._op["++"],", \"story_of_interest\": \"",A2($Basics._op["++"],$Basics.toString(_p3._0._0),"\""));
+            } else {
+               return "";
+            }
+      }();
+      return {verb: "POST"
+             ,headers: _U.list([{ctor: "_Tuple2",_0: "Content-Type",_1: "application/json"}])
+             ,url: A2($Basics._op["++"],apiUrl("rpc/"),apiMethod)
+             ,body: $Http.string(A2($Basics._op["++"],
+             "{\"lat\": \"",
+             A2($Basics._op["++"],
+             pos.lat,
+             A2($Basics._op["++"],"\", \"lng\": \"",A2($Basics._op["++"],pos.lng,A2($Basics._op["++"],"\"",A2($Basics._op["++"],storyPart,"}")))))))};
+   });
+   var apiHttpPostRequest$ = F2(function (apiMethod,pos) {    return A3(apiHttpPostRequest,apiMethod,pos,$Maybe.Nothing);});
    var requestNearbyStories = function (pos) {
-      return A2($Http.fromJson,
-      discoverStories,
-      A2($Http.send,
-      $Http.defaultSettings,
-      {verb: "POST"
-      ,headers: _U.list([{ctor: "_Tuple2",_0: "Content-Type",_1: "application/json"}])
-      ,url: apiUrl("rpc/story_discover_by_location")
-      ,body: $Http.string(A2($Basics._op["++"],
-      "{\"lat\": \"",
-      A2($Basics._op["++"],pos.lat,A2($Basics._op["++"],"\", \"lng\": \"",A2($Basics._op["++"],pos.lng,"\"}")))))}));
+      return A2($Http.fromJson,discoverStories,A2($Http.send,$Http.defaultSettings,A2(apiHttpPostRequest$,"story_discover_by_location",pos)));
    };
+   var requestNearbyStory = F2(function (pos,storyId) {
+      return A2($Task.andThen,
+      A2($Task.map,
+      $List.head,
+      A2($Http.fromJson,fullStoriesDecoder,A2($Http.send,$Http.defaultSettings,A3(apiHttpPostRequest,"story_details_by_location",pos,$Maybe.Just(storyId))))),
+      function (firstStory) {
+         return A2($Maybe.withDefault,
+         $Task.fail(A2($Http.BadResponse,
+         404,
+         A2($Basics._op["++"],"Story with ID of \'",A2($Basics._op["++"],$Story.storyIdToStr(storyId),"\' was not found")))),
+         A2($Maybe.map,$Task.succeed,firstStory));
+      });
+   });
    var requestStories = A2($Http.get,discoverStories,apiUrl("story_discover"));
    var requestStory = function (storyId) {
-      var _p3 = storyId;
-      var id = _p3._0;
+      var _p4 = storyId;
+      var id = _p4._0;
       return A2($Task.andThen,
       A2($Task.map,
       $List.head,
       A2($Http.get,
-      fullStories,
+      fullStoriesDecoder,
       A2($Http.url,apiUrl("story_details"),_U.list([{ctor: "_Tuple2",_0: "id",_1: A2($Basics._op["++"],"eq.",$Basics.toString(id))}])))),
       function (storyId) {
          return A2($Maybe.withDefault,$Task.fail(A2($Http.BadResponse,404,"Story with given id was not found")),A2($Maybe.map,$Task.succeed,storyId));
       });
    };
-   var viewStory = function (_p4) {
-      var _p5 = _p4;
+   var viewStory = function (_p5) {
+      var _p6 = _p5;
       return A2($Task.andThen,
       $Native$TimeTask.getCurrentTime,
       function (time) {
@@ -14423,11 +14460,11 @@ Elm.Data.make = function (_elm) {
          ,url: apiUrl("views")
          ,body: $Http.string(A2($Basics._op["++"],
          "{\"datetime\": \"",
-         A2($Basics._op["++"],timestamp(time),A2($Basics._op["++"],"\", \"story_id\": \"",A2($Basics._op["++"],$Basics.toString(_p5._0),"\"}")))))}));
+         A2($Basics._op["++"],timestamp(time),A2($Basics._op["++"],"\", \"story_id\": \"",A2($Basics._op["++"],$Basics.toString(_p6._0),"\"}")))))}));
       });
    };
-   var favouriteStory = F2(function (_p6,favourited) {
-      var _p7 = _p6;
+   var favouriteStory = F2(function (_p7,favourited) {
+      var _p8 = _p7;
       return A2($Task.andThen,
       $Native$TimeTask.getCurrentTime,
       function (time) {
@@ -14443,27 +14480,27 @@ Elm.Data.make = function (_elm) {
          A2($Basics._op["++"],
          "\", \"story_id\": \"",
          A2($Basics._op["++"],
-         $Basics.toString(_p7._0),
+         $Basics.toString(_p8._0),
          A2($Basics._op["++"],"\", \"favourited\": \"",A2($Basics._op["++"],$Basics.toString(favourited),"\"}")))))))}));
       });
    });
    var updateStory = F2(function (newStory,oldStory) {
-      var _p8 = {ctor: "_Tuple2",_0: $Remote$Data.get(newStory),_1: A2($Maybe.andThen,oldStory,$Remote$Data.get)};
-      if (_p8.ctor === "_Tuple2" && _p8._0.ctor === "Just" && _p8._1.ctor === "Just") {
-            var _p9 = {ctor: "_Tuple2",_0: _p8._0._0,_1: _p8._1._0};
-            _v3_2: do {
-               if (_p9.ctor === "_Tuple2") {
-                     if (_p9._0.ctor === "FullStory") {
-                           return $Maybe.Just($Remote$Data.Loaded($Types.FullStory(_p9._0._0)));
+      var _p9 = {ctor: "_Tuple2",_0: $Remote$Data.get(newStory),_1: A2($Maybe.andThen,oldStory,$Remote$Data.get)};
+      if (_p9.ctor === "_Tuple2" && _p9._0.ctor === "Just" && _p9._1.ctor === "Just") {
+            var _p10 = {ctor: "_Tuple2",_0: _p9._0._0,_1: _p9._1._0};
+            _v4_2: do {
+               if (_p10.ctor === "_Tuple2") {
+                     if (_p10._0.ctor === "FullStory") {
+                           return $Maybe.Just($Remote$Data.Loaded($Types.FullStory(_p10._0._0)));
                         } else {
-                           if (_p9._1.ctor === "DiscoverStory") {
-                                 return $Maybe.Just($Remote$Data.Loaded($Types.DiscoverStory(_p9._0._0)));
+                           if (_p10._1.ctor === "DiscoverStory") {
+                                 return $Maybe.Just($Remote$Data.Loaded($Types.DiscoverStory(_p10._0._0)));
                               } else {
-                                 break _v3_2;
+                                 break _v4_2;
                               }
                         }
                   } else {
-                     break _v3_2;
+                     break _v4_2;
                   }
             } while (false);
             return oldStory;
@@ -14475,6 +14512,7 @@ Elm.Data.make = function (_elm) {
    return _elm.Data.values = {_op: _op
                              ,requestNearbyStories: requestNearbyStories
                              ,requestStories: requestStories
+                             ,requestNearbyStory: requestNearbyStory
                              ,requestStory: requestStory
                              ,viewStory: viewStory
                              ,favouriteStory: favouriteStory
@@ -14693,7 +14731,7 @@ Elm.Route.make = function (_elm) {
                break _v2_3;
             }
       } while (false);
-      return _U.list([$Types.Discover]);
+      return A2($Debug.log,"converted url into default action: ",_U.list([$Types.Discover]));
    };
    return _elm.Route.values = {_op: _op,action: action,url: url};
 };
@@ -14807,29 +14845,24 @@ Elm.Main.make = function (_elm) {
    $Types = Elm.Types.make(_elm),
    $View = Elm.View.make(_elm);
    var _op = {};
-   var initialDiscovery = {item: $Remote$Data.Loading,itemPosition: $Types.Static,items: _U.list([]),favourites: _U.list([]),passes: _U.list([])};
    var initialItemView = {photoIndex: 0,photoPosition: $Types.Static};
-   var initialApp = {location: $Types.Discovering,discovery: initialDiscovery,items: $Remote$DataStore.empty};
-   var fetchDiscover = function (request) {
-      var update = function (story) {    return A2($Remote$DataStore.update,$Story.id(story),$Data.updateStory($Remote$Data.Loaded(story)));};
+   var fetchDiscover = function (requestStoriesTask) {
+      var update_ = function (story) {    return A2($Remote$DataStore.update,$Story.id(story),$Data.updateStory($Remote$Data.Loaded(story)));};
       return $Effects.task(A2($Task.onError,
       A2($Task.andThen,
-      request,
+      requestStoriesTask,
       function (stories) {
          return $Task.succeed(A2($Types.LoadDiscoveryData,
          $Remote$Data.Loaded(A2($List.map,$Story.id,stories)),
-         function (store) {
-            return A3($List.foldl,update,store,stories);
+         function (dataStore) {
+            return A3($List.foldl,update_,dataStore,stories);
          }));
       }),
       function (error) {
          return $Task.succeed(A2($Types.LoadDiscoveryData,$Remote$Data.Failed(error),$Basics.identity));
       }));
    };
-   var updateDiscoverableItems = F2(function (discovery,items) {
-      return _U.eq(discovery,initialDiscovery) ? _U.update(discovery,
-      {item: A2($Remote$Data.map,$List.head,items),items: A2($Maybe.withDefault,_U.list([]),$Remote$Data.get(items))}) : discovery;
-   });
+   var tailOrEmptyList = function (list) {    return A2($Maybe.withDefault,_U.list([]),A2($Maybe.andThen,list,$List.tail));};
    var moveItem = F2(function (discovery,pos) {    return _U.update(discovery,{itemPosition: pos});});
    var animateItem = F3(function (discovery,time,window) {
       return _U.update(discovery,{itemPosition: A3($Swiping.animateStep,time,window,discovery.itemPosition)});
@@ -14851,32 +14884,51 @@ Elm.Main.make = function (_elm) {
    var favouriteItem = function (app) {
       return _U.update(app,
       {item: $Remote$Data.Loaded($List.head(app.items))
-      ,items: function (_p1) {
-         return A2($Maybe.withDefault,_U.list([]),$List.tail(_p1));
-      }(app.items)
+      ,items: A2($Maybe.withDefault,_U.list([]),$List.tail(app.items))
       ,favourites: function () {
-         var _p2 = app.item;
-         if (_p2.ctor === "Loaded" && _p2._0.ctor === "Just") {
-               return A2($Basics._op["++"],app.favourites,_U.list([_p2._0._0]));
+         var _p1 = app.item;
+         if (_p1.ctor === "Loaded" && _p1._0.ctor === "Just") {
+               return A2($Basics._op["++"],app.favourites,_U.list([_p1._0._0]));
             } else {
                return app.favourites;
             }
       }()
       ,itemPosition: $Types.Static});
    };
+   var latLngDecoder = A3($Json$Decode.object2,
+   F2(function (lat,lng) {    return A2($Debug.log,"attempting LatLng json decode",{lat: $Basics.toString(lat),lng: $Basics.toString(lng)});}),
+   A2($Json$Decode._op[":="],"lat",$Json$Decode.$float),
+   A2($Json$Decode._op[":="],"lng",$Json$Decode.$float));
+   var geolocation = Elm.Native.Port.make(_elm).inboundSignal("geolocation","Json.Encode.Value",function (v) {    return v;});
+   var userLocation = A2($Signal.map,
+   function (_p2) {
+      return $Types.UpdateLocation($Result.toMaybe(A2($Json$Decode.decodeValue,latLngDecoder,_p2)));
+   },
+   A2($Debug.log,"geo: ",geolocation));
+   var history = $Signal.mailbox($Types.NoAction);
+   var initialDiscovery = {item: $Remote$Data.Loading,itemPosition: $Types.Static,items: _U.list([]),favourites: _U.list([]),passes: _U.list([])};
    var updateAction = F2(function (action,app) {
       var _p3 = action;
       switch (_p3.ctor)
-      {case "View": var _p5 = _p3._0;
-           return $Effects.task(A2($Task.map,
-           $Types.LoadData,
-           A2($Task.andThen,$Data.viewStory(_p5),function (_p4) {    return A3($Remote$DataStore.fetch,_p5,$Data.requestStory,$Data.updateStory);})));
+      {case "View": var requestRemoteStory = function () {
+              var _p4 = app.latLng;
+              if (_p4.ctor === "Just") {
+                    return $Data.requestNearbyStory(_p4._0);
+                 } else {
+                    return $Data.requestStory;
+                 }
+           }();
+           var getRemoteDataStoreUpdater = function (id) {    return A3($Remote$DataStore.fetch,id,requestRemoteStory,$Data.updateStory);};
+           var logViewThenReturnUpdater = function (id) {
+              return A2($Task.andThen,$Data.viewStory(id),function (_p5) {    return getRemoteDataStoreUpdater(id);});
+           };
+           return $Effects.task(A2($Task.map,$Types.LoadData,logViewThenReturnUpdater(_p3._0)));
          case "UpdateLocation": if (_U.eq(app.discovery,initialDiscovery)) {
                  var _p6 = _p3._0;
                  if (_p6.ctor === "Just") {
-                       return fetchDiscover($Data.requestNearbyStories(_p6._0));
+                       return A3($Debug.log,"UpdateLocation: got LatLng",fetchDiscover,$Data.requestNearbyStories(_p6._0));
                     } else {
-                       return fetchDiscover($Data.requestStories);
+                       return A3($Debug.log,"UpdateLocation: got Nothing",fetchDiscover,$Data.requestStories);
                     }
               } else return $Effects.none;
          case "Favourite": var _p7 = app.discovery.item;
@@ -14912,26 +14964,30 @@ Elm.Main.make = function (_elm) {
                       return $Effects.none;
                    }
               default: return $Effects.none;}
-         default: return $Effects.none;}
+         default: return A2($Debug.log,"updateAction action triggered: ",$Effects.none);}
+   });
+   var updateDiscoverableItems = F2(function (discovery,items) {
+      return _U.eq(discovery,initialDiscovery) ? _U.update(discovery,
+      {item: A2($Remote$Data.map,$List.head,items),items: tailOrEmptyList($Remote$Data.get(items))}) : discovery;
    });
    var updateModel = F2(function (action,app) {
       var _p18 = {ctor: "_Tuple2",_0: app.location,_1: action};
-      _v9_14: do {
+      _v10_15: do {
          switch (_p18._1.ctor)
          {case "MoveItem": if (_p18._0.ctor === "Discovering") {
                     return _U.update(app,{discovery: A2(moveItem,app.discovery,_p18._1._0)});
                  } else {
-                    break _v9_14;
+                    break _v10_15;
                  }
             case "Favourite": if (_p18._0.ctor === "Discovering") {
                     return _U.update(app,{location: $Types.Discovering,discovery: favouriteItem(app.discovery)});
                  } else {
-                    break _v9_14;
+                    break _v10_15;
                  }
             case "Pass": if (_p18._0.ctor === "Discovering") {
                     return _U.update(app,{location: $Types.Discovering,discovery: passItem(app.discovery)});
                  } else {
-                    break _v9_14;
+                    break _v10_15;
                  }
             case "Animate": switch (_p18._0.ctor)
               {case "Discovering": return _U.update(app,{discovery: A3(animateItem,app.discovery,_p18._1._0,_p18._1._1)});
@@ -14940,67 +14996,64 @@ Elm.Main.make = function (_elm) {
                    {location: A2($Types.Viewing,
                    _p18._0._0,
                    _U.update(_p19,{photoPosition: A3($Swiping.animateStep,_p18._1._0,_p18._1._1,_p19.photoPosition)}))});
-                 default: break _v9_14;}
+                 default: break _v10_15;}
             case "MovePhoto": if (_p18._0.ctor === "Viewing") {
                     return _U.update(app,{location: A2($Types.Viewing,_p18._0._0,_U.update(_p18._0._1,{photoPosition: _p18._1._0}))});
                  } else {
-                    break _v9_14;
+                    break _v10_15;
                  }
             case "PrevPhoto": if (_p18._0.ctor === "Viewing") {
                     var _p20 = _p18._0._1;
                     return _U.update(app,
                     {location: A2($Types.Viewing,_p18._0._0,_U.update(_p20,{photoIndex: _p20.photoIndex - 1,photoPosition: $Types.Static}))});
                  } else {
-                    break _v9_14;
+                    break _v10_15;
                  }
             case "NextPhoto": if (_p18._0.ctor === "Viewing") {
                     var _p21 = _p18._0._1;
                     return _U.update(app,
                     {location: A2($Types.Viewing,_p18._0._0,_U.update(_p21,{photoIndex: _p21.photoIndex + 1,photoPosition: $Types.Static}))});
                  } else {
-                    break _v9_14;
+                    break _v10_15;
                  }
             case "JumpPhoto": if (_p18._0.ctor === "Viewing") {
                     return _U.update(app,{location: A2($Types.Viewing,_p18._0._0,_U.update(_p18._0._1,{photoIndex: _p18._1._0,photoPosition: $Types.Static}))});
                  } else {
-                    break _v9_14;
+                    break _v10_15;
                  }
             case "Discover": return _U.update(app,{location: $Types.Discovering});
             case "View": return _U.update(app,{location: A2($Types.Viewing,_p18._1._0,initialItemView)});
             case "ViewFavourites": return _U.update(app,{location: $Types.ViewingFavourites});
             case "LoadData": return _U.update(app,{items: _p18._1._0(app.items)});
             case "LoadDiscoveryData": return _U.update(app,{items: _p18._1._1(app.items),discovery: A2(updateDiscoverableItems,app.discovery,_p18._1._0)});
-            default: break _v9_14;}
+            case "UpdateLocation": return _U.update(app,{latLng: A2($Debug.log,"model setting GPS coords: ",_p18._1._0)});
+            default: break _v10_15;}
       } while (false);
-      return app;
+      return A2($Debug.log,"uM: (_,_)",app);
    });
-   var latLng = A3($Json$Decode.object2,
-   F2(function (lat,lng) {    return {lat: $Basics.toString(lat),lng: $Basics.toString(lng)};}),
-   A2($Json$Decode._op[":="],"lat",$Json$Decode.$float),
-   A2($Json$Decode._op[":="],"lng",$Json$Decode.$float));
-   var geolocation = Elm.Native.Port.make(_elm).inboundSignal("geolocation","Json.Encode.Value",function (v) {    return v;});
-   var userLocation = A2($Signal.map,
-   function (_p22) {
-      return $Types.UpdateLocation($Result.toMaybe(A2($Json$Decode.decodeValue,latLng,_p22)));
-   },
-   geolocation);
-   var history = $Signal.mailbox($Types.NoAction);
-   var update = F2(function (action,model) {    return {ctor: "_Tuple2",_0: A2(updateModel,action,model),_1: A2(updateAction,action,model)};});
+   var update = F2(function (action,model) {
+      return {ctor: "_Tuple2"
+             ,_0: A2(updateModel,A2($Debug.log,"updateModel action:",action),A2($Debug.log,"updateModel model:",model))
+             ,_1: A2(updateAction,A2($Debug.log,"updateAction action:",action),A2($Debug.log,"updateAction model:",model))};
+   });
+   var initialApp = {location: $Types.Discovering,discovery: initialDiscovery,items: $Remote$DataStore.empty,latLng: $Maybe.Nothing};
    var app = $StartApp.start({init: {ctor: "_Tuple2",_0: initialApp,_1: $Effects.none}
                              ,view: $View.view
                              ,update: update
-                             ,inputs: _U.list([history.signal,$Swiping.animate,userLocation])});
+                             ,inputs: _U.list([history.signal,userLocation])});
+   var main = app.html;
    var tasks = Elm.Native.Task.make(_elm).performSignal("tasks",app.tasks);
    var routeTasks = Elm.Native.Task.make(_elm).performSignal("routeTasks",
    $RouteHash.start({prefix: $RouteHash.defaultPrefix,address: history.address,models: app.model,delta2update: $Route.url,location2action: $Route.action}));
-   var main = app.html;
    return _elm.Main.values = {_op: _op
-                             ,main: main
+                             ,initialApp: initialApp
+                             ,initialDiscovery: initialDiscovery
                              ,app: app
-                             ,update: update
+                             ,main: main
                              ,history: history
                              ,userLocation: userLocation
-                             ,latLng: latLng
+                             ,latLngDecoder: latLngDecoder
+                             ,update: update
                              ,updateModel: updateModel
                              ,updateAction: updateAction
                              ,favouriteItem: favouriteItem
@@ -15008,8 +15061,7 @@ Elm.Main.make = function (_elm) {
                              ,animateItem: animateItem
                              ,moveItem: moveItem
                              ,updateDiscoverableItems: updateDiscoverableItems
+                             ,tailOrEmptyList: tailOrEmptyList
                              ,fetchDiscover: fetchDiscover
-                             ,initialApp: initialApp
-                             ,initialItemView: initialItemView
-                             ,initialDiscovery: initialDiscovery};
+                             ,initialItemView: initialItemView};
 };
