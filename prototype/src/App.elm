@@ -238,10 +238,6 @@ updateAction action app = case action of
                 -- which is all just to say,
                 -- View storyId -> Effects (LoadData (RemoteDataStore id a -> RemoteDataStore id a))
     UpdateLocation loc ->
-        --if app.latLng == Nothing then
-        --    case loc of
-        --        Just latlng -> fetchDiscover <| Data.requestNearbyStories latlng
-        --        Nothing -> fetchDiscover <| Data.requestStories
         if app.discovery == initialDiscovery then
             case loc of
                 Just latlng -> Debug.log "UpdateLocation: got LatLng" fetchDiscover <| Data.requestNearbyStories latlng
