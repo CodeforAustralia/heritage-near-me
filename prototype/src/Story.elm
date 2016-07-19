@@ -1,4 +1,4 @@
-module Story (view, id, title, storySiteName, photo, photos, distance) where
+module Story (view, id, storyIdToStr, title, storySiteName, photo, photos, distance) where
 
 import Date exposing (Date)
 import Date.Format
@@ -119,6 +119,15 @@ id : Story -> StoryId
 id story = case story of
     DiscoverStory story -> story.id
     FullStory story -> story.id
+
+{-| Returns the StoryId as a string.
+```
+    id = StoryId 5
+    storyIdToStr id == "5"
+```
+-}
+storyIdToStr : StoryId -> String
+storyIdToStr (StoryId id) = toString id
 
 --id : { story | id : String } -> String
 --id story = story.id
