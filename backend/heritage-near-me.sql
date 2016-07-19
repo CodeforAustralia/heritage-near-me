@@ -242,7 +242,7 @@ COST 100;
 
 
 -- TODO: make this actually use the view story_details (or a common view used by that as well, to reduce SQL code)
-CREATE OR REPLACE FUNCTION hnm.story_details_by_location(lat TEXT, lng TEXT)
+CREATE OR REPLACE FUNCTION hnm.story_details_by_location(lat TEXT, lng TEXT, story_of_interest INT) -- story: story ID
     RETURNS TABLE (
         id INTEGER,
         title TEXT,
@@ -272,6 +272,7 @@ BEGIN
     LEFT JOIN story_site  ON story_site.story_id  = story.id
     LEFT JOIN site        ON story_site.site_id   = site.id
     LEFT JOIN hnm.nearest_site_for_stories($1, $2) nearest_site ON story.id = nearest_site.story_id
+    WHERE story.id = $3
     GROUP BY story.id
     ORDER BY distance ASC;
 END;
