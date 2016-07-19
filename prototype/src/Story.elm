@@ -59,10 +59,14 @@ view address story item = div [class "story"]
                         [] -> text ""
                         _ -> links fullStory
                     ]
-        Failed _ ->
-            [ text "Something went wrong"]
+        Failed error ->
+            [ text "Something went wrong: ", text <| toString <| log error]
         Loading ->
             [ loading ]
+
+log : a -> a
+log anything =
+    Debug.log "" anything
 
 {-| The dots below the photo slide which allow a user to switch the photo being viewed -}
 photoIndicators address story index = div
