@@ -119,11 +119,11 @@ port geolocation : Signal Json.Encode.Value
 If `Nothing` then the user has disallowed geolocation.
 -}
 userLocation : Signal AppAction
-userLocation = Signal.map (UpdateLocation << Result.toMaybe << Json.decodeValue (Debug.log "latlng:" latLng)) (Debug.log "geo: " geolocation)
+userLocation = Signal.map (UpdateLocation << Result.toMaybe << Json.decodeValue latLngDecoder) (Debug.log "geo: " geolocation)
 
 {-| Latitude/Longitude JSON decoder -}
-latLng : Json.Decoder LatLng
-latLng = Json.object2 (\lat lng -> Debug.log "attempting LatLng json decode" {lat = toString lat, lng = toString lng})
+latLngDecoder : Json.Decoder LatLng
+latLngDecoder = Json.object2 (\lat lng -> Debug.log "attempting LatLng json decode" {lat = toString lat, lng = toString lng})
         ("lat" := Json.float)
         ("lng" := Json.float)
 
@@ -204,6 +204,8 @@ updateModel action app = case (app.location, action) of
     -- Data update actions
     (_, LoadData updateItems)                 -> {app | items = updateItems app.items}
     (_, LoadDiscoveryData items updateItems)  -> {app | items = updateItems app.items, discovery = updateDiscoverableItems app.discovery items}
+    -- Geoposition update actions
+    (_, UpdateLocation loc)                   -> {app | latLng = Debug.log "model setting GPS coords: " loc }
     -- Do nothing for the rest of the actions
     (_, _)                                    -> (Debug.log "uM: (_,_)" app)
 
@@ -212,12 +214,29 @@ updateModel action app = case (app.location, action) of
 {-| Perform effectful actions based on actions and app state -}
 updateAction : AppAction -> AppModel -> Effects.Effects AppAction
 updateAction action app = case action of
-    View storyId -> Effects.task
-        <| Task.map LoadData
-        <| Data.viewStory storyId -- log the view
-        `Task.andThen` \_ -> Remote.DataStore.fetch storyId Data.requestStory Data.updateStory
-        -- which is all just to say,
-        -- View storyId -> Effects (LoadData (RemoteDataStore id a -> RemoteDataStore id a))
+    View storyId ->
+            -- sorry this case is long; if `let` is confusing, this might help:
+            -- http://www.lambdacat.com/road-to-elm-let-and-in/
+        let
+            requestRemoteStory : StoryId -> Task Http.Error Story
+            requestRemoteStory =
+                case app.latLng of
+                    Just ll ->
+                        -- ask server to include story's distance from us
+                        Data.requestNearbyStory ll
+                    Nothing ->
+                        -- fine! I don't really care about the distance.
+                        Data.requestStory
+            getRemoteDataStoreUpdater id = Remote.DataStore.fetch id requestRemoteStory Data.updateStory
+            logViewThenReturnUpdater id =
+                Data.viewStory id `Task.andThen` (\_ -> getRemoteDataStoreUpdater id)
+        in
+            Effects.task
+                <| Task.map LoadData (logViewThenReturnUpdater storyId)
+                --<| Data.viewStory storyId -- log the view
+                --`Task.andThen` \_ -> Remote.DataStore.fetch storyId requestRemoteStory Data.updateStory
+                -- which is all just to say,
+                -- View storyId -> Effects (LoadData (RemoteDataStore id a -> RemoteDataStore id a))
     UpdateLocation loc ->
         --if app.latLng == Nothing then
         --    case loc of
