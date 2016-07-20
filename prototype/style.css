@@ -5,15 +5,14 @@ html {
 
 body {
     margin: 0px;
-        
     background: #1D1D1D; /* Old browsers */
     background: -moz-linear-gradient(top,  #202527 15%, #1D1D1D 100%); /* FF3.6-15 */
     background: -webkit-linear-gradient(top,  #202527 15%,#1D1D1D 100%); /* Chrome10-25,Safari5.1-6 */
     background: linear-gradient(to bottom,  #202527 15%,#1D1D1D 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#202527', endColorstr='#1D1D1D',GradientType=0 ); /* IE6-9 */
-
     color: white;
-    font-family: "proxima-nova" /*typekit*/, "Proxima Nova","Open Sans",Corbel,Helvetica,Arial,sans-serif;
+    font-family: "proxima-nova" /*typekit;,
+    "Proxima Nova","Open Sans",Corbel,Helvetica,Arial,sans-serif;;;;;; */;
 }
 
 html, body, body > div {
@@ -168,14 +167,26 @@ html, body, body > div {
                 }
                 .fullStory-meta {
                     background: #77a131;
+                    padding-bottom: 0.5rem;
+                    font-weight:300;
+                    font-size: 16px;
                 }
 
                  .fullStory-meta div, .fullStory-meta p {
                     display: inline;
                     padding-left: 1rem;
-
+                    color: #354716;
                  }
 
+                .fullStory-site {
+                    font-weight: 600;
+                 }
+
+                 .fullStory-distance {
+                     font-size: 16px;
+                 }
+
+      
                 .discovery-story-details p {
                     font-weight: 100;
                     margin-top: 0;
@@ -192,9 +203,10 @@ html, body, body > div {
                     margin-bottom: 10px;
                 }
 
-                .discovery-story-details .distance {
+                .discovery-story-distance p{
                     margin: 0px;
-                    font-size: 18px;
+                    font-size: 16px;
+                   
                 }
 
     .discovery-navigation {
@@ -312,11 +324,11 @@ html, body, body > div {
 
         .story .photo-indicators {
             position: relative;
-            top: -25px;
-            z-index: 1;
 
+            top: -25px;
             text-align: center;
-            color: white;
+            color: #FFF;
+           
         }
 
             .story .photo-indicators i {
@@ -343,10 +355,12 @@ html, body, body > div {
         background: #77a131;
         color: white;
         text-shadow: 1px 1px 1px rgba(0,0,0,.2);
+        letter-spacing: 0.02rem;
         margin: 0;
         margin-top: -22px; /* compensate for photo-indicators */
         padding-top: 0.5rem;
         padding-left: 1rem;
+        padding-bottom: 0.2rem;
         font-weight: 800;
         line-height: 1;
         text-align: left;
@@ -470,25 +484,25 @@ h3 {
 
 h4 {
     text-align: center;
-    font-size: 20px;
-    font-weight: 400;
+    font-size: 18px;
+    font-weight: 600;
     letter-spacing: .5px;
-    color: #1887EC;
+    color: #628529;
 }
 
 p {
     font-size: 18px;
+    color:#343434;
     line-height: 1.4;
     font-weight: normal;
 }
 
 blockquote {
-    text-align: center;
-    font-size: 22px;
-    font-weight: 400;
-    color: #9B9B9B;
-    font-family:  Georgia, Cambria, 'Times New Roman', Times, serif;
-    font-style: italic;
+    text-align: left;
+    font-size: 18px;
+    line-height: 1.4;
+    color: #343434;
+    font-family: "proxima-nova" /*typekit*/, "Proxima Nova","Open Sans",Corbel,Helvetica,Arial,sans-serif;
 }
 
 button {
