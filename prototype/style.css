@@ -166,6 +166,15 @@ html, body, body > div {
                     margin-bottom: 0;
                     text-align: left;
                 }
+                .fullStory-meta {
+                    background: #77a131;
+                }
+
+                 .fullStory-meta div, .fullStory-meta p {
+                    display: inline;
+                    padding-left: 1rem;
+
+                 }
 
                 .discovery-story-details p {
                     font-weight: 100;
@@ -327,7 +336,7 @@ html, body, body > div {
         display: inline-block;
         margin-right: 1em;
         font-size: 1em;
-    }
+    }    
 
 
     .story .title {
