@@ -15,7 +15,10 @@ const pool = new Pool()
 module.exports = {
   load: populateDB,
   pool: pool, // use this for queries, like: db.pool.query(SQL`SELECT * from site;`)
-  end: end
+  end: end,
+  getInsertSiteQuery: getInsertSiteQuery,
+  getInsertStorySiteSQL: getInsertStorySiteSQL,
+  getInsertLinksSQL: getInsertLinksSQL,
 }
 
 // attach an error handler to the pool for when a connected, idle client
@@ -44,7 +47,7 @@ pool.on("connect", () => {
 // entry -> SQL
 // returns a different query depending on if we have heritageItemId or not
 function getInsertSiteQuery(entry) {
-  return entry.heritageItemId ?
+  let q = entry.heritageItemId ?
     SQL`
       INSERT INTO site (heritageItemId, name, address, suburb, latitude, longitude)
       VALUES (${entry.heritageItemId}, ${entry.name}, ${entry.address}, ${entry.suburb}, ${entry.location.latitude}, ${entry.location.longitude}) RETURNING id AS new_site`
@@ -52,6 +55,7 @@ function getInsertSiteQuery(entry) {
     SQL`
       INSERT INTO site (name, address, suburb, latitude, longitude)
       VALUES (${entry.name}, ${entry.address}, ${entry.suburb}, ${entry.location.latitude}, ${entry.location.longitude}) RETURNING id AS new_site`
+  return q
 }
 
 // entry -> SQL
@@ -106,12 +110,12 @@ function populateDB (entries, postPopulateCallback) {
         const photos = entry.pictures || [];
         const links = entry.links || [];
         const insertPicPromises = photos.map((picUrl) => {
-          // console.log(`inserting pic w/ url: '${picUrl}' for story '${storyId}'`);
-          client.query(getInsertPhotoSQL(picUrl, storyID))
+          // console.log(`inserting pic w/ url: '${picUrl}' for story '${storyID}'`);
+          return client.query(getInsertPhotoSQL(picUrl, storyID))
         })
 
         const insertLinkPromises = links.map((link) => {
-          client.query(getInsertLinksSQL (link.url, link.title, storyID))
+          return client.query(getInsertLinksSQL (link.url, link.title, storyID))
         })
 
         return Promise.all(insertPicPromises.concat(insertLinkPromises))
