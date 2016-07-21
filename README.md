@@ -23,17 +23,24 @@ The Nginx server config can be found in [server/](server/heritage-near-me).
 
 ## Setup
 
-Install database, API server, and web server.
+Install database, API server, and web server. Using [brew](http://brew.sh/) on the command line, run:
 
 ```
-brew install postgres postgrest nginx
+brew install postgres postgis postgrest nginx
 ```
 
-Make sure PostgreSQL server is running and then import the required database:
+The output from the above command should say something about starting postgres and nginx, for example, you probably want to run this command next to make it so those two start when your computer does:
 
 ```
-cd backend
-./dbinit.sh
+brew services start postgresql
+brew services start nginx
+```
+
+
+Once PostgreSQL server is running, then import the required database:
+
+```
+backend/dbinit.sh
 ```
 
 (Need to wipe the database and restart? Run `backend/dbdrop.sh`.)
@@ -45,6 +52,8 @@ cd backend
 backend/apistart.sh
 ```
 
+(If that works, you should see something like "Listening on port 3000". Keep that running as long as you want the API server to run.)
+
 ## Start nginx
 
 We use `nginx` so that requests to /api are rerouted to port 3000 where `postgrest`
@@ -53,8 +62,7 @@ is serving the API (see how that works by looking at the nginx config file `serv
 Add that config file to `nginx`'s config. For installs provided by `homebrew` on OSX, that means copying the file to (or linking to it from) the `/usr/local/etc/nginx/servers/` directory.
 
 ```
-cd /usr/local/etc/nginx/servers/
-ln -s ~/your-user/path/to/heritage-near-me/server/heritage-near-me
+ln -s `pwd`/server/heritage-near-me /usr/local/etc/nginx/servers/heritage-near-me
 ```
 
 The `root` directive of our nginx config says where to find the `prototype/` directory:
@@ -66,11 +74,19 @@ root /usr/local/var/nginx/hnm;
 So set that up:
 
 ```
-cd /usr/local/var/nginx/
-ln -s ~/your-user/path/to/heritage-near-me/prototype hnm
+mkdir -p /usr/local/var/nginx
+ln -s `pwd`/prototype /usr/local/var/nginx/hnm
 ```
 
-`nginx` should be ready to go. Make sure `apache` is stopped if you have that on your dev machine (`sudo apachectl stop`) and start the server: `sudo nginx`. If you need to stop it later, run `sudo nginx -s stop`.
+Reload the nginx config:
+
+```
+nginx -s reload
+````
+
+nginx should now be running; open http://localhost:8088 in your web browser to confirm.
+
+(Note, if that doesn't work you may need to make sure `apache` is stopped if you have that on your dev machine (`sudo apachectl stop`) and start the server: `sudo nginx`. If you need to stop it later, run `sudo nginx -s stop`).
 
 ## Running PostgREST API as a service on Debian/Ubuntu
 
