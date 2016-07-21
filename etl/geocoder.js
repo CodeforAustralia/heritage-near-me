@@ -28,7 +28,7 @@ function geocode (heritageItems, callback) {
 
 
             })
-        }, index * 150)
+        }, index * 250)
 
     }))
 
