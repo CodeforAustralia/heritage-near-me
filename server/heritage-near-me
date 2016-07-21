@@ -3,6 +3,7 @@ server {
         root /usr/local/var/nginx/hnm;
         index index.html index.htm;
 
+        listen       8088;
         server_name localhost;
 
         location /api {
@@ -12,5 +13,9 @@ server {
 
         location / {
                 try_files $uri $uri/ $uri/index.html =404;
+
         }
+
+        access_log /tmp/nginx-access-heritage.log;
+        error_log /tmp/nginx-error-heritage.log;
 }
