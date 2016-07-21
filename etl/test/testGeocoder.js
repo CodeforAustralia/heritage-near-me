@@ -11,16 +11,16 @@ describe("geocoder.js", function () {
                 address: "29 champs elysée paris",
             }]
             geocoder.geocode (items, function validator (err, locations) {
-                console.log("testGeocoder.js#validator...")
+                // console.log("testGeocoder.js#validator...")
                 if (err) {
                     console.log("geocoder error: ")
                     console.log(err)
                 }
                 if (locations) {
-                    console.log("locations: ")
-                    console.log(locations)
+                    // console.log("locations: ")
+                    // console.log(locations)
                 }
-                console.log(items)
+                // console.log(items)
                 expect(items[0])
                     .to.have.property("location")
                     .that.is.an("object")

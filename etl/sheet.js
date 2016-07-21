@@ -17,7 +17,7 @@ const Tabletop = require("tabletop");
 function fetchEntries(key, callback) {
     Tabletop.init({ key: key,
                     callback: function(data, tabletop) {
-                        console.log(data);
+                        // console.log(data);
                         callback(data);
                     },
                     simpleSheet: true,

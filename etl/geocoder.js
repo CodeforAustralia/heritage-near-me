@@ -33,8 +33,8 @@ function geocode (heritageItems, callback) {
     }))
 
     Promise.all(geocodePromises).then(values => {
-        console.log(values)
-        console.log("foo")
+        // console.log(values)
+        // console.log("foo")
         callback(null, heritageItems) // should all be geocoded now
     })
     .catch(reason => {
