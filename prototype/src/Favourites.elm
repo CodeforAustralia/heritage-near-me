@@ -10,8 +10,7 @@ import Story
 {-| The main HTML view for looking at a user's favourite stories -}
 view : Signal.Address AppAction -> Favourites Story -> Html
 view address favourites = div [class "favourites"]
-    [ h1 [] [text "Favourites"]
-    , case favourites of
+    [ case favourites of
         [] -> noStories "You have no favourites yet"
         _  -> viewFavourites address favourites
     ]
