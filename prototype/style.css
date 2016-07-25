@@ -30,12 +30,30 @@ html, body, body > div {
 
 /* Top of the page navigation */
 .navigation {
-    background: rgba(24,23,23,0.8);
-    height: 65px;
-    position: fixed;
-    width: 100%;
-    z-index: 1;
+     background: rgba(24,23,23,0.7);
+     height: 65px;
+     position: fixed;
+     width: 100%;
+     z-index: 2;
 }
+
+/*.story-screen .navigation, 
+.favourites-screen .navigation  {
+    background: rgba(0, 0, 0, 0.6);
+}*/
+    .navigation-center {
+        height: 100%;
+        text-align: center;
+    }
+    .favourites-screen .navigation-center {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+        .favourites-screen .navigation-center h1 {
+            color: white;
+            margin: 0 auto;
+        }
 
         .navigation button {
             color: white;
@@ -63,7 +81,6 @@ html, body, body > div {
 
         .navigation .logo {
             height: 100%;
-            text-align: center;
         }
 
         .navigation .logo img {
@@ -98,18 +115,13 @@ html, body, body > div {
         flex-direction: column;
         justify-content: flex-end;
         flex: 1 1 100%;
-        margin: 0px 8px;
-        margin-top: 65px; /* match height of navigation bar */
-        padding-top: 20px;
-        padding-bottom: 20px;
-
-        -webkit-tap-highlight-color: rgba(0,0,0,0);
+        -webkit-tap-highlight-color: rgba(0,0,0,0); 
         -moz-user-select: none;
         -khtml-user-select: none;
         -webkit-user-select: none;
         -ms-user-select: none;
         user-select: none;
-            
+
         cursor: pointer;
     }
 
@@ -118,10 +130,19 @@ html, body, body > div {
             flex-direction: column;
             justify-content: flex-end;
             flex: 1 1 0px;
-
             background-position: center;
-            border-radius: 5px;
-            box-shadow: 0px 2px 4px rgba(0,0,0,0.5);
+            background-repeat: no-repeat;
+        }
+
+        .discovery-story .image::after {
+            content: " ";
+            background: rgba(0,0,0,0.5);
+            height: 100%;
+            position: absolute;
+            top: 0px;
+            display: block;
+            right: 0;
+            left: 0;
         }
 
             .discovery-story-image {
@@ -141,28 +162,27 @@ html, body, body > div {
                     color: red;
                 }
 
-            .discovery-story-details {
-
-                border-radius: 0px 0px 5px 5px;
-
-                text-shadow: 1px 1px 0px black;
-
-                max-width: 500px;
-                margin: 0 auto;
-
-
+            .discovery-story-details 
+            {
+                text-shadow: 1px 1px 1px black;
                 flex: 1;
                 display: flex;
                 align-items: center;
+                z-index: 1;
             }
                 .discovery-story-details-inner {
-                    background-color: rgba(0,0,0, 0.4);
-                    padding: 1em;
+                    padding-left: 35px;
+                    padding-right: 35px;
+                    margin: 2rem auto 0;
+                    max-width: 30em;
                 }
                 .discovery-story-details .title {
                     color: white;
-                    font-weight: 800;
-                    margin-bottom: 0;
+                    font-weight: 700;
+                    line-height: 1;
+                    font-size: 30px;
+                    letter-spacing: 0.05rem;
+                    margin-bottom: 0.5rem;
                     text-align: left;
                 }
                 .fullStory-meta {
@@ -190,7 +210,7 @@ html, body, body > div {
       
                 .discovery-story-details p {
                     font-weight: 100;
-                    margin-top: 0;
+                    padding: 0;
                 }
 
                 .discovery-story-details p:first-of-type {
@@ -215,6 +235,12 @@ html, body, body > div {
         flex: 0 0 80px;
         align-items: stretch;
         justify-content: center;
+        background: rgba(24, 23, 23, 0);
+        position: absolute;
+        height: 80px;
+        bottom: 0;
+        width: 100%;
+        z-index: 2;
     }
 
         .discovery-navigation > * {
@@ -257,6 +283,7 @@ html, body, body > div {
 /* Favourites list style */
 .favourites {
     margin: 16px;
+    margin-top: 65px;
 }
 
     .favourites .favourites-empty {
@@ -303,7 +330,7 @@ html, body, body > div {
 .story {
     height: auto;
     min-height: 100vh;
-    margin-top: 65px; /* match height of navigation bar */
+    /* margin-top: 65px; */ /* match height of navigation bar */
     background-color: #FCFCFC; /* just off white */
     color:black;
 }
@@ -319,17 +346,14 @@ html, body, body > div {
             flex: 1 0 100%;
             height: 100%;
             width: 100%;
-
             background-position: center;
         }
 
         .story .photo-indicators {
             position: relative;
-
             top: -25px;
             text-align: center;
             color: #FFF;
-           
         }
 
             .story .photo-indicators i {
@@ -356,7 +380,7 @@ html, body, body > div {
         background: #77a131;
         color: white;
         text-shadow: 1px 1px 1px rgba(0,0,0,.2);
-        letter-spacing: 0.02rem;
+        letter-spacing: 0.06rem;
         margin: 0;
         margin-top: -22px; /* compensate for photo-indicators */
         padding-top: 0.5rem;
@@ -385,7 +409,7 @@ html, body, body > div {
     }
 
     .story .passage {
-        padding: 0 1rem;
+        /* padding: 0 1rem; */
     }
 
 /* Links list style */
@@ -459,6 +483,8 @@ html, body, body > div {
 
 .image {
 	background-color: #eee;
+	width: 100%;
+	height: 100%;
 }
 
 /* General contents */
@@ -474,7 +500,6 @@ h2 {
     text-align: center;
     font-size: 24px;
     font-weight: 200;
-    color: #1887EC;
 }
 
 h3 {
@@ -495,8 +520,8 @@ h4 {
 
 p {
     font-size: 18px;
-    color:#343434;
     line-height: 1.4;
+    padding-left: 16px;
     font-weight: normal;
 }
 
@@ -516,4 +541,3 @@ button {
 /* Other tweaks */
 .app .fa-inverse {
     color: #1D1D1D;
-}
