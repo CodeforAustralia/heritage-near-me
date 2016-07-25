@@ -27,11 +27,11 @@ view : Signal.Address AppAction -> AppModel -> Html
 view address app = case app.location of
     Discovering -> Discover.view address app
         <| navigation address app.location
-    Viewing storyId itemView -> div [class "app"]
+    Viewing storyId itemView -> div [class "app story-screen"]
         [ navigation address app.location
         , Story.view address (Data.getItem storyId app) itemView
         ]
-    ViewingFavourites -> div [class "app"]
+    ViewingFavourites -> div [class "app favourites-screen"]
         [ navigation address app.location
         , Favourites.view address
             <| List.filterMap Remote.Data.get
