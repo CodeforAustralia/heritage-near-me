@@ -347,6 +347,9 @@ html, body, body > div {
     color:black;
 }
 
+    .story .photo-slide {
+        position: relative; /* to allow photo indicators to be positioned absolutely relative to this. */
+    }
     .story .photos {
         display: flex;
         justify-content: center;
