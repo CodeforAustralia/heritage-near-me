@@ -350,10 +350,11 @@ html, body, body > div {
         }
 
         .story .photo-indicators {
-            position: relative;
-            top: -25px;
+            position: absolute;
+            bottom: 5px;
             text-align: center;
             color: #FFF;
+            width: 100%;
         }
 
             .story .photo-indicators i {
@@ -382,7 +383,6 @@ html, body, body > div {
         text-shadow: 1px 1px 1px rgba(0,0,0,.2);
         letter-spacing: 0.06rem;
         margin: 0;
-        margin-top: -22px; /* compensate for photo-indicators */
         padding-top: 0.5rem;
         padding-left: 1rem;
         padding-bottom: 0.2rem;
