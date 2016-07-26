@@ -1,6 +1,9 @@
 language: node_js
 node_js:
   - "0.12"
+cache:
+  directories:
+    - prototype/elm-stuff/build-artifacts
 before_script:
   - cd prototype
   - npm install -g elm@0.16 elm-test
