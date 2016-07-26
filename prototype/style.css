@@ -52,6 +52,8 @@ html, body, body > div {
     }
         .favourites-screen .navigation-center h1 {
             color: white;
+            font-size: 24px;
+            font-weight: 300;
             margin: 0 auto;
         }
 
@@ -211,6 +213,7 @@ html, body, body > div {
                 .discovery-story-details p {
                     font-weight: 100;
                     padding: 0;
+                    margin-top: 10px;
                 }
 
                 .discovery-story-details p:first-of-type {
@@ -220,8 +223,7 @@ html, body, body > div {
                     background-position: bottom;
                     background-size: 100% 5px;
                     background-repeat: no-repeat;
-                    padding-bottom: 25px;
-                    margin-bottom: 10px;
+                    padding-bottom: 20px;
                 }
 
                 .discovery-story-distance p{
@@ -290,7 +292,18 @@ html, body, body > div {
         padding-top: 30vh;
     }
         .favourites .favourites-empty h2 {
+            font-size: 24px;
+            font-weight: 600;
             color: white;
+        }
+
+        .favourites .favourites-empty p {
+            text-align:center;
+            font-weight:200;
+            font-size: 16px;
+            color: #A3A3A3;
+            padding-left: 30px;
+            padding-right: 30px;
         }
 
     .favourites h1 {
@@ -313,17 +326,16 @@ html, body, body > div {
         }
 
             .favourites li .image {
-                flex: 0 1 100px;
-
+                flex: 0 1 80px;
                 background-position: center;
             }
 
             .favourites li .title {
                 text-align: left;
-                margin: 10px 20px;
-                font-weight: 100;
-                font-size: 24px;
-                color: black;
+                margin: 5px 10px;
+                font-weight: 600;
+                font-size: 16px;
+                color: #312F2F;
             }
 
 /* Story page style */
@@ -386,7 +398,7 @@ html, body, body > div {
         padding-top: 0.5rem;
         padding-left: 1rem;
         padding-bottom: 0.2rem;
-        font-weight: 800;
+        font-weight: 700;
         line-height: 1;
         text-align: left;
     }
