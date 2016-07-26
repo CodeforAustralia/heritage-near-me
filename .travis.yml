@@ -2,7 +2,7 @@ language: node_js
 node_js:
   - "0.12"
 before_script:
-  - cd swipe-local-history/prototype
-  - npm install -g elm elm-test
+  - cd prototype
+  - npm install -g elm@0.16 elm-test
   - elm-package install -y
-script: ./makeapp.sh
+script: make app
