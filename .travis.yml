@@ -4,5 +4,5 @@ node_js:
 before_script:
   - cd prototype
   - npm install -g elm@0.16 elm-test
-  - elm-package install -y
+  - ./travis-elm-install-wrapper.sh
 script: make app
