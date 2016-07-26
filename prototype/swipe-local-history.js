@@ -13724,8 +13724,6 @@ Elm.Types.make = function (_elm) {
    var Window = F2(function (a,b) {    return {width: a,height: b};});
    var Dates = F2(function (a,b) {    return {start: a,end: b};});
    var Site = F2(function (a,b) {    return {id: a,name: b};});
-   var Unavailable = {ctor: "Unavailable"};
-   var Position = function (a) {    return {ctor: "Position",_0: a};};
    var LatLng = F2(function (a,b) {    return {lat: a,lng: b};});
    var FullStory = function (a) {    return {ctor: "FullStory",_0: a};};
    var DiscoverStory = function (a) {    return {ctor: "DiscoverStory",_0: a};};
@@ -14671,20 +14669,24 @@ Elm.Favourites.make = function (_elm) {
    });
    var viewFavourites = F2(function (address,favourites) {    return A2($Html.ul,_U.list([]),A2($List.map,viewFavourite(address),favourites));});
    var noStories = function (message) {
-      return A2($Html.div,_U.list([$Html$Attributes.$class("favourites-empty")]),_U.list([A2($Html.h2,_U.list([]),_U.list([$Html.text(message)]))]));
+      return A2($Html.div,
+      _U.list([$Html$Attributes.$class("favourites-empty")]),
+      _U.list([A2($Html.h2,_U.list([]),_U.list([$Html.text(message)]))
+              ,A2($Html.p,
+              _U.list([]),
+              _U.list([$Html.text("My favourites allows you to collect stories to read later. Return to Discovery mode to like stories and add them to this list.")]))]));
    };
    var view = F2(function (address,favourites) {
       return A2($Html.div,
       _U.list([$Html$Attributes.$class("favourites")]),
-      _U.list([A2($Html.h1,_U.list([]),_U.list([$Html.text("Favourites")]))
-              ,function () {
-                 var _p0 = favourites;
-                 if (_p0.ctor === "[]") {
-                       return noStories("You have no favourites yet");
-                    } else {
-                       return A2(viewFavourites,address,favourites);
-                    }
-              }()]));
+      _U.list([function () {
+         var _p0 = favourites;
+         if (_p0.ctor === "[]") {
+               return noStories("You have no favourites yet");
+            } else {
+               return A2(viewFavourites,address,favourites);
+            }
+      }()]));
    });
    return _elm.Favourites.values = {_op: _op,view: view};
 };
@@ -14752,27 +14754,32 @@ Elm.Navigation.make = function (_elm) {
    $Signal = Elm.Signal.make(_elm),
    $Types = Elm.Types.make(_elm);
    var _op = {};
+   var buttonHtml = F2(function (address,location) {
+      var _p0 = location;
+      switch (_p0.ctor)
+      {case "Discovering": return A2($Html.button,
+           _U.list([A2($Html$Events.onClick,address,$Types.ViewFavourites)]),
+           _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-heart fa-2x")]),_U.list([]))]));
+         case "Viewing": return A2($Html.button,
+           _U.list([A2($Html$Events.onClick,address,$Types.Back)]),
+           _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-angle-left fa-3x")]),_U.list([]))]));
+         default: return A2($Html.button,
+           _U.list([A2($Html$Events.onClick,address,$Types.Discover)]),
+           _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-map fa-2x")]),_U.list([]))]));}
+   });
+   var logoDiv = A2($Html.div,
+   _U.list([$Html$Attributes.$class("logo")]),
+   _U.list([A2($Html.a,_U.list([$Html$Attributes.href("/")]),_U.list([A2($Html.img,_U.list([$Html$Attributes.src("images/logo.png")]),_U.list([]))]))]));
+   var titleHtml = function (location) {
+      var container = $Html.div(_U.list([$Html$Attributes.$class("navigation-center")]));
+      var _p1 = location;
+      switch (_p1.ctor)
+      {case "Discovering": return container(_U.list([logoDiv]));
+         case "Viewing": return container(_U.list([logoDiv]));
+         default: return container(_U.list([A2($Html.h1,_U.list([]),_U.list([$Html.text("Favourites")]))]));}
+   };
    var navigation = F2(function (address,location) {
-      return A2($Html.nav,
-      _U.list([$Html$Attributes.$class("navigation")]),
-      _U.list([function () {
-                 var _p0 = location;
-                 switch (_p0.ctor)
-                 {case "Discovering": return A2($Html.button,
-                      _U.list([A2($Html$Events.onClick,address,$Types.ViewFavourites)]),
-                      _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-heart fa-2x")]),_U.list([]))]));
-                    case "Viewing": return A2($Html.button,
-                      _U.list([A2($Html$Events.onClick,address,$Types.Back)]),
-                      _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-angle-left fa-3x")]),_U.list([]))]));
-                    default: return A2($Html.button,
-                      _U.list([A2($Html$Events.onClick,address,$Types.Discover)]),
-                      _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-map fa-2x")]),_U.list([]))]));}
-              }()
-              ,A2($Html.div,
-              _U.list([$Html$Attributes.$class("logo")]),
-              _U.list([A2($Html.a,
-              _U.list([$Html$Attributes.href("/")]),
-              _U.list([A2($Html.img,_U.list([$Html$Attributes.src("images/logo.png")]),_U.list([]))]))]))]));
+      return A2($Html.nav,_U.list([$Html$Attributes.$class("navigation")]),_U.list([A2(buttonHtml,address,location),titleHtml(location)]));
    });
    return _elm.Navigation.values = {_op: _op,navigation: navigation};
 };
@@ -14803,10 +14810,10 @@ Elm.View.make = function (_elm) {
       switch (_p0.ctor)
       {case "Discovering": return A3($Discover.view,address,app,A2($Navigation.navigation,address,app.location));
          case "Viewing": return A2($Html.div,
-           _U.list([$Html$Attributes.$class("app")]),
+           _U.list([$Html$Attributes.$class("app story-screen")]),
            _U.list([A2($Navigation.navigation,address,app.location),A3($Story.view,address,A2($Data.getItem,_p0._0,app),_p0._1)]));
          default: return A2($Html.div,
-           _U.list([$Html$Attributes.$class("app")]),
+           _U.list([$Html$Attributes.$class("app favourites-screen")]),
            _U.list([A2($Navigation.navigation,address,app.location)
                    ,A2($Favourites.view,
                    address,
