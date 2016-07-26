@@ -20,7 +20,7 @@ url old new = if old.location /= new.location then
         Just <| case new.location of
             Discovering       -> RouteHash.set ["discover"]
             ViewingFavourites -> RouteHash.set ["favourites"]
-            Viewing storyId _ -> RouteHash.set ["story", urliseStory storyId]
+            Viewing storyId _ _ -> RouteHash.set ["story", urliseStory storyId]
     else
         Nothing
 

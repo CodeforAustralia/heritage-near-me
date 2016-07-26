@@ -192,14 +192,14 @@ updateModel action app = case (app.location, action) of
     (Discovering, Favourite)                  -> {app | location = Discovering, discovery = favouriteItem app.discovery}
     (Discovering, Pass)                       -> {app | location = Discovering, discovery = passItem app.discovery}
     -- Viewing location actions
-    (Viewing item view, Animate time window)  -> {app | location = Viewing item {view | photoPosition = Swiping.animateStep time window view.photoPosition}}
-    (Viewing item view, MovePhoto pos)        -> {app | location = Viewing item {view | photoPosition = pos}}
-    (Viewing item view, PrevPhoto)            -> {app | location = Viewing item {view | photoIndex = view.photoIndex-1, photoPosition = Static}}
-    (Viewing item view, NextPhoto)            -> {app | location = Viewing item {view | photoIndex = view.photoIndex+1, photoPosition = Static}}
-    (Viewing item view, JumpPhoto index)      -> {app | location = Viewing item {view | photoIndex = index, photoPosition = Static}}
+    (Viewing item view _ , Animate time window) -> {app | location = Viewing item {view | photoPosition = Swiping.animateStep time window view.photoPosition} initialStoryScreen}
+    (Viewing item view _ , MovePhoto pos)       -> {app | location = Viewing item {view | photoPosition = pos} initialStoryScreen}
+    (Viewing item view _ , PrevPhoto)           -> {app | location = Viewing item {view | photoIndex = view.photoIndex-1, photoPosition = Static} initialStoryScreen}
+    (Viewing item view _ , NextPhoto)           -> {app | location = Viewing item {view | photoIndex = view.photoIndex+1, photoPosition = Static} initialStoryScreen}
+    (Viewing item view _ , JumpPhoto index)     -> {app | location = Viewing item {view | photoIndex = index, photoPosition = Static} initialStoryScreen}
     -- Location change actions
     (_, Discover)                             -> {app | location = Discovering}
-    (_, View story')                          -> {app | location = Viewing story' initialItemView}
+    (_, View story')                          -> {app | location = Viewing story' initialItemView initialStoryScreen}
     (_, ViewFavourites)                       -> {app | location = ViewingFavourites}
     -- Data update actions
     (_, LoadData updateItems)                 -> {app | items = updateItems app.items}
@@ -256,7 +256,7 @@ updateAction action app = case action of
             _ -> Effects.none
     Back -> Effects.map (\_ -> NoAction) <| Effects.task History.back
     Animate time window -> case app.location of
-        Viewing _ view -> case view.photoPosition of
+        Viewing _ view _-> case view.photoPosition of
             Leaving window pos start end _ ->
                 if time > end then
                     Effects.task <| Task.succeed
@@ -397,4 +397,6 @@ fetchDiscover requestStoriesTask =
 initialItemView : ItemView
 initialItemView = {photoIndex = 0, photoPosition = Static}
 
+initialStoryScreen : StoryScreen
+initialStoryScreen = Intro
 

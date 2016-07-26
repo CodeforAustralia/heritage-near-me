@@ -24,7 +24,7 @@ titleHtml location =
             Discovering -> 
                 container [logoDiv]
 
-            Viewing _ _ ->
+            Viewing _ _ _ ->
                 container [logoDiv]
 
             ViewingFavourites ->
@@ -41,7 +41,7 @@ buttonHtml address location =
         Discovering ->
             button [onClick address ViewFavourites] [i [class "fa fa-heart fa-2x"] []]
 
-        Viewing _ _  ->
+        Viewing _ _ _ ->
             button [onClick address Back] [i [class "fa fa-angle-left fa-3x"] []]
 
         ViewingFavourites ->
