@@ -23,17 +23,7 @@ view : Signal.Address AppAction -> RemoteData Story -> ItemView -> Html
 view address story item = div [class "story"]
     <| case story of
         Loaded story ->
-            [ if (List.length <| photos story) > 1 then
-                    div
-                        ([class "photo-slide"] ++ onSwipe address (itemSwipe item.photoPosition) swipePhotoAction)
-                        [ div [class "photos"]
-                            <| List.map (storyImage story item.photoPosition) [item.photoIndex-1, item.photoIndex, item.photoIndex+1]
-                        , photoIndicators address story item.photoIndex
-                        ]
-                else
-                    div
-                        [class "photos"]
-                        [storyImage story item.photoPosition item.photoIndex] 
+            [ photoSlider address story item
             , h1 [class "title"] [text <| title story]
             ] ++ case story of
                 DiscoverStory discoverStory -> [loading]
@@ -63,6 +53,21 @@ view address story item = div [class "story"]
             [ text "Something went wrong: ", text <| toString <| log error]
         Loading ->
             [ loading ]
+
+
+photoSlider : Signal.Address AppAction -> Story -> ItemView -> Html
+photoSlider address story item =
+    if (List.length <| photos story) > 1 then
+        div
+            ([class "photo-slide"] ++ onSwipe address (itemSwipe item.photoPosition) swipePhotoAction)
+            [ div [class "photos"]
+                <| List.map (storyImage story item.photoPosition) [item.photoIndex-1, item.photoIndex, item.photoIndex+1]
+            , photoIndicators address story item.photoIndex
+            ]
+    else
+        div
+            [class "photos"]
+            [storyImage story item.photoPosition item.photoIndex]
 
 log : a -> a
 log anything =
