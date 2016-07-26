@@ -1,6 +1,6 @@
 module Favourites (view) where
 
-import Html exposing (Html, div, h1, h2, img, ul, li, text)
+import Html exposing (Html, div, h1, h2, p, img, ul, li, text)
 import Html.Events exposing (onClick)
 import Html.Attributes as Attr exposing (..)
 
@@ -17,7 +17,7 @@ view address favourites = div [class "favourites"]
 
 {-| The HTML to display when no stories are available for some reason -}
 noStories : String -> Html
-noStories message = div [class "favourites-empty"] [h2 [] [text message]]
+noStories message = div [class "favourites-empty"] [h2 [] [text message], p [] [text "My favourites allows you to collect stories to read later. Return to Discovery mode to like stories and add them to this list."]]
 
 {- The view for a list of favourites -}
 viewFavourites : Signal.Address AppAction -> Favourites Story -> Html
