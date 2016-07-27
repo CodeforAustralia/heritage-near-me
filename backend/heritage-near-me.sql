@@ -70,7 +70,7 @@ CREATE SCHEMA hnm
 
 	CREATE VIEW story_details AS
 		SELECT
-			story.id, story.title, story.blurb, story.story,
+			story.id, story.title, story.blurb, story.story, story.quote,
 			min(site.suburb) AS suburb,
 			json_agg(photo.photo) AS photos,
 			json_object('{start, end}', ARRAY[to_char(story.dateStart, 'YYYY-MM-DD'), to_char(story.dateEnd, 'YYYY-MM-DD')]) AS dates,
@@ -248,6 +248,7 @@ CREATE OR REPLACE FUNCTION hnm.story_details_by_location(lat TEXT, lng TEXT, sto
         title TEXT,
         blurb TEXT,
         story TEXT,
+        quote TEXT,
         suburb TEXT, -- suburb for the site associated with the story and closest to the provided location
         distance FLOAT, -- distance in meters to closest site for the story
         photos JSONB,
@@ -259,7 +260,7 @@ $$
 BEGIN
     RETURN QUERY
     SELECT
-        story.id, story.title, story.blurb, story.story,
+        story.id, story.title, story.blurb, story.story, story.quote,
         MIN(nearest_site.suburb) suburb, -- MIN() is no different than taking the first, since nearest_site.suburb is same for any given story
         MIN(nearest_site.distance) distance, -- MIN(d1,d1,d1) = d1. They're the same distance.
 		jsonb_agg(photo.photo) AS photos,
