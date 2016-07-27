@@ -27,9 +27,9 @@ view : Signal.Address AppAction -> AppModel -> Html
 view address app = case app.location of
     Discovering -> Discover.view address app
         <| navigation address app.location
-    Viewing storyId itemView -> div [class "app story-screen"]
+    Viewing storyId itemView storyScreen -> div [class <| "app story-screen " ++ storyScreenClass storyScreen]
         [ navigation address app.location
-        , Story.view address (Data.getItem storyId app) itemView
+        , Story.view address (Data.getItem storyId app) itemView storyScreen
         ]
     ViewingFavourites -> div [class "app favourites-screen"]
         [ navigation address app.location
@@ -39,4 +39,16 @@ view address app = case app.location of
             <| app.discovery.favourites
         ]
 
+{-| The CSS class name for a story screen
+
+    storyScreenClass Intro = "story-intro"
+    storyScreenClass Intro = "story-body"
+ -}
+storyScreenClass : StoryScreen -> String
+storyScreenClass screen =
+    case screen of
+        Intro ->
+            "story-intro"
+        Body ->
+            "story-body"
 

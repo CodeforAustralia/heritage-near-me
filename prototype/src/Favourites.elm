@@ -5,7 +5,7 @@ import Html.Events exposing (onClick)
 import Html.Attributes as Attr exposing (..)
 
 import Types exposing (..)
-import Story
+import Story exposing (viewStoryAction)
 
 {-| The main HTML view for looking at a user's favourite stories -}
 view : Signal.Address AppAction -> Favourites Story -> Html
@@ -26,10 +26,11 @@ viewFavourites address favourites = ul []
 
 {- The view for a single favourite story in a list of stories -}
 viewFavourite : Signal.Address AppAction -> Story -> Html
-viewFavourite address favourite = li [onClick address <| View <| Story.id favourite]
+viewFavourite address favourite = li [onClick address <| viewStoryAction favourite]
     [ favouriteImage favourite
     , h2 [class "title"] [text <| Story.title favourite]
     ]
+
 
 {- The image for a favourite story -}
 favouriteImage favourite = div

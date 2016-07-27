@@ -10,7 +10,7 @@ import Loading exposing (loading)
 import Swiping exposing (itemSwipe, itemPos, onSwipe, swipeAction)
 import Data exposing (getItem)
 import Remote.Data exposing (RemoteData(..))
-import Story
+import Story exposing (viewStoryAction)
 
 {-| The main HTML view for discovering stories -}
 view : Signal.Address AppAction -> AppModel -> Html -> Html
@@ -50,7 +50,7 @@ noStory message = div [class "discovery-empty"] [h2 [] [text message]]
 {-| The HTML view for an individual story -}
 viewStory : Signal.Address AppAction -> Story -> ItemPosition -> Html
 viewStory address story pos = div
-    ([ onClick address <| View <| Story.id story
+    ([ onClick address <| viewStoryAction story
     , class "discovery-story"
     , style <| styleStory pos
     ] ++ onSwipe address (itemSwipe pos) swipeAction)

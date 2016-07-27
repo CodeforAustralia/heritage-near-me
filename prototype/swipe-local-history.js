@@ -13728,6 +13728,9 @@ Elm.Types.make = function (_elm) {
    var FullStory = function (a) {    return {ctor: "FullStory",_0: a};};
    var DiscoverStory = function (a) {    return {ctor: "DiscoverStory",_0: a};};
    var StoryId = function (a) {    return {ctor: "StoryId",_0: a};};
+   var Body = {ctor: "Body"};
+   var Intro = {ctor: "Intro"};
+   var screen1 = Intro;
    var ItemView = F2(function (a,b) {    return {photoIndex: a,photoPosition: b};});
    var Discovery = F5(function (a,b,c,d,e) {    return {item: a,itemPosition: b,items: c,favourites: d,passes: e};});
    var Leaving = F5(function (a,b,c,d,e) {    return {ctor: "Leaving",_0: a,_1: b,_2: c,_3: d,_4: e};});
@@ -13741,7 +13744,7 @@ Elm.Types.make = function (_elm) {
    var LoadData = function (a) {    return {ctor: "LoadData",_0: a};};
    var Back = {ctor: "Back"};
    var ViewFavourites = {ctor: "ViewFavourites"};
-   var View = function (a) {    return {ctor: "View",_0: a};};
+   var View = F2(function (a,b) {    return {ctor: "View",_0: a,_1: b};});
    var JumpPhoto = function (a) {    return {ctor: "JumpPhoto",_0: a};};
    var NextPhoto = {ctor: "NextPhoto"};
    var PrevPhoto = {ctor: "PrevPhoto"};
@@ -13753,10 +13756,11 @@ Elm.Types.make = function (_elm) {
    var UpdateLocation = function (a) {    return {ctor: "UpdateLocation",_0: a};};
    var Discover = {ctor: "Discover"};
    var ViewingFavourites = {ctor: "ViewingFavourites"};
-   var Viewing = F2(function (a,b) {    return {ctor: "Viewing",_0: a,_1: b};});
+   var Viewing = F3(function (a,b,c) {    return {ctor: "Viewing",_0: a,_1: b,_2: c};});
    var Discovering = {ctor: "Discovering"};
    var App = F4(function (a,b,c,d) {    return {location: a,discovery: b,items: c,latLng: d};});
    return _elm.Types.values = {_op: _op
+                              ,screen1: screen1
                               ,Discovery: Discovery
                               ,ItemView: ItemView
                               ,Site: Site
@@ -13766,6 +13770,8 @@ Elm.Types.make = function (_elm) {
                               ,Discovering: Discovering
                               ,Viewing: Viewing
                               ,ViewingFavourites: ViewingFavourites
+                              ,Intro: Intro
+                              ,Body: Body
                               ,StoryId: StoryId
                               ,DiscoverStory: DiscoverStory
                               ,FullStory: FullStory
@@ -14106,6 +14112,7 @@ Elm.Story.make = function (_elm) {
    var title = function (story) {    var _p6 = story;if (_p6.ctor === "DiscoverStory") {    return _p6._0.title;} else {    return _p6._0.title;}};
    var storyIdToStr = function (_p7) {    var _p8 = _p7;return $Basics.toString(_p8._0);};
    var id = function (story) {    var _p9 = story;if (_p9.ctor === "DiscoverStory") {    return _p9._0.id;} else {    return _p9._0.id;}};
+   var viewStoryAction = function (story) {    return A2($Types.View,id(story),$Types.screen1);};
    var storyIndex = F2(function (index,story) {    return A2($Basics._op["%"],index,$List.length(photos(story)));});
    var photoPosition = function (pos) {
       return _U.list([{ctor: "_Tuple2",_0: "position",_1: "relative"}
@@ -14159,93 +14166,127 @@ Elm.Story.make = function (_elm) {
       photos(story)));
    });
    var log = function (anything) {    return A2($Debug.log,"",anything);};
-   var view = F3(function (address,story,item) {
+   var photoSlider = F4(function (address,story,item,screen) {
+      return _U.eq(screen,$Types.Intro) && _U.cmp($List.length(photos(story)),1) > 0 ? A2($Html.div,
+      A2($Basics._op["++"],
+      _U.list([$Html$Attributes.$class("photo-slide")]),
+      A3($Swiping.onSwipe,address,$Swiping.itemSwipe(item.photoPosition),$Swiping.swipePhotoAction)),
+      _U.list([A2($Html.div,
+              _U.list([$Html$Attributes.$class("photos")]),
+              A2($List.map,A2(storyImage,story,item.photoPosition),_U.list([item.photoIndex - 1,item.photoIndex,item.photoIndex + 1])))
+              ,A3(photoIndicators,address,story,item.photoIndex)])) : A2($Html.div,
+      _U.list([$Html$Attributes.$class("photos")]),
+      _U.list([A3(storyImage,story,item.photoPosition,item.photoIndex)]));
+   });
+   var introOrBody = F2(function (story,storyScreen) {
+      var _p11 = {ctor: "_Tuple2",_0: story,_1: storyScreen};
+      if (_p11._0.ctor === "FullStory") {
+            if (_p11._1.ctor === "Intro") {
+                  return A2($Html.p,_U.list([]),_U.list([$Html.text(_p11._0._0.blurb)]));
+               } else {
+                  return A2($Html.div,_U.list([$Html$Attributes.$class("passage")]),_U.list([$Markdown.toHtml(_p11._0._0.story)]));
+               }
+         } else {
+            return $Html.text("");
+         }
+   });
+   var storyButton = F3(function (address,story,storyScreen) {
+      var _p12 = {ctor: "_Tuple2",_0: story,_1: storyScreen};
+      if (_p12._0.ctor === "FullStory" && _p12._1.ctor === "Intro") {
+            return A2($Html.a,
+            _U.list([$Html$Attributes.$class("btn btn-story"),A2($Html$Events.onClick,address,A2($Types.View,_p12._0._0.id,$Types.Body))]),
+            _U.list([$Html.text("Story")]));
+         } else {
+            return $Html.text("");
+         }
+   });
+   var titleHtml = function (story) {    return A2($Html.h1,_U.list([$Html$Attributes.$class("title")]),_U.list([$Html.text(title(story))]));};
+   var metaHtml = F2(function (story,screen) {
+      var _p13 = {ctor: "_Tuple2",_0: story,_1: screen};
+      if (_p13._0.ctor === "DiscoverStory") {
+            return titleHtml(story);
+         } else {
+            var _p17 = _p13._0._0;
+            return A2($Html.div,
+            _U.list([$Html$Attributes.$class("fullStory-meta")]),
+            _U.list([titleHtml(story)
+                    ,A2($Html.div,_U.list([$Html$Attributes.$class("fullStory-site")]),_U.list([$Html.text(sitesName(_p17.sites))]))
+                    ,function () {
+                       var _p14 = _p17.suburb;
+                       if (_p14.ctor === "Just") {
+                             return A2($Html.div,_U.list([$Html$Attributes.$class("fullStory-suburb")]),_U.list([$Html.text(_p14._0)]));
+                          } else {
+                             return $Html.text("");
+                          }
+                    }()
+                    ,function () {
+                       var _p15 = formatDate(_p17.dates);
+                       if (_p15.ctor === "Just") {
+                             return A2($Html.div,_U.list([$Html$Attributes.$class("fullStory-date")]),_U.list([$Html.text(_p15._0)]));
+                          } else {
+                             return $Html.text("");
+                          }
+                    }()
+                    ,function () {
+                       var _p16 = distance(story);
+                       if (_p16.ctor === "Just") {
+                             return A2($Html.p,
+                             _U.list([$Html$Attributes.$class("fullStory-distance")]),
+                             _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-map-marker")]),_U.list([])),$Html.text(" "),$Html.text(_p16._0)]));
+                          } else {
+                             return A2($Html.p,
+                             _U.list([$Html$Attributes.$class("fullStory-distance got-no-distance")]),
+                             _U.list([$Html.text("got-no-distance")]));
+                          }
+                    }()]));
+         }
+   });
+   var view = F4(function (address,story,item,storyScreen) {
       return A2($Html.div,
       _U.list([$Html$Attributes.$class("story")]),
       function () {
-         var _p11 = story;
-         switch (_p11.ctor)
-         {case "Loaded": var _p20 = _p11._0;
+         var _p18 = story;
+         switch (_p18.ctor)
+         {case "Loaded": var _p24 = _p18._0;
               return A2($Basics._op["++"],
-              _U.list([_U.cmp($List.length(photos(_p20)),1) > 0 ? A2($Html.div,
-                      A2($Basics._op["++"],
-                      _U.list([$Html$Attributes.$class("photo-slide")]),
-                      A3($Swiping.onSwipe,address,$Swiping.itemSwipe(item.photoPosition),$Swiping.swipePhotoAction)),
-                      _U.list([A2($Html.div,
-                              _U.list([$Html$Attributes.$class("photos")]),
-                              A2($List.map,A2(storyImage,_p20,item.photoPosition),_U.list([item.photoIndex - 1,item.photoIndex,item.photoIndex + 1])))
-                              ,A3(photoIndicators,address,_p20,item.photoIndex)])) : A2($Html.div,
-                      _U.list([$Html$Attributes.$class("photos")]),
-                      _U.list([A3(storyImage,_p20,item.photoPosition,item.photoIndex)]))
-                      ,A2($Html.h1,_U.list([$Html$Attributes.$class("title")]),_U.list([$Html.text(title(_p20))]))]),
+              _U.list([A4(photoSlider,address,_p24,item,storyScreen),A2(metaHtml,_p24,storyScreen)]),
               function () {
-                 var _p12 = _p20;
-                 if (_p12.ctor === "DiscoverStory") {
+                 var _p19 = _p24;
+                 if (_p19.ctor === "DiscoverStory") {
                        return _U.list([$Loading.loading]);
                     } else {
-                       var _p19 = _p12._0;
-                       return _U.list([A2($Html.div,
-                                      _U.list([$Html$Attributes.$class("fullStory-meta")]),
-                                      _U.list([A2($Html.div,_U.list([$Html$Attributes.$class("fullStory-site")]),_U.list([$Html.text(sitesName(_p19.sites))]))
-                                              ,function () {
-                                                 var _p13 = _p19.suburb;
-                                                 if (_p13.ctor === "Just") {
-                                                       return A2($Html.div,
-                                                       _U.list([$Html$Attributes.$class("fullStory-suburb")]),
-                                                       _U.list([$Html.text(_p13._0)]));
-                                                    } else {
-                                                       return $Html.text("");
-                                                    }
-                                              }()
-                                              ,function () {
-                                                 var _p14 = formatDate(_p19.dates);
-                                                 if (_p14.ctor === "Just") {
-                                                       return A2($Html.div,_U.list([$Html$Attributes.$class("fullStory-date")]),_U.list([$Html.text(_p14._0)]));
-                                                    } else {
-                                                       return $Html.text("");
-                                                    }
-                                              }()
-                                              ,function () {
-                                                 var _p15 = distance(_p20);
-                                                 if (_p15.ctor === "Just") {
-                                                       return A2($Html.p,
-                                                       _U.list([$Html$Attributes.$class("fullStory-distance")]),
-                                                       _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-map-marker")]),_U.list([]))
-                                                               ,$Html.text(" ")
-                                                               ,$Html.text(_p15._0)]));
-                                                    } else {
-                                                       return $Html.text("got-no-distance");
-                                                    }
-                                              }()]))
-                                      ,A2($Html.blockquote,_U.list([]),_U.list([$Html.text(_p19.blurb)]))
-                                      ,function () {
-                                         var _p16 = $List.head(_p19.locations);
-                                         if (_p16.ctor === "Just") {
-                                               var _p17 = _p16._0;
+                       var _p23 = _p19._0;
+                       return _U.list([function () {
+                                         var _p20 = $List.head(_p23.locations);
+                                         if (_p20.ctor === "Just") {
+                                               var _p21 = _p20._0;
                                                return A2($Html.div,
-                                               _U.list([$Html$Attributes.$class("directions")]),
+                                               _U.list([$Html$Attributes.$class("btn btn-directions directions")]),
                                                _U.list([A2($Html.a,
                                                _U.list([$Html$Attributes.href(A2($Basics._op["++"],
                                                        "https://www.google.com/maps/dir/Current+Location/",
-                                                       A2($Basics._op["++"],_p17.lat,A2($Basics._op["++"],",",_p17.lng))))
+                                                       A2($Basics._op["++"],_p21.lat,A2($Basics._op["++"],",",_p21.lng))))
                                                        ,$Html$Attributes.target("_blank")]),
                                                _U.list([$Html.text("Directions")]))]));
                                             } else {
                                                return $Html.text("");
                                             }
                                       }()
-                                      ,A2($Html.div,_U.list([$Html$Attributes.$class("passage")]),_U.list([$Markdown.toHtml(_p19.story)]))
+                                      ,A3(storyButton,address,_p24,storyScreen)
+                                      ,A2(introOrBody,_p24,storyScreen)
                                       ,function () {
-                                         var _p18 = _p19.sites;
-                                         if (_p18.ctor === "[]") {
+                                         var _p22 = _p23.sites;
+                                         if (_p22.ctor === "[]") {
                                                return $Html.text("");
                                             } else {
-                                               return links(_p19);
+                                               return links(_p23);
                                             }
                                       }()]);
                     }
               }());
-            case "Failed": return _U.list([$Html.text("Something went wrong: "),$Html.text($Basics.toString(log(_p11._0)))]);
+            case "Failed": return _U.list([A2($Html.div,
+              _U.list([$Html$Attributes.$class("error")]),
+              _U.list([$Html.text("Something went wrong: "),$Html.text($Basics.toString(log(_p18._0)))]))]);
             default: return _U.list([$Loading.loading]);}
       }());
    });
@@ -14257,7 +14298,8 @@ Elm.Story.make = function (_elm) {
                               ,storySiteName: storySiteName
                               ,photo: photo
                               ,photos: photos
-                              ,distance: distance};
+                              ,distance: distance
+                              ,viewStoryAction: viewStoryAction};
 };
 Elm.Native.TimeTask = {};
 Elm.Native.TimeTask.make = function(localRuntime) {
@@ -14561,7 +14603,7 @@ Elm.Discover.make = function (_elm) {
    var viewStory = F3(function (address,story,pos) {
       return A2($Html.div,
       A2($Basics._op["++"],
-      _U.list([A2($Html$Events.onClick,address,$Types.View($Story.id(story)))
+      _U.list([A2($Html$Events.onClick,address,$Story.viewStoryAction(story))
               ,$Html$Attributes.$class("discovery-story")
               ,$Html$Attributes.style(styleStory(pos))]),
       A3($Swiping.onSwipe,address,$Swiping.itemSwipe(pos),$Swiping.swipeAction)),
@@ -14664,7 +14706,7 @@ Elm.Favourites.make = function (_elm) {
    };
    var viewFavourite = F2(function (address,favourite) {
       return A2($Html.li,
-      _U.list([A2($Html$Events.onClick,address,$Types.View($Story.id(favourite)))]),
+      _U.list([A2($Html$Events.onClick,address,$Story.viewStoryAction(favourite))]),
       _U.list([favouriteImage(favourite),A2($Html.h2,_U.list([$Html$Attributes.$class("title")]),_U.list([$Html.text($Story.title(favourite))]))]));
    });
    var viewFavourites = F2(function (address,favourites) {    return A2($Html.ul,_U.list([]),A2($List.map,viewFavourite(address),favourites));});
@@ -14703,34 +14745,45 @@ Elm.Route.make = function (_elm) {
    $Result = Elm.Result.make(_elm),
    $RouteHash = Elm.RouteHash.make(_elm),
    $Signal = Elm.Signal.make(_elm),
+   $Story = Elm.Story.make(_elm),
    $String = Elm.String.make(_elm),
    $Types = Elm.Types.make(_elm);
    var _op = {};
-   var urliseStory = function (_p0) {    var _p1 = _p0;return $Basics.toString(_p1._0);};
+   var urliseStoryScreen = function (screen) {    var _p0 = screen;if (_p0.ctor === "Intro") {    return "";} else {    return "body";}};
+   var parseStoryScreen = function (storyScreen) {    var _p1 = storyScreen;if (_p1 === "body") {    return $Types.Body;} else {    return $Types.Intro;}};
+   var parseStoryId = function (storyId) {    return $Types.StoryId(A2($Maybe.withDefault,-1,$Result.toMaybe($String.toInt(storyId))));};
    var url = F2(function (old,$new) {
       return !_U.eq(old.location,$new.location) ? $Maybe.Just(function () {
          var _p2 = $new.location;
          switch (_p2.ctor)
          {case "Discovering": return $RouteHash.set(_U.list(["discover"]));
             case "ViewingFavourites": return $RouteHash.set(_U.list(["favourites"]));
-            default: return $RouteHash.set(_U.list(["story",urliseStory(_p2._0)]));}
+            default: return $RouteHash.set(_U.list(["story",$Story.storyIdToStr(_p2._0),urliseStoryScreen(_p2._2)]));}
       }()) : $Maybe.Nothing;
    });
    var action = function (url) {
       var _p3 = url;
-      _v2_3: do {
+      _v3_4: do {
          if (_p3.ctor === "::") {
                switch (_p3._0)
                {case "discover": return _U.list([$Types.Discover]);
                   case "favourites": return _U.list([$Types.ViewFavourites]);
                   case "story": if (_p3._1.ctor === "::") {
-                          return _U.list([$Types.View($Types.StoryId(A2($Maybe.withDefault,-1,$Result.toMaybe($String.toInt(_p3._1._0)))))]);
+                          if (_p3._1._1.ctor === "::") {
+                                var screen = parseStoryScreen(_p3._1._1._0);
+                                var id = parseStoryId(_p3._1._0);
+                                return _U.list([A2($Types.View,id,screen)]);
+                             } else {
+                                var screen = $Types.screen1;
+                                var id = parseStoryId(_p3._1._0);
+                                return _U.list([A2($Types.View,id,screen)]);
+                             }
                        } else {
-                          break _v2_3;
+                          break _v3_4;
                        }
-                  default: break _v2_3;}
+                  default: break _v3_4;}
             } else {
-               break _v2_3;
+               break _v3_4;
             }
       } while (false);
       return A2($Debug.log,"converted url into default action: ",_U.list([$Types.Discover]));
@@ -14805,13 +14858,15 @@ Elm.View.make = function (_elm) {
    $Story = Elm.Story.make(_elm),
    $Types = Elm.Types.make(_elm);
    var _op = {};
+   var storyScreenClass = function (screen) {    var _p0 = screen;if (_p0.ctor === "Intro") {    return "story-intro";} else {    return "story-body";}};
    var view = F2(function (address,app) {
-      var _p0 = app.location;
-      switch (_p0.ctor)
+      var _p1 = app.location;
+      switch (_p1.ctor)
       {case "Discovering": return A3($Discover.view,address,app,A2($Navigation.navigation,address,app.location));
-         case "Viewing": return A2($Html.div,
-           _U.list([$Html$Attributes.$class("app story-screen")]),
-           _U.list([A2($Navigation.navigation,address,app.location),A3($Story.view,address,A2($Data.getItem,_p0._0,app),_p0._1)]));
+         case "Viewing": var _p2 = _p1._2;
+           return A2($Html.div,
+           _U.list([$Html$Attributes.$class(A2($Basics._op["++"],"app story-screen ",storyScreenClass(_p2)))]),
+           _U.list([A2($Navigation.navigation,address,app.location),A4($Story.view,address,A2($Data.getItem,_p1._0,app),_p1._1,_p2)]));
          default: return A2($Html.div,
            _U.list([$Html$Attributes.$class("app favourites-screen")]),
            _U.list([A2($Navigation.navigation,address,app.location)
@@ -15000,36 +15055,38 @@ Elm.Main.make = function (_elm) {
               {case "Discovering": return _U.update(app,{discovery: A3(animateItem,app.discovery,_p18._1._0,_p18._1._1)});
                  case "Viewing": var _p19 = _p18._0._1;
                    return _U.update(app,
-                   {location: A2($Types.Viewing,
+                   {location: A3($Types.Viewing,
                    _p18._0._0,
-                   _U.update(_p19,{photoPosition: A3($Swiping.animateStep,_p18._1._0,_p18._1._1,_p19.photoPosition)}))});
+                   _U.update(_p19,{photoPosition: A3($Swiping.animateStep,_p18._1._0,_p18._1._1,_p19.photoPosition)}),
+                   $Types.screen1)});
                  default: break _v10_15;}
             case "MovePhoto": if (_p18._0.ctor === "Viewing") {
-                    return _U.update(app,{location: A2($Types.Viewing,_p18._0._0,_U.update(_p18._0._1,{photoPosition: _p18._1._0}))});
+                    return _U.update(app,{location: A3($Types.Viewing,_p18._0._0,_U.update(_p18._0._1,{photoPosition: _p18._1._0}),$Types.screen1)});
                  } else {
                     break _v10_15;
                  }
             case "PrevPhoto": if (_p18._0.ctor === "Viewing") {
                     var _p20 = _p18._0._1;
                     return _U.update(app,
-                    {location: A2($Types.Viewing,_p18._0._0,_U.update(_p20,{photoIndex: _p20.photoIndex - 1,photoPosition: $Types.Static}))});
+                    {location: A3($Types.Viewing,_p18._0._0,_U.update(_p20,{photoIndex: _p20.photoIndex - 1,photoPosition: $Types.Static}),$Types.screen1)});
                  } else {
                     break _v10_15;
                  }
             case "NextPhoto": if (_p18._0.ctor === "Viewing") {
                     var _p21 = _p18._0._1;
                     return _U.update(app,
-                    {location: A2($Types.Viewing,_p18._0._0,_U.update(_p21,{photoIndex: _p21.photoIndex + 1,photoPosition: $Types.Static}))});
+                    {location: A3($Types.Viewing,_p18._0._0,_U.update(_p21,{photoIndex: _p21.photoIndex + 1,photoPosition: $Types.Static}),$Types.screen1)});
                  } else {
                     break _v10_15;
                  }
             case "JumpPhoto": if (_p18._0.ctor === "Viewing") {
-                    return _U.update(app,{location: A2($Types.Viewing,_p18._0._0,_U.update(_p18._0._1,{photoIndex: _p18._1._0,photoPosition: $Types.Static}))});
+                    return _U.update(app,
+                    {location: A3($Types.Viewing,_p18._0._0,_U.update(_p18._0._1,{photoIndex: _p18._1._0,photoPosition: $Types.Static}),$Types.screen1)});
                  } else {
                     break _v10_15;
                  }
             case "Discover": return _U.update(app,{location: $Types.Discovering});
-            case "View": return _U.update(app,{location: A2($Types.Viewing,_p18._1._0,initialItemView)});
+            case "View": return _U.update(app,{location: A3($Types.Viewing,_p18._1._0,initialItemView,_p18._1._1)});
             case "ViewFavourites": return _U.update(app,{location: $Types.ViewingFavourites});
             case "LoadData": return _U.update(app,{items: _p18._1._0(app.items)});
             case "LoadDiscoveryData": return _U.update(app,{items: _p18._1._1(app.items),discovery: A2(updateDiscoverableItems,app.discovery,_p18._1._0)});

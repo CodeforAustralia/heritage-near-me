@@ -1,4 +1,4 @@
-module Story (view, id, storyIdToStr, title, storySiteName, photo, photos, distance) where
+module Story (view, id, storyIdToStr, title, storySiteName, photo, photos, distance, viewStoryAction) where
 
 import Date exposing (Date)
 import Date.Format
@@ -19,50 +19,87 @@ import Swiping exposing (onSwipe, swipePhotoAction, itemSwipe, itemPos)
 {-| The main HTML view for an individual story.
 Displays a simpler view if only part of the story is available.
 -} 
-view : Signal.Address AppAction -> RemoteData Story -> ItemView -> Html
-view address story item = div [class "story"]
+view : Signal.Address AppAction -> RemoteData Story -> ItemView -> StoryScreen -> Html
+view address story item storyScreen = div [class "story"]
     <| case story of
         Loaded story ->
-            [ if (List.length <| photos story) > 1 then
-                    div
-                        ([class "photo-slide"] ++ onSwipe address (itemSwipe item.photoPosition) swipePhotoAction)
-                        [ div [class "photos"]
-                            <| List.map (storyImage story item.photoPosition) [item.photoIndex-1, item.photoIndex, item.photoIndex+1]
-                        , photoIndicators address story item.photoIndex
-                        ]
-                else
-                    div
-                        [class "photos"]
-                        [storyImage story item.photoPosition item.photoIndex] 
-            , h1 [class "title"] [text <| title story]
+            [ photoSlider address story item storyScreen
+            , metaHtml story storyScreen
             ] ++ case story of
                 DiscoverStory discoverStory -> [loading]
                 FullStory fullStory -> [
-                    div [class "fullStory-meta"] [
-                        div [class "fullStory-site"] [text (sitesName fullStory.sites)]
-                        , case fullStory.suburb of
-                            Just suburb -> div [class "fullStory-suburb"] [text suburb]
-                            Nothing -> text ""
-                        , case formatDate fullStory.dates of
-                            Just date -> div [class "fullStory-date"] [text date]
-                            Nothing -> text ""
-                        ,  case distance story of
-                            Just distance -> p [class "fullStory-distance"] [i [class "fa fa-map-marker"] [], text " ", text distance]
-                            Nothing -> text "got-no-distance"
-                    ]
-                    , blockquote [] [text fullStory.blurb]
-                    , case (List.head fullStory.locations) of
-                        Just latlng -> div [class "directions"] [a [href ("https://www.google.com/maps/dir/Current+Location/" ++ latlng.lat ++ "," ++ latlng.lng), target "_blank"] [text "Directions"]]
+                    case (List.head fullStory.locations) of
+                        Just latlng -> div [class "btn btn-directions directions"] [a [href ("https://www.google.com/maps/dir/Current+Location/" ++ latlng.lat ++ "," ++ latlng.lng), target "_blank"] [text "Directions"]]
                         Nothing -> text ""
-                    , div [class "passage"] [Markdown.toHtml fullStory.story]
+                    , storyButton address story storyScreen
+                    , introOrBody story storyScreen
                     , case fullStory.sites of
                         [] -> text ""
                         _ -> links fullStory
                     ]
         Failed error ->
-            [ text "Something went wrong: ", text <| toString <| log error]
+            [ div [class "error"] [text "Something went wrong: ", text <| toString <| log error]]
         Loading ->
             [ loading ]
+
+
+metaHtml : Story -> StoryScreen -> Html
+metaHtml story screen =
+    case (story, screen) of
+
+        (DiscoverStory _, _) ->
+            titleHtml story
+
+        (FullStory fullStory, _) ->
+             div [class "fullStory-meta"] [
+                titleHtml story
+                , div [class "fullStory-site"] [text (sitesName fullStory.sites)]
+                , case fullStory.suburb of
+                    Just suburb -> div [class "fullStory-suburb"] [text suburb]
+                    Nothing -> text ""
+                , case formatDate fullStory.dates of
+                    Just date -> div [class "fullStory-date"] [text date]
+                    Nothing -> text ""
+                ,  case distance story of
+                    Just distance -> p [class "fullStory-distance"] [i [class "fa fa-map-marker"] [], text " ", text distance]
+                    Nothing -> p [class "fullStory-distance got-no-distance"] [text "got-no-distance"]
+            ]
+
+titleHtml : Story -> Html
+titleHtml story = h1 [class "title"] [text <| title story]
+
+
+{-| Produce a nav button to show the story body, or nothing if we're already there -}
+storyButton : Signal.Address AppAction -> Story -> StoryScreen -> Html
+storyButton address story storyScreen =
+    case (story, storyScreen) of
+        (FullStory s, Intro) ->
+            a [class "btn btn-story", onClick address (View s.id Body)] [text "Story"]
+        (_,_) -> text ""
+
+{-| Depending on if we need to show intro or body sub-screen, produce different html -}
+introOrBody : Story -> StoryScreen -> Html
+introOrBody story storyScreen =
+    case (story, storyScreen) of
+        (FullStory s, Intro) ->
+            p [] [text s.blurb]
+        (FullStory s, Body) ->
+            div [class "passage"] [Markdown.toHtml s.story]
+        (_, _) -> text ""
+
+photoSlider : Signal.Address AppAction -> Story -> ItemView -> StoryScreen -> Html
+photoSlider address story item screen =
+    if screen == Intro && (List.length <| photos story) > 1 then
+        div
+            ([class "photo-slide"] ++ onSwipe address (itemSwipe item.photoPosition) swipePhotoAction)
+            [ div [class "photos"]
+                <| List.map (storyImage story item.photoPosition) [item.photoIndex-1, item.photoIndex, item.photoIndex+1]
+            , photoIndicators address story item.photoIndex
+            ]
+    else
+        div
+            [class "photos"]
+            [storyImage story item.photoPosition item.photoIndex]
 
 log : a -> a
 log anything =
@@ -231,3 +268,9 @@ digits n f = let
             n
         else
             (round (f / toFloat (base^places))) * base^places
+
+
+{-| Gives the action to jump to a story with default story screen -}
+viewStoryAction : Story -> AppAction
+viewStoryAction story =
+    View (id story) screen1
