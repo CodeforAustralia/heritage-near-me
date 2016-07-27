@@ -192,16 +192,17 @@ updateModel action app = case (app.location, action) of
     (Discovering, Favourite)                  -> {app | location = Discovering, discovery = favouriteItem app.discovery}
     (Discovering, Pass)                       -> {app | location = Discovering, discovery = passItem app.discovery}
     -- Viewing location actions
-    (Viewing item view _ , Animate time window) -> {app | location = Viewing item {view | photoPosition = Swiping.animateStep time window view.photoPosition} initialStoryScreen}
-    (Viewing item view _ , MovePhoto pos)       -> {app | location = Viewing item {view | photoPosition = pos} initialStoryScreen}
-    (Viewing item view _ , PrevPhoto)           -> {app | location = Viewing item {view | photoIndex = view.photoIndex-1, photoPosition = Static} initialStoryScreen}
-    (Viewing item view _ , NextPhoto)           -> {app | location = Viewing item {view | photoIndex = view.photoIndex+1, photoPosition = Static} initialStoryScreen}
-    (Viewing item view _ , JumpPhoto index)     -> {app | location = Viewing item {view | photoIndex = index, photoPosition = Static} initialStoryScreen}
-    (Viewing item view storyScreen, ViewBody)  -> {app | location = Viewing item view Body}
-    (Viewing item view storyScreen, ViewIntro) -> {app | location = Viewing item view Intro}
+    (Viewing item view _ , Animate time window) -> {app | location = Viewing item {view | photoPosition = Swiping.animateStep time window view.photoPosition} screen1}
+    (Viewing item view _ , MovePhoto pos)       -> {app | location = Viewing item {view | photoPosition = pos} screen1}
+    (Viewing item view _ , PrevPhoto)           -> {app | location = Viewing item {view | photoIndex = view.photoIndex-1, photoPosition = Static} screen1}
+    (Viewing item view _ , NextPhoto)           -> {app | location = Viewing item {view | photoIndex = view.photoIndex+1, photoPosition = Static} screen1}
+    (Viewing item view _ , JumpPhoto index)     -> {app | location = Viewing item {view | photoIndex = index, photoPosition = Static} screen1}
+    --(Viewing item view storyScreen, ViewBody)  -> {app | location = Viewing item view Body}
+    --(Viewing item view storyScreen, ViewIntro) -> {app | location = Viewing item view Intro}
     -- Location change actions
     (_, Discover)                             -> {app | location = Discovering}
-    (_, View story')                          -> {app | location = Viewing story' initialItemView initialStoryScreen}
+    --(_, View story')                          -> {app | location = Viewing story' initialItemView screen1}
+    (_, View story' screen')                  -> {app | location = Viewing story' initialItemView screen'}
     (_, ViewFavourites)                       -> {app | location = ViewingFavourites}
     -- Data update actions
     (_, LoadData updateItems)                 -> {app | items = updateItems app.items}
@@ -216,7 +217,7 @@ updateModel action app = case (app.location, action) of
 {-| Perform effectful actions based on actions and app state -}
 updateAction : AppAction -> AppModel -> Effects.Effects AppAction
 updateAction action app = case action of
-    View storyId ->
+    View storyId _ ->
             -- sorry this case is long; if `let` is confusing, this might help:
             -- http://www.lambdacat.com/road-to-elm-let-and-in/
         let
@@ -398,7 +399,4 @@ fetchDiscover requestStoriesTask =
 {-| The initial state of a singular item being viewed -}
 initialItemView : ItemView
 initialItemView = {photoIndex = 0, photoPosition = Static}
-
-initialStoryScreen : StoryScreen
-initialStoryScreen = Intro
 

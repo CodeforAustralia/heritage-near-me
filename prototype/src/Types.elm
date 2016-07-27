@@ -51,9 +51,7 @@ type Action id a =
     | PrevPhoto
     | NextPhoto
     | JumpPhoto Int
-    | View id
-    | ViewBody
-    | ViewIntro
+    | View id StoryScreen
     | ViewFavourites
     | Back
     | LoadData UpdaterFunction

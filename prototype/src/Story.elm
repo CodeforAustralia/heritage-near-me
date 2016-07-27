@@ -59,7 +59,7 @@ storyButton : Signal.Address AppAction -> Story -> StoryScreen -> Html
 storyButton address story storyScreen =
     case (story, storyScreen) of
         (FullStory s, Intro) ->
-            a [class "btn-story", onClick address ViewBody] [text "Story"]
+            a [class "btn-story", onClick address (View s.id Body)] [text "Story"]
         (_,_) -> text ""
 
 {-| Depending on if we need to show intro or body sub-screen, produce different html -}
