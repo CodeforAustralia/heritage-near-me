@@ -52,6 +52,8 @@ type Action id a =
     | NextPhoto
     | JumpPhoto Int
     | View id
+    | ViewBody
+    | ViewIntro
     | ViewFavourites
     | Back
     | LoadData UpdaterFunction

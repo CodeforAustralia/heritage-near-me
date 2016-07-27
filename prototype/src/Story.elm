@@ -40,11 +40,11 @@ view address story item storyScreen = div [class "story"]
                             Just distance -> p [class "fullStory-distance"] [i [class "fa fa-map-marker"] [], text " ", text distance]
                             Nothing -> text "got-no-distance"
                     ]
-                    , blockquote [] [text fullStory.blurb]
                     , case (List.head fullStory.locations) of
                         Just latlng -> div [class "directions"] [a [href ("https://www.google.com/maps/dir/Current+Location/" ++ latlng.lat ++ "," ++ latlng.lng), target "_blank"] [text "Directions"]]
                         Nothing -> text ""
-                    , div [class "passage"] [Markdown.toHtml fullStory.story]
+                    , storyButton address story storyScreen
+                    , introOrBody story storyScreen
                     , case fullStory.sites of
                         [] -> text ""
                         _ -> links fullStory
@@ -54,6 +54,23 @@ view address story item storyScreen = div [class "story"]
         Loading ->
             [ loading ]
 
+{-| Produce a nav button to show the story body, or nothing if we're already there -}
+storyButton : Signal.Address AppAction -> Story -> StoryScreen -> Html
+storyButton address story storyScreen =
+    case (story, storyScreen) of
+        (FullStory s, Intro) ->
+            a [class "btn-story", onClick address ViewBody] [text "Story"]
+        (_,_) -> text ""
+
+{-| Depending on if we need to show intro or body sub-screen, produce different html -}
+introOrBody : Story -> StoryScreen -> Html
+introOrBody story storyScreen =
+    case (story, storyScreen) of
+        (FullStory s, Intro) ->
+            p [] [text s.blurb]
+        (FullStory s, Body) ->
+            div [class "passage"] [Markdown.toHtml s.story]
+        (_, _) -> text ""
 
 photoSlider : Signal.Address AppAction -> Story -> ItemView -> Html
 photoSlider address story item =

@@ -197,6 +197,8 @@ updateModel action app = case (app.location, action) of
     (Viewing item view _ , PrevPhoto)           -> {app | location = Viewing item {view | photoIndex = view.photoIndex-1, photoPosition = Static} initialStoryScreen}
     (Viewing item view _ , NextPhoto)           -> {app | location = Viewing item {view | photoIndex = view.photoIndex+1, photoPosition = Static} initialStoryScreen}
     (Viewing item view _ , JumpPhoto index)     -> {app | location = Viewing item {view | photoIndex = index, photoPosition = Static} initialStoryScreen}
+    (Viewing item view storyScreen, ViewBody)  -> {app | location = Viewing item view Body}
+    (Viewing item view storyScreen, ViewIntro) -> {app | location = Viewing item view Intro}
     -- Location change actions
     (_, Discover)                             -> {app | location = Discovering}
     (_, View story')                          -> {app | location = Viewing story' initialItemView initialStoryScreen}
