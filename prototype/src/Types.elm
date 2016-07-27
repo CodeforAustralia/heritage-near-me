@@ -1,4 +1,4 @@
-module Types (AppModel, AppAction, AppLocation, Location(..), Discovery, ItemView, StoryScreen(..), Favourites, StoryId(..), Story(..), Site, LatLng, Dates, Action(..), ItemPosition(..), Window) where
+module Types (AppModel, AppAction, AppLocation, Location(..), Discovery, ItemView, StoryScreen(..), screen1, Favourites, StoryId(..), Story(..), Site, LatLng, Dates, Action(..), ItemPosition(..), Window) where
 
 import Remote.DataStore exposing (RemoteDataStore)
 import Remote.Data exposing (RemoteData)
@@ -84,6 +84,10 @@ type alias ItemView =
     }
 
 type StoryScreen = Intro | Body
+
+screen1 : StoryScreen
+screen1 = Intro -- default screen
+
 
 type alias Favourites a = List a
 
