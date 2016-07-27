@@ -8,20 +8,20 @@ import Types exposing (..)
 
 {-| The top level navigation view for the app -}
 navigation : Signal.Address AppAction -> AppLocation -> Html
-navigation address location = 
+navigation address location =
     nav [class "navigation"] [ buttonHtml address location, titleHtml location]
 
 
 
 {-| Generate the title of the nav bar, which may vary depending on the screen -}
 titleHtml : AppLocation -> Html
-titleHtml location = 
+titleHtml location =
     let
         container = div [class "navigation-center"]
     in
         case location of
 
-            Discovering -> 
+            Discovering ->
                 container [logoDiv]
 
             Viewing _ _ _ ->
@@ -34,7 +34,7 @@ logoDiv = div [class "logo"] [a [href "/"] [img [src "images/logo.png"] []]]
 
 
 {-| Generate the top button on the nav bar, which may vary depending on the screen. -}
-buttonHtml : Signal.Address AppAction -> AppLocation -> Html 
+buttonHtml : Signal.Address AppAction -> AppLocation -> Html
 buttonHtml address location =
     case location of
 
@@ -47,7 +47,3 @@ buttonHtml address location =
         ViewingFavourites ->
              button [onClick address Discover] [i [class "fa fa-map fa-2x"] []]
 
-       
-
-
-    
