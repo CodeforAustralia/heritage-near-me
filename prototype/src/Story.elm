@@ -23,25 +23,13 @@ view : Signal.Address AppAction -> RemoteData Story -> ItemView -> StoryScreen -
 view address story item storyScreen = div [class "story"]
     <| case story of
         Loaded story ->
-            , h1 [class "title"] [text <| title story]
             [ photoSlider address story item storyScreen
+            , metaHtml story storyScreen
             ] ++ case story of
                 DiscoverStory discoverStory -> [loading]
                 FullStory fullStory -> [
-                    div [class "fullStory-meta"] [
-                        div [class "fullStory-site"] [text (sitesName fullStory.sites)]
-                        , case fullStory.suburb of
-                            Just suburb -> div [class "fullStory-suburb"] [text suburb]
-                            Nothing -> text ""
-                        , case formatDate fullStory.dates of
-                            Just date -> div [class "fullStory-date"] [text date]
-                            Nothing -> text ""
-                        ,  case distance story of
-                            Just distance -> p [class "fullStory-distance"] [i [class "fa fa-map-marker"] [], text " ", text distance]
-                            Nothing -> text "got-no-distance"
-                    ]
-                    , case (List.head fullStory.locations) of
-                        Just latlng -> div [class "directions"] [a [href ("https://www.google.com/maps/dir/Current+Location/" ++ latlng.lat ++ "," ++ latlng.lng), target "_blank"] [text "Directions"]]
+                    case (List.head fullStory.locations) of
+                        Just latlng -> div [class "btn btn-directions directions"] [a [href ("https://www.google.com/maps/dir/Current+Location/" ++ latlng.lat ++ "," ++ latlng.lng), target "_blank"] [text "Directions"]]
                         Nothing -> text ""
                     , storyButton address story storyScreen
                     , introOrBody story storyScreen
@@ -54,12 +42,39 @@ view address story item storyScreen = div [class "story"]
         Loading ->
             [ loading ]
 
+
+metaHtml : Story -> StoryScreen -> Html
+metaHtml story screen =
+    case (story, screen) of
+
+        (DiscoverStory _, _) ->
+            titleHtml story
+
+        (FullStory fullStory, _) ->
+             div [class "fullStory-meta"] [
+                titleHtml story
+                , div [class "fullStory-site"] [text (sitesName fullStory.sites)]
+                , case fullStory.suburb of
+                    Just suburb -> div [class "fullStory-suburb"] [text suburb]
+                    Nothing -> text ""
+                , case formatDate fullStory.dates of
+                    Just date -> div [class "fullStory-date"] [text date]
+                    Nothing -> text ""
+                ,  case distance story of
+                    Just distance -> p [class "fullStory-distance"] [i [class "fa fa-map-marker"] [], text " ", text distance]
+                    Nothing -> p [class "fullStory-distance got-no-distance"] [text "got-no-distance"]
+            ]
+
+titleHtml : Story -> Html
+titleHtml story = h1 [class "title"] [text <| title story]
+
+
 {-| Produce a nav button to show the story body, or nothing if we're already there -}
 storyButton : Signal.Address AppAction -> Story -> StoryScreen -> Html
 storyButton address story storyScreen =
     case (story, storyScreen) of
         (FullStory s, Intro) ->
-            a [class "btn-story", onClick address (View s.id Body)] [text "Story"]
+            a [class "btn btn-story", onClick address (View s.id Body)] [text "Story"]
         (_,_) -> text ""
 
 {-| Depending on if we need to show intro or body sub-screen, produce different html -}
