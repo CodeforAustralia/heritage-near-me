@@ -50,7 +50,7 @@ view address story item storyScreen = div [class "story"]
                         _ -> links fullStory
                     ]
         Failed error ->
-            [ text "Something went wrong: ", text <| toString <| log error]
+            [ div [class "error"] [text "Something went wrong: ", text <| toString <| log error]]
         Loading ->
             [ loading ]
 
