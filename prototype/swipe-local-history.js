@@ -14166,8 +14166,8 @@ Elm.Story.make = function (_elm) {
       photos(story)));
    });
    var log = function (anything) {    return A2($Debug.log,"",anything);};
-   var photoSlider = F3(function (address,story,item) {
-      return _U.cmp($List.length(photos(story)),1) > 0 ? A2($Html.div,
+   var photoSlider = F4(function (address,story,item,screen) {
+      return _U.eq(screen,$Types.Intro) && _U.cmp($List.length(photos(story)),1) > 0 ? A2($Html.div,
       A2($Basics._op["++"],
       _U.list([$Html$Attributes.$class("photo-slide")]),
       A3($Swiping.onSwipe,address,$Swiping.itemSwipe(item.photoPosition),$Swiping.swipePhotoAction)),
@@ -14194,91 +14194,99 @@ Elm.Story.make = function (_elm) {
       var _p12 = {ctor: "_Tuple2",_0: story,_1: storyScreen};
       if (_p12._0.ctor === "FullStory" && _p12._1.ctor === "Intro") {
             return A2($Html.a,
-            _U.list([$Html$Attributes.$class("btn-story"),A2($Html$Events.onClick,address,A2($Types.View,_p12._0._0.id,$Types.Body))]),
+            _U.list([$Html$Attributes.$class("btn btn-story"),A2($Html$Events.onClick,address,A2($Types.View,_p12._0._0.id,$Types.Body))]),
             _U.list([$Html.text("Story")]));
          } else {
             return $Html.text("");
+         }
+   });
+   var titleHtml = function (story) {    return A2($Html.h1,_U.list([$Html$Attributes.$class("title")]),_U.list([$Html.text(title(story))]));};
+   var metaHtml = F2(function (story,screen) {
+      var _p13 = {ctor: "_Tuple2",_0: story,_1: screen};
+      if (_p13._0.ctor === "DiscoverStory") {
+            return titleHtml(story);
+         } else {
+            var _p17 = _p13._0._0;
+            return A2($Html.div,
+            _U.list([$Html$Attributes.$class("fullStory-meta")]),
+            _U.list([titleHtml(story)
+                    ,A2($Html.div,_U.list([$Html$Attributes.$class("fullStory-site")]),_U.list([$Html.text(sitesName(_p17.sites))]))
+                    ,function () {
+                       var _p14 = _p17.suburb;
+                       if (_p14.ctor === "Just") {
+                             return A2($Html.div,_U.list([$Html$Attributes.$class("fullStory-suburb")]),_U.list([$Html.text(_p14._0)]));
+                          } else {
+                             return $Html.text("");
+                          }
+                    }()
+                    ,function () {
+                       var _p15 = formatDate(_p17.dates);
+                       if (_p15.ctor === "Just") {
+                             return A2($Html.div,_U.list([$Html$Attributes.$class("fullStory-date")]),_U.list([$Html.text(_p15._0)]));
+                          } else {
+                             return $Html.text("");
+                          }
+                    }()
+                    ,function () {
+                       var _p16 = distance(story);
+                       if (_p16.ctor === "Just") {
+                             return A2($Html.p,
+                             _U.list([$Html$Attributes.$class("fullStory-distance")]),
+                             _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-map-marker")]),_U.list([])),$Html.text(" "),$Html.text(_p16._0)]));
+                          } else {
+                             return A2($Html.p,
+                             _U.list([$Html$Attributes.$class("fullStory-distance got-no-distance")]),
+                             _U.list([$Html.text("got-no-distance")]));
+                          }
+                    }()]));
          }
    });
    var view = F4(function (address,story,item,storyScreen) {
       return A2($Html.div,
       _U.list([$Html$Attributes.$class("story")]),
       function () {
-         var _p13 = story;
-         switch (_p13.ctor)
-         {case "Loaded": var _p22 = _p13._0;
+         var _p18 = story;
+         switch (_p18.ctor)
+         {case "Loaded": var _p24 = _p18._0;
               return A2($Basics._op["++"],
-              _U.list([A3(photoSlider,address,_p22,item),A2($Html.h1,_U.list([$Html$Attributes.$class("title")]),_U.list([$Html.text(title(_p22))]))]),
+              _U.list([A4(photoSlider,address,_p24,item,storyScreen),A2(metaHtml,_p24,storyScreen)]),
               function () {
-                 var _p14 = _p22;
-                 if (_p14.ctor === "DiscoverStory") {
+                 var _p19 = _p24;
+                 if (_p19.ctor === "DiscoverStory") {
                        return _U.list([$Loading.loading]);
                     } else {
-                       var _p21 = _p14._0;
-                       return _U.list([A2($Html.div,
-                                      _U.list([$Html$Attributes.$class("fullStory-meta")]),
-                                      _U.list([A2($Html.div,_U.list([$Html$Attributes.$class("fullStory-site")]),_U.list([$Html.text(sitesName(_p21.sites))]))
-                                              ,function () {
-                                                 var _p15 = _p21.suburb;
-                                                 if (_p15.ctor === "Just") {
-                                                       return A2($Html.div,
-                                                       _U.list([$Html$Attributes.$class("fullStory-suburb")]),
-                                                       _U.list([$Html.text(_p15._0)]));
-                                                    } else {
-                                                       return $Html.text("");
-                                                    }
-                                              }()
-                                              ,function () {
-                                                 var _p16 = formatDate(_p21.dates);
-                                                 if (_p16.ctor === "Just") {
-                                                       return A2($Html.div,_U.list([$Html$Attributes.$class("fullStory-date")]),_U.list([$Html.text(_p16._0)]));
-                                                    } else {
-                                                       return $Html.text("");
-                                                    }
-                                              }()
-                                              ,function () {
-                                                 var _p17 = distance(_p22);
-                                                 if (_p17.ctor === "Just") {
-                                                       return A2($Html.p,
-                                                       _U.list([$Html$Attributes.$class("fullStory-distance")]),
-                                                       _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-map-marker")]),_U.list([]))
-                                                               ,$Html.text(" ")
-                                                               ,$Html.text(_p17._0)]));
-                                                    } else {
-                                                       return $Html.text("got-no-distance");
-                                                    }
-                                              }()]))
-                                      ,function () {
-                                         var _p18 = $List.head(_p21.locations);
-                                         if (_p18.ctor === "Just") {
-                                               var _p19 = _p18._0;
+                       var _p23 = _p19._0;
+                       return _U.list([function () {
+                                         var _p20 = $List.head(_p23.locations);
+                                         if (_p20.ctor === "Just") {
+                                               var _p21 = _p20._0;
                                                return A2($Html.div,
-                                               _U.list([$Html$Attributes.$class("directions")]),
+                                               _U.list([$Html$Attributes.$class("btn btn-directions directions")]),
                                                _U.list([A2($Html.a,
                                                _U.list([$Html$Attributes.href(A2($Basics._op["++"],
                                                        "https://www.google.com/maps/dir/Current+Location/",
-                                                       A2($Basics._op["++"],_p19.lat,A2($Basics._op["++"],",",_p19.lng))))
+                                                       A2($Basics._op["++"],_p21.lat,A2($Basics._op["++"],",",_p21.lng))))
                                                        ,$Html$Attributes.target("_blank")]),
                                                _U.list([$Html.text("Directions")]))]));
                                             } else {
                                                return $Html.text("");
                                             }
                                       }()
-                                      ,A3(storyButton,address,_p22,storyScreen)
-                                      ,A2(introOrBody,_p22,storyScreen)
+                                      ,A3(storyButton,address,_p24,storyScreen)
+                                      ,A2(introOrBody,_p24,storyScreen)
                                       ,function () {
-                                         var _p20 = _p21.sites;
-                                         if (_p20.ctor === "[]") {
+                                         var _p22 = _p23.sites;
+                                         if (_p22.ctor === "[]") {
                                                return $Html.text("");
                                             } else {
-                                               return links(_p21);
+                                               return links(_p23);
                                             }
                                       }()]);
                     }
               }());
             case "Failed": return _U.list([A2($Html.div,
               _U.list([$Html$Attributes.$class("error")]),
-              _U.list([$Html.text("Something went wrong: "),$Html.text($Basics.toString(log(_p13._0)))]))]);
+              _U.list([$Html.text("Something went wrong: "),$Html.text($Basics.toString(log(_p18._0)))]))]);
             default: return _U.list([$Loading.loading]);}
       }());
    });
