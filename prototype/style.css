@@ -138,7 +138,7 @@ html, body, body > div {
 
         .discovery-story .image::after {
             content: " ";
-            background: rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.3);
             height: 100%;
             position: absolute;
             top: 0px;
@@ -190,9 +190,9 @@ html, body, body > div {
                 .fullStory-meta {
                     background: #77a131;
                     padding-bottom: 0.5rem;
-                    font-weight:300;
                     font-size: 16px;
                 }
+
 
                  .fullStory-meta div, .fullStory-meta p {
                     display: inline;
@@ -201,7 +201,7 @@ html, body, body > div {
                  }
 
                 .fullStory-site {
-                    font-weight: 600;
+                    font-weight: 500;
                  }
 
                  .fullStory-distance {
@@ -353,7 +353,7 @@ html, body, body > div {
     .story .photos {
         display: flex;
         justify-content: center;
-        height: 300px;
+        height: 265px;
         overflow: hidden;
     }
 
@@ -427,6 +427,110 @@ html, body, body > div {
         /* padding: 0 1rem; */
     }
 
+    /* Story body style */
+ 
+   .story-body {
+        height: auto;
+        min-height: 100vh;
+        /* margin-top: 65px; */ /* match height of navigation bar */
+        background-color: #FCFCFC; /* just off white */
+        color:#343434;
+    }
+
+   .story-body .image {
+        height: 250px;
+        z-index: 1;
+    }
+
+    .story-body .image::after {
+        content: " ";
+        background: rgba(0,0,0,0.3);
+        height: 100%;
+        position: absolute;
+        top: 0px;
+        display: block;
+        right: 0;
+        left: 0;
+    }
+
+    story-body .photos {
+        height: 250px;
+    }
+
+    .story-body .title {
+        background:none;
+        /* position: absolute; */
+        /* top: 75px; */
+        color: white;
+        text-shadow: 1px 1px 1px rgba(0,0,0,.5);
+        letter-spacing: 0.06rem;
+        margin: 0;
+        padding-top: 1rem;
+        padding-left: 1rem;
+        padding-bottom: 1rem;
+        font-size: 27px;
+        font-weight: 700;
+        line-height: 1;
+        text-align: left;
+        z-index: 2;
+    }
+
+    .story-body-site {
+        color: #FFF;
+        z-index: 2;
+        position: absolute;
+        top: 100px;
+    }
+   
+   .story-body .fullStory-meta {
+         background: none;
+         position: absolute;
+         top: 65px;
+         display: block;
+         margin: 0;
+         z-index: 2;
+    }
+    
+   .story-body .fullStory-meta div, .story-body .fullStory-meta p {
+        color: #FFF;
+        display: block;
+        /* position: absolute; */
+        /* z-index: 2; */
+        /* top: 10px; */
+    }
+
+    .fullStory-meta div, .fullStory-meta p {
+        /* color: #FFF; */
+        /* position: absolute; */
+        /* top: 150px; */
+    }
+
+    .story-body .fullStory-meta .fullStory-site {
+        font-weight: 500;
+        font-size: 18px;
+        letter-spacing: .01rem;
+    }
+
+    .story-body .fullStory-meta .fullStory-date {
+        font-weight: 200;
+        font-size: 14px;
+    }
+
+    .story-body .fullStory-meta .fullStory-suburb {
+        display: none;
+        /* Hide suburb */
+    }
+
+    .story-body .fullStory-meta .fullStory-distance {
+        display: none;
+        /* Hide distance */
+    }
+
+    .story-body .photo-indicators {
+        display: none;
+        /* Hide photo indicators */
+    }
+    
 /* Links list style */
 .link {
 
@@ -555,4 +659,4 @@ button {
 
 /* Other tweaks */
 .app .fa-inverse {
-    color: #1D1D1D;
+    color: #1
