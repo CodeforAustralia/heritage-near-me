@@ -1,4 +1,4 @@
-module Story (view, id, storyIdToStr, title, storySiteName, photo, photos, distance) where
+module Story (view, id, storyIdToStr, title, storySiteName, photo, photos, distance, viewStoryAction) where
 
 import Date exposing (Date)
 import Date.Format
@@ -253,3 +253,9 @@ digits n f = let
             n
         else
             (round (f / toFloat (base^places))) * base^places
+
+
+{-| Gives the action to jump to a story with default story screen -}
+viewStoryAction : Story -> AppAction
+viewStoryAction story =
+    View (id story) screen1
