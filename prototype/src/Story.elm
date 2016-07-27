@@ -23,8 +23,8 @@ view : Signal.Address AppAction -> RemoteData Story -> ItemView -> StoryScreen -
 view address story item storyScreen = div [class "story"]
     <| case story of
         Loaded story ->
-            [ photoSlider address story item
             , h1 [class "title"] [text <| title story]
+            [ photoSlider address story item storyScreen
             ] ++ case story of
                 DiscoverStory discoverStory -> [loading]
                 FullStory fullStory -> [
@@ -72,9 +72,9 @@ introOrBody story storyScreen =
             div [class "passage"] [Markdown.toHtml s.story]
         (_, _) -> text ""
 
-photoSlider : Signal.Address AppAction -> Story -> ItemView -> Html
-photoSlider address story item =
-    if (List.length <| photos story) > 1 then
+photoSlider : Signal.Address AppAction -> Story -> ItemView -> StoryScreen -> Html
+photoSlider address story item screen =
+    if screen == Intro && (List.length <| photos story) > 1 then
         div
             ([class "photo-slide"] ++ onSwipe address (itemSwipe item.photoPosition) swipePhotoAction)
             [ div [class "photos"]
