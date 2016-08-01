@@ -216,7 +216,7 @@ fullStoriesDecoder = Json.list fullStoryDecoder
 fullStoryDecoder : Json.Decoder Story
 fullStoryDecoder =
     Json.succeed
-        (\id title blurb suburb story dates photos sites locations distance -> FullStory
+        (\id title blurb suburb story quote dates photos sites locations distance -> FullStory
             { id = StoryId id
             , title = Maybe.withDefault "" title
             , blurb = Maybe.withDefault "" blurb
@@ -224,6 +224,7 @@ fullStoryDecoder =
             , dates = Maybe.withDefault {start = Nothing, end = Nothing} dates
             , photos = photos
             , story = story -- Maybe.withDefault "This story hasn't been written yet!" story
+            , quote = quote
             , sites = List.filterMap identity sites
             , locations = List.filterMap identity locations
             , distance = distance
@@ -233,6 +234,7 @@ fullStoryDecoder =
         |: (Json.maybe ("blurb" := Json.string))
         |: (Json.maybe ("suburb" := Json.string))
         |: ("story" := Json.oneOf [Json.string, Json.null "This story hasn't been written yet!"])
+        |: ("quote" := Json.string)
         |: (Json.maybe ("dates" := datesDecoder))
         |: ("photos" := Json.list (Json.oneOf [Json.string, Json.null "images/unavailable.jpg"]))
         |: ("sites" := Json.list siteDecoder)
