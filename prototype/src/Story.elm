@@ -152,18 +152,17 @@ photoIndicators address story index = div
     ) <| photos story
 
 {-| The HTML for the links that appear at after the story -}
-links story = let
-        heritageUrl = "http://www.environment.nsw.gov.au/heritageapp/visit/ViewAttractionDetail.aspx?ID=" 
-    in
-        div [class "links"]
-            [ h4 [] [text "Further Reading"]
-            , ul [class "links"]
-                <| List.map (\site -> li [] [link site.name (heritageUrl ++ site.id)]) story.sites 
-            ] 
+links story =
+    div [class "links"]
+        [ h4 [] [text "Further Reading"]
+        , ul [class "links"]
+            <| List.map (\link -> li [] [linkHtml link.title link.url]) story.links
+        ]
+
 
 {-| The HTML for a single story link -}
-link : String -> String -> Html
-link name url = a [href url]
+linkHtml : String -> String -> Html
+linkHtml name url = a [href url]
     [ text name
     , span [class "link-arrow"]
         [ span [class "external-link"] [text "External Link"]
