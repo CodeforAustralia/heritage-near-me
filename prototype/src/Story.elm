@@ -107,6 +107,7 @@ log anything =
     Debug.log "" anything
 
 {-| The dots below the photo slide which allow a user to switch the photo being viewed -}
+photoIndicators : Signal.Address AppAction -> Story -> Int -> Html
 photoIndicators address story index = div
     [class "photo-indicators"]
     <| List.indexedMap (\index' _ ->
@@ -137,6 +138,7 @@ link name url = a [href url]
     ]
 
 {-| The HTML style for a photo which can be swiped -}
+storyImage : Story -> ItemPosition -> Int -> Html
 storyImage story pos index = div
     [ class "image"
     , style <|
@@ -147,6 +149,7 @@ storyImage story pos index = div
     ] []
 
 {-| The HTML style just for positioning a photo which can be swiped -}
+photoPosition : ItemPosition -> List ( String, String )
 photoPosition pos =
     [ ("position", "relative")
     , ("left", toString (Maybe.withDefault 0 <| itemPos pos) ++ "px")
