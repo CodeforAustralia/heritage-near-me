@@ -2,7 +2,9 @@
 -- and recreate them every time. That allows us to update the API interface
 -- easily without touching the tables that contain data.
 
+SET client_min_messages TO WARNING; -- don't give notices from DROP SCHEMA ... CASCADE (we know it cascades)
 DROP SCHEMA IF EXISTS hnm CASCADE;
+SET client_min_messages TO NOTICE; -- notices OK after DROP SCHEMA
 
 CREATE SCHEMA hnm
     CREATE VIEW story_discover AS
