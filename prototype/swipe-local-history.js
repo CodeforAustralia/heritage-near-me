@@ -13918,14 +13918,12 @@ Elm.Story.make = function (_elm) {
       var _p15 = $List.head(locations);
       if (_p15.ctor === "Just") {
             var _p16 = _p15._0;
-            return A2($Html.div,
-            _U.list([$Html$Attributes.$class("btn btn-directions directions")]),
-            _U.list([A2($Html.a,
+            return A2($Html.a,
             _U.list([$Html$Attributes.href(A2($Basics._op["++"],
                     "https://www.google.com/maps/dir/Current+Location/",
                     A2($Basics._op["++"],_p16.lat,A2($Basics._op["++"],",",_p16.lng))))
                     ,$Html$Attributes.target("_blank")]),
-            _U.list([$Html.text("Directions")]))]));
+            _U.list([A2($Html.button,_U.list([$Html$Attributes.$class("btn btn-directions directions")]),_U.list([$Html.text("Directions")]))]));
          } else {
             return $Html.text("");
          }
@@ -13954,11 +13952,11 @@ Elm.Story.make = function (_elm) {
             var _p21 = _p20._0._0;
             return A2($Html.div,
             _U.list([$Html$Attributes.$class("buttons")]),
-            _U.list([A2($Html.a,
+            _U.list([A2($Html.button,
                     _U.list([$Html$Attributes.$class("btn btn-story"),A2($Html$Events.onClick,address,A2($Types.View,_p21.id,$Types.Body))]),
                     _U.list([$Html.text("Story")]))
-                    ,A2($Html.a,
-                    _U.list([$Html$Attributes.$class("btn btn-info"),A2($Html$Events.onClick,address,A2($Types.View,_p21.id,$Types.MoreInfo))]),
+                    ,A2($Html.button,
+                    _U.list([$Html$Attributes.$class("btn btn-more-info"),A2($Html$Events.onClick,address,A2($Types.View,_p21.id,$Types.MoreInfo))]),
                     _U.list([$Html.text("Info")]))
                     ,locationsToDirections(_p21.locations)]));
          } else {
