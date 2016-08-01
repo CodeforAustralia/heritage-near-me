@@ -10,6 +10,7 @@ import Html.Events exposing (onClick)
 import Html.Attributes as Attr exposing (..)
 import Markdown
 import Number.Format
+import String
 
 import Types exposing (..)
 import Remote.Data exposing (RemoteData(..))
@@ -150,6 +151,94 @@ photoPosition pos =
     [ ("position", "relative")
     , ("left", toString (Maybe.withDefault 0 <| itemPos pos) ++ "px")
     ]
+
+
+{-| Add a quote to a markdown story.
+Inserts the quote first for very short stories (< 3 lines),
+or after the second line for longer stories.
+
+```
+    addQuote "hi jesse" "" =
+    "> hi jesse"
+
+    addQuote "quote" "one line story" = """
+    > quote
+
+    one line story
+    """
+
+    addQuote "another quote" """
+    some
+
+    multi-line story
+    """ = """
+    > another quote
+
+    some
+
+    multi-line story
+    """
+
+    addQuote "quote3" """
+    just a
+
+    3 line
+
+    story
+    """ = """
+    just a
+
+    3 line
+
+    > quote 3
+
+    story
+    """
+```
+-}
+addQuote : String -> String -> String
+addQuote quote story =
+    case (quote, story) of
+        ("", "") -> ""
+        ("", story) -> story
+        (_, "") -> toMdQuote quote
+        (_, _) ->
+            let
+                lines = String.split "\n\n" story
+                shortStory = toMdQuote quote ++ "\n\n" ++ story
+                join lines = String.join "\n\n" lines
+            in
+                case lines of
+                    [] ->
+                        shortStory
+                    line :: [] ->
+                        shortStory
+                    line :: line2 :: [] ->
+                        shortStory
+                    line :: line2 :: remainder -> -- longer stories
+                        line ++ "\n\n" ++ line2 ++ "\n\n" ++ toMdQuote quote ++ "\n\n" ++ (join remainder)
+
+
+
+{-| Turn a string into a markdown quote.
+```
+    toMdQuote "some quote" = "> some foo"
+
+    toMdQuote """
+    some
+    multi-line
+    quote
+    """ = """
+    > some
+    multi-line
+    quote
+    """
+```
+-}
+toMdQuote : String -> String
+toMdQuote quote = "<blockquote class='featured-quote'>" ++ quote ++ "</blockquote>"
+
+
 
 {-| The current index of a photo in the slideshow which can loop around -}
 storyIndex : Int -> Story -> Int
