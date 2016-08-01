@@ -53,7 +53,7 @@ html, body, body > div {
         .favourites-screen .navigation-center h1 {
             color: white;
             font-size: 24px;
-            font-weight: 300;
+            font-weight: 400;
             margin: 0 auto;
         }
 
@@ -61,14 +61,14 @@ html, body, body > div {
             color: white;
             background: none;
             border: none;
-            height: inherit; 
+            height: inherit;
             cursor: pointer;
             transition: all 0.3s ease 0s;
             opacity: 1;
         }
 
         .navigation button:active {
-            color:#0A3D78;
+            color: #354716;
         }
 
         .navigation button:focus {
@@ -83,6 +83,7 @@ html, body, body > div {
 
         .navigation .logo {
             height: 100%;
+            z-index: 3;
         }
 
         .navigation .logo img {
@@ -180,10 +181,10 @@ html, body, body > div {
                 }
                 .discovery-story-details .title {
                     color: white;
-                    font-weight: 700;
+                    font-weight: 900;
                     line-height: 1;
                     font-size: 30px;
-                    letter-spacing: 0.05rem;
+                    /* letter-spacing: 0.05rem; */
                     margin-bottom: 0.5rem;
                     text-align: left;
                 }
@@ -201,7 +202,7 @@ html, body, body > div {
                  }
 
                 .fullStory-site {
-                    font-weight: 500;
+                    font-weight: 600;
                  }
 
                  .fullStory-distance {
@@ -211,7 +212,7 @@ html, body, body > div {
 
       
                 .discovery-story-details p {
-                    font-weight: 100;
+                    font-weight: 300;
                     padding: 0;
                     margin-top: 10px;
                 }
@@ -339,16 +340,14 @@ html, body, body > div {
             }
 
 /* Story main navigation style */
-            a.btn.btn-story {
-                 background: url(https://raw.githubusercontent.com/CodeforAustralia/heritage-near-me/master/prototype/images/STORY.png) no-repeat;
-                 padding: 100px;
-                 max-width: 65px;
-                 margin: 10px;
+            a.btn .btn-story {
+                 /* background: url(https://raw.githubusercontent.com/CodeforAustralia/heritage-near-me/master/prototype/images/STORY.png) no-repeat; */
+                 type: block;
            }
 
            .btn.btn-directions.directions {
-                background: url(https://raw.githubusercontent.com/CodeforAustralia/heritage-near-me/master/prototype/images/directions.png) no-repeat;
-                padding: 100px;
+                /* background: url(https://raw.githubusercontent.com/CodeforAustralia/heritage-near-me/master/prototype/images/directions.png) no-repeat; */
+                /* padding: 100px; */
                 max-width: 65px;
                 margin: 10px;
             }
@@ -412,12 +411,12 @@ html, body, body > div {
         background: #77a131;
         color: white;
         text-shadow: 1px 1px 1px rgba(0,0,0,.2);
-        letter-spacing: 0.06rem;
+        /* letter-spacing: 0.06rem; */
         margin: 0;
         padding-top: 0.5rem;
         padding-left: 1rem;
         padding-bottom: 0.2rem;
-        font-weight: 700;
+        font-weight: 800;
         line-height: 1;
         text-align: left;
     }
@@ -429,8 +428,8 @@ html, body, body > div {
 
     .story-suburb {
         color: rgba(0,0,0,0.55);
-        /*padding-bottom: 0.5rem;*/
-/*        font-size: 14px;
+        padding-bottom: 0.5rem;*/
+      font-size: 14px;
         font-weight: bold;
         padding-top: 0.5rem;*/
     }
@@ -443,6 +442,10 @@ html, body, body > div {
         /* padding: 0 1rem; */
     }
 
+    .story .links a {
+        display: none;
+    }
+
     /* Story body style */
  
    .story-body {
@@ -453,6 +456,14 @@ html, body, body > div {
         color:#343434;
     }
 
+    .featured-quote {
+        font-size: 24px;
+        letter-spacing: 0.01rem;
+        font-weight: 700;
+        color: #628529;
+        line-height: 1.2;
+    }
+
    .story-body .image {
         height: 250px;
         z-index: 1;
@@ -460,7 +471,7 @@ html, body, body > div {
 
     .story-body .image::after {
         content: " ";
-        background: rgba(0,0,0,0.3);
+        background: rgba(0,0,0,0.4);
         height: 100%;
         position: absolute;
         top: 0px;
@@ -475,8 +486,6 @@ html, body, body > div {
 
     .story-body .title {
         background:none;
-        /* position: absolute; */
-        /* top: 75px; */
         color: white;
         text-shadow: 1px 1px 1px rgba(0,0,0,.5);
         letter-spacing: 0.06rem;
@@ -488,7 +497,7 @@ html, body, body > div {
         font-weight: 700;
         line-height: 1;
         text-align: left;
-        z-index: 2;
+        z-index: 1;
     }
 
     .story-body-site {
@@ -513,6 +522,7 @@ html, body, body > div {
         /* position: absolute; */
         /* z-index: 2; */
         /* top: 10px; */
+      
     }
 
     .fullStory-meta div, .fullStory-meta p {
@@ -525,11 +535,13 @@ html, body, body > div {
         font-weight: 500;
         font-size: 18px;
         letter-spacing: .01rem;
+        text-shadow: 1px 1px 1px rgba(0,0,0,.5);
     }
 
     .story-body .fullStory-meta .fullStory-date {
         font-weight: 200;
         font-size: 14px;
+        text-shadow: 1px 1px 1px rgba(0,0,0,.5);
     }
 
     .story-body .fullStory-meta .fullStory-suburb {
@@ -546,6 +558,10 @@ html, body, body > div {
         display: none;
         /* Hide photo indicators */
     }
+
+    .story-body .links a {
+        display: none;
+    }
     
 /* Links list style */
 .link {
@@ -556,6 +572,7 @@ html, body, body > div {
         text-align: left;
         margin-bottom: 8px;
         margin-left: 16px;
+        display: none;
     }
 
     .links ul {
