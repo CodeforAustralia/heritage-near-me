@@ -442,18 +442,9 @@ html, body, body > div {
         /* padding: 0 1rem; */
     }
 
-    .story .links a {
-        display: none;
-    }
 
     /* Story body style */
- 
    .story-body {
-        height: auto;
-        min-height: 100vh;
-        /* margin-top: 65px; */ /* match height of navigation bar */
-        background-color: #FCFCFC; /* just off white */
-        color:#343434;
     }
 
     .featured-quote {
@@ -672,6 +663,7 @@ h4 {
 
 p {
     font-size: 18px;
+    /* color:#343434; */
     line-height: 1.4;
     padding-left: 16px;
     font-weight: normal;
@@ -692,4 +684,5 @@ button {
 
 /* Other tweaks */
 .app .fa-inverse {
-    color: #1
+    color: #1D1D1D;
+}
