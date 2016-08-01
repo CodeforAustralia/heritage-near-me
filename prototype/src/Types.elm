@@ -108,6 +108,7 @@ type Story =
         , dates : Dates
         , photos : List String
         , story : String
+        , quote : String
         , sites : List Site
         , locations : List LatLng
         , distance : Maybe Float
