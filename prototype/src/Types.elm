@@ -80,7 +80,7 @@ type alias ItemView =
     , photoPosition : ItemPosition
     }
 
-type StoryScreen = Intro | Body
+type StoryScreen = Intro | Body | MoreInfo
 
 screen1 : StoryScreen
 screen1 = Intro -- default screen

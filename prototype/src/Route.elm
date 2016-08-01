@@ -49,6 +49,8 @@ parseStoryScreen storyScreen =
     case storyScreen of
         "body" ->
             Body
+        "info" ->
+            MoreInfo
         _ -> Intro
 
 
@@ -60,3 +62,5 @@ urliseStoryScreen screen =
             ""
         Body ->
             "body"
+        MoreInfo ->
+            "info"

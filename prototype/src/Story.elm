@@ -29,14 +29,9 @@ view address story item storyScreen = div [class "story"]
             ] ++ case story of
                 DiscoverStory discoverStory -> [loading]
                 FullStory fullStory -> [
-                    case (List.head fullStory.locations) of
-                        Just latlng -> div [class "btn btn-directions directions"] [a [href ("https://www.google.com/maps/dir/Current+Location/" ++ latlng.lat ++ "," ++ latlng.lng), target "_blank"] [text "Directions"]]
-                        Nothing -> text ""
-                    , storyButton address story storyScreen
+                    buttons address story storyScreen
                     , introOrBody story storyScreen
-                    , case fullStory.sites of
-                        [] -> text ""
-                        _ -> links fullStory
+                    , moreInfo address story storyScreen
                     ]
         Failed error ->
             [ div [class "error"] [text "Something went wrong: ", text <| toString <| log error]]
@@ -51,7 +46,11 @@ metaHtml story screen =
         (DiscoverStory _, _) ->
             titleHtml story
 
+        (FullStory _, MoreInfo) ->
+            text ""
+
         (FullStory fullStory, _) ->
+
              div [class "fullStory-meta"] [
                 titleHtml story
                 , div [class "fullStory-site"] [text (sitesName fullStory.sites)]
@@ -70,13 +69,46 @@ titleHtml : Story -> Html
 titleHtml story = h1 [class "title"] [text <| title story]
 
 
-{-| Produce a nav button to show the story body, or nothing if we're already there -}
-storyButton : Signal.Address AppAction -> Story -> StoryScreen -> Html
-storyButton address story storyScreen =
+{-| Produce buttons for the story intro page, or nothing if we're not on that page.
+-}
+buttons : Signal.Address AppAction -> Story -> StoryScreen -> Html
+buttons address story storyScreen =
     case (story, storyScreen) of
         (FullStory s, Intro) ->
-            a [class "btn btn-story", onClick address (View s.id Body)] [text "Story"]
+            div [class "buttons"]
+                [ a [class "btn btn-story", onClick address (View s.id Body)] [text "Story"]
+                , a [class "btn btn-info",  onClick address (View s.id MoreInfo)] [text "Info"]
+                , locationsToDirections s.locations
+                ]
         (_,_) -> text ""
+
+
+{-| Produce the content for the Story Info page, or nothing if we're not there.
+-}
+moreInfo : Signal.Address AppAction -> Story -> StoryScreen -> Html
+moreInfo address story storyScreen =
+    let
+        header = div [class "screen-header screen-more-info"]
+                    [ h1 [] [text "More Information"]
+                    ]
+        screen body = div [] [header, body]
+    in
+        case (story, storyScreen) of
+            (FullStory s, MoreInfo) ->
+                case s.sites of
+                    [] -> screen <| text ""
+                    _ -> screen <| links s
+            _ -> text ""
+
+
+{-| Get the link to Google directions map for the first location, or nothing if no locations.
+-}
+locationsToDirections : List LatLng -> Html
+locationsToDirections locations =
+    case (List.head locations) of
+        Just latlng -> div [class "btn btn-directions directions"] [a [href ("https://www.google.com/maps/dir/Current+Location/" ++ latlng.lat ++ "," ++ latlng.lng), target "_blank"] [text "Directions"]]
+        Nothing -> text ""
+
 
 {-| Depending on if we need to show intro or body sub-screen, produce different html -}
 introOrBody : Story -> StoryScreen -> Html
@@ -97,10 +129,12 @@ photoSlider address story item screen =
                 <| List.map (storyImage story item.photoPosition) [item.photoIndex-1, item.photoIndex, item.photoIndex+1]
             , photoIndicators address story item.photoIndex
             ]
-    else
+    else if screen == Body then
         div
             [class "photos"]
             [storyImage story item.photoPosition item.photoIndex]
+    else
+        text ""
 
 log : a -> a
 log anything =
