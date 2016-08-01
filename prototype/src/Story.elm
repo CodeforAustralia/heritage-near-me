@@ -5,7 +5,7 @@ import Date.Format
 import Date.Config.Config_en_au as AuDate
 import List.Extra as List
 
-import Html exposing (Html, div, h1, h2, h3, h4, p, blockquote, img, ul, li, span, a, i, text)
+import Html exposing (Html, div, h1, h2, h3, h4, p, blockquote, img, ul, li, span, a, button, i, text)
 import Html.Events exposing (onClick)
 import Html.Attributes as Attr exposing (..)
 import Markdown
@@ -76,8 +76,8 @@ buttons address story storyScreen =
     case (story, storyScreen) of
         (FullStory s, Intro) ->
             div [class "buttons"]
-                [ a [class "btn btn-story", onClick address (View s.id Body)] [text "Story"]
-                , a [class "btn btn-info",  onClick address (View s.id MoreInfo)] [text "Info"]
+                [ button [class "btn btn-story", onClick address (View s.id Body)] [text "Story"]
+                , button [class "btn btn-more-info",  onClick address (View s.id MoreInfo)] [text "Info"]
                 , locationsToDirections s.locations
                 ]
         (_,_) -> text ""
@@ -106,7 +106,7 @@ moreInfo address story storyScreen =
 locationsToDirections : List LatLng -> Html
 locationsToDirections locations =
     case (List.head locations) of
-        Just latlng -> div [class "btn btn-directions directions"] [a [href ("https://www.google.com/maps/dir/Current+Location/" ++ latlng.lat ++ "," ++ latlng.lng), target "_blank"] [text "Directions"]]
+        Just latlng -> a [href ("https://www.google.com/maps/dir/Current+Location/" ++ latlng.lat ++ "," ++ latlng.lng), target "_blank"] [button [class "btn btn-directions directions"] [text "Directions"]]
         Nothing -> text ""
 
 
