@@ -3,7 +3,6 @@ module Types (AppModel, AppAction, AppLocation, Location(..), Discovery, ItemVie
 import Remote.DataStore exposing (RemoteDataStore)
 import Remote.Data exposing (RemoteData)
 import Date exposing (Date)
-import Dict exposing (Dict)
 import Swipe exposing (SwipeState)
 import Time exposing (Time)
 
