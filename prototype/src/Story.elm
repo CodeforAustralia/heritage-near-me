@@ -85,7 +85,7 @@ introOrBody story storyScreen =
         (FullStory s, Intro) ->
             p [] [text s.blurb]
         (FullStory s, Body) ->
-            div [class "passage"] [Markdown.toHtml s.story]
+            div [class "passage"] [Markdown.toHtml (addQuote s.quote s.story)]
         (_, _) -> text ""
 
 photoSlider : Signal.Address AppAction -> Story -> ItemView -> StoryScreen -> Html
