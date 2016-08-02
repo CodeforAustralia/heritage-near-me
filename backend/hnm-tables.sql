@@ -26,7 +26,9 @@ CREATE TABLE IF NOT EXISTS site (
 	suburb TEXT,
 	address TEXT,
 	latitude TEXT,
-	longitude TEXT
+	longitude TEXT,
+	architectural_style TEXT, -- like "Early Colonial" (TODO: does this include indigenous metadata?)
+	heritage_categories TEXT -- like "NE, REP, LEP, SHR"
 );
 
 CREATE TABLE IF NOT EXISTS story_site (

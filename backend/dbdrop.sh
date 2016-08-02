@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
-dropdb hnm
+dropdb --if-exists hnm
 

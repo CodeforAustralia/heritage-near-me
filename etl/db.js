@@ -49,12 +49,12 @@ pool.on("connect", () => {
 function getInsertSiteQuery(entry) {
   let q = entry.heritageItemId ?
     SQL`
-      INSERT INTO site (heritageItemId, name, address, suburb, latitude, longitude)
-      VALUES (${entry.heritageItemId}, ${entry.name}, ${entry.address}, ${entry.suburb}, ${entry.location.latitude}, ${entry.location.longitude}) RETURNING id AS new_site`
+      INSERT INTO site (heritageItemId, name, address, suburb, latitude, longitude, architectural_style, heritage_categories)
+      VALUES (${entry.heritageItemId}, ${entry.name}, ${entry.address}, ${entry.suburb}, ${entry.location.latitude}, ${entry.location.longitude}, ${entry.architectural_style}, ${entry.heritage_categories}) RETURNING id AS new_site`
     :
     SQL`
-      INSERT INTO site (name, address, suburb, latitude, longitude)
-      VALUES (${entry.name}, ${entry.address}, ${entry.suburb}, ${entry.location.latitude}, ${entry.location.longitude}) RETURNING id AS new_site`
+      INSERT INTO site (name, address, suburb, latitude, longitude, architectural_style, heritage_categories)
+      VALUES (${entry.name}, ${entry.address}, ${entry.suburb}, ${entry.location.latitude}, ${entry.location.longitude}, ${entry.architectural_style}, ${entry.heritage_categories}) RETURNING id AS new_site`
   return q
 }
 
