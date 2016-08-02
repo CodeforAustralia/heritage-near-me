@@ -194,7 +194,6 @@ html, body, body > div {
                     font-size: 16px;
                 }
 
-
                  .fullStory-meta div, .fullStory-meta p {
                     display: inline;
                     padding-left: 1rem;
@@ -487,7 +486,7 @@ html, body, body > div {
         left: 0;
     }
 
-    story-body .photos {
+    .story-body .photos {
         height: 250px;
     }
 
@@ -569,21 +568,46 @@ html, body, body > div {
     .story-body .links a {
         display: none;
     }
-    
-/* Links list style */
-.link {
 
+/* more info story sub-screen style */
+.story-screen.story-more-info {
+    background-color: #77a131;
 }
+    .story-more-info .screen-header {
+        margin-top: 65px;
+        padding-bottom: 2rem;
+        background: #77a131;
+        padding-top: 1rem;
+    }
+        .screen-header .title {
+            padding-top: 0.5rem;
+            margin: 0;
+            color: white;
+            font-weight: normal;
+        }
+
+    .heritage-meta-info {
+        display: flex;
+        justify-content: space-between;
+        margin: 0 1rem;
+    }
+
+
+
+    /* Links list style */
+    .links {
+        margin: 0 1rem;
+    }
 
     .links h4 {
         text-align: left;
-        margin-bottom: 8px;
-        margin-left: 16px;
-        display: none;
+        /* margin-bottom: 8px; */
+        /*margin-left: 16px;*/
     }
 
     .links ul {
-        margin: 8px 0px;
+        margin: 0 0;
+/*      margin: 8px 0px; */
         list-style: none;
         -webkit-padding-start: 0px;
     }
@@ -600,7 +624,7 @@ html, body, body > div {
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                padding-left: 16px;
+                /*padding-left: 16px;*/
                 padding-top: 8px;
                 padding-bottom: 8px;
                 text-decoration: none;
