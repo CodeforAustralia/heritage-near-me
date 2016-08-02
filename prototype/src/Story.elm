@@ -95,7 +95,7 @@ moreInfo address story storyScreen =
     in
         case (story, storyScreen) of
             (FullStory s, MoreInfo) ->
-                case s.sites of
+                case s.links of
                     [] -> screen <| text ""
                     _ -> screen <| links s
             _ -> text ""
