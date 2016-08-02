@@ -91,13 +91,16 @@ moreInfo address story storyScreen =
         header = div [class "screen-header screen-more-info"]
                     [ h1 [] [text "More Information"]
                     ]
-        screen body = div [] [header, body]
+        screen body = div [] (header :: body)
     in
         case (story, storyScreen) of
             (FullStory s, MoreInfo) ->
-                case s.links of
-                    [] -> screen <| text ""
-                    _ -> screen <| links s
+                let
+                    links_ = links s
+                    categories_ = categories s
+                    style_ = architecturalStyle s
+                in
+                    screen (links_ :: categories_ :: style_ :: [])
             _ -> text ""
 
 
@@ -153,12 +156,14 @@ photoIndicators address story index = div
 
 {-| The HTML for the links that appear at after the story -}
 links story =
-    div [class "links"]
-        [ h4 [] [text "Further Reading"]
-        , ul [class "links"]
-            <| List.map (\link -> li [] [linkHtml link.title link.url]) story.links
-        ]
-
+    case story.links of
+        [] -> text ""
+        _ ->
+            div [class "links"]
+                [ h4 [] [text "Further Reading"]
+                , ul [class "links"]
+                    <| List.map (\link -> li [] [linkHtml link.title link.url]) story.links
+                ]
 
 {-| The HTML for a single story link -}
 linkHtml : String -> String -> Html
@@ -169,6 +174,36 @@ linkHtml name url = a [href url]
         , i [class "fa fa-angle-right"] []
         ]
     ]
+
+{-| The HTML for a story's heritage caterogies.
+-}
+categories story =
+    div [class "heritage-categories-container"]
+        [ h4 [] [text "Heritage Categories"]
+        , div [class "heritage-categories"] [sitesCategoriesHtml story.sites]
+        ]
+
+sitesCategoriesHtml : List Site -> Html
+sitesCategoriesHtml sites =
+    case sites of
+        [] -> text "n/a"
+        site::_ -> text site.heritageCategories
+
+
+{-| The HTML for a story's architectural style.
+-}
+architecturalStyle story =
+    div [class "architectural-style-container"]
+        [ h4 [] [text "Architectural Style"]
+        , div [class "architectural-style"] [sitesStyleHtml story.sites]
+        ]
+
+sitesStyleHtml : List Site -> Html
+sitesStyleHtml sites =
+    case sites of
+        [] -> text "n/a"
+        site::_ -> text site.architecturalStyle
+
 
 {-| The HTML style for a photo which can be swiped -}
 storyImage : Story -> ItemPosition -> Int -> Html

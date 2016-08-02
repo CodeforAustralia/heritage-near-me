@@ -256,10 +256,20 @@ datesDecoder = Json.object2
 
 {-| Site JSON decoder -}
 siteDecoder : Json.Decoder (Maybe Site)
-siteDecoder = Json.object2
-    (Maybe.map2 (\id name -> {id = id, name = name}))
+siteDecoder = Json.object4
+    (Maybe.map4
+        (\id name architecturalStyle heritageCategories ->
+            { id = id
+            , name = name
+            , architecturalStyle = architecturalStyle
+            , heritageCategories = heritageCategories
+            }
+        )
+    )
     (Json.maybe ("id" := Json.string))
     (Json.maybe ("name" := Json.string))
+    (Json.maybe ("architectural_style" := Json.string))
+    (Json.maybe ("heritage_categories" := Json.string))
 
 {-| Location JSON decoder -}
 locationDecoder : Json.Decoder (Maybe LatLng)

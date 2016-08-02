@@ -127,6 +127,8 @@ type alias Link =
 type alias Site =
     { id : String
     , name : String
+    , architecturalStyle : String
+    , heritageCategories : String
     }
 
 type alias Dates =
