@@ -1,9 +1,8 @@
-module Types (AppModel, AppAction, AppLocation, Location(..), Discovery, ItemView, StoryScreen(..), screen1, Favourites, StoryId(..), Story(..), Site, LatLng, Dates, Action(..), ItemPosition(..), Window) where
+module Types (AppModel, AppAction, AppLocation, Location(..), Discovery, ItemView, StoryScreen(..), screen1, Favourites, StoryId(..), Story(..), Site, LatLng, Link, Dates, Action(..), ItemPosition(..), Window) where
 
 import Remote.DataStore exposing (RemoteDataStore)
 import Remote.Data exposing (RemoteData)
 import Date exposing (Date)
-import Dict exposing (Dict)
 import Swipe exposing (SwipeState)
 import Time exposing (Time)
 
@@ -81,7 +80,7 @@ type alias ItemView =
     , photoPosition : ItemPosition
     }
 
-type StoryScreen = Intro | Body
+type StoryScreen = Intro | Body | MoreInfo
 
 screen1 : StoryScreen
 screen1 = Intro -- default screen
@@ -111,6 +110,7 @@ type Story =
         , quote : String
         , sites : List Site
         , locations : List LatLng
+        , links : List Link
         , distance : Maybe Float
         }
 
@@ -119,9 +119,16 @@ type alias LatLng =
     , lng : String
     }
 
+type alias Link =
+    { url   : String
+    , title : String
+    }
+
 type alias Site =
     { id : String
     , name : String
+    , architecturalStyle : String
+    , heritageCategories : String
     }
 
 type alias Dates =

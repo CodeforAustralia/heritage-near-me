@@ -4,5 +4,6 @@
 
 createdb hnm
 psql hnm -c 'CREATE EXTENSION postgis;'
-psql hnm -f heritage-near-me.sql
+psql hnm -f hnm-tables.sql
+psql hnm -f hnm-views+functions.sql
 

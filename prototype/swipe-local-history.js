@@ -5732,158 +5732,6 @@ Elm.Time.make = function (_elm) {
                              ,delay: delay
                              ,since: since};
 };
-Elm.Easing = Elm.Easing || {};
-Elm.Easing.make = function (_elm) {
-   "use strict";
-   _elm.Easing = _elm.Easing || {};
-   if (_elm.Easing.values) return _elm.Easing.values;
-   var _U = Elm.Native.Utils.make(_elm),
-   $Basics = Elm.Basics.make(_elm),
-   $Color = Elm.Color.make(_elm),
-   $Debug = Elm.Debug.make(_elm),
-   $List = Elm.List.make(_elm),
-   $Maybe = Elm.Maybe.make(_elm),
-   $Result = Elm.Result.make(_elm),
-   $Signal = Elm.Signal.make(_elm),
-   $Time = Elm.Time.make(_elm);
-   var _op = {};
-   var cycle = F3(function (animation,d,t) {    return A2(animation,1,t / d - $Basics.toFloat($Basics.floor(t / d)));});
-   var flip = F2(function (easing,time) {    return easing(1 - time);});
-   var retour = F2(function (easing,time) {    return _U.cmp(time,0.5) < 0 ? easing(time * 2) : A2(flip,easing,(time - 0.5) * 2);});
-   var invert = F2(function (easing,time) {    return 1 - easing(1 - time);});
-   var inOut = F3(function (e1,e2,time) {    return _U.cmp(time,0.5) < 0 ? e1(time * 2) / 2 : 0.5 + e2((time - 0.5) * 2) / 2;});
-   var easeInElastic = function (time) {
-      if (_U.eq(time,0.0)) return 0.0; else {
-            var t$ = time - 1;
-            var p = 0.3;
-            var s = 7.5e-2;
-            return 0 - Math.pow(2,10 * t$) * $Basics.sin((t$ - s) * (2 * $Basics.pi) / p);
-         }
-   };
-   var easeOutElastic = invert(easeInElastic);
-   var easeInOutElastic = A2(inOut,easeInElastic,easeOutElastic);
-   var easeOutBounce = function (time) {
-      var t4 = time - 2.625 / 2.75;
-      var t3 = time - 2.25 / 2.75;
-      var t2 = time - 1.5 / 2.75;
-      var a = 7.5625;
-      return _U.cmp(time,1 / 2.75) < 0 ? a * time * time : _U.cmp(time,2 / 2.75) < 0 ? a * t2 * t2 + 0.75 : _U.cmp(time,
-      2.5 / 2.75) < 0 ? a * t3 * t3 + 0.9375 : a * t4 * t4 + 0.984375;
-   };
-   var easeInBounce = invert(easeOutBounce);
-   var easeInOutBounce = A2(inOut,easeInBounce,easeOutBounce);
-   var easeInBack = function (time) {    return time * time * (2.70158 * time - 1.70158);};
-   var easeOutBack = invert(easeInBack);
-   var easeInOutBack = A2(inOut,easeInBack,easeOutBack);
-   var easeOutCirc = function (time) {    return $Basics.sqrt(1 - Math.pow(time - 1,2));};
-   var easeInCirc = invert(easeOutCirc);
-   var easeInOutCirc = A2(inOut,easeInCirc,easeOutCirc);
-   var easeInExpo = function (time) {    return _U.eq(time,0.0) ? 0.0 : Math.pow(2,10 * (time - 1));};
-   var easeOutExpo = invert(easeInExpo);
-   var easeInOutExpo = A2(inOut,easeInExpo,easeOutExpo);
-   var easeOutSine = function (time) {    return $Basics.sin(time * ($Basics.pi / 2));};
-   var easeInSine = invert(easeOutSine);
-   var easeInOutSine = A2(inOut,easeInSine,easeOutSine);
-   var easeInQuint = function (time) {    return Math.pow(time,5);};
-   var easeOutQuint = invert(easeInQuint);
-   var easeInOutQuint = A2(inOut,easeInQuint,easeOutQuint);
-   var easeInQuart = function (time) {    return Math.pow(time,4);};
-   var easeOutQuart = invert(easeInQuart);
-   var easeInOutQuart = A2(inOut,easeInQuart,easeOutQuart);
-   var easeInCubic = function (time) {    return Math.pow(time,3);};
-   var easeOutCubic = invert(easeInCubic);
-   var easeInOutCubic = A2(inOut,easeInCubic,easeOutCubic);
-   var easeInQuad = function (time) {    return Math.pow(time,2);};
-   var easeOutQuad = invert(easeInQuad);
-   var easeInOutQuad = A2(inOut,easeInQuad,easeOutQuad);
-   var linear = $Basics.identity;
-   var pair = F4(function (interpolate,_p1,_p0,v) {
-      var _p2 = _p1;
-      var _p3 = _p0;
-      return {ctor: "_Tuple2",_0: A3(interpolate,_p2._0,_p3._0,v),_1: A3(interpolate,_p2._1,_p3._1,v)};
-   });
-   var $float = F3(function (from,to,v) {    return from + (to - from) * v;});
-   var point2d = F3(function (from,to,v) {    return {x: A3($float,from.x,to.x,v),y: A3($float,from.y,to.y,v)};});
-   var point3d = F3(function (from,to,v) {    return {x: A3($float,from.x,to.x,v),y: A3($float,from.y,to.y,v),z: A3($float,from.z,to.z,v)};});
-   var color = F3(function (from,to,v) {
-      var float$ = F3(function (from,to,v) {    return $Basics.round(A3($float,$Basics.toFloat(from),$Basics.toFloat(to),v));});
-      var _p4 = {ctor: "_Tuple2",_0: $Color.toRgb(from),_1: $Color.toRgb(to)};
-      var rgb1 = _p4._0;
-      var rgb2 = _p4._1;
-      var _p5 = {ctor: "_Tuple4",_0: rgb1.red,_1: rgb1.green,_2: rgb1.blue,_3: rgb1.alpha};
-      var r1 = _p5._0;
-      var g1 = _p5._1;
-      var b1 = _p5._2;
-      var a1 = _p5._3;
-      var _p6 = {ctor: "_Tuple4",_0: rgb2.red,_1: rgb2.green,_2: rgb2.blue,_3: rgb2.alpha};
-      var r2 = _p6._0;
-      var g2 = _p6._1;
-      var b2 = _p6._2;
-      var a2 = _p6._3;
-      return A4($Color.rgba,A3(float$,r1,r2,v),A3(float$,g1,g2,v),A3(float$,b1,b2,v),A3($float,a1,a2,v));
-   });
-   var bezier = F5(function (x1,y1,x2,y2,time) {
-      var casteljau = function (ps) {
-         casteljau: while (true) {
-            var _p7 = ps;
-            if (_p7.ctor === "::" && _p7._0.ctor === "_Tuple2" && _p7._1.ctor === "[]") {
-                  return _p7._0._1;
-               } else {
-                  var _p8 = _p7;
-                  var _v3 = A3($List.map2,F2(function (x,y) {    return A4(pair,$float,x,y,time);}),_p8,A2($Maybe.withDefault,_U.list([]),$List.tail(_p8)));
-                  ps = _v3;
-                  continue casteljau;
-               }
-         }
-      };
-      return casteljau(_U.list([{ctor: "_Tuple2",_0: 0,_1: 0},{ctor: "_Tuple2",_0: x1,_1: y1},{ctor: "_Tuple2",_0: x2,_1: y2},{ctor: "_Tuple2",_0: 1,_1: 1}]));
-   });
-   var ease = F6(function (easing,interpolation,from,to,duration,time) {    return A3(interpolation,from,to,easing(A2($Basics.min,time / duration,1)));});
-   return _elm.Easing.values = {_op: _op
-                               ,ease: ease
-                               ,$float: $float
-                               ,point2d: point2d
-                               ,point3d: point3d
-                               ,color: color
-                               ,pair: pair
-                               ,cycle: cycle
-                               ,invert: invert
-                               ,retour: retour
-                               ,inOut: inOut
-                               ,flip: flip
-                               ,bezier: bezier
-                               ,linear: linear
-                               ,easeInQuad: easeInQuad
-                               ,easeOutQuad: easeOutQuad
-                               ,easeInOutQuad: easeInOutQuad
-                               ,easeInCubic: easeInCubic
-                               ,easeOutCubic: easeOutCubic
-                               ,easeInOutCubic: easeInOutCubic
-                               ,easeInQuart: easeInQuart
-                               ,easeOutQuart: easeOutQuart
-                               ,easeInOutQuart: easeInOutQuart
-                               ,easeInQuint: easeInQuint
-                               ,easeOutQuint: easeOutQuint
-                               ,easeInOutQuint: easeInOutQuint
-                               ,easeInSine: easeInSine
-                               ,easeOutSine: easeOutSine
-                               ,easeInOutSine: easeInOutSine
-                               ,easeInExpo: easeInExpo
-                               ,easeOutExpo: easeOutExpo
-                               ,easeInOutExpo: easeInOutExpo
-                               ,easeInCirc: easeInCirc
-                               ,easeOutCirc: easeOutCirc
-                               ,easeInOutCirc: easeInOutCirc
-                               ,easeInBack: easeInBack
-                               ,easeOutBack: easeOutBack
-                               ,easeInOutBack: easeInOutBack
-                               ,easeInBounce: easeInBounce
-                               ,easeOutBounce: easeOutBounce
-                               ,easeInOutBounce: easeInOutBounce
-                               ,easeInElastic: easeInElastic
-                               ,easeOutElastic: easeOutElastic
-                               ,easeInOutElastic: easeInOutElastic};
-};
 Elm.Native.Json = {};
 
 Elm.Native.Json.make = function(localRuntime) {
@@ -8812,6 +8660,1721 @@ Elm.Json.Decode.Extra.make = function (_elm) {
    _op["|:"] = apply;
    return _elm.Json.Decode.Extra.values = {_op: _op,date: date,apply: apply,set: set,dict2: dict2,withDefault: withDefault,maybeNull: maybeNull,lazy: lazy};
 };
+Elm.Native.Regex = {};
+Elm.Native.Regex.make = function(localRuntime) {
+	localRuntime.Native = localRuntime.Native || {};
+	localRuntime.Native.Regex = localRuntime.Native.Regex || {};
+	if (localRuntime.Native.Regex.values)
+	{
+		return localRuntime.Native.Regex.values;
+	}
+	if ('values' in Elm.Native.Regex)
+	{
+		return localRuntime.Native.Regex.values = Elm.Native.Regex.values;
+	}
+
+	var List = Elm.Native.List.make(localRuntime);
+	var Maybe = Elm.Maybe.make(localRuntime);
+
+	function escape(str)
+	{
+		return str.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+	}
+	function caseInsensitive(re)
+	{
+		return new RegExp(re.source, 'gi');
+	}
+	function regex(raw)
+	{
+		return new RegExp(raw, 'g');
+	}
+
+	function contains(re, string)
+	{
+		return string.match(re) !== null;
+	}
+
+	function find(n, re, str)
+	{
+		n = n.ctor === 'All' ? Infinity : n._0;
+		var out = [];
+		var number = 0;
+		var string = str;
+		var lastIndex = re.lastIndex;
+		var prevLastIndex = -1;
+		var result;
+		while (number++ < n && (result = re.exec(string)))
+		{
+			if (prevLastIndex === re.lastIndex) break;
+			var i = result.length - 1;
+			var subs = new Array(i);
+			while (i > 0)
+			{
+				var submatch = result[i];
+				subs[--i] = submatch === undefined
+					? Maybe.Nothing
+					: Maybe.Just(submatch);
+			}
+			out.push({
+				match: result[0],
+				submatches: List.fromArray(subs),
+				index: result.index,
+				number: number
+			});
+			prevLastIndex = re.lastIndex;
+		}
+		re.lastIndex = lastIndex;
+		return List.fromArray(out);
+	}
+
+	function replace(n, re, replacer, string)
+	{
+		n = n.ctor === 'All' ? Infinity : n._0;
+		var count = 0;
+		function jsReplacer(match)
+		{
+			if (count++ >= n)
+			{
+				return match;
+			}
+			var i = arguments.length - 3;
+			var submatches = new Array(i);
+			while (i > 0)
+			{
+				var submatch = arguments[i];
+				submatches[--i] = submatch === undefined
+					? Maybe.Nothing
+					: Maybe.Just(submatch);
+			}
+			return replacer({
+				match: match,
+				submatches: List.fromArray(submatches),
+				index: arguments[i - 1],
+				number: count
+			});
+		}
+		return string.replace(re, jsReplacer);
+	}
+
+	function split(n, re, str)
+	{
+		n = n.ctor === 'All' ? Infinity : n._0;
+		if (n === Infinity)
+		{
+			return List.fromArray(str.split(re));
+		}
+		var string = str;
+		var result;
+		var out = [];
+		var start = re.lastIndex;
+		while (n--)
+		{
+			if (!(result = re.exec(string))) break;
+			out.push(string.slice(start, result.index));
+			start = re.lastIndex;
+		}
+		out.push(string.slice(start));
+		return List.fromArray(out);
+	}
+
+	return Elm.Native.Regex.values = {
+		regex: regex,
+		caseInsensitive: caseInsensitive,
+		escape: escape,
+
+		contains: F2(contains),
+		find: F3(find),
+		replace: F4(replace),
+		split: F3(split)
+	};
+};
+
+Elm.Regex = Elm.Regex || {};
+Elm.Regex.make = function (_elm) {
+   "use strict";
+   _elm.Regex = _elm.Regex || {};
+   if (_elm.Regex.values) return _elm.Regex.values;
+   var _U = Elm.Native.Utils.make(_elm),$Maybe = Elm.Maybe.make(_elm),$Native$Regex = Elm.Native.Regex.make(_elm);
+   var _op = {};
+   var split = $Native$Regex.split;
+   var replace = $Native$Regex.replace;
+   var find = $Native$Regex.find;
+   var AtMost = function (a) {    return {ctor: "AtMost",_0: a};};
+   var All = {ctor: "All"};
+   var Match = F4(function (a,b,c,d) {    return {match: a,submatches: b,index: c,number: d};});
+   var contains = $Native$Regex.contains;
+   var caseInsensitive = $Native$Regex.caseInsensitive;
+   var regex = $Native$Regex.regex;
+   var escape = $Native$Regex.escape;
+   var Regex = {ctor: "Regex"};
+   return _elm.Regex.values = {_op: _op
+                              ,regex: regex
+                              ,escape: escape
+                              ,caseInsensitive: caseInsensitive
+                              ,contains: contains
+                              ,find: find
+                              ,replace: replace
+                              ,split: split
+                              ,Match: Match
+                              ,All: All
+                              ,AtMost: AtMost};
+};
+Elm.Date = Elm.Date || {};
+Elm.Date.Config = Elm.Date.Config || {};
+Elm.Date.Config.make = function (_elm) {
+   "use strict";
+   _elm.Date = _elm.Date || {};
+   _elm.Date.Config = _elm.Date.Config || {};
+   if (_elm.Date.Config.values) return _elm.Date.Config.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Date = Elm.Date.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm);
+   var _op = {};
+   var Config = F2(function (a,b) {    return {i18n: a,format: b};});
+   return _elm.Date.Config.values = {_op: _op,Config: Config};
+};
+Elm.Date = Elm.Date || {};
+Elm.Date.Core = Elm.Date.Core || {};
+Elm.Date.Core.make = function (_elm) {
+   "use strict";
+   _elm.Date = _elm.Date || {};
+   _elm.Date.Core = _elm.Date.Core || {};
+   if (_elm.Date.Core.values) return _elm.Date.Core.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Date = Elm.Date.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $Time = Elm.Time.make(_elm);
+   var _op = {};
+   var prevMonth = function (month) {
+      var _p0 = month;
+      switch (_p0.ctor)
+      {case "Jan": return $Date.Dec;
+         case "Feb": return $Date.Jan;
+         case "Mar": return $Date.Feb;
+         case "Apr": return $Date.Mar;
+         case "May": return $Date.Apr;
+         case "Jun": return $Date.May;
+         case "Jul": return $Date.Jun;
+         case "Aug": return $Date.Jul;
+         case "Sep": return $Date.Aug;
+         case "Oct": return $Date.Sep;
+         case "Nov": return $Date.Oct;
+         default: return $Date.Nov;}
+   };
+   var nextMonth = function (month) {
+      var _p1 = month;
+      switch (_p1.ctor)
+      {case "Jan": return $Date.Feb;
+         case "Feb": return $Date.Mar;
+         case "Mar": return $Date.Apr;
+         case "Apr": return $Date.May;
+         case "May": return $Date.Jun;
+         case "Jun": return $Date.Jul;
+         case "Jul": return $Date.Aug;
+         case "Aug": return $Date.Sep;
+         case "Sep": return $Date.Oct;
+         case "Oct": return $Date.Nov;
+         case "Nov": return $Date.Dec;
+         default: return $Date.Jan;}
+   };
+   var monthToInt = function (month) {
+      var _p2 = month;
+      switch (_p2.ctor)
+      {case "Jan": return 1;
+         case "Feb": return 2;
+         case "Mar": return 3;
+         case "Apr": return 4;
+         case "May": return 5;
+         case "Jun": return 6;
+         case "Jul": return 7;
+         case "Aug": return 8;
+         case "Sep": return 9;
+         case "Oct": return 10;
+         case "Nov": return 11;
+         default: return 12;}
+   };
+   var isLeapYear = function (year) {
+      return _U.eq(A2($Basics._op["%"],year,4),0) && !_U.eq(A2($Basics._op["%"],year,100),0) || _U.eq(A2($Basics._op["%"],year,400),0);
+   };
+   var isLeapYearDate = function (date) {    return isLeapYear($Date.year(date));};
+   var yearToDayLength = function (year) {    return isLeapYear(year) ? 366 : 365;};
+   var daysInMonth = F2(function (year,month) {
+      var _p3 = month;
+      switch (_p3.ctor)
+      {case "Jan": return 31;
+         case "Feb": return isLeapYear(year) ? 29 : 28;
+         case "Mar": return 31;
+         case "Apr": return 30;
+         case "May": return 31;
+         case "Jun": return 30;
+         case "Jul": return 31;
+         case "Aug": return 31;
+         case "Sep": return 30;
+         case "Oct": return 31;
+         case "Nov": return 30;
+         default: return 31;}
+   });
+   var daysInMonthDate = function (date) {    return A2(daysInMonth,$Date.year(date),$Date.month(date));};
+   var monthList = _U.list([$Date.Jan,$Date.Feb,$Date.Mar,$Date.Apr,$Date.May,$Date.Jun,$Date.Jul,$Date.Aug,$Date.Sep,$Date.Oct,$Date.Nov,$Date.Dec]);
+   var toTime = function (_p4) {    return $Basics.floor($Date.toTime(_p4));};
+   var fromTime = function (_p5) {    return $Date.fromTime($Basics.toFloat(_p5));};
+   var prevDay = function (day) {
+      var _p6 = day;
+      switch (_p6.ctor)
+      {case "Mon": return $Date.Sun;
+         case "Tue": return $Date.Mon;
+         case "Wed": return $Date.Tue;
+         case "Thu": return $Date.Wed;
+         case "Fri": return $Date.Thu;
+         case "Sat": return $Date.Fri;
+         default: return $Date.Sat;}
+   };
+   var nextDay = function (day) {
+      var _p7 = day;
+      switch (_p7.ctor)
+      {case "Mon": return $Date.Tue;
+         case "Tue": return $Date.Wed;
+         case "Wed": return $Date.Thu;
+         case "Thu": return $Date.Fri;
+         case "Fri": return $Date.Sat;
+         case "Sat": return $Date.Sun;
+         default: return $Date.Mon;}
+   };
+   var isoDayOfWeek = function (day) {
+      var _p8 = day;
+      switch (_p8.ctor)
+      {case "Mon": return 1;
+         case "Tue": return 2;
+         case "Wed": return 3;
+         case "Thu": return 4;
+         case "Fri": return 5;
+         case "Sat": return 6;
+         default: return 7;}
+   };
+   var daysBackToStartOfWeek = F2(function (dateDay,startOfWeekDay) {
+      var startOfWeekDayIndex = isoDayOfWeek(startOfWeekDay);
+      var dateDayIndex = isoDayOfWeek(dateDay);
+      return _U.cmp(dateDayIndex,startOfWeekDayIndex) < 0 ? 7 + dateDayIndex - startOfWeekDayIndex : dateDayIndex - startOfWeekDayIndex;
+   });
+   var ticksAMillisecond = $Basics.floor($Time.millisecond);
+   var ticksASecond = ticksAMillisecond * 1000;
+   var ticksAMinute = ticksASecond * 60;
+   var ticksAnHour = ticksAMinute * 60;
+   var ticksADay = ticksAnHour * 24;
+   var ticksAWeek = ticksADay * 7;
+   var firstOfMonthTicks = function (date) {    var dateTicks = toTime(date);var day = $Date.day(date);return dateTicks + (1 - day) * ticksADay;};
+   var lastOfPrevMonthDate = function (date) {    return fromTime(firstOfMonthTicks(date) - ticksADay);};
+   var daysInPrevMonth = function (date) {    return daysInMonthDate(lastOfPrevMonthDate(date));};
+   var toFirstOfMonth = function (date) {    return fromTime(firstOfMonthTicks(date));};
+   var lastOfMonthTicks = function (date) {
+      var dateTicks = toTime(date);
+      var day = $Date.day(date);
+      var month = $Date.month(date);
+      var year = $Date.year(date);
+      var daysInMonthVal = A2(daysInMonth,year,month);
+      var addDays = daysInMonthVal - day;
+      return dateTicks + addDays * ticksADay;
+   };
+   var firstOfNextMonthDate = function (date) {    return fromTime(lastOfMonthTicks(date) + ticksADay);};
+   var daysInNextMonth = function (date) {    return daysInMonthDate(firstOfNextMonthDate(date));};
+   var lastOfMonthDate = function (date) {    return fromTime(lastOfMonthTicks(date));};
+   var epochDateStr = "1970-01-01T00:00:00Z";
+   return _elm.Date.Core.values = {_op: _op
+                                  ,monthToInt: monthToInt
+                                  ,daysInMonth: daysInMonth
+                                  ,monthList: monthList
+                                  ,daysInNextMonth: daysInNextMonth
+                                  ,daysInPrevMonth: daysInPrevMonth
+                                  ,daysInMonthDate: daysInMonthDate
+                                  ,isLeapYear: isLeapYear
+                                  ,isLeapYearDate: isLeapYearDate
+                                  ,yearToDayLength: yearToDayLength
+                                  ,isoDayOfWeek: isoDayOfWeek
+                                  ,toFirstOfMonth: toFirstOfMonth
+                                  ,firstOfNextMonthDate: firstOfNextMonthDate
+                                  ,lastOfMonthDate: lastOfMonthDate
+                                  ,lastOfPrevMonthDate: lastOfPrevMonthDate
+                                  ,daysBackToStartOfWeek: daysBackToStartOfWeek
+                                  ,fromTime: fromTime
+                                  ,toTime: toTime
+                                  ,nextDay: nextDay
+                                  ,prevDay: prevDay
+                                  ,nextMonth: nextMonth
+                                  ,prevMonth: prevMonth
+                                  ,epochDateStr: epochDateStr
+                                  ,ticksAMillisecond: ticksAMillisecond
+                                  ,ticksASecond: ticksASecond
+                                  ,ticksAMinute: ticksAMinute
+                                  ,ticksAnHour: ticksAnHour
+                                  ,ticksADay: ticksADay
+                                  ,ticksAWeek: ticksAWeek};
+};
+Elm.Date = Elm.Date || {};
+Elm.Date.Create = Elm.Date.Create || {};
+Elm.Date.Create.make = function (_elm) {
+   "use strict";
+   _elm.Date = _elm.Date || {};
+   _elm.Date.Create = _elm.Date.Create || {};
+   if (_elm.Date.Create.values) return _elm.Date.Create.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Date = Elm.Date.make(_elm),
+   $Date$Core = Elm.Date.Core.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm);
+   var _op = {};
+   var iterateSum = F5(function (getNext,getValue,target,current,accumulator) {
+      iterateSum: while (true) if (_U.eq(current,target)) return accumulator; else {
+            var _v0 = getNext,_v1 = getValue,_v2 = target,_v3 = getNext(current),_v4 = accumulator + getValue(current);
+            getNext = _v0;
+            getValue = _v1;
+            target = _v2;
+            current = _v3;
+            accumulator = _v4;
+            continue iterateSum;
+         }
+   });
+   var monthToTicks = F2(function (year,month) {    return A2($Date$Core.daysInMonth,year,month) * $Date$Core.ticksADay;});
+   var getMonthTicksToEndYear = F2(function (year,month) {
+      return A5(iterateSum,$Date$Core.nextMonth,monthToTicks(year),$Date.Jan,$Date$Core.nextMonth(month),0);
+   });
+   var getMonthTicksSinceStartOfYear = F2(function (year,month) {    return A5(iterateSum,$Date$Core.nextMonth,monthToTicks(year),month,$Date.Jan,0);});
+   var yearToTicks = function (year) {    return $Date$Core.yearToDayLength(year) * $Date$Core.ticksADay;};
+   var getYearTicksTo1970 = function (year) {    return A5(iterateSum,F2(function (x,y) {    return x + y;})(1),yearToTicks,1970,year + 1,0);};
+   var makeDateTicksNegative = function (date) {
+      var millisecondsToEndOfSecond = 1000 - $Date.millisecond(date);
+      var millisecondTicks = millisecondsToEndOfSecond * $Date$Core.ticksAMillisecond;
+      var secondsToEndOfMinute = 60 - $Date.second(date) - 1;
+      var secondTicks = secondsToEndOfMinute * $Date$Core.ticksASecond;
+      var minutesToEndOfHour = 60 - $Date.minute(date) - 1;
+      var minuteTicks = minutesToEndOfHour * $Date$Core.ticksAMinute;
+      var hoursToEndOfDay = 24 - $Date.hour(date) - 1;
+      var hourTicks = hoursToEndOfDay * $Date$Core.ticksAnHour;
+      var month = $Date.month(date);
+      var year = $Date.year(date);
+      var yearTicks = getYearTicksTo1970(year);
+      var monthTicks = A2(getMonthTicksToEndYear,year,month);
+      var daysToEndOfMonth = A2($Date$Core.daysInMonth,year,month) - $Date.day(date);
+      var dayTicks = daysToEndOfMonth * $Date$Core.ticksADay;
+      return $Basics.negate(yearTicks + monthTicks + dayTicks + hourTicks + minuteTicks + secondTicks + millisecondTicks);
+   };
+   var getYearTicksFrom1970 = function (year) {    return A5(iterateSum,F2(function (x,y) {    return x + y;})(1),yearToTicks,year,1970,0);};
+   var makeDateTicksPositive = function (date) {
+      var day = $Date.day(date);
+      var restTicks = $Date.millisecond(date) * $Date$Core.ticksAMillisecond + $Date.second(date) * $Date$Core.ticksASecond + $Date.minute(date) * $Date$Core.ticksAMinute + $Date.hour(date) * $Date$Core.ticksAnHour + (day - 1) * $Date$Core.ticksADay;
+      var month = $Date.month(date);
+      var year = $Date.year(date);
+      var yearTicks = getYearTicksFrom1970(year);
+      var monthTicks = A2(getMonthTicksSinceStartOfYear,year,month);
+      return yearTicks + monthTicks + restTicks;
+   };
+   var makeDateTicks = function (date) {
+      var year = $Date.year(date);
+      return _U.cmp(year,1970) < 0 ? makeDateTicksNegative(date) : makeDateTicksPositive(date);
+   };
+   var getTimezoneOffset = function (date) {
+      var date = function () {
+         var _p0 = $Date.fromString($Date$Core.epochDateStr);
+         if (_p0.ctor === "Ok") {
+               return _p0._0;
+            } else {
+               return _U.crashCase("Date.Create",
+               {start: {line: 176,column: 7},end: {line: 178,column: 89}},
+               _p0)("Failed to parse unix epoch date something is very wrong.");
+            }
+      }();
+      var dateTicks = $Date$Core.toTime(date);
+      var newTicks = makeDateTicks(date);
+      var timezoneOffset = (dateTicks - newTicks) / $Date$Core.ticksAMinute | 0;
+      return timezoneOffset;
+   };
+   return _elm.Date.Create.values = {_op: _op,makeDateTicks: makeDateTicks,getTimezoneOffset: getTimezoneOffset};
+};
+Elm.Date = Elm.Date || {};
+Elm.Date.I18n = Elm.Date.I18n || {};
+Elm.Date.I18n.I_en_us = Elm.Date.I18n.I_en_us || {};
+Elm.Date.I18n.I_en_us.make = function (_elm) {
+   "use strict";
+   _elm.Date = _elm.Date || {};
+   _elm.Date.I18n = _elm.Date.I18n || {};
+   _elm.Date.I18n.I_en_us = _elm.Date.I18n.I_en_us || {};
+   if (_elm.Date.I18n.I_en_us.values) return _elm.Date.I18n.I_en_us.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Date = Elm.Date.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm);
+   var _op = {};
+   var monthName = function (month) {
+      var _p0 = month;
+      switch (_p0.ctor)
+      {case "Jan": return "January";
+         case "Feb": return "February";
+         case "Mar": return "March";
+         case "Apr": return "April";
+         case "May": return "May";
+         case "Jun": return "June";
+         case "Jul": return "July";
+         case "Aug": return "August";
+         case "Sep": return "September";
+         case "Oct": return "October";
+         case "Nov": return "November";
+         default: return "December";}
+   };
+   var monthShort = function (month) {
+      var _p1 = month;
+      switch (_p1.ctor)
+      {case "Jan": return "Jan";
+         case "Feb": return "Feb";
+         case "Mar": return "Mar";
+         case "Apr": return "Apr";
+         case "May": return "May";
+         case "Jun": return "Jun";
+         case "Jul": return "Jul";
+         case "Aug": return "Aug";
+         case "Sep": return "Sep";
+         case "Oct": return "Oct";
+         case "Nov": return "Nov";
+         default: return "Dec";}
+   };
+   var dayName = function (day) {
+      var _p2 = day;
+      switch (_p2.ctor)
+      {case "Mon": return "Monday";
+         case "Tue": return "Tuesday";
+         case "Wed": return "Wednesday";
+         case "Thu": return "Thursday";
+         case "Fri": return "Friday";
+         case "Sat": return "Saturday";
+         default: return "Sunday";}
+   };
+   var dayShort = function (day) {
+      var _p3 = day;
+      switch (_p3.ctor)
+      {case "Mon": return "Mon";
+         case "Tue": return "Tue";
+         case "Wed": return "Wed";
+         case "Thu": return "Thu";
+         case "Fri": return "Fri";
+         case "Sat": return "Sat";
+         default: return "Sun";}
+   };
+   return _elm.Date.I18n.I_en_us.values = {_op: _op,dayShort: dayShort,dayName: dayName,monthShort: monthShort,monthName: monthName};
+};
+Elm.Date = Elm.Date || {};
+Elm.Date.Config = Elm.Date.Config || {};
+Elm.Date.Config.Config_en_us = Elm.Date.Config.Config_en_us || {};
+Elm.Date.Config.Config_en_us.make = function (_elm) {
+   "use strict";
+   _elm.Date = _elm.Date || {};
+   _elm.Date.Config = _elm.Date.Config || {};
+   _elm.Date.Config.Config_en_us = _elm.Date.Config.Config_en_us || {};
+   if (_elm.Date.Config.Config_en_us.values) return _elm.Date.Config.Config_en_us.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Date = Elm.Date.make(_elm),
+   $Date$Config = Elm.Date.Config.make(_elm),
+   $Date$I18n$I_en_us = Elm.Date.I18n.I_en_us.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm);
+   var _op = {};
+   var config = {i18n: {dayShort: $Date$I18n$I_en_us.dayShort
+                       ,dayName: $Date$I18n$I_en_us.dayName
+                       ,monthShort: $Date$I18n$I_en_us.monthShort
+                       ,monthName: $Date$I18n$I_en_us.monthName}
+                ,format: {date: "%-m/%-d/%Y"
+                         ,longDate: "%A, %B %d, %Y"
+                         ,time: "%-H:%M %p"
+                         ,longTime: "%-H:%M:%S %p"
+                         ,dateTime: "%-m/%-d/%Y %-I:%M %p"
+                         ,firstDayOfWeek: $Date.Mon}};
+   return _elm.Date.Config.Config_en_us.values = {_op: _op,config: config};
+};
+Elm.Date = Elm.Date || {};
+Elm.Date.Internal = Elm.Date.Internal || {};
+Elm.Date.Internal.make = function (_elm) {
+   "use strict";
+   _elm.Date = _elm.Date || {};
+   _elm.Date.Internal = _elm.Date.Internal || {};
+   if (_elm.Date.Internal.values) return _elm.Date.Internal.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Date = Elm.Date.make(_elm),
+   $Date$Core = Elm.Date.Core.make(_elm),
+   $Date$Create = Elm.Date.Create.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm);
+   var _op = {};
+   var hackDateAsOffset = F2(function (offsetMinutes,date) {
+      return $Date$Core.fromTime(A2(F2(function (x,y) {    return x + y;}),offsetMinutes * $Date$Core.ticksAMinute,$Date$Core.toTime(date)));
+   });
+   var hackDateAsUtc = function (date) {    return A2(hackDateAsOffset,$Date$Create.getTimezoneOffset(date),date);};
+   return _elm.Date.Internal.values = {_op: _op,hackDateAsUtc: hackDateAsUtc,hackDateAsOffset: hackDateAsOffset};
+};
+Elm.Date = Elm.Date || {};
+Elm.Date.Format = Elm.Date.Format || {};
+Elm.Date.Format.make = function (_elm) {
+   "use strict";
+   _elm.Date = _elm.Date || {};
+   _elm.Date.Format = _elm.Date.Format || {};
+   if (_elm.Date.Format.values) return _elm.Date.Format.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Date = Elm.Date.make(_elm),
+   $Date$Config = Elm.Date.Config.make(_elm),
+   $Date$Config$Config_en_us = Elm.Date.Config.Config_en_us.make(_elm),
+   $Date$Core = Elm.Date.Core.make(_elm),
+   $Date$Create = Elm.Date.Create.make(_elm),
+   $Date$Internal = Elm.Date.Internal.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Regex = Elm.Regex.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $String = Elm.String.make(_elm);
+   var _op = {};
+   var toHourMin = function (offsetMinutes) {    return {ctor: "_Tuple2",_0: offsetMinutes / 60 | 0,_1: A2($Basics._op["%"],offsetMinutes,60)};};
+   var padWithN = F2(function (n,c) {    return function (_p0) {    return A3($String.padLeft,n,c,$Basics.toString(_p0));};});
+   var padWith = function (c) {    return function (_p1) {    return A3($String.padLeft,2,c,$Basics.toString(_p1));};};
+   var hourMod12 = function (h) {    return _U.eq(A2($Basics._op["%"],h,12),0) ? 12 : A2($Basics._op["%"],h,12);};
+   var formatOffsetStr = F2(function (betweenHoursMinutes,offset) {
+      var _p2 = toHourMin($Basics.abs(offset));
+      var hour = _p2._0;
+      var minute = _p2._1;
+      return A2($Basics._op["++"],
+      _U.cmp(offset,0) < 1 ? "+" : "-",
+      A2($Basics._op["++"],A2(padWith,_U.chr("0"),hour),A2($Basics._op["++"],betweenHoursMinutes,A2(padWith,_U.chr("0"),minute))));
+   });
+   var collapse = function (m) {    return A2($Maybe.andThen,m,$Basics.identity);};
+   var formatToken = F4(function (config,offset,d,m) {
+      var symbol = A2($Maybe.withDefault," ",collapse($List.head(m.submatches)));
+      var _p3 = symbol;
+      switch (_p3)
+      {case "Y": return A3(padWithN,4,_U.chr("0"),$Date.year(d));
+         case "m": return A2(padWith,_U.chr("0"),$Date$Core.monthToInt($Date.month(d)));
+         case "_m": return A2(padWith,_U.chr(" "),$Date$Core.monthToInt($Date.month(d)));
+         case "-m": return $Basics.toString($Date$Core.monthToInt($Date.month(d)));
+         case "B": return config.i18n.monthName($Date.month(d));
+         case "^B": return $String.toUpper(config.i18n.monthName($Date.month(d)));
+         case "b": return config.i18n.monthShort($Date.month(d));
+         case "^b": return $String.toUpper(config.i18n.monthShort($Date.month(d)));
+         case "d": return A2(padWith,_U.chr("0"),$Date.day(d));
+         case "-d": return $Basics.toString($Date.day(d));
+         case "e": return A2(padWith,_U.chr(" "),$Date.day(d));
+         case "A": return config.i18n.dayName($Date.dayOfWeek(d));
+         case "^A": return $String.toUpper(config.i18n.dayName($Date.dayOfWeek(d)));
+         case "a": return config.i18n.dayShort($Date.dayOfWeek(d));
+         case "^a": return $String.toUpper(config.i18n.dayShort($Date.dayOfWeek(d)));
+         case "H": return A2(padWith,_U.chr("0"),$Date.hour(d));
+         case "-H": return $Basics.toString($Date.hour(d));
+         case "k": return A2(padWith,_U.chr(" "),$Date.hour(d));
+         case "I": return A2(padWith,_U.chr("0"),hourMod12($Date.hour(d)));
+         case "-I": return $Basics.toString(hourMod12($Date.hour(d)));
+         case "l": return A2(padWith,_U.chr(" "),hourMod12($Date.hour(d)));
+         case "p": return _U.cmp($Date.hour(d),12) < 0 ? "AM" : "PM";
+         case "P": return _U.cmp($Date.hour(d),12) < 0 ? "am" : "pm";
+         case "M": return A2(padWith,_U.chr("0"),$Date.minute(d));
+         case "S": return A2(padWith,_U.chr("0"),$Date.second(d));
+         case "L": return A3(padWithN,3,_U.chr("0"),$Date.millisecond(d));
+         case "%": return symbol;
+         case "z": return A2(formatOffsetStr,"",offset);
+         case ":z": return A2(formatOffsetStr,":",offset);
+         default: return "";}
+   });
+   var formatRegex = $Regex.regex("%(Y|m|_m|-m|B|^B|b|^b|d|-d|e|A|^A|a|^a|H|-H|k|I|-I|l|p|P|M|S|%|L|z|:z)");
+   var formatOffset = F4(function (config,offset,formatStr,date) {
+      var hackOffset = $Date$Create.getTimezoneOffset(date) - offset;
+      return A4($Regex.replace,$Regex.All,formatRegex,A3(formatToken,config,offset,A2($Date$Internal.hackDateAsOffset,hackOffset,date)),formatStr);
+   });
+   var format = F3(function (config,formatStr,date) {    return A4(formatOffset,config,$Date$Create.getTimezoneOffset(date),formatStr,date);});
+   var formatUtc = F3(function (config,formatStr,date) {    return A4(formatOffset,config,0,formatStr,date);});
+   var isoDateString = function (date) {
+      var day = $Date.day(date);
+      var month = $Date.month(date);
+      var year = $Date.year(date);
+      return A2($Basics._op["++"],
+      A3($String.padLeft,4,_U.chr("0"),$Basics.toString(year)),
+      A2($Basics._op["++"],
+      "-",
+      A2($Basics._op["++"],
+      A3($String.padLeft,2,_U.chr("0"),$Basics.toString($Date$Core.monthToInt(month))),
+      A2($Basics._op["++"],"-",A3($String.padLeft,2,_U.chr("0"),$Basics.toString(day))))));
+   };
+   var utcIsoDateString = function (date) {    return isoDateString($Date$Internal.hackDateAsUtc(date));};
+   var yearInt = function (year) {    return A3($String.padLeft,4,_U.chr("0"),$Basics.toString(year));};
+   var year = function (date) {    return A3($String.padLeft,4,_U.chr("0"),$Basics.toString($Date.year(date)));};
+   var monthMonth = function (month) {    return A3($String.padLeft,2,_U.chr("0"),$Basics.toString($Date$Core.monthToInt(month)));};
+   var month = function (date) {    return A3($String.padLeft,2,_U.chr("0"),$Basics.toString($Date$Core.monthToInt($Date.month(date))));};
+   var isoTimeFormat = "%H:%M:%S";
+   var isoDateFormat = "%Y-%m-%d";
+   var isoMsecOffsetFormat = "%Y-%m-%dT%H:%M:%S.%L%z";
+   var isoString = A2(format,$Date$Config$Config_en_us.config,isoMsecOffsetFormat);
+   var isoOffsetFormat = "%Y-%m-%dT%H:%M:%S%z";
+   var isoMsecFormat = "%Y-%m-%dT%H:%M:%S.%L";
+   var utcIsoString = function (date) {    return A2($Basics._op["++"],A3(formatUtc,$Date$Config$Config_en_us.config,isoMsecFormat,date),"Z");};
+   var isoFormat = "%Y-%m-%dT%H:%M:%S";
+   return _elm.Date.Format.values = {_op: _op
+                                    ,format: format
+                                    ,formatUtc: formatUtc
+                                    ,formatOffset: formatOffset
+                                    ,isoString: isoString
+                                    ,utcIsoString: utcIsoString
+                                    ,isoDateString: isoDateString
+                                    ,utcIsoDateString: utcIsoDateString
+                                    ,isoFormat: isoFormat
+                                    ,isoMsecFormat: isoMsecFormat
+                                    ,isoOffsetFormat: isoOffsetFormat
+                                    ,isoMsecOffsetFormat: isoMsecOffsetFormat
+                                    ,isoDateFormat: isoDateFormat
+                                    ,isoTimeFormat: isoTimeFormat};
+};
+Elm.Date = Elm.Date || {};
+Elm.Date.Config = Elm.Date.Config || {};
+Elm.Date.Config.Config_en_au = Elm.Date.Config.Config_en_au || {};
+Elm.Date.Config.Config_en_au.make = function (_elm) {
+   "use strict";
+   _elm.Date = _elm.Date || {};
+   _elm.Date.Config = _elm.Date.Config || {};
+   _elm.Date.Config.Config_en_au = _elm.Date.Config.Config_en_au || {};
+   if (_elm.Date.Config.Config_en_au.values) return _elm.Date.Config.Config_en_au.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Date = Elm.Date.make(_elm),
+   $Date$Config = Elm.Date.Config.make(_elm),
+   $Date$I18n$I_en_us = Elm.Date.I18n.I_en_us.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm);
+   var _op = {};
+   var config = {i18n: {dayShort: $Date$I18n$I_en_us.dayShort
+                       ,dayName: $Date$I18n$I_en_us.dayName
+                       ,monthShort: $Date$I18n$I_en_us.monthShort
+                       ,monthName: $Date$I18n$I_en_us.monthName}
+                ,format: {date: "%-d/%m/%Y"
+                         ,longDate: "%A, %-d %B %Y"
+                         ,time: "%-I:%M %p"
+                         ,longTime: "%-I:%M:%S %p"
+                         ,dateTime: "%-d/%m/%Y %-I:%M %p"
+                         ,firstDayOfWeek: $Date.Mon}};
+   return _elm.Date.Config.Config_en_au.values = {_op: _op,config: config};
+};
+Elm.Native.Effects = {};
+Elm.Native.Effects.make = function(localRuntime) {
+
+	localRuntime.Native = localRuntime.Native || {};
+	localRuntime.Native.Effects = localRuntime.Native.Effects || {};
+	if (localRuntime.Native.Effects.values)
+	{
+		return localRuntime.Native.Effects.values;
+	}
+
+	var Task = Elm.Native.Task.make(localRuntime);
+	var Utils = Elm.Native.Utils.make(localRuntime);
+	var Signal = Elm.Signal.make(localRuntime);
+	var List = Elm.Native.List.make(localRuntime);
+
+
+	// polyfill so things will work even if rAF is not available for some reason
+	var _requestAnimationFrame =
+		typeof requestAnimationFrame !== 'undefined'
+			? requestAnimationFrame
+			: function(cb) { setTimeout(cb, 1000 / 60); }
+			;
+
+
+	// batchedSending and sendCallback implement a small state machine in order
+	// to schedule only one send(time) call per animation frame.
+	//
+	// Invariants:
+	// 1. In the NO_REQUEST state, there is never a scheduled sendCallback.
+	// 2. In the PENDING_REQUEST and EXTRA_REQUEST states, there is always exactly
+	//    one scheduled sendCallback.
+	var NO_REQUEST = 0;
+	var PENDING_REQUEST = 1;
+	var EXTRA_REQUEST = 2;
+	var state = NO_REQUEST;
+	var messageArray = [];
+
+
+	function batchedSending(address, tickMessages)
+	{
+		// insert ticks into the messageArray
+		var foundAddress = false;
+
+		for (var i = messageArray.length; i--; )
+		{
+			if (messageArray[i].address === address)
+			{
+				foundAddress = true;
+				messageArray[i].tickMessages = A3(List.foldl, List.cons, messageArray[i].tickMessages, tickMessages);
+				break;
+			}
+		}
+
+		if (!foundAddress)
+		{
+			messageArray.push({ address: address, tickMessages: tickMessages });
+		}
+
+		// do the appropriate state transition
+		switch (state)
+		{
+			case NO_REQUEST:
+				_requestAnimationFrame(sendCallback);
+				state = PENDING_REQUEST;
+				break;
+			case PENDING_REQUEST:
+				state = PENDING_REQUEST;
+				break;
+			case EXTRA_REQUEST:
+				state = PENDING_REQUEST;
+				break;
+		}
+	}
+
+
+	function sendCallback(time)
+	{
+		switch (state)
+		{
+			case NO_REQUEST:
+				// This state should not be possible. How can there be no
+				// request, yet somehow we are actively fulfilling a
+				// request?
+				throw new Error(
+					'Unexpected send callback.\n' +
+					'Please report this to <https://github.com/evancz/elm-effects/issues>.'
+				);
+
+			case PENDING_REQUEST:
+				// At this point, we do not *know* that another frame is
+				// needed, but we make an extra request to rAF just in
+				// case. It's possible to drop a frame if rAF is called
+				// too late, so we just do it preemptively.
+				_requestAnimationFrame(sendCallback);
+				state = EXTRA_REQUEST;
+
+				// There's also stuff we definitely need to send.
+				send(time);
+				return;
+
+			case EXTRA_REQUEST:
+				// Turns out the extra request was not needed, so we will
+				// stop calling rAF. No reason to call it all the time if
+				// no one needs it.
+				state = NO_REQUEST;
+				return;
+		}
+	}
+
+
+	function send(time)
+	{
+		for (var i = messageArray.length; i--; )
+		{
+			var messages = A3(
+				List.foldl,
+				F2( function(toAction, list) { return List.Cons(toAction(time), list); } ),
+				List.Nil,
+				messageArray[i].tickMessages
+			);
+			Task.perform( A2(Signal.send, messageArray[i].address, messages) );
+		}
+		messageArray = [];
+	}
+
+
+	function requestTickSending(address, tickMessages)
+	{
+		return Task.asyncFunction(function(callback) {
+			batchedSending(address, tickMessages);
+			callback(Task.succeed(Utils.Tuple0));
+		});
+	}
+
+
+	return localRuntime.Native.Effects.values = {
+		requestTickSending: F2(requestTickSending)
+	};
+
+};
+
+Elm.Effects = Elm.Effects || {};
+Elm.Effects.make = function (_elm) {
+   "use strict";
+   _elm.Effects = _elm.Effects || {};
+   if (_elm.Effects.values) return _elm.Effects.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Native$Effects = Elm.Native.Effects.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $Task = Elm.Task.make(_elm),
+   $Time = Elm.Time.make(_elm);
+   var _op = {};
+   var ignore = function (task) {    return A2($Task.map,$Basics.always({ctor: "_Tuple0"}),task);};
+   var requestTickSending = $Native$Effects.requestTickSending;
+   var toTaskHelp = F3(function (address,effect,_p0) {
+      var _p1 = _p0;
+      var _p5 = _p1._1;
+      var _p4 = _p1;
+      var _p3 = _p1._0;
+      var _p2 = effect;
+      switch (_p2.ctor)
+      {case "Task": var reporter = A2($Task.andThen,_p2._0,function (answer) {    return A2($Signal.send,address,_U.list([answer]));});
+           return {ctor: "_Tuple2",_0: A2($Task.andThen,_p3,$Basics.always(ignore($Task.spawn(reporter)))),_1: _p5};
+         case "Tick": return {ctor: "_Tuple2",_0: _p3,_1: A2($List._op["::"],_p2._0,_p5)};
+         case "None": return _p4;
+         default: return A3($List.foldl,toTaskHelp(address),_p4,_p2._0);}
+   });
+   var toTask = F2(function (address,effect) {
+      var _p6 = A3(toTaskHelp,address,effect,{ctor: "_Tuple2",_0: $Task.succeed({ctor: "_Tuple0"}),_1: _U.list([])});
+      var combinedTask = _p6._0;
+      var tickMessages = _p6._1;
+      return $List.isEmpty(tickMessages) ? combinedTask : A2($Task.andThen,combinedTask,$Basics.always(A2(requestTickSending,address,tickMessages)));
+   });
+   var Never = function (a) {    return {ctor: "Never",_0: a};};
+   var Batch = function (a) {    return {ctor: "Batch",_0: a};};
+   var batch = Batch;
+   var None = {ctor: "None"};
+   var none = None;
+   var Tick = function (a) {    return {ctor: "Tick",_0: a};};
+   var tick = Tick;
+   var Task = function (a) {    return {ctor: "Task",_0: a};};
+   var task = Task;
+   var map = F2(function (func,effect) {
+      var _p7 = effect;
+      switch (_p7.ctor)
+      {case "Task": return Task(A2($Task.map,func,_p7._0));
+         case "Tick": return Tick(function (_p8) {    return func(_p7._0(_p8));});
+         case "None": return None;
+         default: return Batch(A2($List.map,map(func),_p7._0));}
+   });
+   return _elm.Effects.values = {_op: _op,none: none,task: task,tick: tick,map: map,batch: batch,toTask: toTask};
+};
+Elm.Native.Http = {};
+Elm.Native.Http.make = function(localRuntime) {
+
+	localRuntime.Native = localRuntime.Native || {};
+	localRuntime.Native.Http = localRuntime.Native.Http || {};
+	if (localRuntime.Native.Http.values)
+	{
+		return localRuntime.Native.Http.values;
+	}
+
+	var Dict = Elm.Dict.make(localRuntime);
+	var List = Elm.List.make(localRuntime);
+	var Maybe = Elm.Maybe.make(localRuntime);
+	var Task = Elm.Native.Task.make(localRuntime);
+
+
+	function send(settings, request)
+	{
+		return Task.asyncFunction(function(callback) {
+			var req = new XMLHttpRequest();
+
+			// start
+			if (settings.onStart.ctor === 'Just')
+			{
+				req.addEventListener('loadStart', function() {
+					var task = settings.onStart._0;
+					Task.spawn(task);
+				});
+			}
+
+			// progress
+			if (settings.onProgress.ctor === 'Just')
+			{
+				req.addEventListener('progress', function(event) {
+					var progress = !event.lengthComputable
+						? Maybe.Nothing
+						: Maybe.Just({
+							_: {},
+							loaded: event.loaded,
+							total: event.total
+						});
+					var task = settings.onProgress._0(progress);
+					Task.spawn(task);
+				});
+			}
+
+			// end
+			req.addEventListener('error', function() {
+				return callback(Task.fail({ ctor: 'RawNetworkError' }));
+			});
+
+			req.addEventListener('timeout', function() {
+				return callback(Task.fail({ ctor: 'RawTimeout' }));
+			});
+
+			req.addEventListener('load', function() {
+				return callback(Task.succeed(toResponse(req)));
+			});
+
+			req.open(request.verb, request.url, true);
+
+			// set all the headers
+			function setHeader(pair) {
+				req.setRequestHeader(pair._0, pair._1);
+			}
+			A2(List.map, setHeader, request.headers);
+
+			// set the timeout
+			req.timeout = settings.timeout;
+
+			// enable this withCredentials thing
+			req.withCredentials = settings.withCredentials;
+
+			// ask for a specific MIME type for the response
+			if (settings.desiredResponseType.ctor === 'Just')
+			{
+				req.overrideMimeType(settings.desiredResponseType._0);
+			}
+
+			// actuall send the request
+			if(request.body.ctor === "BodyFormData")
+			{
+				req.send(request.body.formData)
+			}
+			else
+			{
+				req.send(request.body._0);
+			}
+		});
+	}
+
+
+	// deal with responses
+
+	function toResponse(req)
+	{
+		var tag = req.responseType === 'blob' ? 'Blob' : 'Text'
+		var response = tag === 'Blob' ? req.response : req.responseText;
+		return {
+			_: {},
+			status: req.status,
+			statusText: req.statusText,
+			headers: parseHeaders(req.getAllResponseHeaders()),
+			url: req.responseURL,
+			value: { ctor: tag, _0: response }
+		};
+	}
+
+
+	function parseHeaders(rawHeaders)
+	{
+		var headers = Dict.empty;
+
+		if (!rawHeaders)
+		{
+			return headers;
+		}
+
+		var headerPairs = rawHeaders.split('\u000d\u000a');
+		for (var i = headerPairs.length; i--; )
+		{
+			var headerPair = headerPairs[i];
+			var index = headerPair.indexOf('\u003a\u0020');
+			if (index > 0)
+			{
+				var key = headerPair.substring(0, index);
+				var value = headerPair.substring(index + 2);
+
+				headers = A3(Dict.update, key, function(oldValue) {
+					if (oldValue.ctor === 'Just')
+					{
+						return Maybe.Just(value + ', ' + oldValue._0);
+					}
+					return Maybe.Just(value);
+				}, headers);
+			}
+		}
+
+		return headers;
+	}
+
+
+	function multipart(dataList)
+	{
+		var formData = new FormData();
+
+		while (dataList.ctor !== '[]')
+		{
+			var data = dataList._0;
+			if (data.ctor === 'StringData')
+			{
+				formData.append(data._0, data._1);
+			}
+			else
+			{
+				var fileName = data._1.ctor === 'Nothing'
+					? undefined
+					: data._1._0;
+				formData.append(data._0, data._2, fileName);
+			}
+			dataList = dataList._1;
+		}
+
+		return { ctor: 'BodyFormData', formData: formData };
+	}
+
+
+	function uriEncode(string)
+	{
+		return encodeURIComponent(string);
+	}
+
+	function uriDecode(string)
+	{
+		return decodeURIComponent(string);
+	}
+
+	return localRuntime.Native.Http.values = {
+		send: F2(send),
+		multipart: multipart,
+		uriEncode: uriEncode,
+		uriDecode: uriDecode
+	};
+};
+
+Elm.Http = Elm.Http || {};
+Elm.Http.make = function (_elm) {
+   "use strict";
+   _elm.Http = _elm.Http || {};
+   if (_elm.Http.values) return _elm.Http.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $Dict = Elm.Dict.make(_elm),
+   $Json$Decode = Elm.Json.Decode.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Native$Http = Elm.Native.Http.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $String = Elm.String.make(_elm),
+   $Task = Elm.Task.make(_elm),
+   $Time = Elm.Time.make(_elm);
+   var _op = {};
+   var send = $Native$Http.send;
+   var BadResponse = F2(function (a,b) {    return {ctor: "BadResponse",_0: a,_1: b};});
+   var UnexpectedPayload = function (a) {    return {ctor: "UnexpectedPayload",_0: a};};
+   var handleResponse = F2(function (handle,response) {
+      if (_U.cmp(200,response.status) < 1 && _U.cmp(response.status,300) < 0) {
+            var _p0 = response.value;
+            if (_p0.ctor === "Text") {
+                  return handle(_p0._0);
+               } else {
+                  return $Task.fail(UnexpectedPayload("Response body is a blob, expecting a string."));
+               }
+         } else return $Task.fail(A2(BadResponse,response.status,response.statusText));
+   });
+   var NetworkError = {ctor: "NetworkError"};
+   var Timeout = {ctor: "Timeout"};
+   var promoteError = function (rawError) {    var _p1 = rawError;if (_p1.ctor === "RawTimeout") {    return Timeout;} else {    return NetworkError;}};
+   var fromJson = F2(function (decoder,response) {
+      var decode = function (str) {
+         var _p2 = A2($Json$Decode.decodeString,decoder,str);
+         if (_p2.ctor === "Ok") {
+               return $Task.succeed(_p2._0);
+            } else {
+               return $Task.fail(UnexpectedPayload(_p2._0));
+            }
+      };
+      return A2($Task.andThen,A2($Task.mapError,promoteError,response),handleResponse(decode));
+   });
+   var RawNetworkError = {ctor: "RawNetworkError"};
+   var RawTimeout = {ctor: "RawTimeout"};
+   var Blob = function (a) {    return {ctor: "Blob",_0: a};};
+   var Text = function (a) {    return {ctor: "Text",_0: a};};
+   var Response = F5(function (a,b,c,d,e) {    return {status: a,statusText: b,headers: c,url: d,value: e};});
+   var defaultSettings = {timeout: 0,onStart: $Maybe.Nothing,onProgress: $Maybe.Nothing,desiredResponseType: $Maybe.Nothing,withCredentials: false};
+   var post = F3(function (decoder,url,body) {
+      var request = {verb: "POST",headers: _U.list([]),url: url,body: body};
+      return A2(fromJson,decoder,A2(send,defaultSettings,request));
+   });
+   var Settings = F5(function (a,b,c,d,e) {    return {timeout: a,onStart: b,onProgress: c,desiredResponseType: d,withCredentials: e};});
+   var multipart = $Native$Http.multipart;
+   var FileData = F3(function (a,b,c) {    return {ctor: "FileData",_0: a,_1: b,_2: c};});
+   var BlobData = F3(function (a,b,c) {    return {ctor: "BlobData",_0: a,_1: b,_2: c};});
+   var blobData = BlobData;
+   var StringData = F2(function (a,b) {    return {ctor: "StringData",_0: a,_1: b};});
+   var stringData = StringData;
+   var BodyBlob = function (a) {    return {ctor: "BodyBlob",_0: a};};
+   var BodyFormData = {ctor: "BodyFormData"};
+   var ArrayBuffer = {ctor: "ArrayBuffer"};
+   var BodyString = function (a) {    return {ctor: "BodyString",_0: a};};
+   var string = BodyString;
+   var Empty = {ctor: "Empty"};
+   var empty = Empty;
+   var getString = function (url) {
+      var request = {verb: "GET",headers: _U.list([]),url: url,body: empty};
+      return A2($Task.andThen,A2($Task.mapError,promoteError,A2(send,defaultSettings,request)),handleResponse($Task.succeed));
+   };
+   var get = F2(function (decoder,url) {
+      var request = {verb: "GET",headers: _U.list([]),url: url,body: empty};
+      return A2(fromJson,decoder,A2(send,defaultSettings,request));
+   });
+   var Request = F4(function (a,b,c,d) {    return {verb: a,headers: b,url: c,body: d};});
+   var uriDecode = $Native$Http.uriDecode;
+   var uriEncode = $Native$Http.uriEncode;
+   var queryEscape = function (string) {    return A2($String.join,"+",A2($String.split,"%20",uriEncode(string)));};
+   var queryPair = function (_p3) {    var _p4 = _p3;return A2($Basics._op["++"],queryEscape(_p4._0),A2($Basics._op["++"],"=",queryEscape(_p4._1)));};
+   var url = F2(function (baseUrl,args) {
+      var _p5 = args;
+      if (_p5.ctor === "[]") {
+            return baseUrl;
+         } else {
+            return A2($Basics._op["++"],baseUrl,A2($Basics._op["++"],"?",A2($String.join,"&",A2($List.map,queryPair,args))));
+         }
+   });
+   var TODO_implement_file_in_another_library = {ctor: "TODO_implement_file_in_another_library"};
+   var TODO_implement_blob_in_another_library = {ctor: "TODO_implement_blob_in_another_library"};
+   return _elm.Http.values = {_op: _op
+                             ,getString: getString
+                             ,get: get
+                             ,post: post
+                             ,send: send
+                             ,url: url
+                             ,uriEncode: uriEncode
+                             ,uriDecode: uriDecode
+                             ,empty: empty
+                             ,string: string
+                             ,multipart: multipart
+                             ,stringData: stringData
+                             ,defaultSettings: defaultSettings
+                             ,fromJson: fromJson
+                             ,Request: Request
+                             ,Settings: Settings
+                             ,Response: Response
+                             ,Text: Text
+                             ,Blob: Blob
+                             ,Timeout: Timeout
+                             ,NetworkError: NetworkError
+                             ,UnexpectedPayload: UnexpectedPayload
+                             ,BadResponse: BadResponse
+                             ,RawTimeout: RawTimeout
+                             ,RawNetworkError: RawNetworkError};
+};
+Elm.Remote = Elm.Remote || {};
+Elm.Remote.Data = Elm.Remote.Data || {};
+Elm.Remote.Data.make = function (_elm) {
+   "use strict";
+   _elm.Remote = _elm.Remote || {};
+   _elm.Remote.Data = _elm.Remote.Data || {};
+   if (_elm.Remote.Data.values) return _elm.Remote.Data.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $Http = Elm.Http.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm);
+   var _op = {};
+   var isFailed = function (data) {    var _p0 = data;if (_p0.ctor === "Failed") {    return true;} else {    return false;}};
+   var isLoaded = function (data) {    var _p1 = data;if (_p1.ctor === "Loaded") {    return true;} else {    return false;}};
+   var isLoading = function (data) {    var _p2 = data;if (_p2.ctor === "Loading") {    return true;} else {    return false;}};
+   var get = function (data) {    var _p3 = data;if (_p3.ctor === "Loaded") {    return $Maybe.Just(_p3._0);} else {    return $Maybe.Nothing;}};
+   var Failed = function (a) {    return {ctor: "Failed",_0: a};};
+   var Loaded = function (a) {    return {ctor: "Loaded",_0: a};};
+   var Loading = {ctor: "Loading"};
+   var map = F2(function (f,data) {
+      var _p4 = data;
+      switch (_p4.ctor)
+      {case "Loaded": return Loaded(f(_p4._0));
+         case "Failed": return Failed(_p4._0);
+         default: return Loading;}
+   });
+   return _elm.Remote.Data.values = {_op: _op
+                                    ,get: get
+                                    ,map: map
+                                    ,isLoading: isLoading
+                                    ,isLoaded: isLoaded
+                                    ,isFailed: isFailed
+                                    ,Loading: Loading
+                                    ,Loaded: Loaded
+                                    ,Failed: Failed};
+};
+Elm.Remote = Elm.Remote || {};
+Elm.Remote.DataStore = Elm.Remote.DataStore || {};
+Elm.Remote.DataStore.make = function (_elm) {
+   "use strict";
+   _elm.Remote = _elm.Remote || {};
+   _elm.Remote.DataStore = _elm.Remote.DataStore || {};
+   if (_elm.Remote.DataStore.values) return _elm.Remote.DataStore.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $Dict = Elm.Dict.make(_elm),
+   $Effects = Elm.Effects.make(_elm),
+   $Http = Elm.Http.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Remote$Data = Elm.Remote.Data.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $Task = Elm.Task.make(_elm);
+   var _op = {};
+   var updateIfLoaded = F2(function (newValue,oldValue) {
+      return $Remote$Data.isLoaded(newValue) ? $Maybe.Just(newValue) : A2($Maybe.withDefault,
+      false,
+      A2($Maybe.map,$Remote$Data.isFailed,oldValue)) ? $Maybe.Just(newValue) : oldValue;
+   });
+   var loaded = function (_p0) {    var _p1 = _p0;return A2($List.filterMap,$Remote$Data.get,$Dict.values(_p1._0));};
+   var get = F2(function (id,_p2) {    var _p3 = _p2;return A2($Maybe.withDefault,$Remote$Data.Loading,A2($Dict.get,$Basics.toString(id),_p3._0));});
+   var RemoteDataStore = function (a) {    return {ctor: "RemoteDataStore",_0: a};};
+   var empty = RemoteDataStore($Dict.empty);
+   var update = F3(function (id,alter,_p4) {    var _p5 = _p4;return RemoteDataStore(A3($Dict.update,$Basics.toString(id),alter,_p5._0));});
+   var fetch = F3(function (id,request,alter) {
+      return A2($Task.onError,
+      A2($Task.andThen,request(id),function (value) {    return $Task.succeed(A2(update,id,alter($Remote$Data.Loaded(value))));}),
+      function (error) {
+         return $Task.succeed(A2(update,id,alter($Remote$Data.Failed(error))));
+      });
+   });
+   var fetchInsert = F2(function (id,request) {    return A3(fetch,id,request,updateIfLoaded);});
+   return _elm.Remote.DataStore.values = {_op: _op
+                                         ,empty: empty
+                                         ,update: update
+                                         ,get: get
+                                         ,loaded: loaded
+                                         ,fetch: fetch
+                                         ,fetchInsert: fetchInsert
+                                         ,RemoteDataStore: RemoteDataStore};
+};
+Elm.Native = Elm.Native || {};
+Elm.Native.Touch = {};
+Elm.Native.Touch.make = function(localRuntime) {
+	localRuntime.Native = localRuntime.Native || {};
+	localRuntime.Native.Touch = localRuntime.Native.Touch || {};
+	if (localRuntime.Native.Touch.values)
+	{
+		return localRuntime.Native.Touch.values;
+	}
+
+	var Signal = Elm.Signal.make(localRuntime);
+	var NS = Elm.Native.Signal.make(localRuntime);
+	var List = Elm.Native.List.make(localRuntime);
+	var Utils = Elm.Native.Utils.make(localRuntime);
+
+	function Dict() {
+		this.keys = [];
+		this.values = [];
+
+		this.insert = function(key, value) {
+			this.keys.push(key);
+			this.values.push(value);
+		};
+		this.lookup = function(key) {
+			var i = this.keys.indexOf(key);
+			return i >= 0 ? this.values[i] : {x: 0, y: 0, t: 0};
+		};
+		this.remove = function(key) {
+			var i = this.keys.indexOf(key);
+			if (i < 0) return;
+			var t = this.values[i];
+			this.keys.splice(i, 1);
+			this.values.splice(i, 1);
+			return t;
+		};
+		this.clear = function() {
+			this.keys = [];
+			this.values = [];
+		};
+	}
+
+	var root = NS.input('touch', []),
+		tapTime = 500,
+		hasTap = false,
+		tap = { x: 0, y: 0},
+		dict = new Dict();
+
+	function touch(t) {
+		var r = dict.lookup(t.identifier);
+		var point = Utils.getXY(t);
+		return {
+			id: t.identifier,
+			x: point._0,
+			y: point._1,
+			x0: r.x,
+			y0: r.y,
+			t0: r.t
+		 };
+	}
+
+	var node = localRuntime.isFullscreen()
+		? document
+		: localRuntime.node;
+
+	function start(e) {
+		var point = Utils.getXY(e);
+		dict.insert(e.identifier, {
+			x: point._0,
+			y: point._1,
+			t: localRuntime.timer.now()
+		});
+	}
+	function end(e) {
+		var t = dict.remove(e.identifier);
+		if (localRuntime.timer.now() - t.t < tapTime)
+		{
+			hasTap = true;
+			tap = {
+				x: t.x,
+				y: t.y
+			};
+		}
+	}
+
+	function listen(name, f) {
+		function update(e) {
+			for (var i = e.changedTouches.length; i--; ) {
+				f(e.changedTouches[i]);
+			}
+			var ts = new Array(e.touches.length);
+			for (var i = e.touches.length; i--; ) {
+				ts[i] = touch(e.touches[i]);
+			}
+			localRuntime.notify(root.id, ts);
+			e.preventDefault();
+		}
+		localRuntime.addListener([root.id], node, name, update);
+	}
+
+	listen('touchstart', start);
+	listen('touchmove', function(_) {});
+	listen('touchend', end);
+	listen('touchcancel', end);
+	listen('touchleave', end);
+
+	var mouseID = -1;
+	function move(e) {
+		var point = Utils.getXY(e);
+		for (var i = root.value.length; i--; ) {
+			if (root.value[i].id === mouseID)
+			{
+				root.value[i].x = point._0;
+				root.value[i].y = point._1;
+				localRuntime.notify(root.id, root.value);
+				break;
+			}
+		}
+	}
+	localRuntime.addListener([root.id], node, 'mousedown', function down(e) {
+		node.addEventListener('mousemove', move);
+		e.identifier = mouseID;
+		start(e);
+		root.value.push(touch(e));
+		localRuntime.notify(root.id, root.value);
+	});
+	localRuntime.addListener([root.id], document, 'mouseup', function up(e) {
+		node.removeEventListener('mousemove', move);
+		e.identifier = mouseID;
+		end(e);
+		for (var i = root.value.length; i--; ) {
+			if (root.value[i].id === mouseID)
+			{
+				root.value.splice(i, 1);
+				--mouseID;
+				break;
+			}
+		}
+		localRuntime.notify(root.id, root.value);
+	});
+	localRuntime.addListener([root.id], node, 'blur', function blur(e) {
+		node.removeEventListener('mousemove', move);
+		if (root.value.length > 0)
+		{
+			localRuntime.notify(root.id, []);
+			--mouseID;
+		}
+		dict.clear();
+	});
+
+	function dependency(f) {
+		var sig = A2( Signal.map, f, root );
+		root.defaultNumberOfKids += 1;
+		sig.defaultNumberOfKids = 0;
+		return sig;
+	}
+
+	var touches = dependency(List.fromArray);
+
+	var taps = function() {
+		var sig = dependency(function(_) { return tap; });
+		sig.defaultNumberOfKids = 1;
+		function pred(_) {
+			var b = hasTap;
+			hasTap = false;
+			return b;
+		}
+		var sig2 = A3(Signal.filter, pred, {x: 0, y: 0}, sig);
+		sig2.defaultNumberOfKids = 0;
+		return sig2;
+	}();
+
+	return localRuntime.Native.Touch.values = { touches: touches, taps: taps };
+};
+
+Elm.Touch = Elm.Touch || {};
+Elm.Touch.make = function (_elm) {
+   "use strict";
+   _elm.Touch = _elm.Touch || {};
+   if (_elm.Touch.values) return _elm.Touch.values;
+   var _U = Elm.Native.Utils.make(_elm),$Native$Touch = Elm.Native.Touch.make(_elm),$Signal = Elm.Signal.make(_elm),$Time = Elm.Time.make(_elm);
+   var _op = {};
+   var taps = $Native$Touch.taps;
+   var touches = $Native$Touch.touches;
+   var Touch = F6(function (a,b,c,d,e,f) {    return {x: a,y: b,id: c,x0: d,y0: e,t0: f};});
+   return _elm.Touch.values = {_op: _op,touches: touches,taps: taps,Touch: Touch};
+};
+Elm.Swipe = Elm.Swipe || {};
+Elm.Swipe.make = function (_elm) {
+   "use strict";
+   _elm.Swipe = _elm.Swipe || {};
+   if (_elm.Swipe.values) return _elm.Swipe.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $Time = Elm.Time.make(_elm),
+   $Touch = Elm.Touch.make(_elm);
+   var _op = {};
+   var swipeId = function (state) {
+      var _p0 = state;
+      switch (_p0.ctor)
+      {case "Start": return _p0._0.id;
+         case "Swiping": return _p0._0.id;
+         default: return _p0._0.id;}
+   };
+   var Right = {ctor: "Right"};
+   var Left = {ctor: "Left"};
+   var Down = {ctor: "Down"};
+   var Up = {ctor: "Up"};
+   var direction = F2(function (dx,dy) {
+      return _U.cmp($Basics.abs(dx),$Basics.abs(dy)) > 0 ? _U.cmp(dx,0) > 0 ? $Maybe.Just(Right) : _U.cmp(dx,
+      0) < 0 ? $Maybe.Just(Left) : $Maybe.Nothing : _U.cmp(dy,0) > 0 ? $Maybe.Just(Down) : _U.cmp(dy,0) < 0 ? $Maybe.Just(Up) : $Maybe.Nothing;
+   });
+   var End = function (a) {    return {ctor: "End",_0: a};};
+   var Swiping = function (a) {    return {ctor: "Swiping",_0: a};};
+   var Start = function (a) {    return {ctor: "Start",_0: a};};
+   var update = F2(function (touch,swipeState) {
+      var _p1 = swipeState;
+      switch (_p1.ctor)
+      {case "Start": var _p3 = _p1._0;
+           var _p2 = A2(direction,$Basics.toFloat(touch.x) - _p3.x,$Basics.toFloat(touch.y) - _p3.y);
+           if (_p2.ctor === "Just") {
+                 return $Maybe.Just(Swiping({x0: _p3.x
+                                            ,y0: _p3.y
+                                            ,x1: $Basics.toFloat(touch.x)
+                                            ,y1: $Basics.toFloat(touch.y)
+                                            ,id: _p3.id
+                                            ,direction: _p2._0
+                                            ,t0: _p3.t0}));
+              } else {
+                 return $Maybe.Nothing;
+              }
+         case "Swiping": var _p5 = _p1._0;
+           var fromStartDir = A2(direction,$Basics.toFloat(touch.x) - _p5.x0,$Basics.toFloat(touch.y) - _p5.y0);
+           var _p4 = fromStartDir;
+           if (_p4.ctor === "Just") {
+                 return $Maybe.Just(Swiping({x0: _p5.x0
+                                            ,y0: _p5.y0
+                                            ,x1: $Basics.toFloat(touch.x)
+                                            ,y1: $Basics.toFloat(touch.y)
+                                            ,id: _p5.id
+                                            ,direction: _p4._0
+                                            ,t0: _p5.t0}));
+              } else {
+                 return $Maybe.Just(End({x0: _p5.x0
+                                        ,y0: _p5.y0
+                                        ,x1: $Basics.toFloat(touch.x)
+                                        ,y1: $Basics.toFloat(touch.y)
+                                        ,id: _p5.id
+                                        ,direction: _p5.direction
+                                        ,t0: _p5.t0}));
+              }
+         default: return $Maybe.Just(Start({x: $Basics.toFloat(touch.x),y: $Basics.toFloat(touch.y),id: touch.id,t0: touch.t0}));}
+   });
+   var swipeStates = function () {
+      var updates = F2(function (touches,states) {
+         return A2($Basics._op["++"],
+         A2($List.concatMap,
+         function (state) {
+            var newTouches = A2($List.filter,function (t) {    return _U.eq(swipeId(state),t.id);},touches);
+            if ($List.isEmpty(newTouches)) {
+                  var _p6 = state;
+                  switch (_p6.ctor)
+                  {case "Start": return _U.list([]);
+                     case "Swiping": return _U.list([End(_p6._0)]);
+                     default: return _U.list([]);}
+               } else return A2($List.filterMap,function (touch) {    return A2(update,touch,state);},newTouches);
+         },
+         states),
+         A2($List.map,
+         function (touch) {
+            return Start({x: $Basics.toFloat(touch.x),y: $Basics.toFloat(touch.y),id: touch.id,t0: touch.t0});
+         },
+         A2($List.filter,function (touch) {    return $Basics.not(A2($List.any,function (s) {    return _U.eq(swipeId(s),touch.id);},states));},touches)));
+      });
+      return A3($Signal.foldp,updates,_U.list([]),$Touch.touches);
+   }();
+   var swipes = function () {
+      var isSwiping = function (swipe) {
+         var _p7 = swipe;
+         switch (_p7.ctor)
+         {case "Start": return $Maybe.Nothing;
+            case "Swiping": return $Maybe.Nothing;
+            default: return $Maybe.Just(_p7._0);}
+      };
+      return A2($Signal.map,$List.filterMap(isSwiping),swipeStates);
+   }();
+   var SwipeStart = F4(function (a,b,c,d) {    return {x: a,y: b,id: c,t0: d};});
+   var Swipe = F7(function (a,b,c,d,e,f,g) {    return {x0: a,y0: b,x1: c,y1: d,id: e,direction: f,t0: g};});
+   return _elm.Swipe.values = {_op: _op
+                              ,swipes: swipes
+                              ,swipeStates: swipeStates
+                              ,Swipe: Swipe
+                              ,SwipeStart: SwipeStart
+                              ,Start: Start
+                              ,Swiping: Swiping
+                              ,End: End
+                              ,Up: Up
+                              ,Down: Down
+                              ,Left: Left
+                              ,Right: Right};
+};
+Elm.Types = Elm.Types || {};
+Elm.Types.make = function (_elm) {
+   "use strict";
+   _elm.Types = _elm.Types || {};
+   if (_elm.Types.values) return _elm.Types.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Date = Elm.Date.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Remote$Data = Elm.Remote.Data.make(_elm),
+   $Remote$DataStore = Elm.Remote.DataStore.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $Swipe = Elm.Swipe.make(_elm),
+   $Time = Elm.Time.make(_elm);
+   var _op = {};
+   var Window = F2(function (a,b) {    return {width: a,height: b};});
+   var Dates = F2(function (a,b) {    return {start: a,end: b};});
+   var Site = F4(function (a,b,c,d) {    return {id: a,name: b,architecturalStyle: c,heritageCategories: d};});
+   var Link = F2(function (a,b) {    return {url: a,title: b};});
+   var LatLng = F2(function (a,b) {    return {lat: a,lng: b};});
+   var FullStory = function (a) {    return {ctor: "FullStory",_0: a};};
+   var DiscoverStory = function (a) {    return {ctor: "DiscoverStory",_0: a};};
+   var StoryId = function (a) {    return {ctor: "StoryId",_0: a};};
+   var MoreInfo = {ctor: "MoreInfo"};
+   var Body = {ctor: "Body"};
+   var Intro = {ctor: "Intro"};
+   var screen1 = Intro;
+   var ItemView = F2(function (a,b) {    return {photoIndex: a,photoPosition: b};});
+   var Discovery = F5(function (a,b,c,d,e) {    return {item: a,itemPosition: b,items: c,favourites: d,passes: e};});
+   var Leaving = F5(function (a,b,c,d,e) {    return {ctor: "Leaving",_0: a,_1: b,_2: c,_3: d,_4: e};});
+   var Leave = function (a) {    return {ctor: "Leave",_0: a};};
+   var Returning = F5(function (a,b,c,d,e) {    return {ctor: "Returning",_0: a,_1: b,_2: c,_3: d,_4: e};});
+   var Return = function (a) {    return {ctor: "Return",_0: a};};
+   var Swiping = function (a) {    return {ctor: "Swiping",_0: a};};
+   var Static = {ctor: "Static"};
+   var NoAction = {ctor: "NoAction"};
+   var LoadDiscoveryData = F2(function (a,b) {    return {ctor: "LoadDiscoveryData",_0: a,_1: b};});
+   var LoadData = function (a) {    return {ctor: "LoadData",_0: a};};
+   var Back = {ctor: "Back"};
+   var ViewFavourites = {ctor: "ViewFavourites"};
+   var View = F2(function (a,b) {    return {ctor: "View",_0: a,_1: b};});
+   var JumpPhoto = function (a) {    return {ctor: "JumpPhoto",_0: a};};
+   var NextPhoto = {ctor: "NextPhoto"};
+   var PrevPhoto = {ctor: "PrevPhoto"};
+   var MovePhoto = function (a) {    return {ctor: "MovePhoto",_0: a};};
+   var Pass = {ctor: "Pass"};
+   var Favourite = {ctor: "Favourite"};
+   var MoveItem = function (a) {    return {ctor: "MoveItem",_0: a};};
+   var Animate = F2(function (a,b) {    return {ctor: "Animate",_0: a,_1: b};});
+   var UpdateLocation = function (a) {    return {ctor: "UpdateLocation",_0: a};};
+   var Discover = {ctor: "Discover"};
+   var ViewingFavourites = {ctor: "ViewingFavourites"};
+   var Viewing = F3(function (a,b,c) {    return {ctor: "Viewing",_0: a,_1: b,_2: c};});
+   var Discovering = {ctor: "Discovering"};
+   var App = F4(function (a,b,c,d) {    return {location: a,discovery: b,items: c,latLng: d};});
+   return _elm.Types.values = {_op: _op
+                              ,screen1: screen1
+                              ,Discovery: Discovery
+                              ,ItemView: ItemView
+                              ,Site: Site
+                              ,LatLng: LatLng
+                              ,Link: Link
+                              ,Dates: Dates
+                              ,Window: Window
+                              ,Discovering: Discovering
+                              ,Viewing: Viewing
+                              ,ViewingFavourites: ViewingFavourites
+                              ,Intro: Intro
+                              ,Body: Body
+                              ,MoreInfo: MoreInfo
+                              ,StoryId: StoryId
+                              ,DiscoverStory: DiscoverStory
+                              ,FullStory: FullStory
+                              ,Discover: Discover
+                              ,UpdateLocation: UpdateLocation
+                              ,Animate: Animate
+                              ,MoveItem: MoveItem
+                              ,Favourite: Favourite
+                              ,Pass: Pass
+                              ,MovePhoto: MovePhoto
+                              ,PrevPhoto: PrevPhoto
+                              ,NextPhoto: NextPhoto
+                              ,JumpPhoto: JumpPhoto
+                              ,View: View
+                              ,ViewFavourites: ViewFavourites
+                              ,Back: Back
+                              ,LoadData: LoadData
+                              ,LoadDiscoveryData: LoadDiscoveryData
+                              ,NoAction: NoAction
+                              ,Static: Static
+                              ,Swiping: Swiping
+                              ,Return: Return
+                              ,Returning: Returning
+                              ,Leave: Leave
+                              ,Leaving: Leaving};
+};
 Elm.List = Elm.List || {};
 Elm.List.Extra = Elm.List.Extra || {};
 Elm.List.Extra.make = function (_elm) {
@@ -9311,868 +10874,6 @@ Elm.List.Extra.make = function (_elm) {
                                    ,lift2: lift2
                                    ,lift3: lift3
                                    ,lift4: lift4};
-};
-Elm.String = Elm.String || {};
-Elm.String.Split = Elm.String.Split || {};
-Elm.String.Split.make = function (_elm) {
-   "use strict";
-   _elm.String = _elm.String || {};
-   _elm.String.Split = _elm.String.Split || {};
-   if (_elm.String.Split.values) return _elm.String.Split.values;
-   var _U = Elm.Native.Utils.make(_elm),
-   $Basics = Elm.Basics.make(_elm),
-   $Debug = Elm.Debug.make(_elm),
-   $List = Elm.List.make(_elm),
-   $Maybe = Elm.Maybe.make(_elm),
-   $Result = Elm.Result.make(_elm),
-   $Signal = Elm.Signal.make(_elm),
-   $String = Elm.String.make(_elm);
-   var _op = {};
-   var chunksOfRight = F2(function (k,s) {
-      var k2 = 2 * k;
-      var chunksOfR = function (s$) {
-         return _U.cmp($String.length(s$),k2) > 0 ? A2($List._op["::"],A2($String.right,k,s$),chunksOfR(A2($String.dropRight,k,s$))) : A2($List._op["::"],
-         A2($String.right,k,s$),
-         _U.list([A2($String.dropRight,k,s$)]));
-      };
-      var len = $String.length(s);
-      return _U.cmp(len,k2) > 0 ? $List.reverse(chunksOfR(s)) : _U.cmp(len,k) > 0 ? A2($List._op["::"],
-      A2($String.dropRight,k,s),
-      _U.list([A2($String.right,k,s)])) : _U.list([s]);
-   });
-   var chunksOfLeft = F2(function (k,s) {
-      var len = $String.length(s);
-      return _U.cmp(len,k) > 0 ? A2($List._op["::"],A2($String.left,k,s),A2(chunksOfLeft,k,A2($String.dropLeft,k,s))) : _U.list([s]);
-   });
-   return _elm.String.Split.values = {_op: _op,chunksOfLeft: chunksOfLeft,chunksOfRight: chunksOfRight};
-};
-Elm.Number = Elm.Number || {};
-Elm.Number.Format = Elm.Number.Format || {};
-Elm.Number.Format.make = function (_elm) {
-   "use strict";
-   _elm.Number = _elm.Number || {};
-   _elm.Number.Format = _elm.Number.Format || {};
-   if (_elm.Number.Format.values) return _elm.Number.Format.values;
-   var _U = Elm.Native.Utils.make(_elm),
-   $Basics = Elm.Basics.make(_elm),
-   $Debug = Elm.Debug.make(_elm),
-   $List = Elm.List.make(_elm),
-   $Maybe = Elm.Maybe.make(_elm),
-   $Result = Elm.Result.make(_elm),
-   $Signal = Elm.Signal.make(_elm),
-   $String = Elm.String.make(_elm),
-   $String$Split = Elm.String.Split.make(_elm);
-   var _op = {};
-   var prettyInt = F2(function (sep,n) {
-      var ni = $Basics.abs(n);
-      var nis = A2($String.join,$String.fromChar(sep),A2($String$Split.chunksOfRight,3,$Basics.toString(ni)));
-      return _U.cmp(n,0) < 0 ? A2($String.cons,_U.chr("-"),nis) : nis;
-   });
-   var pretty = F3(function (decimals,sep,n) {
-      var decpow = Math.pow(10,decimals);
-      var nshift = n * $Basics.toFloat(decpow);
-      var nshifti = $Basics.round(nshift);
-      var nshifti$ = $Basics.abs(nshifti);
-      var ni = nshifti$ / decpow | 0;
-      var nf = nshifti$ - ni * decpow;
-      var nfs = $Basics.toString(nf);
-      var nflen = $String.length(nfs);
-      return A2($String.append,
-      _U.cmp(nshifti,0) < 0 ? A2(prettyInt,sep,0 - ni) : A2(prettyInt,sep,ni),
-      A2($String.cons,_U.chr("."),A3($String.padLeft,decimals,_U.chr("0"),nfs)));
-   });
-   return _elm.Number.Format.values = {_op: _op,pretty: pretty,prettyInt: prettyInt};
-};
-Elm.Native = Elm.Native || {};
-Elm.Native.History = {};
-Elm.Native.History.make = function(localRuntime){
-
-  localRuntime.Native = localRuntime.Native || {};
-  localRuntime.Native.History = localRuntime.Native.History || {};
-
-  if (localRuntime.Native.History.values){
-    return localRuntime.Native.History.values;
-  }
-
-  var NS = Elm.Native.Signal.make(localRuntime);
-  var Task = Elm.Native.Task.make(localRuntime);
-  var Utils = Elm.Native.Utils.make(localRuntime);
-  var node = window;
-
-  // path : Signal String
-  var path = NS.input('History.path', window.location.pathname);
-
-  // length : Signal Int
-  var length = NS.input('History.length', window.history.length);
-
-  // hash : Signal String
-  var hash = NS.input('History.hash', window.location.hash);
-
-  // href : Signal String
-  var href = NS.input('History.href', window.location.href);
-
-  localRuntime.addListener([href.id, path.id, length.id], node, 'popstate', function getPath(event){
-    localRuntime.notify(path.id, window.location.pathname);
-    localRuntime.notify(length.id, window.history.length);
-    localRuntime.notify(hash.id, window.location.hash);
-    localRuntime.notify(href.id, window.location.href);
-  });
-
-  localRuntime.addListener([hash.id], node, 'hashchange', function getHash(event){
-    localRuntime.notify(hash.id, window.location.hash);
-  });
-
-  // setHash : String -> Task error ()
-  var setHash = function(hash){
-    return Task.asyncFunction(function(callback){
-      setTimeout(function(){
-        location.hash = hash;
-        localRuntime.notify(hash.id, window.location.hash);
-        localRuntime.notify(length.id, window.history.length);
-        localRuntime.notify(href.id, window.location.href);
-      },0);
-      return callback(Task.succeed(Utils.Tuple0));
-    });
-  };
-
-  // setPath : String -> Task error ()
-  var setPath = function(urlpath){
-    return Task.asyncFunction(function(callback){
-      setTimeout(function(){
-        window.history.pushState({}, "", urlpath);
-        localRuntime.notify(path.id, window.location.pathname);
-        localRuntime.notify(hash.id, window.location.hash);
-        localRuntime.notify(length.id, window.history.length);
-        localRuntime.notify(href.id, window.location.href);
-      },0);
-      return callback(Task.succeed(Utils.Tuple0));
-    });
-  };
-
-  // replacePath : String -> Task error ()
-  var replacePath = function(urlpath){
-    return Task.asyncFunction(function(callback){
-      setTimeout(function(){
-        window.history.replaceState({}, "", urlpath);
-        localRuntime.notify(path.id, window.location.pathname);
-        localRuntime.notify(hash.id, window.location.hash);
-        localRuntime.notify(length.id, window.history.length);
-        localRuntime.notify(href.id, window.location.href);
-      },0);
-      return callback(Task.succeed(Utils.Tuple0));
-    });
-  };
-
-  // go : Int -> Task error ()
-  var go = function(n){
-    return Task.asyncFunction(function(callback){
-      setTimeout(function(){
-        window.history.go(n);
-        localRuntime.notify(length.id, window.history.length);
-        localRuntime.notify(hash.id, window.location.hash);
-        localRuntime.notify(href.id, window.location.href);
-      }, 0);
-      return callback(Task.succeed(Utils.Tuple0));
-    });
-  };
-
-  // back : Task error ()
-  var back = Task.asyncFunction(function(callback){
-    setTimeout(function(){
-      localRuntime.notify(hash.id, window.location.hash);
-      window.history.back();
-      localRuntime.notify(length.id, window.history.length);
-      localRuntime.notify(href.id, window.location.href);
-    }, 0);
-    return callback(Task.succeed(Utils.Tuple0));
-  });
-
-  // forward : Task error ()
-  var forward = Task.asyncFunction(function(callback){
-    setTimeout(function(){
-      window.history.forward();
-      localRuntime.notify(length.id, window.history.length);
-      localRuntime.notify(hash.id, window.location.hash);
-      localRuntime.notify(href.id, window.location.href);
-    }, 0);
-    return callback(Task.succeed(Utils.Tuple0));
-  });
-
-
-
-  return {
-    path        : path,
-    setHash     : setHash,
-    setPath     : setPath,
-    replacePath : replacePath,
-    go          : go,
-    back        : back,
-    forward     : forward,
-    length      : length,
-    hash        : hash,
-    href        : href
-  };
-
-};
-
-Elm.History = Elm.History || {};
-Elm.History.make = function (_elm) {
-   "use strict";
-   _elm.History = _elm.History || {};
-   if (_elm.History.values) return _elm.History.values;
-   var _U = Elm.Native.Utils.make(_elm),
-   $Basics = Elm.Basics.make(_elm),
-   $Debug = Elm.Debug.make(_elm),
-   $List = Elm.List.make(_elm),
-   $Maybe = Elm.Maybe.make(_elm),
-   $Native$History = Elm.Native.History.make(_elm),
-   $Result = Elm.Result.make(_elm),
-   $Signal = Elm.Signal.make(_elm),
-   $Task = Elm.Task.make(_elm);
-   var _op = {};
-   var href = $Native$History.href;
-   var path = $Native$History.path;
-   var hash = $Native$History.hash;
-   var length = $Native$History.length;
-   var forward = $Native$History.forward;
-   var back = $Native$History.back;
-   var go = $Native$History.go;
-   var replacePath = $Native$History.replacePath;
-   var setPath = $Native$History.setPath;
-   var setHash = $Native$History.setHash;
-   return _elm.History.values = {_op: _op
-                                ,setHash: setHash
-                                ,setPath: setPath
-                                ,replacePath: replacePath
-                                ,go: go
-                                ,back: back
-                                ,forward: forward
-                                ,length: length
-                                ,hash: hash
-                                ,path: path
-                                ,href: href};
-};
-Elm.Native.Regex = {};
-Elm.Native.Regex.make = function(localRuntime) {
-	localRuntime.Native = localRuntime.Native || {};
-	localRuntime.Native.Regex = localRuntime.Native.Regex || {};
-	if (localRuntime.Native.Regex.values)
-	{
-		return localRuntime.Native.Regex.values;
-	}
-	if ('values' in Elm.Native.Regex)
-	{
-		return localRuntime.Native.Regex.values = Elm.Native.Regex.values;
-	}
-
-	var List = Elm.Native.List.make(localRuntime);
-	var Maybe = Elm.Maybe.make(localRuntime);
-
-	function escape(str)
-	{
-		return str.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-	}
-	function caseInsensitive(re)
-	{
-		return new RegExp(re.source, 'gi');
-	}
-	function regex(raw)
-	{
-		return new RegExp(raw, 'g');
-	}
-
-	function contains(re, string)
-	{
-		return string.match(re) !== null;
-	}
-
-	function find(n, re, str)
-	{
-		n = n.ctor === 'All' ? Infinity : n._0;
-		var out = [];
-		var number = 0;
-		var string = str;
-		var lastIndex = re.lastIndex;
-		var prevLastIndex = -1;
-		var result;
-		while (number++ < n && (result = re.exec(string)))
-		{
-			if (prevLastIndex === re.lastIndex) break;
-			var i = result.length - 1;
-			var subs = new Array(i);
-			while (i > 0)
-			{
-				var submatch = result[i];
-				subs[--i] = submatch === undefined
-					? Maybe.Nothing
-					: Maybe.Just(submatch);
-			}
-			out.push({
-				match: result[0],
-				submatches: List.fromArray(subs),
-				index: result.index,
-				number: number
-			});
-			prevLastIndex = re.lastIndex;
-		}
-		re.lastIndex = lastIndex;
-		return List.fromArray(out);
-	}
-
-	function replace(n, re, replacer, string)
-	{
-		n = n.ctor === 'All' ? Infinity : n._0;
-		var count = 0;
-		function jsReplacer(match)
-		{
-			if (count++ >= n)
-			{
-				return match;
-			}
-			var i = arguments.length - 3;
-			var submatches = new Array(i);
-			while (i > 0)
-			{
-				var submatch = arguments[i];
-				submatches[--i] = submatch === undefined
-					? Maybe.Nothing
-					: Maybe.Just(submatch);
-			}
-			return replacer({
-				match: match,
-				submatches: List.fromArray(submatches),
-				index: arguments[i - 1],
-				number: count
-			});
-		}
-		return string.replace(re, jsReplacer);
-	}
-
-	function split(n, re, str)
-	{
-		n = n.ctor === 'All' ? Infinity : n._0;
-		if (n === Infinity)
-		{
-			return List.fromArray(str.split(re));
-		}
-		var string = str;
-		var result;
-		var out = [];
-		var start = re.lastIndex;
-		while (n--)
-		{
-			if (!(result = re.exec(string))) break;
-			out.push(string.slice(start, result.index));
-			start = re.lastIndex;
-		}
-		out.push(string.slice(start));
-		return List.fromArray(out);
-	}
-
-	return Elm.Native.Regex.values = {
-		regex: regex,
-		caseInsensitive: caseInsensitive,
-		escape: escape,
-
-		contains: F2(contains),
-		find: F3(find),
-		replace: F4(replace),
-		split: F3(split)
-	};
-};
-
-Elm.Native = Elm.Native || {};
-Elm.Native.Touch = {};
-Elm.Native.Touch.make = function(localRuntime) {
-	localRuntime.Native = localRuntime.Native || {};
-	localRuntime.Native.Touch = localRuntime.Native.Touch || {};
-	if (localRuntime.Native.Touch.values)
-	{
-		return localRuntime.Native.Touch.values;
-	}
-
-	var Signal = Elm.Signal.make(localRuntime);
-	var NS = Elm.Native.Signal.make(localRuntime);
-	var List = Elm.Native.List.make(localRuntime);
-	var Utils = Elm.Native.Utils.make(localRuntime);
-
-	function Dict() {
-		this.keys = [];
-		this.values = [];
-
-		this.insert = function(key, value) {
-			this.keys.push(key);
-			this.values.push(value);
-		};
-		this.lookup = function(key) {
-			var i = this.keys.indexOf(key);
-			return i >= 0 ? this.values[i] : {x: 0, y: 0, t: 0};
-		};
-		this.remove = function(key) {
-			var i = this.keys.indexOf(key);
-			if (i < 0) return;
-			var t = this.values[i];
-			this.keys.splice(i, 1);
-			this.values.splice(i, 1);
-			return t;
-		};
-		this.clear = function() {
-			this.keys = [];
-			this.values = [];
-		};
-	}
-
-	var root = NS.input('touch', []),
-		tapTime = 500,
-		hasTap = false,
-		tap = { x: 0, y: 0},
-		dict = new Dict();
-
-	function touch(t) {
-		var r = dict.lookup(t.identifier);
-		var point = Utils.getXY(t);
-		return {
-			id: t.identifier,
-			x: point._0,
-			y: point._1,
-			x0: r.x,
-			y0: r.y,
-			t0: r.t
-		 };
-	}
-
-	var node = localRuntime.isFullscreen()
-		? document
-		: localRuntime.node;
-
-	function start(e) {
-		var point = Utils.getXY(e);
-		dict.insert(e.identifier, {
-			x: point._0,
-			y: point._1,
-			t: localRuntime.timer.now()
-		});
-	}
-	function end(e) {
-		var t = dict.remove(e.identifier);
-		if (localRuntime.timer.now() - t.t < tapTime)
-		{
-			hasTap = true;
-			tap = {
-				x: t.x,
-				y: t.y
-			};
-		}
-	}
-
-	function listen(name, f) {
-		function update(e) {
-			for (var i = e.changedTouches.length; i--; ) {
-				f(e.changedTouches[i]);
-			}
-			var ts = new Array(e.touches.length);
-			for (var i = e.touches.length; i--; ) {
-				ts[i] = touch(e.touches[i]);
-			}
-			localRuntime.notify(root.id, ts);
-			e.preventDefault();
-		}
-		localRuntime.addListener([root.id], node, name, update);
-	}
-
-	listen('touchstart', start);
-	listen('touchmove', function(_) {});
-	listen('touchend', end);
-	listen('touchcancel', end);
-	listen('touchleave', end);
-
-	var mouseID = -1;
-	function move(e) {
-		var point = Utils.getXY(e);
-		for (var i = root.value.length; i--; ) {
-			if (root.value[i].id === mouseID)
-			{
-				root.value[i].x = point._0;
-				root.value[i].y = point._1;
-				localRuntime.notify(root.id, root.value);
-				break;
-			}
-		}
-	}
-	localRuntime.addListener([root.id], node, 'mousedown', function down(e) {
-		node.addEventListener('mousemove', move);
-		e.identifier = mouseID;
-		start(e);
-		root.value.push(touch(e));
-		localRuntime.notify(root.id, root.value);
-	});
-	localRuntime.addListener([root.id], document, 'mouseup', function up(e) {
-		node.removeEventListener('mousemove', move);
-		e.identifier = mouseID;
-		end(e);
-		for (var i = root.value.length; i--; ) {
-			if (root.value[i].id === mouseID)
-			{
-				root.value.splice(i, 1);
-				--mouseID;
-				break;
-			}
-		}
-		localRuntime.notify(root.id, root.value);
-	});
-	localRuntime.addListener([root.id], node, 'blur', function blur(e) {
-		node.removeEventListener('mousemove', move);
-		if (root.value.length > 0)
-		{
-			localRuntime.notify(root.id, []);
-			--mouseID;
-		}
-		dict.clear();
-	});
-
-	function dependency(f) {
-		var sig = A2( Signal.map, f, root );
-		root.defaultNumberOfKids += 1;
-		sig.defaultNumberOfKids = 0;
-		return sig;
-	}
-
-	var touches = dependency(List.fromArray);
-
-	var taps = function() {
-		var sig = dependency(function(_) { return tap; });
-		sig.defaultNumberOfKids = 1;
-		function pred(_) {
-			var b = hasTap;
-			hasTap = false;
-			return b;
-		}
-		var sig2 = A3(Signal.filter, pred, {x: 0, y: 0}, sig);
-		sig2.defaultNumberOfKids = 0;
-		return sig2;
-	}();
-
-	return localRuntime.Native.Touch.values = { touches: touches, taps: taps };
-};
-
-Elm.Native = Elm.Native || {};
-Elm.Native.Window = {};
-Elm.Native.Window.make = function make(localRuntime) {
-	localRuntime.Native = localRuntime.Native || {};
-	localRuntime.Native.Window = localRuntime.Native.Window || {};
-	if (localRuntime.Native.Window.values)
-	{
-		return localRuntime.Native.Window.values;
-	}
-
-	var NS = Elm.Native.Signal.make(localRuntime);
-	var Tuple2 = Elm.Native.Utils.make(localRuntime).Tuple2;
-
-
-	function getWidth()
-	{
-		return localRuntime.node.clientWidth;
-	}
-
-
-	function getHeight()
-	{
-		if (localRuntime.isFullscreen())
-		{
-			return window.innerHeight;
-		}
-		return localRuntime.node.clientHeight;
-	}
-
-
-	var dimensions = NS.input('Window.dimensions', Tuple2(getWidth(), getHeight()));
-
-
-	function resizeIfNeeded()
-	{
-		// Do not trigger event if the dimensions have not changed.
-		// This should be most of the time.
-		var w = getWidth();
-		var h = getHeight();
-		if (dimensions.value._0 === w && dimensions.value._1 === h)
-		{
-			return;
-		}
-
-		setTimeout(function() {
-			// Check again to see if the dimensions have changed.
-			// It is conceivable that the dimensions have changed
-			// again while some other event was being processed.
-			w = getWidth();
-			h = getHeight();
-			if (dimensions.value._0 === w && dimensions.value._1 === h)
-			{
-				return;
-			}
-			localRuntime.notify(dimensions.id, Tuple2(w, h));
-		}, 0);
-	}
-
-
-	localRuntime.addListener([dimensions.id], window, 'resize', resizeIfNeeded);
-
-
-	return localRuntime.Native.Window.values = {
-		dimensions: dimensions,
-		resizeIfNeeded: resizeIfNeeded
-	};
-};
-
-Elm.Regex = Elm.Regex || {};
-Elm.Regex.make = function (_elm) {
-   "use strict";
-   _elm.Regex = _elm.Regex || {};
-   if (_elm.Regex.values) return _elm.Regex.values;
-   var _U = Elm.Native.Utils.make(_elm),$Maybe = Elm.Maybe.make(_elm),$Native$Regex = Elm.Native.Regex.make(_elm);
-   var _op = {};
-   var split = $Native$Regex.split;
-   var replace = $Native$Regex.replace;
-   var find = $Native$Regex.find;
-   var AtMost = function (a) {    return {ctor: "AtMost",_0: a};};
-   var All = {ctor: "All"};
-   var Match = F4(function (a,b,c,d) {    return {match: a,submatches: b,index: c,number: d};});
-   var contains = $Native$Regex.contains;
-   var caseInsensitive = $Native$Regex.caseInsensitive;
-   var regex = $Native$Regex.regex;
-   var escape = $Native$Regex.escape;
-   var Regex = {ctor: "Regex"};
-   return _elm.Regex.values = {_op: _op
-                              ,regex: regex
-                              ,escape: escape
-                              ,caseInsensitive: caseInsensitive
-                              ,contains: contains
-                              ,find: find
-                              ,replace: replace
-                              ,split: split
-                              ,Match: Match
-                              ,All: All
-                              ,AtMost: AtMost};
-};
-Elm.Touch = Elm.Touch || {};
-Elm.Touch.make = function (_elm) {
-   "use strict";
-   _elm.Touch = _elm.Touch || {};
-   if (_elm.Touch.values) return _elm.Touch.values;
-   var _U = Elm.Native.Utils.make(_elm),$Native$Touch = Elm.Native.Touch.make(_elm),$Signal = Elm.Signal.make(_elm),$Time = Elm.Time.make(_elm);
-   var _op = {};
-   var taps = $Native$Touch.taps;
-   var touches = $Native$Touch.touches;
-   var Touch = F6(function (a,b,c,d,e,f) {    return {x: a,y: b,id: c,x0: d,y0: e,t0: f};});
-   return _elm.Touch.values = {_op: _op,touches: touches,taps: taps,Touch: Touch};
-};
-Elm.Window = Elm.Window || {};
-Elm.Window.make = function (_elm) {
-   "use strict";
-   _elm.Window = _elm.Window || {};
-   if (_elm.Window.values) return _elm.Window.values;
-   var _U = Elm.Native.Utils.make(_elm),$Basics = Elm.Basics.make(_elm),$Native$Window = Elm.Native.Window.make(_elm),$Signal = Elm.Signal.make(_elm);
-   var _op = {};
-   var dimensions = $Native$Window.dimensions;
-   var width = A2($Signal.map,$Basics.fst,dimensions);
-   var height = A2($Signal.map,$Basics.snd,dimensions);
-   return _elm.Window.values = {_op: _op,dimensions: dimensions,width: width,height: height};
-};
-Elm.Native.Effects = {};
-Elm.Native.Effects.make = function(localRuntime) {
-
-	localRuntime.Native = localRuntime.Native || {};
-	localRuntime.Native.Effects = localRuntime.Native.Effects || {};
-	if (localRuntime.Native.Effects.values)
-	{
-		return localRuntime.Native.Effects.values;
-	}
-
-	var Task = Elm.Native.Task.make(localRuntime);
-	var Utils = Elm.Native.Utils.make(localRuntime);
-	var Signal = Elm.Signal.make(localRuntime);
-	var List = Elm.Native.List.make(localRuntime);
-
-
-	// polyfill so things will work even if rAF is not available for some reason
-	var _requestAnimationFrame =
-		typeof requestAnimationFrame !== 'undefined'
-			? requestAnimationFrame
-			: function(cb) { setTimeout(cb, 1000 / 60); }
-			;
-
-
-	// batchedSending and sendCallback implement a small state machine in order
-	// to schedule only one send(time) call per animation frame.
-	//
-	// Invariants:
-	// 1. In the NO_REQUEST state, there is never a scheduled sendCallback.
-	// 2. In the PENDING_REQUEST and EXTRA_REQUEST states, there is always exactly
-	//    one scheduled sendCallback.
-	var NO_REQUEST = 0;
-	var PENDING_REQUEST = 1;
-	var EXTRA_REQUEST = 2;
-	var state = NO_REQUEST;
-	var messageArray = [];
-
-
-	function batchedSending(address, tickMessages)
-	{
-		// insert ticks into the messageArray
-		var foundAddress = false;
-
-		for (var i = messageArray.length; i--; )
-		{
-			if (messageArray[i].address === address)
-			{
-				foundAddress = true;
-				messageArray[i].tickMessages = A3(List.foldl, List.cons, messageArray[i].tickMessages, tickMessages);
-				break;
-			}
-		}
-
-		if (!foundAddress)
-		{
-			messageArray.push({ address: address, tickMessages: tickMessages });
-		}
-
-		// do the appropriate state transition
-		switch (state)
-		{
-			case NO_REQUEST:
-				_requestAnimationFrame(sendCallback);
-				state = PENDING_REQUEST;
-				break;
-			case PENDING_REQUEST:
-				state = PENDING_REQUEST;
-				break;
-			case EXTRA_REQUEST:
-				state = PENDING_REQUEST;
-				break;
-		}
-	}
-
-
-	function sendCallback(time)
-	{
-		switch (state)
-		{
-			case NO_REQUEST:
-				// This state should not be possible. How can there be no
-				// request, yet somehow we are actively fulfilling a
-				// request?
-				throw new Error(
-					'Unexpected send callback.\n' +
-					'Please report this to <https://github.com/evancz/elm-effects/issues>.'
-				);
-
-			case PENDING_REQUEST:
-				// At this point, we do not *know* that another frame is
-				// needed, but we make an extra request to rAF just in
-				// case. It's possible to drop a frame if rAF is called
-				// too late, so we just do it preemptively.
-				_requestAnimationFrame(sendCallback);
-				state = EXTRA_REQUEST;
-
-				// There's also stuff we definitely need to send.
-				send(time);
-				return;
-
-			case EXTRA_REQUEST:
-				// Turns out the extra request was not needed, so we will
-				// stop calling rAF. No reason to call it all the time if
-				// no one needs it.
-				state = NO_REQUEST;
-				return;
-		}
-	}
-
-
-	function send(time)
-	{
-		for (var i = messageArray.length; i--; )
-		{
-			var messages = A3(
-				List.foldl,
-				F2( function(toAction, list) { return List.Cons(toAction(time), list); } ),
-				List.Nil,
-				messageArray[i].tickMessages
-			);
-			Task.perform( A2(Signal.send, messageArray[i].address, messages) );
-		}
-		messageArray = [];
-	}
-
-
-	function requestTickSending(address, tickMessages)
-	{
-		return Task.asyncFunction(function(callback) {
-			batchedSending(address, tickMessages);
-			callback(Task.succeed(Utils.Tuple0));
-		});
-	}
-
-
-	return localRuntime.Native.Effects.values = {
-		requestTickSending: F2(requestTickSending)
-	};
-
-};
-
-Elm.Effects = Elm.Effects || {};
-Elm.Effects.make = function (_elm) {
-   "use strict";
-   _elm.Effects = _elm.Effects || {};
-   if (_elm.Effects.values) return _elm.Effects.values;
-   var _U = Elm.Native.Utils.make(_elm),
-   $Basics = Elm.Basics.make(_elm),
-   $Debug = Elm.Debug.make(_elm),
-   $List = Elm.List.make(_elm),
-   $Maybe = Elm.Maybe.make(_elm),
-   $Native$Effects = Elm.Native.Effects.make(_elm),
-   $Result = Elm.Result.make(_elm),
-   $Signal = Elm.Signal.make(_elm),
-   $Task = Elm.Task.make(_elm),
-   $Time = Elm.Time.make(_elm);
-   var _op = {};
-   var ignore = function (task) {    return A2($Task.map,$Basics.always({ctor: "_Tuple0"}),task);};
-   var requestTickSending = $Native$Effects.requestTickSending;
-   var toTaskHelp = F3(function (address,effect,_p0) {
-      var _p1 = _p0;
-      var _p5 = _p1._1;
-      var _p4 = _p1;
-      var _p3 = _p1._0;
-      var _p2 = effect;
-      switch (_p2.ctor)
-      {case "Task": var reporter = A2($Task.andThen,_p2._0,function (answer) {    return A2($Signal.send,address,_U.list([answer]));});
-           return {ctor: "_Tuple2",_0: A2($Task.andThen,_p3,$Basics.always(ignore($Task.spawn(reporter)))),_1: _p5};
-         case "Tick": return {ctor: "_Tuple2",_0: _p3,_1: A2($List._op["::"],_p2._0,_p5)};
-         case "None": return _p4;
-         default: return A3($List.foldl,toTaskHelp(address),_p4,_p2._0);}
-   });
-   var toTask = F2(function (address,effect) {
-      var _p6 = A3(toTaskHelp,address,effect,{ctor: "_Tuple2",_0: $Task.succeed({ctor: "_Tuple0"}),_1: _U.list([])});
-      var combinedTask = _p6._0;
-      var tickMessages = _p6._1;
-      return $List.isEmpty(tickMessages) ? combinedTask : A2($Task.andThen,combinedTask,$Basics.always(A2(requestTickSending,address,tickMessages)));
-   });
-   var Never = function (a) {    return {ctor: "Never",_0: a};};
-   var Batch = function (a) {    return {ctor: "Batch",_0: a};};
-   var batch = Batch;
-   var None = {ctor: "None"};
-   var none = None;
-   var Tick = function (a) {    return {ctor: "Tick",_0: a};};
-   var tick = Tick;
-   var Task = function (a) {    return {ctor: "Task",_0: a};};
-   var task = Task;
-   var map = F2(function (func,effect) {
-      var _p7 = effect;
-      switch (_p7.ctor)
-      {case "Task": return Task(A2($Task.map,func,_p7._0));
-         case "Tick": return Tick(function (_p8) {    return func(_p7._0(_p8));});
-         case "None": return None;
-         default: return Batch(A2($List.map,map(func),_p7._0));}
-   });
-   return _elm.Effects.values = {_op: _op,none: none,task: task,tick: tick,map: map,batch: batch,toTask: toTask};
 };
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 
@@ -12041,6 +12742,72 @@ Elm.Html.make = function (_elm) {
                              ,menu: menu};
 };
 Elm.Html = Elm.Html || {};
+Elm.Html.Events = Elm.Html.Events || {};
+Elm.Html.Events.make = function (_elm) {
+   "use strict";
+   _elm.Html = _elm.Html || {};
+   _elm.Html.Events = _elm.Html.Events || {};
+   if (_elm.Html.Events.values) return _elm.Html.Events.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $Html = Elm.Html.make(_elm),
+   $Json$Decode = Elm.Json.Decode.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $VirtualDom = Elm.VirtualDom.make(_elm);
+   var _op = {};
+   var keyCode = A2($Json$Decode._op[":="],"keyCode",$Json$Decode.$int);
+   var targetChecked = A2($Json$Decode.at,_U.list(["target","checked"]),$Json$Decode.bool);
+   var targetValue = A2($Json$Decode.at,_U.list(["target","value"]),$Json$Decode.string);
+   var defaultOptions = $VirtualDom.defaultOptions;
+   var Options = F2(function (a,b) {    return {stopPropagation: a,preventDefault: b};});
+   var onWithOptions = $VirtualDom.onWithOptions;
+   var on = $VirtualDom.on;
+   var messageOn = F3(function (name,addr,msg) {    return A3(on,name,$Json$Decode.value,function (_p0) {    return A2($Signal.message,addr,msg);});});
+   var onClick = messageOn("click");
+   var onDoubleClick = messageOn("dblclick");
+   var onMouseMove = messageOn("mousemove");
+   var onMouseDown = messageOn("mousedown");
+   var onMouseUp = messageOn("mouseup");
+   var onMouseEnter = messageOn("mouseenter");
+   var onMouseLeave = messageOn("mouseleave");
+   var onMouseOver = messageOn("mouseover");
+   var onMouseOut = messageOn("mouseout");
+   var onBlur = messageOn("blur");
+   var onFocus = messageOn("focus");
+   var onSubmit = messageOn("submit");
+   var onKey = F3(function (name,addr,handler) {    return A3(on,name,keyCode,function (code) {    return A2($Signal.message,addr,handler(code));});});
+   var onKeyUp = onKey("keyup");
+   var onKeyDown = onKey("keydown");
+   var onKeyPress = onKey("keypress");
+   return _elm.Html.Events.values = {_op: _op
+                                    ,onBlur: onBlur
+                                    ,onFocus: onFocus
+                                    ,onSubmit: onSubmit
+                                    ,onKeyUp: onKeyUp
+                                    ,onKeyDown: onKeyDown
+                                    ,onKeyPress: onKeyPress
+                                    ,onClick: onClick
+                                    ,onDoubleClick: onDoubleClick
+                                    ,onMouseMove: onMouseMove
+                                    ,onMouseDown: onMouseDown
+                                    ,onMouseUp: onMouseUp
+                                    ,onMouseEnter: onMouseEnter
+                                    ,onMouseLeave: onMouseLeave
+                                    ,onMouseOver: onMouseOver
+                                    ,onMouseOut: onMouseOut
+                                    ,on: on
+                                    ,onWithOptions: onWithOptions
+                                    ,defaultOptions: defaultOptions
+                                    ,targetValue: targetValue
+                                    ,targetChecked: targetChecked
+                                    ,keyCode: keyCode
+                                    ,Options: Options};
+};
+Elm.Html = Elm.Html || {};
 Elm.Html.Attributes = Elm.Html.Attributes || {};
 Elm.Html.Attributes.make = function (_elm) {
    "use strict";
@@ -12265,376 +13032,6 @@ Elm.Html.Attributes.make = function (_elm) {
                                         ,property: property
                                         ,attribute: attribute};
 };
-Elm.Html = Elm.Html || {};
-Elm.Html.Events = Elm.Html.Events || {};
-Elm.Html.Events.make = function (_elm) {
-   "use strict";
-   _elm.Html = _elm.Html || {};
-   _elm.Html.Events = _elm.Html.Events || {};
-   if (_elm.Html.Events.values) return _elm.Html.Events.values;
-   var _U = Elm.Native.Utils.make(_elm),
-   $Basics = Elm.Basics.make(_elm),
-   $Debug = Elm.Debug.make(_elm),
-   $Html = Elm.Html.make(_elm),
-   $Json$Decode = Elm.Json.Decode.make(_elm),
-   $List = Elm.List.make(_elm),
-   $Maybe = Elm.Maybe.make(_elm),
-   $Result = Elm.Result.make(_elm),
-   $Signal = Elm.Signal.make(_elm),
-   $VirtualDom = Elm.VirtualDom.make(_elm);
-   var _op = {};
-   var keyCode = A2($Json$Decode._op[":="],"keyCode",$Json$Decode.$int);
-   var targetChecked = A2($Json$Decode.at,_U.list(["target","checked"]),$Json$Decode.bool);
-   var targetValue = A2($Json$Decode.at,_U.list(["target","value"]),$Json$Decode.string);
-   var defaultOptions = $VirtualDom.defaultOptions;
-   var Options = F2(function (a,b) {    return {stopPropagation: a,preventDefault: b};});
-   var onWithOptions = $VirtualDom.onWithOptions;
-   var on = $VirtualDom.on;
-   var messageOn = F3(function (name,addr,msg) {    return A3(on,name,$Json$Decode.value,function (_p0) {    return A2($Signal.message,addr,msg);});});
-   var onClick = messageOn("click");
-   var onDoubleClick = messageOn("dblclick");
-   var onMouseMove = messageOn("mousemove");
-   var onMouseDown = messageOn("mousedown");
-   var onMouseUp = messageOn("mouseup");
-   var onMouseEnter = messageOn("mouseenter");
-   var onMouseLeave = messageOn("mouseleave");
-   var onMouseOver = messageOn("mouseover");
-   var onMouseOut = messageOn("mouseout");
-   var onBlur = messageOn("blur");
-   var onFocus = messageOn("focus");
-   var onSubmit = messageOn("submit");
-   var onKey = F3(function (name,addr,handler) {    return A3(on,name,keyCode,function (code) {    return A2($Signal.message,addr,handler(code));});});
-   var onKeyUp = onKey("keyup");
-   var onKeyDown = onKey("keydown");
-   var onKeyPress = onKey("keypress");
-   return _elm.Html.Events.values = {_op: _op
-                                    ,onBlur: onBlur
-                                    ,onFocus: onFocus
-                                    ,onSubmit: onSubmit
-                                    ,onKeyUp: onKeyUp
-                                    ,onKeyDown: onKeyDown
-                                    ,onKeyPress: onKeyPress
-                                    ,onClick: onClick
-                                    ,onDoubleClick: onDoubleClick
-                                    ,onMouseMove: onMouseMove
-                                    ,onMouseDown: onMouseDown
-                                    ,onMouseUp: onMouseUp
-                                    ,onMouseEnter: onMouseEnter
-                                    ,onMouseLeave: onMouseLeave
-                                    ,onMouseOver: onMouseOver
-                                    ,onMouseOut: onMouseOut
-                                    ,on: on
-                                    ,onWithOptions: onWithOptions
-                                    ,defaultOptions: defaultOptions
-                                    ,targetValue: targetValue
-                                    ,targetChecked: targetChecked
-                                    ,keyCode: keyCode
-                                    ,Options: Options};
-};
-Elm.Native.Http = {};
-Elm.Native.Http.make = function(localRuntime) {
-
-	localRuntime.Native = localRuntime.Native || {};
-	localRuntime.Native.Http = localRuntime.Native.Http || {};
-	if (localRuntime.Native.Http.values)
-	{
-		return localRuntime.Native.Http.values;
-	}
-
-	var Dict = Elm.Dict.make(localRuntime);
-	var List = Elm.List.make(localRuntime);
-	var Maybe = Elm.Maybe.make(localRuntime);
-	var Task = Elm.Native.Task.make(localRuntime);
-
-
-	function send(settings, request)
-	{
-		return Task.asyncFunction(function(callback) {
-			var req = new XMLHttpRequest();
-
-			// start
-			if (settings.onStart.ctor === 'Just')
-			{
-				req.addEventListener('loadStart', function() {
-					var task = settings.onStart._0;
-					Task.spawn(task);
-				});
-			}
-
-			// progress
-			if (settings.onProgress.ctor === 'Just')
-			{
-				req.addEventListener('progress', function(event) {
-					var progress = !event.lengthComputable
-						? Maybe.Nothing
-						: Maybe.Just({
-							_: {},
-							loaded: event.loaded,
-							total: event.total
-						});
-					var task = settings.onProgress._0(progress);
-					Task.spawn(task);
-				});
-			}
-
-			// end
-			req.addEventListener('error', function() {
-				return callback(Task.fail({ ctor: 'RawNetworkError' }));
-			});
-
-			req.addEventListener('timeout', function() {
-				return callback(Task.fail({ ctor: 'RawTimeout' }));
-			});
-
-			req.addEventListener('load', function() {
-				return callback(Task.succeed(toResponse(req)));
-			});
-
-			req.open(request.verb, request.url, true);
-
-			// set all the headers
-			function setHeader(pair) {
-				req.setRequestHeader(pair._0, pair._1);
-			}
-			A2(List.map, setHeader, request.headers);
-
-			// set the timeout
-			req.timeout = settings.timeout;
-
-			// enable this withCredentials thing
-			req.withCredentials = settings.withCredentials;
-
-			// ask for a specific MIME type for the response
-			if (settings.desiredResponseType.ctor === 'Just')
-			{
-				req.overrideMimeType(settings.desiredResponseType._0);
-			}
-
-			// actuall send the request
-			if(request.body.ctor === "BodyFormData")
-			{
-				req.send(request.body.formData)
-			}
-			else
-			{
-				req.send(request.body._0);
-			}
-		});
-	}
-
-
-	// deal with responses
-
-	function toResponse(req)
-	{
-		var tag = req.responseType === 'blob' ? 'Blob' : 'Text'
-		var response = tag === 'Blob' ? req.response : req.responseText;
-		return {
-			_: {},
-			status: req.status,
-			statusText: req.statusText,
-			headers: parseHeaders(req.getAllResponseHeaders()),
-			url: req.responseURL,
-			value: { ctor: tag, _0: response }
-		};
-	}
-
-
-	function parseHeaders(rawHeaders)
-	{
-		var headers = Dict.empty;
-
-		if (!rawHeaders)
-		{
-			return headers;
-		}
-
-		var headerPairs = rawHeaders.split('\u000d\u000a');
-		for (var i = headerPairs.length; i--; )
-		{
-			var headerPair = headerPairs[i];
-			var index = headerPair.indexOf('\u003a\u0020');
-			if (index > 0)
-			{
-				var key = headerPair.substring(0, index);
-				var value = headerPair.substring(index + 2);
-
-				headers = A3(Dict.update, key, function(oldValue) {
-					if (oldValue.ctor === 'Just')
-					{
-						return Maybe.Just(value + ', ' + oldValue._0);
-					}
-					return Maybe.Just(value);
-				}, headers);
-			}
-		}
-
-		return headers;
-	}
-
-
-	function multipart(dataList)
-	{
-		var formData = new FormData();
-
-		while (dataList.ctor !== '[]')
-		{
-			var data = dataList._0;
-			if (data.ctor === 'StringData')
-			{
-				formData.append(data._0, data._1);
-			}
-			else
-			{
-				var fileName = data._1.ctor === 'Nothing'
-					? undefined
-					: data._1._0;
-				formData.append(data._0, data._2, fileName);
-			}
-			dataList = dataList._1;
-		}
-
-		return { ctor: 'BodyFormData', formData: formData };
-	}
-
-
-	function uriEncode(string)
-	{
-		return encodeURIComponent(string);
-	}
-
-	function uriDecode(string)
-	{
-		return decodeURIComponent(string);
-	}
-
-	return localRuntime.Native.Http.values = {
-		send: F2(send),
-		multipart: multipart,
-		uriEncode: uriEncode,
-		uriDecode: uriDecode
-	};
-};
-
-Elm.Http = Elm.Http || {};
-Elm.Http.make = function (_elm) {
-   "use strict";
-   _elm.Http = _elm.Http || {};
-   if (_elm.Http.values) return _elm.Http.values;
-   var _U = Elm.Native.Utils.make(_elm),
-   $Basics = Elm.Basics.make(_elm),
-   $Debug = Elm.Debug.make(_elm),
-   $Dict = Elm.Dict.make(_elm),
-   $Json$Decode = Elm.Json.Decode.make(_elm),
-   $List = Elm.List.make(_elm),
-   $Maybe = Elm.Maybe.make(_elm),
-   $Native$Http = Elm.Native.Http.make(_elm),
-   $Result = Elm.Result.make(_elm),
-   $Signal = Elm.Signal.make(_elm),
-   $String = Elm.String.make(_elm),
-   $Task = Elm.Task.make(_elm),
-   $Time = Elm.Time.make(_elm);
-   var _op = {};
-   var send = $Native$Http.send;
-   var BadResponse = F2(function (a,b) {    return {ctor: "BadResponse",_0: a,_1: b};});
-   var UnexpectedPayload = function (a) {    return {ctor: "UnexpectedPayload",_0: a};};
-   var handleResponse = F2(function (handle,response) {
-      if (_U.cmp(200,response.status) < 1 && _U.cmp(response.status,300) < 0) {
-            var _p0 = response.value;
-            if (_p0.ctor === "Text") {
-                  return handle(_p0._0);
-               } else {
-                  return $Task.fail(UnexpectedPayload("Response body is a blob, expecting a string."));
-               }
-         } else return $Task.fail(A2(BadResponse,response.status,response.statusText));
-   });
-   var NetworkError = {ctor: "NetworkError"};
-   var Timeout = {ctor: "Timeout"};
-   var promoteError = function (rawError) {    var _p1 = rawError;if (_p1.ctor === "RawTimeout") {    return Timeout;} else {    return NetworkError;}};
-   var fromJson = F2(function (decoder,response) {
-      var decode = function (str) {
-         var _p2 = A2($Json$Decode.decodeString,decoder,str);
-         if (_p2.ctor === "Ok") {
-               return $Task.succeed(_p2._0);
-            } else {
-               return $Task.fail(UnexpectedPayload(_p2._0));
-            }
-      };
-      return A2($Task.andThen,A2($Task.mapError,promoteError,response),handleResponse(decode));
-   });
-   var RawNetworkError = {ctor: "RawNetworkError"};
-   var RawTimeout = {ctor: "RawTimeout"};
-   var Blob = function (a) {    return {ctor: "Blob",_0: a};};
-   var Text = function (a) {    return {ctor: "Text",_0: a};};
-   var Response = F5(function (a,b,c,d,e) {    return {status: a,statusText: b,headers: c,url: d,value: e};});
-   var defaultSettings = {timeout: 0,onStart: $Maybe.Nothing,onProgress: $Maybe.Nothing,desiredResponseType: $Maybe.Nothing,withCredentials: false};
-   var post = F3(function (decoder,url,body) {
-      var request = {verb: "POST",headers: _U.list([]),url: url,body: body};
-      return A2(fromJson,decoder,A2(send,defaultSettings,request));
-   });
-   var Settings = F5(function (a,b,c,d,e) {    return {timeout: a,onStart: b,onProgress: c,desiredResponseType: d,withCredentials: e};});
-   var multipart = $Native$Http.multipart;
-   var FileData = F3(function (a,b,c) {    return {ctor: "FileData",_0: a,_1: b,_2: c};});
-   var BlobData = F3(function (a,b,c) {    return {ctor: "BlobData",_0: a,_1: b,_2: c};});
-   var blobData = BlobData;
-   var StringData = F2(function (a,b) {    return {ctor: "StringData",_0: a,_1: b};});
-   var stringData = StringData;
-   var BodyBlob = function (a) {    return {ctor: "BodyBlob",_0: a};};
-   var BodyFormData = {ctor: "BodyFormData"};
-   var ArrayBuffer = {ctor: "ArrayBuffer"};
-   var BodyString = function (a) {    return {ctor: "BodyString",_0: a};};
-   var string = BodyString;
-   var Empty = {ctor: "Empty"};
-   var empty = Empty;
-   var getString = function (url) {
-      var request = {verb: "GET",headers: _U.list([]),url: url,body: empty};
-      return A2($Task.andThen,A2($Task.mapError,promoteError,A2(send,defaultSettings,request)),handleResponse($Task.succeed));
-   };
-   var get = F2(function (decoder,url) {
-      var request = {verb: "GET",headers: _U.list([]),url: url,body: empty};
-      return A2(fromJson,decoder,A2(send,defaultSettings,request));
-   });
-   var Request = F4(function (a,b,c,d) {    return {verb: a,headers: b,url: c,body: d};});
-   var uriDecode = $Native$Http.uriDecode;
-   var uriEncode = $Native$Http.uriEncode;
-   var queryEscape = function (string) {    return A2($String.join,"+",A2($String.split,"%20",uriEncode(string)));};
-   var queryPair = function (_p3) {    var _p4 = _p3;return A2($Basics._op["++"],queryEscape(_p4._0),A2($Basics._op["++"],"=",queryEscape(_p4._1)));};
-   var url = F2(function (baseUrl,args) {
-      var _p5 = args;
-      if (_p5.ctor === "[]") {
-            return baseUrl;
-         } else {
-            return A2($Basics._op["++"],baseUrl,A2($Basics._op["++"],"?",A2($String.join,"&",A2($List.map,queryPair,args))));
-         }
-   });
-   var TODO_implement_file_in_another_library = {ctor: "TODO_implement_file_in_another_library"};
-   var TODO_implement_blob_in_another_library = {ctor: "TODO_implement_blob_in_another_library"};
-   return _elm.Http.values = {_op: _op
-                             ,getString: getString
-                             ,get: get
-                             ,post: post
-                             ,send: send
-                             ,url: url
-                             ,uriEncode: uriEncode
-                             ,uriDecode: uriDecode
-                             ,empty: empty
-                             ,string: string
-                             ,multipart: multipart
-                             ,stringData: stringData
-                             ,defaultSettings: defaultSettings
-                             ,fromJson: fromJson
-                             ,Request: Request
-                             ,Settings: Settings
-                             ,Response: Response
-                             ,Text: Text
-                             ,Blob: Blob
-                             ,Timeout: Timeout
-                             ,NetworkError: NetworkError
-                             ,UnexpectedPayload: UnexpectedPayload
-                             ,BadResponse: BadResponse
-                             ,RawTimeout: RawTimeout
-                             ,RawNetworkError: RawNetworkError};
-};
 
 // setup
 Elm.Native = Elm.Native || {};
@@ -12781,1022 +13178,76 @@ Elm.Markdown.make = function (_elm) {
                                  ,toHtmlWith: toHtmlWith
                                  ,toElementWith: toElementWith};
 };
-Elm.StartApp = Elm.StartApp || {};
-Elm.StartApp.make = function (_elm) {
+Elm.String = Elm.String || {};
+Elm.String.Split = Elm.String.Split || {};
+Elm.String.Split.make = function (_elm) {
    "use strict";
-   _elm.StartApp = _elm.StartApp || {};
-   if (_elm.StartApp.values) return _elm.StartApp.values;
-   var _U = Elm.Native.Utils.make(_elm),
-   $Basics = Elm.Basics.make(_elm),
-   $Debug = Elm.Debug.make(_elm),
-   $Effects = Elm.Effects.make(_elm),
-   $Html = Elm.Html.make(_elm),
-   $List = Elm.List.make(_elm),
-   $Maybe = Elm.Maybe.make(_elm),
-   $Result = Elm.Result.make(_elm),
-   $Signal = Elm.Signal.make(_elm),
-   $Task = Elm.Task.make(_elm);
-   var _op = {};
-   var start = function (config) {
-      var updateStep = F2(function (action,_p0) {
-         var _p1 = _p0;
-         var _p2 = A2(config.update,action,_p1._0);
-         var newModel = _p2._0;
-         var additionalEffects = _p2._1;
-         return {ctor: "_Tuple2",_0: newModel,_1: $Effects.batch(_U.list([_p1._1,additionalEffects]))};
-      });
-      var update = F2(function (actions,_p3) {    var _p4 = _p3;return A3($List.foldl,updateStep,{ctor: "_Tuple2",_0: _p4._0,_1: $Effects.none},actions);});
-      var messages = $Signal.mailbox(_U.list([]));
-      var singleton = function (action) {    return _U.list([action]);};
-      var address = A2($Signal.forwardTo,messages.address,singleton);
-      var inputs = $Signal.mergeMany(A2($List._op["::"],messages.signal,A2($List.map,$Signal.map(singleton),config.inputs)));
-      var effectsAndModel = A3($Signal.foldp,update,config.init,inputs);
-      var model = A2($Signal.map,$Basics.fst,effectsAndModel);
-      return {html: A2($Signal.map,config.view(address),model)
-             ,model: model
-             ,tasks: A2($Signal.map,function (_p5) {    return A2($Effects.toTask,messages.address,$Basics.snd(_p5));},effectsAndModel)};
-   };
-   var App = F3(function (a,b,c) {    return {html: a,model: b,tasks: c};});
-   var Config = F4(function (a,b,c,d) {    return {init: a,update: b,view: c,inputs: d};});
-   return _elm.StartApp.values = {_op: _op,start: start,Config: Config,App: App};
-};
-Elm.Swipe = Elm.Swipe || {};
-Elm.Swipe.make = function (_elm) {
-   "use strict";
-   _elm.Swipe = _elm.Swipe || {};
-   if (_elm.Swipe.values) return _elm.Swipe.values;
+   _elm.String = _elm.String || {};
+   _elm.String.Split = _elm.String.Split || {};
+   if (_elm.String.Split.values) return _elm.String.Split.values;
    var _U = Elm.Native.Utils.make(_elm),
    $Basics = Elm.Basics.make(_elm),
    $Debug = Elm.Debug.make(_elm),
    $List = Elm.List.make(_elm),
    $Maybe = Elm.Maybe.make(_elm),
-   $Result = Elm.Result.make(_elm),
-   $Signal = Elm.Signal.make(_elm),
-   $Time = Elm.Time.make(_elm),
-   $Touch = Elm.Touch.make(_elm);
-   var _op = {};
-   var swipeId = function (state) {
-      var _p0 = state;
-      switch (_p0.ctor)
-      {case "Start": return _p0._0.id;
-         case "Swiping": return _p0._0.id;
-         default: return _p0._0.id;}
-   };
-   var Right = {ctor: "Right"};
-   var Left = {ctor: "Left"};
-   var Down = {ctor: "Down"};
-   var Up = {ctor: "Up"};
-   var direction = F2(function (dx,dy) {
-      return _U.cmp($Basics.abs(dx),$Basics.abs(dy)) > 0 ? _U.cmp(dx,0) > 0 ? $Maybe.Just(Right) : _U.cmp(dx,
-      0) < 0 ? $Maybe.Just(Left) : $Maybe.Nothing : _U.cmp(dy,0) > 0 ? $Maybe.Just(Down) : _U.cmp(dy,0) < 0 ? $Maybe.Just(Up) : $Maybe.Nothing;
-   });
-   var End = function (a) {    return {ctor: "End",_0: a};};
-   var Swiping = function (a) {    return {ctor: "Swiping",_0: a};};
-   var Start = function (a) {    return {ctor: "Start",_0: a};};
-   var update = F2(function (touch,swipeState) {
-      var _p1 = swipeState;
-      switch (_p1.ctor)
-      {case "Start": var _p3 = _p1._0;
-           var _p2 = A2(direction,$Basics.toFloat(touch.x) - _p3.x,$Basics.toFloat(touch.y) - _p3.y);
-           if (_p2.ctor === "Just") {
-                 return $Maybe.Just(Swiping({x0: _p3.x
-                                            ,y0: _p3.y
-                                            ,x1: $Basics.toFloat(touch.x)
-                                            ,y1: $Basics.toFloat(touch.y)
-                                            ,id: _p3.id
-                                            ,direction: _p2._0
-                                            ,t0: _p3.t0}));
-              } else {
-                 return $Maybe.Nothing;
-              }
-         case "Swiping": var _p5 = _p1._0;
-           var fromStartDir = A2(direction,$Basics.toFloat(touch.x) - _p5.x0,$Basics.toFloat(touch.y) - _p5.y0);
-           var _p4 = fromStartDir;
-           if (_p4.ctor === "Just") {
-                 return $Maybe.Just(Swiping({x0: _p5.x0
-                                            ,y0: _p5.y0
-                                            ,x1: $Basics.toFloat(touch.x)
-                                            ,y1: $Basics.toFloat(touch.y)
-                                            ,id: _p5.id
-                                            ,direction: _p4._0
-                                            ,t0: _p5.t0}));
-              } else {
-                 return $Maybe.Just(End({x0: _p5.x0
-                                        ,y0: _p5.y0
-                                        ,x1: $Basics.toFloat(touch.x)
-                                        ,y1: $Basics.toFloat(touch.y)
-                                        ,id: _p5.id
-                                        ,direction: _p5.direction
-                                        ,t0: _p5.t0}));
-              }
-         default: return $Maybe.Just(Start({x: $Basics.toFloat(touch.x),y: $Basics.toFloat(touch.y),id: touch.id,t0: touch.t0}));}
-   });
-   var swipeStates = function () {
-      var updates = F2(function (touches,states) {
-         return A2($Basics._op["++"],
-         A2($List.concatMap,
-         function (state) {
-            var newTouches = A2($List.filter,function (t) {    return _U.eq(swipeId(state),t.id);},touches);
-            if ($List.isEmpty(newTouches)) {
-                  var _p6 = state;
-                  switch (_p6.ctor)
-                  {case "Start": return _U.list([]);
-                     case "Swiping": return _U.list([End(_p6._0)]);
-                     default: return _U.list([]);}
-               } else return A2($List.filterMap,function (touch) {    return A2(update,touch,state);},newTouches);
-         },
-         states),
-         A2($List.map,
-         function (touch) {
-            return Start({x: $Basics.toFloat(touch.x),y: $Basics.toFloat(touch.y),id: touch.id,t0: touch.t0});
-         },
-         A2($List.filter,function (touch) {    return $Basics.not(A2($List.any,function (s) {    return _U.eq(swipeId(s),touch.id);},states));},touches)));
-      });
-      return A3($Signal.foldp,updates,_U.list([]),$Touch.touches);
-   }();
-   var swipes = function () {
-      var isSwiping = function (swipe) {
-         var _p7 = swipe;
-         switch (_p7.ctor)
-         {case "Start": return $Maybe.Nothing;
-            case "Swiping": return $Maybe.Nothing;
-            default: return $Maybe.Just(_p7._0);}
-      };
-      return A2($Signal.map,$List.filterMap(isSwiping),swipeStates);
-   }();
-   var SwipeStart = F4(function (a,b,c,d) {    return {x: a,y: b,id: c,t0: d};});
-   var Swipe = F7(function (a,b,c,d,e,f,g) {    return {x0: a,y0: b,x1: c,y1: d,id: e,direction: f,t0: g};});
-   return _elm.Swipe.values = {_op: _op
-                              ,swipes: swipes
-                              ,swipeStates: swipeStates
-                              ,Swipe: Swipe
-                              ,SwipeStart: SwipeStart
-                              ,Start: Start
-                              ,Swiping: Swiping
-                              ,End: End
-                              ,Up: Up
-                              ,Down: Down
-                              ,Left: Left
-                              ,Right: Right};
-};
-Elm.RouteHash = Elm.RouteHash || {};
-Elm.RouteHash.make = function (_elm) {
-   "use strict";
-   _elm.RouteHash = _elm.RouteHash || {};
-   if (_elm.RouteHash.values) return _elm.RouteHash.values;
-   var _U = Elm.Native.Utils.make(_elm),
-   $Basics = Elm.Basics.make(_elm),
-   $Debug = Elm.Debug.make(_elm),
-   $History = Elm.History.make(_elm),
-   $Http = Elm.Http.make(_elm),
-   $List = Elm.List.make(_elm),
-   $Maybe = Elm.Maybe.make(_elm),
-   $Result = Elm.Result.make(_elm),
-   $Signal = Elm.Signal.make(_elm),
-   $Signal$Extra = Elm.Signal.Extra.make(_elm),
-   $String = Elm.String.make(_elm),
-   $Task = Elm.Task.make(_elm);
-   var _op = {};
-   var list2hash = F2(function (prefix,list) {    return A2($Basics._op["++"],prefix,A2($String.join,"/",A2($List.map,$Http.uriEncode,list)));});
-   var removeInitial = F2(function (initial,original) {
-      var _p0 = $String.uncons(original);
-      if (_p0.ctor === "Just" && _p0._0.ctor === "_Tuple2") {
-            return _U.eq(_p0._0._0,initial) ? _p0._0._1 : original;
-         } else {
-            return original;
-         }
-   });
-   var removeInitialSequence = F2(function (initial,original) {    return A3($String.foldl,removeInitial,original,initial);});
-   var hash2list = function (prefix) {
-      return function (_p1) {
-         return A2($List.map,$Http.uriDecode,A2($String.split,"/",A2(removeInitialSequence,prefix,_p1)));
-      };
-   };
-   var defaultPrefix = "#!/";
-   var Config = F5(function (a,b,c,d,e) {    return {prefix: a,models: b,delta2update: c,location2action: d,address: e};});
-   var extract = function (action) {    var _p2 = action;if (_p2.ctor === "SetPath") {    return _p2._0;} else {    return _p2._0;}};
-   var dropIfCurrent = F2(function (update,current) {
-      return A2($Maybe.andThen,update,function (u) {    return _U.eq(extract(u),current) ? $Maybe.Nothing : update;});
-   });
-   var start = function (config) {
-      var route = F2(function (location,update) {
-         var _p3 = update;
-         if (_p3.ctor === "Just") {
-               if (_p3._0.ctor === "SetPath") {
-                     return _U.eq(_p3._0._0,location) ? _U.list([]) : config.location2action(location);
-                  } else {
-                     return _U.eq(_p3._0._0,location) ? _U.list([]) : config.location2action(location);
-                  }
-            } else {
-               return config.location2action(location);
-            }
-      });
-      var update2task = function (update) {
-         return function () {
-            var _p4 = update;
-            if (_p4.ctor === "SetPath") {
-                  return $History.setPath;
-               } else {
-                  return $History.replacePath;
-               }
-         }()(A2(list2hash,config.prefix,extract(update)));
-      };
-      var computeUpdate = function (maybeChange) {    return A2($Maybe.andThen,maybeChange,$Basics.uncurry(config.delta2update));};
-      var locations = A2($Signal.map,hash2list(config.prefix),$History.hash);
-      var processingActions = $Signal.mailbox(false);
-      var action2task = function (actions) {
-         var _p5 = actions;
-         if (_p5.ctor === "[]") {
-               return $Maybe.Nothing;
-            } else {
-               return $Maybe.Just(A2($Task.map,
-               $Basics.always({ctor: "_Tuple0"}),
-               $Task.sequence(A2($Basics._op["++"],
-               _U.list([A2($Signal.send,processingActions.address,true)]),
-               A2($Basics._op["++"],A2($List.map,$Signal.send(config.address),actions),_U.list([A2($Signal.send,processingActions.address,false)]))))));
-            }
-      };
-      var changes = $Signal$Extra.deltas(config.models);
-      var externalChanges = A2($Signal.map,
-      function (zipped) {
-         return $Basics.snd(zipped) ? $Maybe.Nothing : $Maybe.Just($Basics.fst(zipped));
-      },
-      A2($Signal.sampleOn,changes,A2($Signal$Extra.zip,changes,processingActions.signal)));
-      var possibleUpdates = A2($Signal.map,computeUpdate,externalChanges);
-      var actualUpdates = A3($Signal$Extra.passiveMap2,dropIfCurrent,possibleUpdates,locations);
-      var updateTasks = A3($Signal.filterMap,$Maybe.map(update2task),$Task.succeed({ctor: "_Tuple0"}),actualUpdates);
-      var actions = A3($Signal$Extra.passiveMap2,route,locations,actualUpdates);
-      var actionTasks = A3($Signal.filterMap,action2task,$Task.succeed({ctor: "_Tuple0"}),actions);
-      return A2($Signal.merge,actionTasks,updateTasks);
-   };
-   var ReplacePath = function (a) {    return {ctor: "ReplacePath",_0: a};};
-   var replace = ReplacePath;
-   var SetPath = function (a) {    return {ctor: "SetPath",_0: a};};
-   var set = SetPath;
-   var apply = F2(function (func,update) {
-      var _p6 = update;
-      if (_p6.ctor === "SetPath") {
-            return SetPath(func(_p6._0));
-         } else {
-            return ReplacePath(func(_p6._0));
-         }
-   });
-   var map = F2(function (func,update) {    return A2($Maybe.map,apply(func),update);});
-   return _elm.RouteHash.values = {_op: _op
-                                  ,set: set
-                                  ,replace: replace
-                                  ,apply: apply
-                                  ,map: map
-                                  ,extract: extract
-                                  ,defaultPrefix: defaultPrefix
-                                  ,start: start
-                                  ,Config: Config};
-};
-Elm.Date = Elm.Date || {};
-Elm.Date.Core = Elm.Date.Core || {};
-Elm.Date.Core.make = function (_elm) {
-   "use strict";
-   _elm.Date = _elm.Date || {};
-   _elm.Date.Core = _elm.Date.Core || {};
-   if (_elm.Date.Core.values) return _elm.Date.Core.values;
-   var _U = Elm.Native.Utils.make(_elm),
-   $Basics = Elm.Basics.make(_elm),
-   $Date = Elm.Date.make(_elm),
-   $Debug = Elm.Debug.make(_elm),
-   $List = Elm.List.make(_elm),
-   $Maybe = Elm.Maybe.make(_elm),
-   $Result = Elm.Result.make(_elm),
-   $Signal = Elm.Signal.make(_elm),
-   $Time = Elm.Time.make(_elm);
-   var _op = {};
-   var prevMonth = function (month) {
-      var _p0 = month;
-      switch (_p0.ctor)
-      {case "Jan": return $Date.Dec;
-         case "Feb": return $Date.Jan;
-         case "Mar": return $Date.Feb;
-         case "Apr": return $Date.Mar;
-         case "May": return $Date.Apr;
-         case "Jun": return $Date.May;
-         case "Jul": return $Date.Jun;
-         case "Aug": return $Date.Jul;
-         case "Sep": return $Date.Aug;
-         case "Oct": return $Date.Sep;
-         case "Nov": return $Date.Oct;
-         default: return $Date.Nov;}
-   };
-   var nextMonth = function (month) {
-      var _p1 = month;
-      switch (_p1.ctor)
-      {case "Jan": return $Date.Feb;
-         case "Feb": return $Date.Mar;
-         case "Mar": return $Date.Apr;
-         case "Apr": return $Date.May;
-         case "May": return $Date.Jun;
-         case "Jun": return $Date.Jul;
-         case "Jul": return $Date.Aug;
-         case "Aug": return $Date.Sep;
-         case "Sep": return $Date.Oct;
-         case "Oct": return $Date.Nov;
-         case "Nov": return $Date.Dec;
-         default: return $Date.Jan;}
-   };
-   var monthToInt = function (month) {
-      var _p2 = month;
-      switch (_p2.ctor)
-      {case "Jan": return 1;
-         case "Feb": return 2;
-         case "Mar": return 3;
-         case "Apr": return 4;
-         case "May": return 5;
-         case "Jun": return 6;
-         case "Jul": return 7;
-         case "Aug": return 8;
-         case "Sep": return 9;
-         case "Oct": return 10;
-         case "Nov": return 11;
-         default: return 12;}
-   };
-   var isLeapYear = function (year) {
-      return _U.eq(A2($Basics._op["%"],year,4),0) && !_U.eq(A2($Basics._op["%"],year,100),0) || _U.eq(A2($Basics._op["%"],year,400),0);
-   };
-   var isLeapYearDate = function (date) {    return isLeapYear($Date.year(date));};
-   var yearToDayLength = function (year) {    return isLeapYear(year) ? 366 : 365;};
-   var daysInMonth = F2(function (year,month) {
-      var _p3 = month;
-      switch (_p3.ctor)
-      {case "Jan": return 31;
-         case "Feb": return isLeapYear(year) ? 29 : 28;
-         case "Mar": return 31;
-         case "Apr": return 30;
-         case "May": return 31;
-         case "Jun": return 30;
-         case "Jul": return 31;
-         case "Aug": return 31;
-         case "Sep": return 30;
-         case "Oct": return 31;
-         case "Nov": return 30;
-         default: return 31;}
-   });
-   var daysInMonthDate = function (date) {    return A2(daysInMonth,$Date.year(date),$Date.month(date));};
-   var monthList = _U.list([$Date.Jan,$Date.Feb,$Date.Mar,$Date.Apr,$Date.May,$Date.Jun,$Date.Jul,$Date.Aug,$Date.Sep,$Date.Oct,$Date.Nov,$Date.Dec]);
-   var toTime = function (_p4) {    return $Basics.floor($Date.toTime(_p4));};
-   var fromTime = function (_p5) {    return $Date.fromTime($Basics.toFloat(_p5));};
-   var prevDay = function (day) {
-      var _p6 = day;
-      switch (_p6.ctor)
-      {case "Mon": return $Date.Sun;
-         case "Tue": return $Date.Mon;
-         case "Wed": return $Date.Tue;
-         case "Thu": return $Date.Wed;
-         case "Fri": return $Date.Thu;
-         case "Sat": return $Date.Fri;
-         default: return $Date.Sat;}
-   };
-   var nextDay = function (day) {
-      var _p7 = day;
-      switch (_p7.ctor)
-      {case "Mon": return $Date.Tue;
-         case "Tue": return $Date.Wed;
-         case "Wed": return $Date.Thu;
-         case "Thu": return $Date.Fri;
-         case "Fri": return $Date.Sat;
-         case "Sat": return $Date.Sun;
-         default: return $Date.Mon;}
-   };
-   var isoDayOfWeek = function (day) {
-      var _p8 = day;
-      switch (_p8.ctor)
-      {case "Mon": return 1;
-         case "Tue": return 2;
-         case "Wed": return 3;
-         case "Thu": return 4;
-         case "Fri": return 5;
-         case "Sat": return 6;
-         default: return 7;}
-   };
-   var daysBackToStartOfWeek = F2(function (dateDay,startOfWeekDay) {
-      var startOfWeekDayIndex = isoDayOfWeek(startOfWeekDay);
-      var dateDayIndex = isoDayOfWeek(dateDay);
-      return _U.cmp(dateDayIndex,startOfWeekDayIndex) < 0 ? 7 + dateDayIndex - startOfWeekDayIndex : dateDayIndex - startOfWeekDayIndex;
-   });
-   var ticksAMillisecond = $Basics.floor($Time.millisecond);
-   var ticksASecond = ticksAMillisecond * 1000;
-   var ticksAMinute = ticksASecond * 60;
-   var ticksAnHour = ticksAMinute * 60;
-   var ticksADay = ticksAnHour * 24;
-   var ticksAWeek = ticksADay * 7;
-   var firstOfMonthTicks = function (date) {    var dateTicks = toTime(date);var day = $Date.day(date);return dateTicks + (1 - day) * ticksADay;};
-   var lastOfPrevMonthDate = function (date) {    return fromTime(firstOfMonthTicks(date) - ticksADay);};
-   var daysInPrevMonth = function (date) {    return daysInMonthDate(lastOfPrevMonthDate(date));};
-   var toFirstOfMonth = function (date) {    return fromTime(firstOfMonthTicks(date));};
-   var lastOfMonthTicks = function (date) {
-      var dateTicks = toTime(date);
-      var day = $Date.day(date);
-      var month = $Date.month(date);
-      var year = $Date.year(date);
-      var daysInMonthVal = A2(daysInMonth,year,month);
-      var addDays = daysInMonthVal - day;
-      return dateTicks + addDays * ticksADay;
-   };
-   var firstOfNextMonthDate = function (date) {    return fromTime(lastOfMonthTicks(date) + ticksADay);};
-   var daysInNextMonth = function (date) {    return daysInMonthDate(firstOfNextMonthDate(date));};
-   var lastOfMonthDate = function (date) {    return fromTime(lastOfMonthTicks(date));};
-   var epochDateStr = "1970-01-01T00:00:00Z";
-   return _elm.Date.Core.values = {_op: _op
-                                  ,monthToInt: monthToInt
-                                  ,daysInMonth: daysInMonth
-                                  ,monthList: monthList
-                                  ,daysInNextMonth: daysInNextMonth
-                                  ,daysInPrevMonth: daysInPrevMonth
-                                  ,daysInMonthDate: daysInMonthDate
-                                  ,isLeapYear: isLeapYear
-                                  ,isLeapYearDate: isLeapYearDate
-                                  ,yearToDayLength: yearToDayLength
-                                  ,isoDayOfWeek: isoDayOfWeek
-                                  ,toFirstOfMonth: toFirstOfMonth
-                                  ,firstOfNextMonthDate: firstOfNextMonthDate
-                                  ,lastOfMonthDate: lastOfMonthDate
-                                  ,lastOfPrevMonthDate: lastOfPrevMonthDate
-                                  ,daysBackToStartOfWeek: daysBackToStartOfWeek
-                                  ,fromTime: fromTime
-                                  ,toTime: toTime
-                                  ,nextDay: nextDay
-                                  ,prevDay: prevDay
-                                  ,nextMonth: nextMonth
-                                  ,prevMonth: prevMonth
-                                  ,epochDateStr: epochDateStr
-                                  ,ticksAMillisecond: ticksAMillisecond
-                                  ,ticksASecond: ticksASecond
-                                  ,ticksAMinute: ticksAMinute
-                                  ,ticksAnHour: ticksAnHour
-                                  ,ticksADay: ticksADay
-                                  ,ticksAWeek: ticksAWeek};
-};
-Elm.Date = Elm.Date || {};
-Elm.Date.Config = Elm.Date.Config || {};
-Elm.Date.Config.make = function (_elm) {
-   "use strict";
-   _elm.Date = _elm.Date || {};
-   _elm.Date.Config = _elm.Date.Config || {};
-   if (_elm.Date.Config.values) return _elm.Date.Config.values;
-   var _U = Elm.Native.Utils.make(_elm),
-   $Basics = Elm.Basics.make(_elm),
-   $Date = Elm.Date.make(_elm),
-   $Debug = Elm.Debug.make(_elm),
-   $List = Elm.List.make(_elm),
-   $Maybe = Elm.Maybe.make(_elm),
-   $Result = Elm.Result.make(_elm),
-   $Signal = Elm.Signal.make(_elm);
-   var _op = {};
-   var Config = F2(function (a,b) {    return {i18n: a,format: b};});
-   return _elm.Date.Config.values = {_op: _op,Config: Config};
-};
-Elm.Date = Elm.Date || {};
-Elm.Date.I18n = Elm.Date.I18n || {};
-Elm.Date.I18n.I_en_us = Elm.Date.I18n.I_en_us || {};
-Elm.Date.I18n.I_en_us.make = function (_elm) {
-   "use strict";
-   _elm.Date = _elm.Date || {};
-   _elm.Date.I18n = _elm.Date.I18n || {};
-   _elm.Date.I18n.I_en_us = _elm.Date.I18n.I_en_us || {};
-   if (_elm.Date.I18n.I_en_us.values) return _elm.Date.I18n.I_en_us.values;
-   var _U = Elm.Native.Utils.make(_elm),
-   $Basics = Elm.Basics.make(_elm),
-   $Date = Elm.Date.make(_elm),
-   $Debug = Elm.Debug.make(_elm),
-   $List = Elm.List.make(_elm),
-   $Maybe = Elm.Maybe.make(_elm),
-   $Result = Elm.Result.make(_elm),
-   $Signal = Elm.Signal.make(_elm);
-   var _op = {};
-   var monthName = function (month) {
-      var _p0 = month;
-      switch (_p0.ctor)
-      {case "Jan": return "January";
-         case "Feb": return "February";
-         case "Mar": return "March";
-         case "Apr": return "April";
-         case "May": return "May";
-         case "Jun": return "June";
-         case "Jul": return "July";
-         case "Aug": return "August";
-         case "Sep": return "September";
-         case "Oct": return "October";
-         case "Nov": return "November";
-         default: return "December";}
-   };
-   var monthShort = function (month) {
-      var _p1 = month;
-      switch (_p1.ctor)
-      {case "Jan": return "Jan";
-         case "Feb": return "Feb";
-         case "Mar": return "Mar";
-         case "Apr": return "Apr";
-         case "May": return "May";
-         case "Jun": return "Jun";
-         case "Jul": return "Jul";
-         case "Aug": return "Aug";
-         case "Sep": return "Sep";
-         case "Oct": return "Oct";
-         case "Nov": return "Nov";
-         default: return "Dec";}
-   };
-   var dayName = function (day) {
-      var _p2 = day;
-      switch (_p2.ctor)
-      {case "Mon": return "Monday";
-         case "Tue": return "Tuesday";
-         case "Wed": return "Wednesday";
-         case "Thu": return "Thursday";
-         case "Fri": return "Friday";
-         case "Sat": return "Saturday";
-         default: return "Sunday";}
-   };
-   var dayShort = function (day) {
-      var _p3 = day;
-      switch (_p3.ctor)
-      {case "Mon": return "Mon";
-         case "Tue": return "Tue";
-         case "Wed": return "Wed";
-         case "Thu": return "Thu";
-         case "Fri": return "Fri";
-         case "Sat": return "Sat";
-         default: return "Sun";}
-   };
-   return _elm.Date.I18n.I_en_us.values = {_op: _op,dayShort: dayShort,dayName: dayName,monthShort: monthShort,monthName: monthName};
-};
-Elm.Date = Elm.Date || {};
-Elm.Date.Config = Elm.Date.Config || {};
-Elm.Date.Config.Config_en_au = Elm.Date.Config.Config_en_au || {};
-Elm.Date.Config.Config_en_au.make = function (_elm) {
-   "use strict";
-   _elm.Date = _elm.Date || {};
-   _elm.Date.Config = _elm.Date.Config || {};
-   _elm.Date.Config.Config_en_au = _elm.Date.Config.Config_en_au || {};
-   if (_elm.Date.Config.Config_en_au.values) return _elm.Date.Config.Config_en_au.values;
-   var _U = Elm.Native.Utils.make(_elm),
-   $Basics = Elm.Basics.make(_elm),
-   $Date = Elm.Date.make(_elm),
-   $Date$Config = Elm.Date.Config.make(_elm),
-   $Date$I18n$I_en_us = Elm.Date.I18n.I_en_us.make(_elm),
-   $Debug = Elm.Debug.make(_elm),
-   $List = Elm.List.make(_elm),
-   $Maybe = Elm.Maybe.make(_elm),
-   $Result = Elm.Result.make(_elm),
-   $Signal = Elm.Signal.make(_elm);
-   var _op = {};
-   var config = {i18n: {dayShort: $Date$I18n$I_en_us.dayShort
-                       ,dayName: $Date$I18n$I_en_us.dayName
-                       ,monthShort: $Date$I18n$I_en_us.monthShort
-                       ,monthName: $Date$I18n$I_en_us.monthName}
-                ,format: {date: "%-d/%m/%Y"
-                         ,longDate: "%A, %-d %B %Y"
-                         ,time: "%-I:%M %p"
-                         ,longTime: "%-I:%M:%S %p"
-                         ,dateTime: "%-d/%m/%Y %-I:%M %p"
-                         ,firstDayOfWeek: $Date.Mon}};
-   return _elm.Date.Config.Config_en_au.values = {_op: _op,config: config};
-};
-Elm.Date = Elm.Date || {};
-Elm.Date.Config = Elm.Date.Config || {};
-Elm.Date.Config.Config_en_us = Elm.Date.Config.Config_en_us || {};
-Elm.Date.Config.Config_en_us.make = function (_elm) {
-   "use strict";
-   _elm.Date = _elm.Date || {};
-   _elm.Date.Config = _elm.Date.Config || {};
-   _elm.Date.Config.Config_en_us = _elm.Date.Config.Config_en_us || {};
-   if (_elm.Date.Config.Config_en_us.values) return _elm.Date.Config.Config_en_us.values;
-   var _U = Elm.Native.Utils.make(_elm),
-   $Basics = Elm.Basics.make(_elm),
-   $Date = Elm.Date.make(_elm),
-   $Date$Config = Elm.Date.Config.make(_elm),
-   $Date$I18n$I_en_us = Elm.Date.I18n.I_en_us.make(_elm),
-   $Debug = Elm.Debug.make(_elm),
-   $List = Elm.List.make(_elm),
-   $Maybe = Elm.Maybe.make(_elm),
-   $Result = Elm.Result.make(_elm),
-   $Signal = Elm.Signal.make(_elm);
-   var _op = {};
-   var config = {i18n: {dayShort: $Date$I18n$I_en_us.dayShort
-                       ,dayName: $Date$I18n$I_en_us.dayName
-                       ,monthShort: $Date$I18n$I_en_us.monthShort
-                       ,monthName: $Date$I18n$I_en_us.monthName}
-                ,format: {date: "%-m/%-d/%Y"
-                         ,longDate: "%A, %B %d, %Y"
-                         ,time: "%-H:%M %p"
-                         ,longTime: "%-H:%M:%S %p"
-                         ,dateTime: "%-m/%-d/%Y %-I:%M %p"
-                         ,firstDayOfWeek: $Date.Mon}};
-   return _elm.Date.Config.Config_en_us.values = {_op: _op,config: config};
-};
-Elm.Date = Elm.Date || {};
-Elm.Date.Create = Elm.Date.Create || {};
-Elm.Date.Create.make = function (_elm) {
-   "use strict";
-   _elm.Date = _elm.Date || {};
-   _elm.Date.Create = _elm.Date.Create || {};
-   if (_elm.Date.Create.values) return _elm.Date.Create.values;
-   var _U = Elm.Native.Utils.make(_elm),
-   $Basics = Elm.Basics.make(_elm),
-   $Date = Elm.Date.make(_elm),
-   $Date$Core = Elm.Date.Core.make(_elm),
-   $Debug = Elm.Debug.make(_elm),
-   $List = Elm.List.make(_elm),
-   $Maybe = Elm.Maybe.make(_elm),
-   $Result = Elm.Result.make(_elm),
-   $Signal = Elm.Signal.make(_elm);
-   var _op = {};
-   var iterateSum = F5(function (getNext,getValue,target,current,accumulator) {
-      iterateSum: while (true) if (_U.eq(current,target)) return accumulator; else {
-            var _v0 = getNext,_v1 = getValue,_v2 = target,_v3 = getNext(current),_v4 = accumulator + getValue(current);
-            getNext = _v0;
-            getValue = _v1;
-            target = _v2;
-            current = _v3;
-            accumulator = _v4;
-            continue iterateSum;
-         }
-   });
-   var monthToTicks = F2(function (year,month) {    return A2($Date$Core.daysInMonth,year,month) * $Date$Core.ticksADay;});
-   var getMonthTicksToEndYear = F2(function (year,month) {
-      return A5(iterateSum,$Date$Core.nextMonth,monthToTicks(year),$Date.Jan,$Date$Core.nextMonth(month),0);
-   });
-   var getMonthTicksSinceStartOfYear = F2(function (year,month) {    return A5(iterateSum,$Date$Core.nextMonth,monthToTicks(year),month,$Date.Jan,0);});
-   var yearToTicks = function (year) {    return $Date$Core.yearToDayLength(year) * $Date$Core.ticksADay;};
-   var getYearTicksTo1970 = function (year) {    return A5(iterateSum,F2(function (x,y) {    return x + y;})(1),yearToTicks,1970,year + 1,0);};
-   var makeDateTicksNegative = function (date) {
-      var millisecondsToEndOfSecond = 1000 - $Date.millisecond(date);
-      var millisecondTicks = millisecondsToEndOfSecond * $Date$Core.ticksAMillisecond;
-      var secondsToEndOfMinute = 60 - $Date.second(date) - 1;
-      var secondTicks = secondsToEndOfMinute * $Date$Core.ticksASecond;
-      var minutesToEndOfHour = 60 - $Date.minute(date) - 1;
-      var minuteTicks = minutesToEndOfHour * $Date$Core.ticksAMinute;
-      var hoursToEndOfDay = 24 - $Date.hour(date) - 1;
-      var hourTicks = hoursToEndOfDay * $Date$Core.ticksAnHour;
-      var month = $Date.month(date);
-      var year = $Date.year(date);
-      var yearTicks = getYearTicksTo1970(year);
-      var monthTicks = A2(getMonthTicksToEndYear,year,month);
-      var daysToEndOfMonth = A2($Date$Core.daysInMonth,year,month) - $Date.day(date);
-      var dayTicks = daysToEndOfMonth * $Date$Core.ticksADay;
-      return $Basics.negate(yearTicks + monthTicks + dayTicks + hourTicks + minuteTicks + secondTicks + millisecondTicks);
-   };
-   var getYearTicksFrom1970 = function (year) {    return A5(iterateSum,F2(function (x,y) {    return x + y;})(1),yearToTicks,year,1970,0);};
-   var makeDateTicksPositive = function (date) {
-      var day = $Date.day(date);
-      var restTicks = $Date.millisecond(date) * $Date$Core.ticksAMillisecond + $Date.second(date) * $Date$Core.ticksASecond + $Date.minute(date) * $Date$Core.ticksAMinute + $Date.hour(date) * $Date$Core.ticksAnHour + (day - 1) * $Date$Core.ticksADay;
-      var month = $Date.month(date);
-      var year = $Date.year(date);
-      var yearTicks = getYearTicksFrom1970(year);
-      var monthTicks = A2(getMonthTicksSinceStartOfYear,year,month);
-      return yearTicks + monthTicks + restTicks;
-   };
-   var makeDateTicks = function (date) {
-      var year = $Date.year(date);
-      return _U.cmp(year,1970) < 0 ? makeDateTicksNegative(date) : makeDateTicksPositive(date);
-   };
-   var getTimezoneOffset = function (date) {
-      var date = function () {
-         var _p0 = $Date.fromString($Date$Core.epochDateStr);
-         if (_p0.ctor === "Ok") {
-               return _p0._0;
-            } else {
-               return _U.crashCase("Date.Create",
-               {start: {line: 176,column: 7},end: {line: 178,column: 89}},
-               _p0)("Failed to parse unix epoch date something is very wrong.");
-            }
-      }();
-      var dateTicks = $Date$Core.toTime(date);
-      var newTicks = makeDateTicks(date);
-      var timezoneOffset = (dateTicks - newTicks) / $Date$Core.ticksAMinute | 0;
-      return timezoneOffset;
-   };
-   return _elm.Date.Create.values = {_op: _op,makeDateTicks: makeDateTicks,getTimezoneOffset: getTimezoneOffset};
-};
-Elm.Date = Elm.Date || {};
-Elm.Date.Internal = Elm.Date.Internal || {};
-Elm.Date.Internal.make = function (_elm) {
-   "use strict";
-   _elm.Date = _elm.Date || {};
-   _elm.Date.Internal = _elm.Date.Internal || {};
-   if (_elm.Date.Internal.values) return _elm.Date.Internal.values;
-   var _U = Elm.Native.Utils.make(_elm),
-   $Basics = Elm.Basics.make(_elm),
-   $Date = Elm.Date.make(_elm),
-   $Date$Core = Elm.Date.Core.make(_elm),
-   $Date$Create = Elm.Date.Create.make(_elm),
-   $Debug = Elm.Debug.make(_elm),
-   $List = Elm.List.make(_elm),
-   $Maybe = Elm.Maybe.make(_elm),
-   $Result = Elm.Result.make(_elm),
-   $Signal = Elm.Signal.make(_elm);
-   var _op = {};
-   var hackDateAsOffset = F2(function (offsetMinutes,date) {
-      return $Date$Core.fromTime(A2(F2(function (x,y) {    return x + y;}),offsetMinutes * $Date$Core.ticksAMinute,$Date$Core.toTime(date)));
-   });
-   var hackDateAsUtc = function (date) {    return A2(hackDateAsOffset,$Date$Create.getTimezoneOffset(date),date);};
-   return _elm.Date.Internal.values = {_op: _op,hackDateAsUtc: hackDateAsUtc,hackDateAsOffset: hackDateAsOffset};
-};
-Elm.Date = Elm.Date || {};
-Elm.Date.Format = Elm.Date.Format || {};
-Elm.Date.Format.make = function (_elm) {
-   "use strict";
-   _elm.Date = _elm.Date || {};
-   _elm.Date.Format = _elm.Date.Format || {};
-   if (_elm.Date.Format.values) return _elm.Date.Format.values;
-   var _U = Elm.Native.Utils.make(_elm),
-   $Basics = Elm.Basics.make(_elm),
-   $Date = Elm.Date.make(_elm),
-   $Date$Config = Elm.Date.Config.make(_elm),
-   $Date$Config$Config_en_us = Elm.Date.Config.Config_en_us.make(_elm),
-   $Date$Core = Elm.Date.Core.make(_elm),
-   $Date$Create = Elm.Date.Create.make(_elm),
-   $Date$Internal = Elm.Date.Internal.make(_elm),
-   $Debug = Elm.Debug.make(_elm),
-   $List = Elm.List.make(_elm),
-   $Maybe = Elm.Maybe.make(_elm),
-   $Regex = Elm.Regex.make(_elm),
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm),
    $String = Elm.String.make(_elm);
    var _op = {};
-   var toHourMin = function (offsetMinutes) {    return {ctor: "_Tuple2",_0: offsetMinutes / 60 | 0,_1: A2($Basics._op["%"],offsetMinutes,60)};};
-   var padWithN = F2(function (n,c) {    return function (_p0) {    return A3($String.padLeft,n,c,$Basics.toString(_p0));};});
-   var padWith = function (c) {    return function (_p1) {    return A3($String.padLeft,2,c,$Basics.toString(_p1));};};
-   var hourMod12 = function (h) {    return _U.eq(A2($Basics._op["%"],h,12),0) ? 12 : A2($Basics._op["%"],h,12);};
-   var formatOffsetStr = F2(function (betweenHoursMinutes,offset) {
-      var _p2 = toHourMin($Basics.abs(offset));
-      var hour = _p2._0;
-      var minute = _p2._1;
-      return A2($Basics._op["++"],
-      _U.cmp(offset,0) < 1 ? "+" : "-",
-      A2($Basics._op["++"],A2(padWith,_U.chr("0"),hour),A2($Basics._op["++"],betweenHoursMinutes,A2(padWith,_U.chr("0"),minute))));
+   var chunksOfRight = F2(function (k,s) {
+      var k2 = 2 * k;
+      var chunksOfR = function (s$) {
+         return _U.cmp($String.length(s$),k2) > 0 ? A2($List._op["::"],A2($String.right,k,s$),chunksOfR(A2($String.dropRight,k,s$))) : A2($List._op["::"],
+         A2($String.right,k,s$),
+         _U.list([A2($String.dropRight,k,s$)]));
+      };
+      var len = $String.length(s);
+      return _U.cmp(len,k2) > 0 ? $List.reverse(chunksOfR(s)) : _U.cmp(len,k) > 0 ? A2($List._op["::"],
+      A2($String.dropRight,k,s),
+      _U.list([A2($String.right,k,s)])) : _U.list([s]);
    });
-   var collapse = function (m) {    return A2($Maybe.andThen,m,$Basics.identity);};
-   var formatToken = F4(function (config,offset,d,m) {
-      var symbol = A2($Maybe.withDefault," ",collapse($List.head(m.submatches)));
-      var _p3 = symbol;
-      switch (_p3)
-      {case "Y": return A3(padWithN,4,_U.chr("0"),$Date.year(d));
-         case "m": return A2(padWith,_U.chr("0"),$Date$Core.monthToInt($Date.month(d)));
-         case "_m": return A2(padWith,_U.chr(" "),$Date$Core.monthToInt($Date.month(d)));
-         case "-m": return $Basics.toString($Date$Core.monthToInt($Date.month(d)));
-         case "B": return config.i18n.monthName($Date.month(d));
-         case "^B": return $String.toUpper(config.i18n.monthName($Date.month(d)));
-         case "b": return config.i18n.monthShort($Date.month(d));
-         case "^b": return $String.toUpper(config.i18n.monthShort($Date.month(d)));
-         case "d": return A2(padWith,_U.chr("0"),$Date.day(d));
-         case "-d": return $Basics.toString($Date.day(d));
-         case "e": return A2(padWith,_U.chr(" "),$Date.day(d));
-         case "A": return config.i18n.dayName($Date.dayOfWeek(d));
-         case "^A": return $String.toUpper(config.i18n.dayName($Date.dayOfWeek(d)));
-         case "a": return config.i18n.dayShort($Date.dayOfWeek(d));
-         case "^a": return $String.toUpper(config.i18n.dayShort($Date.dayOfWeek(d)));
-         case "H": return A2(padWith,_U.chr("0"),$Date.hour(d));
-         case "-H": return $Basics.toString($Date.hour(d));
-         case "k": return A2(padWith,_U.chr(" "),$Date.hour(d));
-         case "I": return A2(padWith,_U.chr("0"),hourMod12($Date.hour(d)));
-         case "-I": return $Basics.toString(hourMod12($Date.hour(d)));
-         case "l": return A2(padWith,_U.chr(" "),hourMod12($Date.hour(d)));
-         case "p": return _U.cmp($Date.hour(d),12) < 0 ? "AM" : "PM";
-         case "P": return _U.cmp($Date.hour(d),12) < 0 ? "am" : "pm";
-         case "M": return A2(padWith,_U.chr("0"),$Date.minute(d));
-         case "S": return A2(padWith,_U.chr("0"),$Date.second(d));
-         case "L": return A3(padWithN,3,_U.chr("0"),$Date.millisecond(d));
-         case "%": return symbol;
-         case "z": return A2(formatOffsetStr,"",offset);
-         case ":z": return A2(formatOffsetStr,":",offset);
-         default: return "";}
+   var chunksOfLeft = F2(function (k,s) {
+      var len = $String.length(s);
+      return _U.cmp(len,k) > 0 ? A2($List._op["::"],A2($String.left,k,s),A2(chunksOfLeft,k,A2($String.dropLeft,k,s))) : _U.list([s]);
    });
-   var formatRegex = $Regex.regex("%(Y|m|_m|-m|B|^B|b|^b|d|-d|e|A|^A|a|^a|H|-H|k|I|-I|l|p|P|M|S|%|L|z|:z)");
-   var formatOffset = F4(function (config,offset,formatStr,date) {
-      var hackOffset = $Date$Create.getTimezoneOffset(date) - offset;
-      return A4($Regex.replace,$Regex.All,formatRegex,A3(formatToken,config,offset,A2($Date$Internal.hackDateAsOffset,hackOffset,date)),formatStr);
-   });
-   var format = F3(function (config,formatStr,date) {    return A4(formatOffset,config,$Date$Create.getTimezoneOffset(date),formatStr,date);});
-   var formatUtc = F3(function (config,formatStr,date) {    return A4(formatOffset,config,0,formatStr,date);});
-   var isoDateString = function (date) {
-      var day = $Date.day(date);
-      var month = $Date.month(date);
-      var year = $Date.year(date);
-      return A2($Basics._op["++"],
-      A3($String.padLeft,4,_U.chr("0"),$Basics.toString(year)),
-      A2($Basics._op["++"],
-      "-",
-      A2($Basics._op["++"],
-      A3($String.padLeft,2,_U.chr("0"),$Basics.toString($Date$Core.monthToInt(month))),
-      A2($Basics._op["++"],"-",A3($String.padLeft,2,_U.chr("0"),$Basics.toString(day))))));
-   };
-   var utcIsoDateString = function (date) {    return isoDateString($Date$Internal.hackDateAsUtc(date));};
-   var yearInt = function (year) {    return A3($String.padLeft,4,_U.chr("0"),$Basics.toString(year));};
-   var year = function (date) {    return A3($String.padLeft,4,_U.chr("0"),$Basics.toString($Date.year(date)));};
-   var monthMonth = function (month) {    return A3($String.padLeft,2,_U.chr("0"),$Basics.toString($Date$Core.monthToInt(month)));};
-   var month = function (date) {    return A3($String.padLeft,2,_U.chr("0"),$Basics.toString($Date$Core.monthToInt($Date.month(date))));};
-   var isoTimeFormat = "%H:%M:%S";
-   var isoDateFormat = "%Y-%m-%d";
-   var isoMsecOffsetFormat = "%Y-%m-%dT%H:%M:%S.%L%z";
-   var isoString = A2(format,$Date$Config$Config_en_us.config,isoMsecOffsetFormat);
-   var isoOffsetFormat = "%Y-%m-%dT%H:%M:%S%z";
-   var isoMsecFormat = "%Y-%m-%dT%H:%M:%S.%L";
-   var utcIsoString = function (date) {    return A2($Basics._op["++"],A3(formatUtc,$Date$Config$Config_en_us.config,isoMsecFormat,date),"Z");};
-   var isoFormat = "%Y-%m-%dT%H:%M:%S";
-   return _elm.Date.Format.values = {_op: _op
-                                    ,format: format
-                                    ,formatUtc: formatUtc
-                                    ,formatOffset: formatOffset
-                                    ,isoString: isoString
-                                    ,utcIsoString: utcIsoString
-                                    ,isoDateString: isoDateString
-                                    ,utcIsoDateString: utcIsoDateString
-                                    ,isoFormat: isoFormat
-                                    ,isoMsecFormat: isoMsecFormat
-                                    ,isoOffsetFormat: isoOffsetFormat
-                                    ,isoMsecOffsetFormat: isoMsecOffsetFormat
-                                    ,isoDateFormat: isoDateFormat
-                                    ,isoTimeFormat: isoTimeFormat};
+   return _elm.String.Split.values = {_op: _op,chunksOfLeft: chunksOfLeft,chunksOfRight: chunksOfRight};
 };
-Elm.Remote = Elm.Remote || {};
-Elm.Remote.Data = Elm.Remote.Data || {};
-Elm.Remote.Data.make = function (_elm) {
+Elm.Number = Elm.Number || {};
+Elm.Number.Format = Elm.Number.Format || {};
+Elm.Number.Format.make = function (_elm) {
    "use strict";
-   _elm.Remote = _elm.Remote || {};
-   _elm.Remote.Data = _elm.Remote.Data || {};
-   if (_elm.Remote.Data.values) return _elm.Remote.Data.values;
+   _elm.Number = _elm.Number || {};
+   _elm.Number.Format = _elm.Number.Format || {};
+   if (_elm.Number.Format.values) return _elm.Number.Format.values;
    var _U = Elm.Native.Utils.make(_elm),
    $Basics = Elm.Basics.make(_elm),
    $Debug = Elm.Debug.make(_elm),
-   $Http = Elm.Http.make(_elm),
    $List = Elm.List.make(_elm),
    $Maybe = Elm.Maybe.make(_elm),
-   $Result = Elm.Result.make(_elm),
-   $Signal = Elm.Signal.make(_elm);
-   var _op = {};
-   var isFailed = function (data) {    var _p0 = data;if (_p0.ctor === "Failed") {    return true;} else {    return false;}};
-   var isLoaded = function (data) {    var _p1 = data;if (_p1.ctor === "Loaded") {    return true;} else {    return false;}};
-   var isLoading = function (data) {    var _p2 = data;if (_p2.ctor === "Loading") {    return true;} else {    return false;}};
-   var get = function (data) {    var _p3 = data;if (_p3.ctor === "Loaded") {    return $Maybe.Just(_p3._0);} else {    return $Maybe.Nothing;}};
-   var Failed = function (a) {    return {ctor: "Failed",_0: a};};
-   var Loaded = function (a) {    return {ctor: "Loaded",_0: a};};
-   var Loading = {ctor: "Loading"};
-   var map = F2(function (f,data) {
-      var _p4 = data;
-      switch (_p4.ctor)
-      {case "Loaded": return Loaded(f(_p4._0));
-         case "Failed": return Failed(_p4._0);
-         default: return Loading;}
-   });
-   return _elm.Remote.Data.values = {_op: _op
-                                    ,get: get
-                                    ,map: map
-                                    ,isLoading: isLoading
-                                    ,isLoaded: isLoaded
-                                    ,isFailed: isFailed
-                                    ,Loading: Loading
-                                    ,Loaded: Loaded
-                                    ,Failed: Failed};
-};
-Elm.Remote = Elm.Remote || {};
-Elm.Remote.DataStore = Elm.Remote.DataStore || {};
-Elm.Remote.DataStore.make = function (_elm) {
-   "use strict";
-   _elm.Remote = _elm.Remote || {};
-   _elm.Remote.DataStore = _elm.Remote.DataStore || {};
-   if (_elm.Remote.DataStore.values) return _elm.Remote.DataStore.values;
-   var _U = Elm.Native.Utils.make(_elm),
-   $Basics = Elm.Basics.make(_elm),
-   $Debug = Elm.Debug.make(_elm),
-   $Dict = Elm.Dict.make(_elm),
-   $Effects = Elm.Effects.make(_elm),
-   $Http = Elm.Http.make(_elm),
-   $List = Elm.List.make(_elm),
-   $Maybe = Elm.Maybe.make(_elm),
-   $Remote$Data = Elm.Remote.Data.make(_elm),
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm),
-   $Task = Elm.Task.make(_elm);
+   $String = Elm.String.make(_elm),
+   $String$Split = Elm.String.Split.make(_elm);
    var _op = {};
-   var updateIfLoaded = F2(function (newValue,oldValue) {
-      return $Remote$Data.isLoaded(newValue) ? $Maybe.Just(newValue) : A2($Maybe.withDefault,
-      false,
-      A2($Maybe.map,$Remote$Data.isFailed,oldValue)) ? $Maybe.Just(newValue) : oldValue;
+   var prettyInt = F2(function (sep,n) {
+      var ni = $Basics.abs(n);
+      var nis = A2($String.join,$String.fromChar(sep),A2($String$Split.chunksOfRight,3,$Basics.toString(ni)));
+      return _U.cmp(n,0) < 0 ? A2($String.cons,_U.chr("-"),nis) : nis;
    });
-   var loaded = function (_p0) {    var _p1 = _p0;return A2($List.filterMap,$Remote$Data.get,$Dict.values(_p1._0));};
-   var get = F2(function (id,_p2) {    var _p3 = _p2;return A2($Maybe.withDefault,$Remote$Data.Loading,A2($Dict.get,$Basics.toString(id),_p3._0));});
-   var RemoteDataStore = function (a) {    return {ctor: "RemoteDataStore",_0: a};};
-   var empty = RemoteDataStore($Dict.empty);
-   var update = F3(function (id,alter,_p4) {    var _p5 = _p4;return RemoteDataStore(A3($Dict.update,$Basics.toString(id),alter,_p5._0));});
-   var fetch = F3(function (id,request,alter) {
-      return A2($Task.onError,
-      A2($Task.andThen,request(id),function (value) {    return $Task.succeed(A2(update,id,alter($Remote$Data.Loaded(value))));}),
-      function (error) {
-         return $Task.succeed(A2(update,id,alter($Remote$Data.Failed(error))));
-      });
+   var pretty = F3(function (decimals,sep,n) {
+      var decpow = Math.pow(10,decimals);
+      var nshift = n * $Basics.toFloat(decpow);
+      var nshifti = $Basics.round(nshift);
+      var nshifti$ = $Basics.abs(nshifti);
+      var ni = nshifti$ / decpow | 0;
+      var nf = nshifti$ - ni * decpow;
+      var nfs = $Basics.toString(nf);
+      var nflen = $String.length(nfs);
+      return A2($String.append,
+      _U.cmp(nshifti,0) < 0 ? A2(prettyInt,sep,0 - ni) : A2(prettyInt,sep,ni),
+      A2($String.cons,_U.chr("."),A3($String.padLeft,decimals,_U.chr("0"),nfs)));
    });
-   var fetchInsert = F2(function (id,request) {    return A3(fetch,id,request,updateIfLoaded);});
-   return _elm.Remote.DataStore.values = {_op: _op
-                                         ,empty: empty
-                                         ,update: update
-                                         ,get: get
-                                         ,loaded: loaded
-                                         ,fetch: fetch
-                                         ,fetchInsert: fetchInsert
-                                         ,RemoteDataStore: RemoteDataStore};
-};
-Elm.Types = Elm.Types || {};
-Elm.Types.make = function (_elm) {
-   "use strict";
-   _elm.Types = _elm.Types || {};
-   if (_elm.Types.values) return _elm.Types.values;
-   var _U = Elm.Native.Utils.make(_elm),
-   $Basics = Elm.Basics.make(_elm),
-   $Date = Elm.Date.make(_elm),
-   $Debug = Elm.Debug.make(_elm),
-   $List = Elm.List.make(_elm),
-   $Maybe = Elm.Maybe.make(_elm),
-   $Remote$Data = Elm.Remote.Data.make(_elm),
-   $Remote$DataStore = Elm.Remote.DataStore.make(_elm),
-   $Result = Elm.Result.make(_elm),
-   $Signal = Elm.Signal.make(_elm),
-   $Swipe = Elm.Swipe.make(_elm),
-   $Time = Elm.Time.make(_elm);
-   var _op = {};
-   var Window = F2(function (a,b) {    return {width: a,height: b};});
-   var Dates = F2(function (a,b) {    return {start: a,end: b};});
-   var Site = F2(function (a,b) {    return {id: a,name: b};});
-   var LatLng = F2(function (a,b) {    return {lat: a,lng: b};});
-   var FullStory = function (a) {    return {ctor: "FullStory",_0: a};};
-   var DiscoverStory = function (a) {    return {ctor: "DiscoverStory",_0: a};};
-   var StoryId = function (a) {    return {ctor: "StoryId",_0: a};};
-   var Body = {ctor: "Body"};
-   var Intro = {ctor: "Intro"};
-   var screen1 = Intro;
-   var ItemView = F2(function (a,b) {    return {photoIndex: a,photoPosition: b};});
-   var Discovery = F5(function (a,b,c,d,e) {    return {item: a,itemPosition: b,items: c,favourites: d,passes: e};});
-   var Leaving = F5(function (a,b,c,d,e) {    return {ctor: "Leaving",_0: a,_1: b,_2: c,_3: d,_4: e};});
-   var Leave = function (a) {    return {ctor: "Leave",_0: a};};
-   var Returning = F5(function (a,b,c,d,e) {    return {ctor: "Returning",_0: a,_1: b,_2: c,_3: d,_4: e};});
-   var Return = function (a) {    return {ctor: "Return",_0: a};};
-   var Swiping = function (a) {    return {ctor: "Swiping",_0: a};};
-   var Static = {ctor: "Static"};
-   var NoAction = {ctor: "NoAction"};
-   var LoadDiscoveryData = F2(function (a,b) {    return {ctor: "LoadDiscoveryData",_0: a,_1: b};});
-   var LoadData = function (a) {    return {ctor: "LoadData",_0: a};};
-   var Back = {ctor: "Back"};
-   var ViewFavourites = {ctor: "ViewFavourites"};
-   var View = F2(function (a,b) {    return {ctor: "View",_0: a,_1: b};});
-   var JumpPhoto = function (a) {    return {ctor: "JumpPhoto",_0: a};};
-   var NextPhoto = {ctor: "NextPhoto"};
-   var PrevPhoto = {ctor: "PrevPhoto"};
-   var MovePhoto = function (a) {    return {ctor: "MovePhoto",_0: a};};
-   var Pass = {ctor: "Pass"};
-   var Favourite = {ctor: "Favourite"};
-   var MoveItem = function (a) {    return {ctor: "MoveItem",_0: a};};
-   var Animate = F2(function (a,b) {    return {ctor: "Animate",_0: a,_1: b};});
-   var UpdateLocation = function (a) {    return {ctor: "UpdateLocation",_0: a};};
-   var Discover = {ctor: "Discover"};
-   var ViewingFavourites = {ctor: "ViewingFavourites"};
-   var Viewing = F3(function (a,b,c) {    return {ctor: "Viewing",_0: a,_1: b,_2: c};});
-   var Discovering = {ctor: "Discovering"};
-   var App = F4(function (a,b,c,d) {    return {location: a,discovery: b,items: c,latLng: d};});
-   return _elm.Types.values = {_op: _op
-                              ,screen1: screen1
-                              ,Discovery: Discovery
-                              ,ItemView: ItemView
-                              ,Site: Site
-                              ,LatLng: LatLng
-                              ,Dates: Dates
-                              ,Window: Window
-                              ,Discovering: Discovering
-                              ,Viewing: Viewing
-                              ,ViewingFavourites: ViewingFavourites
-                              ,Intro: Intro
-                              ,Body: Body
-                              ,StoryId: StoryId
-                              ,DiscoverStory: DiscoverStory
-                              ,FullStory: FullStory
-                              ,Discover: Discover
-                              ,UpdateLocation: UpdateLocation
-                              ,Animate: Animate
-                              ,MoveItem: MoveItem
-                              ,Favourite: Favourite
-                              ,Pass: Pass
-                              ,MovePhoto: MovePhoto
-                              ,PrevPhoto: PrevPhoto
-                              ,NextPhoto: NextPhoto
-                              ,JumpPhoto: JumpPhoto
-                              ,View: View
-                              ,ViewFavourites: ViewFavourites
-                              ,Back: Back
-                              ,LoadData: LoadData
-                              ,LoadDiscoveryData: LoadDiscoveryData
-                              ,NoAction: NoAction
-                              ,Static: Static
-                              ,Swiping: Swiping
-                              ,Return: Return
-                              ,Returning: Returning
-                              ,Leave: Leave
-                              ,Leaving: Leaving};
+   return _elm.Number.Format.values = {_op: _op,pretty: pretty,prettyInt: prettyInt};
 };
 Elm.Loading = Elm.Loading || {};
 Elm.Loading.make = function (_elm) {
@@ -13817,6 +13268,238 @@ Elm.Loading.make = function (_elm) {
    _U.list([$Html$Attributes.$class("loading")]),
    _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-circle-o-notch fa-spin fa-3x")]),_U.list([]))]));
    return _elm.Loading.values = {_op: _op,loading: loading};
+};
+Elm.Easing = Elm.Easing || {};
+Elm.Easing.make = function (_elm) {
+   "use strict";
+   _elm.Easing = _elm.Easing || {};
+   if (_elm.Easing.values) return _elm.Easing.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Color = Elm.Color.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $Time = Elm.Time.make(_elm);
+   var _op = {};
+   var cycle = F3(function (animation,d,t) {    return A2(animation,1,t / d - $Basics.toFloat($Basics.floor(t / d)));});
+   var flip = F2(function (easing,time) {    return easing(1 - time);});
+   var retour = F2(function (easing,time) {    return _U.cmp(time,0.5) < 0 ? easing(time * 2) : A2(flip,easing,(time - 0.5) * 2);});
+   var invert = F2(function (easing,time) {    return 1 - easing(1 - time);});
+   var inOut = F3(function (e1,e2,time) {    return _U.cmp(time,0.5) < 0 ? e1(time * 2) / 2 : 0.5 + e2((time - 0.5) * 2) / 2;});
+   var easeInElastic = function (time) {
+      if (_U.eq(time,0.0)) return 0.0; else {
+            var t$ = time - 1;
+            var p = 0.3;
+            var s = 7.5e-2;
+            return 0 - Math.pow(2,10 * t$) * $Basics.sin((t$ - s) * (2 * $Basics.pi) / p);
+         }
+   };
+   var easeOutElastic = invert(easeInElastic);
+   var easeInOutElastic = A2(inOut,easeInElastic,easeOutElastic);
+   var easeOutBounce = function (time) {
+      var t4 = time - 2.625 / 2.75;
+      var t3 = time - 2.25 / 2.75;
+      var t2 = time - 1.5 / 2.75;
+      var a = 7.5625;
+      return _U.cmp(time,1 / 2.75) < 0 ? a * time * time : _U.cmp(time,2 / 2.75) < 0 ? a * t2 * t2 + 0.75 : _U.cmp(time,
+      2.5 / 2.75) < 0 ? a * t3 * t3 + 0.9375 : a * t4 * t4 + 0.984375;
+   };
+   var easeInBounce = invert(easeOutBounce);
+   var easeInOutBounce = A2(inOut,easeInBounce,easeOutBounce);
+   var easeInBack = function (time) {    return time * time * (2.70158 * time - 1.70158);};
+   var easeOutBack = invert(easeInBack);
+   var easeInOutBack = A2(inOut,easeInBack,easeOutBack);
+   var easeOutCirc = function (time) {    return $Basics.sqrt(1 - Math.pow(time - 1,2));};
+   var easeInCirc = invert(easeOutCirc);
+   var easeInOutCirc = A2(inOut,easeInCirc,easeOutCirc);
+   var easeInExpo = function (time) {    return _U.eq(time,0.0) ? 0.0 : Math.pow(2,10 * (time - 1));};
+   var easeOutExpo = invert(easeInExpo);
+   var easeInOutExpo = A2(inOut,easeInExpo,easeOutExpo);
+   var easeOutSine = function (time) {    return $Basics.sin(time * ($Basics.pi / 2));};
+   var easeInSine = invert(easeOutSine);
+   var easeInOutSine = A2(inOut,easeInSine,easeOutSine);
+   var easeInQuint = function (time) {    return Math.pow(time,5);};
+   var easeOutQuint = invert(easeInQuint);
+   var easeInOutQuint = A2(inOut,easeInQuint,easeOutQuint);
+   var easeInQuart = function (time) {    return Math.pow(time,4);};
+   var easeOutQuart = invert(easeInQuart);
+   var easeInOutQuart = A2(inOut,easeInQuart,easeOutQuart);
+   var easeInCubic = function (time) {    return Math.pow(time,3);};
+   var easeOutCubic = invert(easeInCubic);
+   var easeInOutCubic = A2(inOut,easeInCubic,easeOutCubic);
+   var easeInQuad = function (time) {    return Math.pow(time,2);};
+   var easeOutQuad = invert(easeInQuad);
+   var easeInOutQuad = A2(inOut,easeInQuad,easeOutQuad);
+   var linear = $Basics.identity;
+   var pair = F4(function (interpolate,_p1,_p0,v) {
+      var _p2 = _p1;
+      var _p3 = _p0;
+      return {ctor: "_Tuple2",_0: A3(interpolate,_p2._0,_p3._0,v),_1: A3(interpolate,_p2._1,_p3._1,v)};
+   });
+   var $float = F3(function (from,to,v) {    return from + (to - from) * v;});
+   var point2d = F3(function (from,to,v) {    return {x: A3($float,from.x,to.x,v),y: A3($float,from.y,to.y,v)};});
+   var point3d = F3(function (from,to,v) {    return {x: A3($float,from.x,to.x,v),y: A3($float,from.y,to.y,v),z: A3($float,from.z,to.z,v)};});
+   var color = F3(function (from,to,v) {
+      var float$ = F3(function (from,to,v) {    return $Basics.round(A3($float,$Basics.toFloat(from),$Basics.toFloat(to),v));});
+      var _p4 = {ctor: "_Tuple2",_0: $Color.toRgb(from),_1: $Color.toRgb(to)};
+      var rgb1 = _p4._0;
+      var rgb2 = _p4._1;
+      var _p5 = {ctor: "_Tuple4",_0: rgb1.red,_1: rgb1.green,_2: rgb1.blue,_3: rgb1.alpha};
+      var r1 = _p5._0;
+      var g1 = _p5._1;
+      var b1 = _p5._2;
+      var a1 = _p5._3;
+      var _p6 = {ctor: "_Tuple4",_0: rgb2.red,_1: rgb2.green,_2: rgb2.blue,_3: rgb2.alpha};
+      var r2 = _p6._0;
+      var g2 = _p6._1;
+      var b2 = _p6._2;
+      var a2 = _p6._3;
+      return A4($Color.rgba,A3(float$,r1,r2,v),A3(float$,g1,g2,v),A3(float$,b1,b2,v),A3($float,a1,a2,v));
+   });
+   var bezier = F5(function (x1,y1,x2,y2,time) {
+      var casteljau = function (ps) {
+         casteljau: while (true) {
+            var _p7 = ps;
+            if (_p7.ctor === "::" && _p7._0.ctor === "_Tuple2" && _p7._1.ctor === "[]") {
+                  return _p7._0._1;
+               } else {
+                  var _p8 = _p7;
+                  var _v3 = A3($List.map2,F2(function (x,y) {    return A4(pair,$float,x,y,time);}),_p8,A2($Maybe.withDefault,_U.list([]),$List.tail(_p8)));
+                  ps = _v3;
+                  continue casteljau;
+               }
+         }
+      };
+      return casteljau(_U.list([{ctor: "_Tuple2",_0: 0,_1: 0},{ctor: "_Tuple2",_0: x1,_1: y1},{ctor: "_Tuple2",_0: x2,_1: y2},{ctor: "_Tuple2",_0: 1,_1: 1}]));
+   });
+   var ease = F6(function (easing,interpolation,from,to,duration,time) {    return A3(interpolation,from,to,easing(A2($Basics.min,time / duration,1)));});
+   return _elm.Easing.values = {_op: _op
+                               ,ease: ease
+                               ,$float: $float
+                               ,point2d: point2d
+                               ,point3d: point3d
+                               ,color: color
+                               ,pair: pair
+                               ,cycle: cycle
+                               ,invert: invert
+                               ,retour: retour
+                               ,inOut: inOut
+                               ,flip: flip
+                               ,bezier: bezier
+                               ,linear: linear
+                               ,easeInQuad: easeInQuad
+                               ,easeOutQuad: easeOutQuad
+                               ,easeInOutQuad: easeInOutQuad
+                               ,easeInCubic: easeInCubic
+                               ,easeOutCubic: easeOutCubic
+                               ,easeInOutCubic: easeInOutCubic
+                               ,easeInQuart: easeInQuart
+                               ,easeOutQuart: easeOutQuart
+                               ,easeInOutQuart: easeInOutQuart
+                               ,easeInQuint: easeInQuint
+                               ,easeOutQuint: easeOutQuint
+                               ,easeInOutQuint: easeInOutQuint
+                               ,easeInSine: easeInSine
+                               ,easeOutSine: easeOutSine
+                               ,easeInOutSine: easeInOutSine
+                               ,easeInExpo: easeInExpo
+                               ,easeOutExpo: easeOutExpo
+                               ,easeInOutExpo: easeInOutExpo
+                               ,easeInCirc: easeInCirc
+                               ,easeOutCirc: easeOutCirc
+                               ,easeInOutCirc: easeInOutCirc
+                               ,easeInBack: easeInBack
+                               ,easeOutBack: easeOutBack
+                               ,easeInOutBack: easeInOutBack
+                               ,easeInBounce: easeInBounce
+                               ,easeOutBounce: easeOutBounce
+                               ,easeInOutBounce: easeInOutBounce
+                               ,easeInElastic: easeInElastic
+                               ,easeOutElastic: easeOutElastic
+                               ,easeInOutElastic: easeInOutElastic};
+};
+Elm.Native = Elm.Native || {};
+Elm.Native.Window = {};
+Elm.Native.Window.make = function make(localRuntime) {
+	localRuntime.Native = localRuntime.Native || {};
+	localRuntime.Native.Window = localRuntime.Native.Window || {};
+	if (localRuntime.Native.Window.values)
+	{
+		return localRuntime.Native.Window.values;
+	}
+
+	var NS = Elm.Native.Signal.make(localRuntime);
+	var Tuple2 = Elm.Native.Utils.make(localRuntime).Tuple2;
+
+
+	function getWidth()
+	{
+		return localRuntime.node.clientWidth;
+	}
+
+
+	function getHeight()
+	{
+		if (localRuntime.isFullscreen())
+		{
+			return window.innerHeight;
+		}
+		return localRuntime.node.clientHeight;
+	}
+
+
+	var dimensions = NS.input('Window.dimensions', Tuple2(getWidth(), getHeight()));
+
+
+	function resizeIfNeeded()
+	{
+		// Do not trigger event if the dimensions have not changed.
+		// This should be most of the time.
+		var w = getWidth();
+		var h = getHeight();
+		if (dimensions.value._0 === w && dimensions.value._1 === h)
+		{
+			return;
+		}
+
+		setTimeout(function() {
+			// Check again to see if the dimensions have changed.
+			// It is conceivable that the dimensions have changed
+			// again while some other event was being processed.
+			w = getWidth();
+			h = getHeight();
+			if (dimensions.value._0 === w && dimensions.value._1 === h)
+			{
+				return;
+			}
+			localRuntime.notify(dimensions.id, Tuple2(w, h));
+		}, 0);
+	}
+
+
+	localRuntime.addListener([dimensions.id], window, 'resize', resizeIfNeeded);
+
+
+	return localRuntime.Native.Window.values = {
+		dimensions: dimensions,
+		resizeIfNeeded: resizeIfNeeded
+	};
+};
+
+Elm.Window = Elm.Window || {};
+Elm.Window.make = function (_elm) {
+   "use strict";
+   _elm.Window = _elm.Window || {};
+   if (_elm.Window.values) return _elm.Window.values;
+   var _U = Elm.Native.Utils.make(_elm),$Basics = Elm.Basics.make(_elm),$Native$Window = Elm.Native.Window.make(_elm),$Signal = Elm.Signal.make(_elm);
+   var _op = {};
+   var dimensions = $Native$Window.dimensions;
+   var width = A2($Signal.map,$Basics.fst,dimensions);
+   var height = A2($Signal.map,$Basics.snd,dimensions);
+   return _elm.Window.values = {_op: _op,dimensions: dimensions,width: width,height: height};
 };
 Elm.Swiping = Elm.Swiping || {};
 Elm.Swiping.make = function (_elm) {
@@ -14172,7 +13855,35 @@ Elm.Story.make = function (_elm) {
               photoPosition(pos)))]),
       _U.list([]));
    });
-   var link = F2(function (name,url) {
+   var sitesStyleHtml = function (sites) {
+      var _p12 = sites;
+      if (_p12.ctor === "[]") {
+            return $Html.text("n/a");
+         } else {
+            return $Html.text(_p12._0.architecturalStyle);
+         }
+   };
+   var architecturalStyle = function (story) {
+      return A2($Html.div,
+      _U.list([$Html$Attributes.$class("architectural-style-container")]),
+      _U.list([A2($Html.h4,_U.list([]),_U.list([$Html.text("Architectural Style")]))
+              ,A2($Html.div,_U.list([$Html$Attributes.$class("architectural-style")]),_U.list([sitesStyleHtml(story.sites)]))]));
+   };
+   var sitesCategoriesHtml = function (sites) {
+      var _p13 = sites;
+      if (_p13.ctor === "[]") {
+            return $Html.text("n/a");
+         } else {
+            return $Html.text(_p13._0.heritageCategories);
+         }
+   };
+   var categories = function (story) {
+      return A2($Html.div,
+      _U.list([$Html$Attributes.$class("heritage-categories-container")]),
+      _U.list([A2($Html.h4,_U.list([]),_U.list([$Html.text("Heritage Categories")]))
+              ,A2($Html.div,_U.list([$Html$Attributes.$class("heritage-categories")]),_U.list([sitesCategoriesHtml(story.sites)]))]));
+   };
+   var linkHtml = F2(function (name,url) {
       return A2($Html.a,
       _U.list([$Html$Attributes.href(url)]),
       _U.list([$Html.text(name)
@@ -14182,23 +13893,23 @@ Elm.Story.make = function (_elm) {
                       ,A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-angle-right")]),_U.list([]))]))]));
    });
    var links = function (story) {
-      var heritageUrl = "http://www.environment.nsw.gov.au/heritageapp/visit/ViewAttractionDetail.aspx?ID=";
-      return A2($Html.div,
-      _U.list([$Html$Attributes.$class("links")]),
-      _U.list([A2($Html.h4,_U.list([]),_U.list([$Html.text("Further Reading")]))
-              ,A2($Html.ul,
-              _U.list([$Html$Attributes.$class("links")]),
-              A2($List.map,
-              function (site) {
-                 return A2($Html.li,_U.list([]),_U.list([A2(link,site.name,A2($Basics._op["++"],heritageUrl,site.id))]));
-              },
-              story.sites))]));
+      var _p14 = story.links;
+      if (_p14.ctor === "[]") {
+            return $Html.text("");
+         } else {
+            return A2($Html.div,
+            _U.list([$Html$Attributes.$class("links")]),
+            _U.list([A2($Html.h4,_U.list([]),_U.list([$Html.text("Further Reading")]))
+                    ,A2($Html.ul,
+                    _U.list([$Html$Attributes.$class("links")]),
+                    A2($List.map,function (link) {    return A2($Html.li,_U.list([]),_U.list([A2(linkHtml,link.title,link.url)]));},story.links))]));
+         }
    };
    var photoIndicators = F3(function (address,story,index) {
       return A2($Html.div,
       _U.list([$Html$Attributes.$class("photo-indicators")]),
       A2($List.indexedMap,
-      F2(function (index$,_p12) {
+      F2(function (index$,_p15) {
          return _U.eq(index$,A2(storyIndex,index,story)) ? A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-circle")]),_U.list([])) : A2($Html.i,
          _U.list([$Html$Attributes.$class("fa fa-circle-o"),A2($Html$Events.onClick,address,$Types.JumpPhoto(index$))]),
          _U.list([]));
@@ -14214,120 +13925,139 @@ Elm.Story.make = function (_elm) {
       _U.list([A2($Html.div,
               _U.list([$Html$Attributes.$class("photos")]),
               A2($List.map,A2(storyImage,story,item.photoPosition),_U.list([item.photoIndex - 1,item.photoIndex,item.photoIndex + 1])))
-              ,A3(photoIndicators,address,story,item.photoIndex)])) : A2($Html.div,
+              ,A3(photoIndicators,address,story,item.photoIndex)])) : _U.eq(screen,$Types.Body) ? A2($Html.div,
       _U.list([$Html$Attributes.$class("photos")]),
-      _U.list([A3(storyImage,story,item.photoPosition,item.photoIndex)]));
+      _U.list([A3(storyImage,story,item.photoPosition,item.photoIndex)])) : $Html.text("");
    });
    var introOrBody = F2(function (story,storyScreen) {
-      var _p13 = {ctor: "_Tuple2",_0: story,_1: storyScreen};
-      if (_p13._0.ctor === "FullStory") {
-            if (_p13._1.ctor === "Intro") {
-                  return A2($Html.p,_U.list([]),_U.list([$Html.text(_p13._0._0.blurb)]));
-               } else {
-                  var _p14 = _p13._0._0;
-                  return A2($Html.div,_U.list([$Html$Attributes.$class("passage")]),_U.list([$Markdown.toHtml(A2(addQuote,_p14.quote,_p14.story))]));
-               }
+      var _p16 = {ctor: "_Tuple2",_0: story,_1: storyScreen};
+      _v14_2: do {
+         if (_p16._0.ctor === "FullStory") {
+               switch (_p16._1.ctor)
+               {case "Intro": return A2($Html.p,_U.list([]),_U.list([$Html.text(_p16._0._0.blurb)]));
+                  case "Body": var _p17 = _p16._0._0;
+                    return A2($Html.div,_U.list([$Html$Attributes.$class("passage")]),_U.list([$Markdown.toHtml(A2(addQuote,_p17.quote,_p17.story))]));
+                  default: break _v14_2;}
+            } else {
+               break _v14_2;
+            }
+      } while (false);
+      return $Html.text("");
+   });
+   var locationsToDirections = function (locations) {
+      var _p18 = $List.head(locations);
+      if (_p18.ctor === "Just") {
+            var _p19 = _p18._0;
+            return A2($Html.a,
+            _U.list([$Html$Attributes.href(A2($Basics._op["++"],
+                    "https://www.google.com/maps/dir/Current+Location/",
+                    A2($Basics._op["++"],_p19.lat,A2($Basics._op["++"],",",_p19.lng))))
+                    ,$Html$Attributes.target("_blank")]),
+            _U.list([A2($Html.button,_U.list([$Html$Attributes.$class("btn btn-directions directions")]),_U.list([$Html.text("Directions")]))]));
+         } else {
+            return $Html.text("");
+         }
+   };
+   var moreInfo = F3(function (address,story,storyScreen) {
+      var header = A2($Html.div,
+      _U.list([$Html$Attributes.$class("screen-header screen-more-info")]),
+      _U.list([A2($Html.h1,_U.list([]),_U.list([$Html.text("More Information")]))]));
+      var screen = function (body) {    return A2($Html.div,_U.list([]),A2($List._op["::"],header,body));};
+      var _p20 = {ctor: "_Tuple2",_0: story,_1: storyScreen};
+      if (_p20.ctor === "_Tuple2" && _p20._0.ctor === "FullStory" && _p20._1.ctor === "MoreInfo") {
+            var _p21 = _p20._0._0;
+            var style_ = architecturalStyle(_p21);
+            var categories_ = categories(_p21);
+            var links_ = links(_p21);
+            return screen(A2($List._op["::"],links_,A2($List._op["::"],categories_,A2($List._op["::"],style_,_U.list([])))));
          } else {
             return $Html.text("");
          }
    });
-   var storyButton = F3(function (address,story,storyScreen) {
-      var _p15 = {ctor: "_Tuple2",_0: story,_1: storyScreen};
-      if (_p15._0.ctor === "FullStory" && _p15._1.ctor === "Intro") {
-            return A2($Html.a,
-            _U.list([$Html$Attributes.$class("btn btn-story"),A2($Html$Events.onClick,address,A2($Types.View,_p15._0._0.id,$Types.Body))]),
-            _U.list([$Html.text("Story")]));
+   var buttons = F3(function (address,story,storyScreen) {
+      var _p22 = {ctor: "_Tuple2",_0: story,_1: storyScreen};
+      if (_p22._0.ctor === "FullStory" && _p22._1.ctor === "Intro") {
+            var _p23 = _p22._0._0;
+            return A2($Html.div,
+            _U.list([$Html$Attributes.$class("buttons")]),
+            _U.list([A2($Html.button,
+                    _U.list([$Html$Attributes.$class("btn btn-story"),A2($Html$Events.onClick,address,A2($Types.View,_p23.id,$Types.Body))]),
+                    _U.list([$Html.text("Story")]))
+                    ,A2($Html.button,
+                    _U.list([$Html$Attributes.$class("btn btn-more-info"),A2($Html$Events.onClick,address,A2($Types.View,_p23.id,$Types.MoreInfo))]),
+                    _U.list([$Html.text("Info")]))
+                    ,locationsToDirections(_p23.locations)]));
          } else {
             return $Html.text("");
          }
    });
    var titleHtml = function (story) {    return A2($Html.h1,_U.list([$Html$Attributes.$class("title")]),_U.list([$Html.text(title(story))]));};
    var metaHtml = F2(function (story,screen) {
-      var _p16 = {ctor: "_Tuple2",_0: story,_1: screen};
-      if (_p16._0.ctor === "DiscoverStory") {
+      var _p24 = {ctor: "_Tuple2",_0: story,_1: screen};
+      if (_p24._0.ctor === "DiscoverStory") {
             return titleHtml(story);
          } else {
-            var _p20 = _p16._0._0;
-            return A2($Html.div,
-            _U.list([$Html$Attributes.$class("fullStory-meta")]),
-            _U.list([titleHtml(story)
-                    ,A2($Html.div,_U.list([$Html$Attributes.$class("fullStory-site")]),_U.list([$Html.text(sitesName(_p20.sites))]))
-                    ,function () {
-                       var _p17 = _p20.suburb;
-                       if (_p17.ctor === "Just") {
-                             return A2($Html.div,_U.list([$Html$Attributes.$class("fullStory-suburb")]),_U.list([$Html.text(_p17._0)]));
-                          } else {
-                             return $Html.text("");
-                          }
-                    }()
-                    ,function () {
-                       var _p18 = formatDate(_p20.dates);
-                       if (_p18.ctor === "Just") {
-                             return A2($Html.div,_U.list([$Html$Attributes.$class("fullStory-date")]),_U.list([$Html.text(_p18._0)]));
-                          } else {
-                             return $Html.text("");
-                          }
-                    }()
-                    ,function () {
-                       var _p19 = distance(story);
-                       if (_p19.ctor === "Just") {
-                             return A2($Html.p,
-                             _U.list([$Html$Attributes.$class("fullStory-distance")]),
-                             _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-map-marker")]),_U.list([])),$Html.text(" "),$Html.text(_p19._0)]));
-                          } else {
-                             return A2($Html.p,
-                             _U.list([$Html$Attributes.$class("fullStory-distance got-no-distance")]),
-                             _U.list([$Html.text("got-no-distance")]));
-                          }
-                    }()]));
+            if (_p24._1.ctor === "MoreInfo") {
+                  return $Html.text("");
+               } else {
+                  var _p28 = _p24._0._0;
+                  return A2($Html.div,
+                  _U.list([$Html$Attributes.$class("fullStory-meta")]),
+                  _U.list([titleHtml(story)
+                          ,A2($Html.div,_U.list([$Html$Attributes.$class("fullStory-site")]),_U.list([$Html.text(sitesName(_p28.sites))]))
+                          ,function () {
+                             var _p25 = _p28.suburb;
+                             if (_p25.ctor === "Just") {
+                                   return A2($Html.div,_U.list([$Html$Attributes.$class("fullStory-suburb")]),_U.list([$Html.text(_p25._0)]));
+                                } else {
+                                   return $Html.text("");
+                                }
+                          }()
+                          ,function () {
+                             var _p26 = formatDate(_p28.dates);
+                             if (_p26.ctor === "Just") {
+                                   return A2($Html.div,_U.list([$Html$Attributes.$class("fullStory-date")]),_U.list([$Html.text(_p26._0)]));
+                                } else {
+                                   return $Html.text("");
+                                }
+                          }()
+                          ,function () {
+                             var _p27 = distance(story);
+                             if (_p27.ctor === "Just") {
+                                   return A2($Html.p,
+                                   _U.list([$Html$Attributes.$class("fullStory-distance")]),
+                                   _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-map-marker")]),_U.list([]))
+                                           ,$Html.text(" ")
+                                           ,$Html.text(_p27._0)]));
+                                } else {
+                                   return A2($Html.p,
+                                   _U.list([$Html$Attributes.$class("fullStory-distance got-no-distance")]),
+                                   _U.list([$Html.text("got-no-distance")]));
+                                }
+                          }()]));
+               }
          }
    });
    var view = F4(function (address,story,item,storyScreen) {
       return A2($Html.div,
       _U.list([$Html$Attributes.$class("story")]),
       function () {
-         var _p21 = story;
-         switch (_p21.ctor)
-         {case "Loaded": var _p27 = _p21._0;
+         var _p29 = story;
+         switch (_p29.ctor)
+         {case "Loaded": var _p31 = _p29._0;
               return A2($Basics._op["++"],
-              _U.list([A4(photoSlider,address,_p27,item,storyScreen),A2(metaHtml,_p27,storyScreen)]),
+              _U.list([A4(photoSlider,address,_p31,item,storyScreen),A2(metaHtml,_p31,storyScreen)]),
               function () {
-                 var _p22 = _p27;
-                 if (_p22.ctor === "DiscoverStory") {
+                 var _p30 = _p31;
+                 if (_p30.ctor === "DiscoverStory") {
                        return _U.list([$Loading.loading]);
                     } else {
-                       var _p26 = _p22._0;
-                       return _U.list([function () {
-                                         var _p23 = $List.head(_p26.locations);
-                                         if (_p23.ctor === "Just") {
-                                               var _p24 = _p23._0;
-                                               return A2($Html.div,
-                                               _U.list([$Html$Attributes.$class("btn btn-directions directions")]),
-                                               _U.list([A2($Html.a,
-                                               _U.list([$Html$Attributes.href(A2($Basics._op["++"],
-                                                       "https://www.google.com/maps/dir/Current+Location/",
-                                                       A2($Basics._op["++"],_p24.lat,A2($Basics._op["++"],",",_p24.lng))))
-                                                       ,$Html$Attributes.target("_blank")]),
-                                               _U.list([$Html.text("Directions")]))]));
-                                            } else {
-                                               return $Html.text("");
-                                            }
-                                      }()
-                                      ,A3(storyButton,address,_p27,storyScreen)
-                                      ,A2(introOrBody,_p27,storyScreen)
-                                      ,function () {
-                                         var _p25 = _p26.sites;
-                                         if (_p25.ctor === "[]") {
-                                               return $Html.text("");
-                                            } else {
-                                               return links(_p26);
-                                            }
-                                      }()]);
+                       return _U.list([A3(buttons,address,_p31,storyScreen),A2(introOrBody,_p31,storyScreen),A3(moreInfo,address,_p31,storyScreen)]);
                     }
               }());
             case "Failed": return _U.list([A2($Html.div,
               _U.list([$Html$Attributes.$class("error")]),
-              _U.list([$Html.text("Something went wrong: "),$Html.text($Basics.toString(log(_p21._0)))]))]);
+              _U.list([$Html.text("Something went wrong: "),$Html.text($Basics.toString(log(_p29._0)))]))]);
             default: return _U.list([$Loading.loading]);}
       }());
    });
@@ -14391,14 +14121,22 @@ Elm.Data.make = function (_elm) {
    $Time = Elm.Time.make(_elm),
    $Types = Elm.Types.make(_elm);
    var _op = {};
+   var linkDecoder = A3($Json$Decode.object2,
+   $Maybe.map2(F2(function (url,title) {    return {url: url,title: title};})),
+   $Json$Decode.maybe(A2($Json$Decode._op[":="],"url",$Json$Decode.string)),
+   $Json$Decode.maybe(A2($Json$Decode._op[":="],"title",$Json$Decode.string)));
    var locationDecoder = A3($Json$Decode.object2,
    $Maybe.map2(F2(function (lat,lng) {    return {lat: lat,lng: lng};})),
    $Json$Decode.maybe(A2($Json$Decode._op[":="],"lat",$Json$Decode.string)),
    $Json$Decode.maybe(A2($Json$Decode._op[":="],"lng",$Json$Decode.string)));
-   var siteDecoder = A3($Json$Decode.object2,
-   $Maybe.map2(F2(function (id,name) {    return {id: id,name: name};})),
+   var siteDecoder = A5($Json$Decode.object4,
+   $Maybe.map4(F4(function (id,name,architecturalStyle,heritageCategories) {
+      return {id: id,name: name,architecturalStyle: architecturalStyle,heritageCategories: heritageCategories};
+   })),
    $Json$Decode.maybe(A2($Json$Decode._op[":="],"id",$Json$Decode.string)),
-   $Json$Decode.maybe(A2($Json$Decode._op[":="],"name",$Json$Decode.string)));
+   $Json$Decode.maybe(A2($Json$Decode._op[":="],"name",$Json$Decode.string)),
+   $Json$Decode.maybe(A2($Json$Decode._op[":="],"architectural_style",$Json$Decode.string)),
+   $Json$Decode.maybe(A2($Json$Decode._op[":="],"heritage_categories",$Json$Decode.string)));
    var datesDecoder = A3($Json$Decode.object2,
    F2(function (start,end) {
       return {start: A2($Maybe.andThen,start,function (_p0) {    return $Result.toMaybe($Date.fromString(_p0));})
@@ -14407,6 +14145,7 @@ Elm.Data.make = function (_elm) {
    $Json$Decode.maybe(A2($Json$Decode._op[":="],"start",$Json$Decode.string)),
    $Json$Decode.maybe(A2($Json$Decode._op[":="],"end",$Json$Decode.string)));
    var fullStoryDecoder = A2($Json$Decode$Extra._op["|:"],
+   A2($Json$Decode$Extra._op["|:"],
    A2($Json$Decode$Extra._op["|:"],
    A2($Json$Decode$Extra._op["|:"],
    A2($Json$Decode$Extra._op["|:"],
@@ -14427,18 +14166,21 @@ Elm.Data.make = function (_elm) {
                         return function (photos) {
                            return function (sites) {
                               return function (locations) {
-                                 return function (distance) {
-                                    return $Types.FullStory({id: $Types.StoryId(id)
-                                                            ,title: A2($Maybe.withDefault,"",title)
-                                                            ,blurb: A2($Maybe.withDefault,"",blurb)
-                                                            ,suburb: suburb
-                                                            ,dates: A2($Maybe.withDefault,{start: $Maybe.Nothing,end: $Maybe.Nothing},dates)
-                                                            ,photos: photos
-                                                            ,story: story
-                                                            ,quote: quote
-                                                            ,sites: A2($List.filterMap,$Basics.identity,sites)
-                                                            ,locations: A2($List.filterMap,$Basics.identity,locations)
-                                                            ,distance: distance});
+                                 return function (links) {
+                                    return function (distance) {
+                                       return $Types.FullStory({id: $Types.StoryId(id)
+                                                               ,title: A2($Maybe.withDefault,"",title)
+                                                               ,blurb: A2($Maybe.withDefault,"",blurb)
+                                                               ,suburb: suburb
+                                                               ,dates: A2($Maybe.withDefault,{start: $Maybe.Nothing,end: $Maybe.Nothing},dates)
+                                                               ,photos: photos
+                                                               ,story: story
+                                                               ,quote: quote
+                                                               ,sites: A2($List.filterMap,$Basics.identity,sites)
+                                                               ,locations: A2($List.filterMap,$Basics.identity,locations)
+                                                               ,links: A2($List.filterMap,$Basics.identity,links)
+                                                               ,distance: distance});
+                                    };
                                  };
                               };
                            };
@@ -14460,6 +14202,7 @@ Elm.Data.make = function (_elm) {
    A2($Json$Decode._op[":="],"photos",$Json$Decode.list($Json$Decode.oneOf(_U.list([$Json$Decode.string,$Json$Decode.$null("images/unavailable.jpg")]))))),
    A2($Json$Decode._op[":="],"sites",$Json$Decode.list(siteDecoder))),
    A2($Json$Decode._op[":="],"locations",$Json$Decode.list(locationDecoder))),
+   A2($Json$Decode._op[":="],"links",$Json$Decode.list(linkDecoder))),
    $Json$Decode.maybe(A2($Json$Decode._op[":="],"distance",$Json$Decode.$float)));
    var fullStoriesDecoder = $Json$Decode.list(fullStoryDecoder);
    var discoverStory = A7($Json$Decode.object6,
@@ -14778,6 +14521,327 @@ Elm.Favourites.make = function (_elm) {
    });
    return _elm.Favourites.values = {_op: _op,view: view};
 };
+Elm.Native = Elm.Native || {};
+Elm.Native.History = {};
+Elm.Native.History.make = function(localRuntime){
+
+  localRuntime.Native = localRuntime.Native || {};
+  localRuntime.Native.History = localRuntime.Native.History || {};
+
+  if (localRuntime.Native.History.values){
+    return localRuntime.Native.History.values;
+  }
+
+  var NS = Elm.Native.Signal.make(localRuntime);
+  var Task = Elm.Native.Task.make(localRuntime);
+  var Utils = Elm.Native.Utils.make(localRuntime);
+  var node = window;
+
+  // path : Signal String
+  var path = NS.input('History.path', window.location.pathname);
+
+  // length : Signal Int
+  var length = NS.input('History.length', window.history.length);
+
+  // hash : Signal String
+  var hash = NS.input('History.hash', window.location.hash);
+
+  // href : Signal String
+  var href = NS.input('History.href', window.location.href);
+
+  localRuntime.addListener([href.id, path.id, length.id], node, 'popstate', function getPath(event){
+    localRuntime.notify(path.id, window.location.pathname);
+    localRuntime.notify(length.id, window.history.length);
+    localRuntime.notify(hash.id, window.location.hash);
+    localRuntime.notify(href.id, window.location.href);
+  });
+
+  localRuntime.addListener([hash.id], node, 'hashchange', function getHash(event){
+    localRuntime.notify(hash.id, window.location.hash);
+  });
+
+  // setHash : String -> Task error ()
+  var setHash = function(hash){
+    return Task.asyncFunction(function(callback){
+      setTimeout(function(){
+        location.hash = hash;
+        localRuntime.notify(hash.id, window.location.hash);
+        localRuntime.notify(length.id, window.history.length);
+        localRuntime.notify(href.id, window.location.href);
+      },0);
+      return callback(Task.succeed(Utils.Tuple0));
+    });
+  };
+
+  // setPath : String -> Task error ()
+  var setPath = function(urlpath){
+    return Task.asyncFunction(function(callback){
+      setTimeout(function(){
+        window.history.pushState({}, "", urlpath);
+        localRuntime.notify(path.id, window.location.pathname);
+        localRuntime.notify(hash.id, window.location.hash);
+        localRuntime.notify(length.id, window.history.length);
+        localRuntime.notify(href.id, window.location.href);
+      },0);
+      return callback(Task.succeed(Utils.Tuple0));
+    });
+  };
+
+  // replacePath : String -> Task error ()
+  var replacePath = function(urlpath){
+    return Task.asyncFunction(function(callback){
+      setTimeout(function(){
+        window.history.replaceState({}, "", urlpath);
+        localRuntime.notify(path.id, window.location.pathname);
+        localRuntime.notify(hash.id, window.location.hash);
+        localRuntime.notify(length.id, window.history.length);
+        localRuntime.notify(href.id, window.location.href);
+      },0);
+      return callback(Task.succeed(Utils.Tuple0));
+    });
+  };
+
+  // go : Int -> Task error ()
+  var go = function(n){
+    return Task.asyncFunction(function(callback){
+      setTimeout(function(){
+        window.history.go(n);
+        localRuntime.notify(length.id, window.history.length);
+        localRuntime.notify(hash.id, window.location.hash);
+        localRuntime.notify(href.id, window.location.href);
+      }, 0);
+      return callback(Task.succeed(Utils.Tuple0));
+    });
+  };
+
+  // back : Task error ()
+  var back = Task.asyncFunction(function(callback){
+    setTimeout(function(){
+      localRuntime.notify(hash.id, window.location.hash);
+      window.history.back();
+      localRuntime.notify(length.id, window.history.length);
+      localRuntime.notify(href.id, window.location.href);
+    }, 0);
+    return callback(Task.succeed(Utils.Tuple0));
+  });
+
+  // forward : Task error ()
+  var forward = Task.asyncFunction(function(callback){
+    setTimeout(function(){
+      window.history.forward();
+      localRuntime.notify(length.id, window.history.length);
+      localRuntime.notify(hash.id, window.location.hash);
+      localRuntime.notify(href.id, window.location.href);
+    }, 0);
+    return callback(Task.succeed(Utils.Tuple0));
+  });
+
+
+
+  return {
+    path        : path,
+    setHash     : setHash,
+    setPath     : setPath,
+    replacePath : replacePath,
+    go          : go,
+    back        : back,
+    forward     : forward,
+    length      : length,
+    hash        : hash,
+    href        : href
+  };
+
+};
+
+Elm.History = Elm.History || {};
+Elm.History.make = function (_elm) {
+   "use strict";
+   _elm.History = _elm.History || {};
+   if (_elm.History.values) return _elm.History.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Native$History = Elm.Native.History.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $Task = Elm.Task.make(_elm);
+   var _op = {};
+   var href = $Native$History.href;
+   var path = $Native$History.path;
+   var hash = $Native$History.hash;
+   var length = $Native$History.length;
+   var forward = $Native$History.forward;
+   var back = $Native$History.back;
+   var go = $Native$History.go;
+   var replacePath = $Native$History.replacePath;
+   var setPath = $Native$History.setPath;
+   var setHash = $Native$History.setHash;
+   return _elm.History.values = {_op: _op
+                                ,setHash: setHash
+                                ,setPath: setPath
+                                ,replacePath: replacePath
+                                ,go: go
+                                ,back: back
+                                ,forward: forward
+                                ,length: length
+                                ,hash: hash
+                                ,path: path
+                                ,href: href};
+};
+Elm.RouteHash = Elm.RouteHash || {};
+Elm.RouteHash.make = function (_elm) {
+   "use strict";
+   _elm.RouteHash = _elm.RouteHash || {};
+   if (_elm.RouteHash.values) return _elm.RouteHash.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $History = Elm.History.make(_elm),
+   $Http = Elm.Http.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $Signal$Extra = Elm.Signal.Extra.make(_elm),
+   $String = Elm.String.make(_elm),
+   $Task = Elm.Task.make(_elm);
+   var _op = {};
+   var list2hash = F2(function (prefix,list) {    return A2($Basics._op["++"],prefix,A2($String.join,"/",A2($List.map,$Http.uriEncode,list)));});
+   var removeInitial = F2(function (initial,original) {
+      var _p0 = $String.uncons(original);
+      if (_p0.ctor === "Just" && _p0._0.ctor === "_Tuple2") {
+            return _U.eq(_p0._0._0,initial) ? _p0._0._1 : original;
+         } else {
+            return original;
+         }
+   });
+   var removeInitialSequence = F2(function (initial,original) {    return A3($String.foldl,removeInitial,original,initial);});
+   var hash2list = function (prefix) {
+      return function (_p1) {
+         return A2($List.map,$Http.uriDecode,A2($String.split,"/",A2(removeInitialSequence,prefix,_p1)));
+      };
+   };
+   var defaultPrefix = "#!/";
+   var Config = F5(function (a,b,c,d,e) {    return {prefix: a,models: b,delta2update: c,location2action: d,address: e};});
+   var extract = function (action) {    var _p2 = action;if (_p2.ctor === "SetPath") {    return _p2._0;} else {    return _p2._0;}};
+   var dropIfCurrent = F2(function (update,current) {
+      return A2($Maybe.andThen,update,function (u) {    return _U.eq(extract(u),current) ? $Maybe.Nothing : update;});
+   });
+   var start = function (config) {
+      var route = F2(function (location,update) {
+         var _p3 = update;
+         if (_p3.ctor === "Just") {
+               if (_p3._0.ctor === "SetPath") {
+                     return _U.eq(_p3._0._0,location) ? _U.list([]) : config.location2action(location);
+                  } else {
+                     return _U.eq(_p3._0._0,location) ? _U.list([]) : config.location2action(location);
+                  }
+            } else {
+               return config.location2action(location);
+            }
+      });
+      var update2task = function (update) {
+         return function () {
+            var _p4 = update;
+            if (_p4.ctor === "SetPath") {
+                  return $History.setPath;
+               } else {
+                  return $History.replacePath;
+               }
+         }()(A2(list2hash,config.prefix,extract(update)));
+      };
+      var computeUpdate = function (maybeChange) {    return A2($Maybe.andThen,maybeChange,$Basics.uncurry(config.delta2update));};
+      var locations = A2($Signal.map,hash2list(config.prefix),$History.hash);
+      var processingActions = $Signal.mailbox(false);
+      var action2task = function (actions) {
+         var _p5 = actions;
+         if (_p5.ctor === "[]") {
+               return $Maybe.Nothing;
+            } else {
+               return $Maybe.Just(A2($Task.map,
+               $Basics.always({ctor: "_Tuple0"}),
+               $Task.sequence(A2($Basics._op["++"],
+               _U.list([A2($Signal.send,processingActions.address,true)]),
+               A2($Basics._op["++"],A2($List.map,$Signal.send(config.address),actions),_U.list([A2($Signal.send,processingActions.address,false)]))))));
+            }
+      };
+      var changes = $Signal$Extra.deltas(config.models);
+      var externalChanges = A2($Signal.map,
+      function (zipped) {
+         return $Basics.snd(zipped) ? $Maybe.Nothing : $Maybe.Just($Basics.fst(zipped));
+      },
+      A2($Signal.sampleOn,changes,A2($Signal$Extra.zip,changes,processingActions.signal)));
+      var possibleUpdates = A2($Signal.map,computeUpdate,externalChanges);
+      var actualUpdates = A3($Signal$Extra.passiveMap2,dropIfCurrent,possibleUpdates,locations);
+      var updateTasks = A3($Signal.filterMap,$Maybe.map(update2task),$Task.succeed({ctor: "_Tuple0"}),actualUpdates);
+      var actions = A3($Signal$Extra.passiveMap2,route,locations,actualUpdates);
+      var actionTasks = A3($Signal.filterMap,action2task,$Task.succeed({ctor: "_Tuple0"}),actions);
+      return A2($Signal.merge,actionTasks,updateTasks);
+   };
+   var ReplacePath = function (a) {    return {ctor: "ReplacePath",_0: a};};
+   var replace = ReplacePath;
+   var SetPath = function (a) {    return {ctor: "SetPath",_0: a};};
+   var set = SetPath;
+   var apply = F2(function (func,update) {
+      var _p6 = update;
+      if (_p6.ctor === "SetPath") {
+            return SetPath(func(_p6._0));
+         } else {
+            return ReplacePath(func(_p6._0));
+         }
+   });
+   var map = F2(function (func,update) {    return A2($Maybe.map,apply(func),update);});
+   return _elm.RouteHash.values = {_op: _op
+                                  ,set: set
+                                  ,replace: replace
+                                  ,apply: apply
+                                  ,map: map
+                                  ,extract: extract
+                                  ,defaultPrefix: defaultPrefix
+                                  ,start: start
+                                  ,Config: Config};
+};
+Elm.StartApp = Elm.StartApp || {};
+Elm.StartApp.make = function (_elm) {
+   "use strict";
+   _elm.StartApp = _elm.StartApp || {};
+   if (_elm.StartApp.values) return _elm.StartApp.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $Effects = Elm.Effects.make(_elm),
+   $Html = Elm.Html.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $Task = Elm.Task.make(_elm);
+   var _op = {};
+   var start = function (config) {
+      var updateStep = F2(function (action,_p0) {
+         var _p1 = _p0;
+         var _p2 = A2(config.update,action,_p1._0);
+         var newModel = _p2._0;
+         var additionalEffects = _p2._1;
+         return {ctor: "_Tuple2",_0: newModel,_1: $Effects.batch(_U.list([_p1._1,additionalEffects]))};
+      });
+      var update = F2(function (actions,_p3) {    var _p4 = _p3;return A3($List.foldl,updateStep,{ctor: "_Tuple2",_0: _p4._0,_1: $Effects.none},actions);});
+      var messages = $Signal.mailbox(_U.list([]));
+      var singleton = function (action) {    return _U.list([action]);};
+      var address = A2($Signal.forwardTo,messages.address,singleton);
+      var inputs = $Signal.mergeMany(A2($List._op["::"],messages.signal,A2($List.map,$Signal.map(singleton),config.inputs)));
+      var effectsAndModel = A3($Signal.foldp,update,config.init,inputs);
+      var model = A2($Signal.map,$Basics.fst,effectsAndModel);
+      return {html: A2($Signal.map,config.view(address),model)
+             ,model: model
+             ,tasks: A2($Signal.map,function (_p5) {    return A2($Effects.toTask,messages.address,$Basics.snd(_p5));},effectsAndModel)};
+   };
+   var App = F3(function (a,b,c) {    return {html: a,model: b,tasks: c};});
+   var Config = F4(function (a,b,c,d) {    return {init: a,update: b,view: c,inputs: d};});
+   return _elm.StartApp.values = {_op: _op,start: start,Config: Config,App: App};
+};
 Elm.Route = Elm.Route || {};
 Elm.Route.make = function (_elm) {
    "use strict";
@@ -14795,8 +14859,20 @@ Elm.Route.make = function (_elm) {
    $String = Elm.String.make(_elm),
    $Types = Elm.Types.make(_elm);
    var _op = {};
-   var urliseStoryScreen = function (screen) {    var _p0 = screen;if (_p0.ctor === "Intro") {    return "";} else {    return "body";}};
-   var parseStoryScreen = function (storyScreen) {    var _p1 = storyScreen;if (_p1 === "body") {    return $Types.Body;} else {    return $Types.Intro;}};
+   var urliseStoryScreen = function (screen) {
+      var _p0 = screen;
+      switch (_p0.ctor)
+      {case "Intro": return "";
+         case "Body": return "body";
+         default: return "info";}
+   };
+   var parseStoryScreen = function (storyScreen) {
+      var _p1 = storyScreen;
+      switch (_p1)
+      {case "body": return $Types.Body;
+         case "info": return $Types.MoreInfo;
+         default: return $Types.Intro;}
+   };
    var parseStoryId = function (storyId) {    return $Types.StoryId(A2($Maybe.withDefault,-1,$Result.toMaybe($String.toInt(storyId))));};
    var url = F2(function (old,$new) {
       return !_U.eq(old.location,$new.location) ? $Maybe.Just(function () {
@@ -14904,7 +14980,13 @@ Elm.View.make = function (_elm) {
    $Story = Elm.Story.make(_elm),
    $Types = Elm.Types.make(_elm);
    var _op = {};
-   var storyScreenClass = function (screen) {    var _p0 = screen;if (_p0.ctor === "Intro") {    return "story-intro";} else {    return "story-body";}};
+   var storyScreenClass = function (screen) {
+      var _p0 = screen;
+      switch (_p0.ctor)
+      {case "Intro": return "story-intro";
+         case "Body": return "story-body";
+         default: return "story-more-info";}
+   };
    var view = F2(function (address,app) {
       var _p1 = app.location;
       switch (_p1.ctor)

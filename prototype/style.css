@@ -345,11 +345,27 @@ html, body, body > div {
                  type: block;
            }
 
-           .btn.btn-directions.directions {
-                /* background: url(https://raw.githubusercontent.com/CodeforAustralia/heritage-near-me/master/prototype/images/directions.png) no-repeat; */
-                /* padding: 100px; */
-                max-width: 65px;
-                margin: 10px;
+            .buttons {
+                display: flex;
+                justify-content: space-around;
+            }
+            button.btn {
+                /* padding top, width, and (transparent but thick) border properties
+                   work together to squeeze the background icon image while keeping the
+                   button text centered beneath that icon. Bit of a hack? */
+                background-size: contain;
+                padding-top: 75px;
+                width: 90px;
+                border: 12px solid rgba(255, 255, 255, 0);
+            }
+            .btn-story {
+                 background: url("/images/button-story.png") no-repeat;
+            }
+            .btn-more-info {
+                background: url("/images/button-more-info.png") no-repeat;
+            }
+            .btn-directions {
+                background: url("/images/button-directions.png") no-repeat;
             }
 
 /* Story page style */

@@ -216,7 +216,7 @@ fullStoriesDecoder = Json.list fullStoryDecoder
 fullStoryDecoder : Json.Decoder Story
 fullStoryDecoder =
     Json.succeed
-        (\id title blurb suburb story quote dates photos sites locations distance -> FullStory
+        (\id title blurb suburb story quote dates photos sites locations links distance -> FullStory
             { id = StoryId id
             , title = Maybe.withDefault "" title
             , blurb = Maybe.withDefault "" blurb
@@ -227,6 +227,7 @@ fullStoryDecoder =
             , quote = quote
             , sites = List.filterMap identity sites
             , locations = List.filterMap identity locations
+            , links = List.filterMap identity links
             , distance = distance
             })
         |: ("id" := Json.int)
@@ -239,6 +240,7 @@ fullStoryDecoder =
         |: ("photos" := Json.list (Json.oneOf [Json.string, Json.null "images/unavailable.jpg"]))
         |: ("sites" := Json.list siteDecoder)
         |: ("locations" := Json.list locationDecoder)
+        |: ("links" := Json.list linkDecoder)
         |: (Json.maybe ("distance" := Json.float))
 
 
@@ -254,10 +256,20 @@ datesDecoder = Json.object2
 
 {-| Site JSON decoder -}
 siteDecoder : Json.Decoder (Maybe Site)
-siteDecoder = Json.object2
-    (Maybe.map2 (\id name -> {id = id, name = name}))
+siteDecoder = Json.object4
+    (Maybe.map4
+        (\id name architecturalStyle heritageCategories ->
+            { id = id
+            , name = name
+            , architecturalStyle = architecturalStyle
+            , heritageCategories = heritageCategories
+            }
+        )
+    )
     (Json.maybe ("id" := Json.string))
     (Json.maybe ("name" := Json.string))
+    (Json.maybe ("architectural_style" := Json.string))
+    (Json.maybe ("heritage_categories" := Json.string))
 
 {-| Location JSON decoder -}
 locationDecoder : Json.Decoder (Maybe LatLng)
@@ -265,3 +277,13 @@ locationDecoder = Json.object2
     (Maybe.map2 (\lat lng -> {lat = lat, lng = lng}))
     (Json.maybe ("lat" := Json.string))
     (Json.maybe ("lng" := Json.string))
+
+{-| Link JSON decoder -}
+linkDecoder : Json.Decoder (Maybe Link)
+linkDecoder = Json.object2
+    (Maybe.map2 (\url title -> {url = url, title = title}))
+    (Json.maybe ("url" := Json.string))
+    (Json.maybe ("title" := Json.string))
+
+
+

@@ -16,7 +16,7 @@ The back end is a [Postgres](http://www.postgresql.org) database with a [RESTful
 The API and front end are pulled together by an [Nginx](http://nginx.org/en/) server.
 
 The front end code can be found in the [prototype](prototype) directory.
-The database schema can be found in [backend/](backend/heritage-near-me.sql).
+The database schema can be found in [backend/hnm-tables.sql](backend/hnm-tables.sql) and [backend/hnm-views+functions.sql](backend/hnm-views+functions.sql).
 The documentation for the REST API can be found [here](http://postgrest.com/api/reading/).
 The Nginx server config can be found in [server/](server/heritage-near-me).
 

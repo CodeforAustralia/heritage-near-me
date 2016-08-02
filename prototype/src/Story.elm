@@ -5,7 +5,7 @@ import Date.Format
 import Date.Config.Config_en_au as AuDate
 import List.Extra as List
 
-import Html exposing (Html, div, h1, h2, h3, h4, p, blockquote, img, ul, li, span, a, i, text)
+import Html exposing (Html, div, h1, h2, h3, h4, p, blockquote, img, ul, li, span, a, button, i, text)
 import Html.Events exposing (onClick)
 import Html.Attributes as Attr exposing (..)
 import Markdown
@@ -29,14 +29,9 @@ view address story item storyScreen = div [class "story"]
             ] ++ case story of
                 DiscoverStory discoverStory -> [loading]
                 FullStory fullStory -> [
-                    case (List.head fullStory.locations) of
-                        Just latlng -> div [class "btn btn-directions directions"] [a [href ("https://www.google.com/maps/dir/Current+Location/" ++ latlng.lat ++ "," ++ latlng.lng), target "_blank"] [text "Directions"]]
-                        Nothing -> text ""
-                    , storyButton address story storyScreen
+                    buttons address story storyScreen
                     , introOrBody story storyScreen
-                    , case fullStory.sites of
-                        [] -> text ""
-                        _ -> links fullStory
+                    , moreInfo address story storyScreen
                     ]
         Failed error ->
             [ div [class "error"] [text "Something went wrong: ", text <| toString <| log error]]
@@ -51,7 +46,11 @@ metaHtml story screen =
         (DiscoverStory _, _) ->
             titleHtml story
 
+        (FullStory _, MoreInfo) ->
+            text ""
+
         (FullStory fullStory, _) ->
+
              div [class "fullStory-meta"] [
                 titleHtml story
                 , div [class "fullStory-site"] [text (sitesName fullStory.sites)]
@@ -70,13 +69,49 @@ titleHtml : Story -> Html
 titleHtml story = h1 [class "title"] [text <| title story]
 
 
-{-| Produce a nav button to show the story body, or nothing if we're already there -}
-storyButton : Signal.Address AppAction -> Story -> StoryScreen -> Html
-storyButton address story storyScreen =
+{-| Produce buttons for the story intro page, or nothing if we're not on that page.
+-}
+buttons : Signal.Address AppAction -> Story -> StoryScreen -> Html
+buttons address story storyScreen =
     case (story, storyScreen) of
         (FullStory s, Intro) ->
-            a [class "btn btn-story", onClick address (View s.id Body)] [text "Story"]
+            div [class "buttons"]
+                [ button [class "btn btn-story", onClick address (View s.id Body)] [text "Story"]
+                , button [class "btn btn-more-info",  onClick address (View s.id MoreInfo)] [text "Info"]
+                , locationsToDirections s.locations
+                ]
         (_,_) -> text ""
+
+
+{-| Produce the content for the Story Info page, or nothing if we're not there.
+-}
+moreInfo : Signal.Address AppAction -> Story -> StoryScreen -> Html
+moreInfo address story storyScreen =
+    let
+        header = div [class "screen-header screen-more-info"]
+                    [ h1 [] [text "More Information"]
+                    ]
+        screen body = div [] (header :: body)
+    in
+        case (story, storyScreen) of
+            (FullStory s, MoreInfo) ->
+                let
+                    links_ = links s
+                    categories_ = categories s
+                    style_ = architecturalStyle s
+                in
+                    screen (links_ :: categories_ :: style_ :: [])
+            _ -> text ""
+
+
+{-| Get the link to Google directions map for the first location, or nothing if no locations.
+-}
+locationsToDirections : List LatLng -> Html
+locationsToDirections locations =
+    case (List.head locations) of
+        Just latlng -> a [href ("https://www.google.com/maps/dir/Current+Location/" ++ latlng.lat ++ "," ++ latlng.lng), target "_blank"] [button [class "btn btn-directions directions"] [text "Directions"]]
+        Nothing -> text ""
+
 
 {-| Depending on if we need to show intro or body sub-screen, produce different html -}
 introOrBody : Story -> StoryScreen -> Html
@@ -97,10 +132,12 @@ photoSlider address story item screen =
                 <| List.map (storyImage story item.photoPosition) [item.photoIndex-1, item.photoIndex, item.photoIndex+1]
             , photoIndicators address story item.photoIndex
             ]
-    else
+    else if screen == Body then
         div
             [class "photos"]
             [storyImage story item.photoPosition item.photoIndex]
+    else
+        text ""
 
 log : a -> a
 log anything =
@@ -118,24 +155,55 @@ photoIndicators address story index = div
     ) <| photos story
 
 {-| The HTML for the links that appear at after the story -}
-links story = let
-        heritageUrl = "http://www.environment.nsw.gov.au/heritageapp/visit/ViewAttractionDetail.aspx?ID=" 
-    in
-        div [class "links"]
-            [ h4 [] [text "Further Reading"]
-            , ul [class "links"]
-                <| List.map (\site -> li [] [link site.name (heritageUrl ++ site.id)]) story.sites 
-            ] 
+links story =
+    case story.links of
+        [] -> text ""
+        _ ->
+            div [class "links"]
+                [ h4 [] [text "Further Reading"]
+                , ul [class "links"]
+                    <| List.map (\link -> li [] [linkHtml link.title link.url]) story.links
+                ]
 
 {-| The HTML for a single story link -}
-link : String -> String -> Html
-link name url = a [href url]
+linkHtml : String -> String -> Html
+linkHtml name url = a [href url]
     [ text name
     , span [class "link-arrow"]
         [ span [class "external-link"] [text "External Link"]
         , i [class "fa fa-angle-right"] []
         ]
     ]
+
+{-| The HTML for a story's heritage caterogies.
+-}
+categories story =
+    div [class "heritage-categories-container"]
+        [ h4 [] [text "Heritage Categories"]
+        , div [class "heritage-categories"] [sitesCategoriesHtml story.sites]
+        ]
+
+sitesCategoriesHtml : List Site -> Html
+sitesCategoriesHtml sites =
+    case sites of
+        [] -> text "n/a"
+        site::_ -> text site.heritageCategories
+
+
+{-| The HTML for a story's architectural style.
+-}
+architecturalStyle story =
+    div [class "architectural-style-container"]
+        [ h4 [] [text "Architectural Style"]
+        , div [class "architectural-style"] [sitesStyleHtml story.sites]
+        ]
+
+sitesStyleHtml : List Site -> Html
+sitesStyleHtml sites =
+    case sites of
+        [] -> text "n/a"
+        site::_ -> text site.architecturalStyle
+
 
 {-| The HTML style for a photo which can be swiped -}
 storyImage : Story -> ItemPosition -> Int -> Html

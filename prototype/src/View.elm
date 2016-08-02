@@ -51,4 +51,6 @@ storyScreenClass screen =
             "story-intro"
         Body ->
             "story-body"
+        MoreInfo ->
+            "story-more-info"
 

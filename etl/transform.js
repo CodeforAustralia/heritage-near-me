@@ -95,6 +95,8 @@ function cleanupHeritageRow (row) {
         address: row["Street Address"],
         location: {},
         // latitude / longitude: geocode location
+        heritage_categories: row["Heritage Categories"],
+        architectural_style: row["Architectural Style"],
         links: parseLinks(row["Links & Further Reading"]),
         pictures: parsePictures(row["Images"]), // should be an array of urls
         // links: unused right now, generated based on heritage id

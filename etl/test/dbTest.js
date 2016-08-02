@@ -25,6 +25,8 @@ describe("db.js", function () {
         location: {
             latitude: "", longitude: ""
         },
+        heritage_categories: "NE, SHR",
+        architectural_style: "Space Alien",
         // pics
         pictures: ["http://example.com/test.jpg\nhttp://example.com/test2.jpg"]
     }
@@ -46,6 +48,8 @@ describe("db.js", function () {
                 location: {
                     latitude: "", longitude: ""
                 },
+                heritage_categories: "",
+                architectural_style: "",
                 // pics
                 pictures: []
             }
@@ -60,6 +64,9 @@ describe("db.js", function () {
             expect(q.values).to.include(entry.address);
             expect(q.values).to.include(entry.location.latitude);
             expect(q.values).to.include(entry.location.longitude);
+            expect(q.values).to.include(entry.heritage_categories);
+            expect(q.values).to.include(entry.architectural_style);
+
         })
     })
 
@@ -216,7 +223,7 @@ function prepare_db(next){
         if (err !== null) {
             console.log("exec error: " + err)
         }
-        exec("psql -d testdb -f ../backend/heritage-near-me.sql", function(err) {
+        exec("cat ../backend/{hnm-tables.sql,hnm-views+functions.sql} | psql -d testdb", function(err) {
             if (err !== null) {
               console.log("exec error: " + err)
             }

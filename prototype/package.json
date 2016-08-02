@@ -1,0 +1,12 @@
+{
+  "//": "This file is just a helper so we can `npm run watch` to auto-recompile while developing.",
+  "name": "heritage-near-me-prototype",
+  "version": "0.1.0",
+  "scripts": {
+    "watch": "watch 'make osxClear && npm run build' src",
+    "build": "make app"
+  },
+  "devDependencies": {
+    "watch": "latest"
+  }
+}
