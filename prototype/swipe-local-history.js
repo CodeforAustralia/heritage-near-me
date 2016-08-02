@@ -13961,7 +13961,7 @@ Elm.Story.make = function (_elm) {
    var moreInfo = F3(function (address,story,storyScreen) {
       var header = A2($Html.div,
       _U.list([$Html$Attributes.$class("screen-header screen-more-info")]),
-      _U.list([A2($Html.h1,_U.list([]),_U.list([$Html.text("More Information")]))]));
+      _U.list([A2($Html.h1,_U.list([$Html$Attributes.$class("title")]),_U.list([$Html.text("More Information")]))]));
       var screen = function (body) {    return A2($Html.div,_U.list([]),A2($List._op["::"],header,body));};
       var _p20 = {ctor: "_Tuple2",_0: story,_1: storyScreen};
       if (_p20.ctor === "_Tuple2" && _p20._0.ctor === "FullStory" && _p20._1.ctor === "MoreInfo") {
@@ -13969,7 +13969,7 @@ Elm.Story.make = function (_elm) {
             var style_ = architecturalStyle(_p21);
             var categories_ = categories(_p21);
             var links_ = links(_p21);
-            return screen(A2($List._op["::"],links_,A2($List._op["::"],categories_,A2($List._op["::"],style_,_U.list([])))));
+            return screen(_U.list([links_,A2($Html.div,_U.list([$Html$Attributes.$class("heritage-meta-info")]),_U.list([categories_,style_]))]));
          } else {
             return $Html.text("");
          }
