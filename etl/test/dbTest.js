@@ -223,7 +223,7 @@ function prepare_db(next){
         if (err !== null) {
             console.log("exec error: " + err)
         }
-        exec("psql -d testdb -f ../backend/heritage-near-me.sql", function(err) {
+        exec("cat ../backend/{hnm-tables.sql,hnm-views+functions.sql} | psql -d testdb", function(err) {
             if (err !== null) {
               console.log("exec error: " + err)
             }
