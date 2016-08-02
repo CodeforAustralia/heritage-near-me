@@ -23,7 +23,7 @@ CREATE SCHEMA hnm
         SELECT
             story.id, story.title, story.blurb, story.story, story.quote,
             min(site.suburb) AS suburb,
-            json_agg(photo.photo) AS photos,
+            json_agg(DISTINCT photo.photo) AS photos,
             json_object('{start, end}', ARRAY[to_char(story.dateStart, 'YYYY-MM-DD'), to_char(story.dateEnd, 'YYYY-MM-DD')]) AS dates,
             json_agg(DISTINCT json_object('{id, name}', ARRAY[to_char(site.heritageItemId, '9999999'), site.name])::jsonb) AS sites,
             json_agg(DISTINCT json_object('{lat, lng}', ARRAY[site.latitude, site.longitude])::jsonb) AS locations,
@@ -217,7 +217,7 @@ BEGIN
         story.id, story.title, story.blurb, story.story, story.quote,
         MIN(nearest_site.suburb) suburb, -- MIN() is no different than taking the first, since nearest_site.suburb is same for any given story
         MIN(nearest_site.distance) distance, -- MIN(d1,d1,d1) = d1. They're the same distance.
-        jsonb_agg(photo.photo) AS photos,
+        jsonb_agg(DISTINCT photo.photo) AS photos,
         jsonb_object('{start, end}', ARRAY[to_char(story.dateStart, 'YYYY-MM-DD'), to_char(story.dateEnd, 'YYYY-MM-DD')]) AS dates,
         jsonb_agg(DISTINCT json_object('{id, name}', ARRAY[to_char(site.heritageItemId, '9999999'), site.name])::jsonb) AS sites,
         jsonb_agg(DISTINCT json_object('{lat, lng}', ARRAY[site.latitude, site.longitude])::jsonb) AS locations,
