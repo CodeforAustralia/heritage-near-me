@@ -487,7 +487,7 @@ html, body, body > div {
         left: 0;
     }
 
-    story-body .photos {
+    .story-body .photos {
         height: 250px;
     }
 
