@@ -89,7 +89,7 @@ moreInfo : Signal.Address AppAction -> Story -> StoryScreen -> Html
 moreInfo address story storyScreen =
     let
         header = div [class "screen-header screen-more-info"]
-                    [ h1 [] [text "More Information"]
+                    [ h1 [class "title"] [text "More Information"]
                     ]
         screen body = div [] (header :: body)
     in
@@ -100,7 +100,10 @@ moreInfo address story storyScreen =
                     categories_ = categories s
                     style_ = architecturalStyle s
                 in
-                    screen (links_ :: categories_ :: style_ :: [])
+                    screen
+                        [ links_
+                        , div [class "heritage-meta-info"] [categories_, style_]
+                        ]
             _ -> text ""
 
 
