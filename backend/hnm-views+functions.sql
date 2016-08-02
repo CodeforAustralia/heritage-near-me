@@ -10,7 +10,7 @@ CREATE SCHEMA hnm
     CREATE VIEW story_discover AS
         SELECT DISTINCT ON (story.id) -- just picks one row https://www.postgresql.org/message-id/22uphu0hohpbnvg3a6d4qv21ofr4di7kda%404ax.com
             story.id, story.title, story.blurb, photo.photo,
-            json_agg(DISTINCT json_object('{id, name}', ARRAY[to_char(site.heritageItemId, '9999999'), site.name])::jsonb) AS sites
+            json_agg(DISTINCT json_object('{id, name, architectural_style, heritage_categories}', ARRAY[to_char(site.heritageItemId, '9999999'), site.name, site.architectural_style, site.heritage_categories])::jsonb) AS sites
         FROM story
         LEFT JOIN story_photo ON story_photo.story_id = story.id
         LEFT JOIN photo       ON story_photo.photo_id = photo.id
@@ -25,7 +25,7 @@ CREATE SCHEMA hnm
             min(site.suburb) AS suburb,
             json_agg(DISTINCT photo.photo) AS photos,
             json_object('{start, end}', ARRAY[to_char(story.dateStart, 'YYYY-MM-DD'), to_char(story.dateEnd, 'YYYY-MM-DD')]) AS dates,
-            json_agg(DISTINCT json_object('{id, name}', ARRAY[to_char(site.heritageItemId, '9999999'), site.name])::jsonb) AS sites,
+            json_agg(DISTINCT json_object('{id, name, architectural_style, heritage_categories}', ARRAY[to_char(site.heritageItemId, '9999999'), site.name, site.architectural_style, site.heritage_categories])::jsonb) AS sites,
             json_agg(DISTINCT json_object('{lat, lng}', ARRAY[site.latitude, site.longitude])::jsonb) AS locations,
             json_agg(DISTINCT json_object('{url, title}', ARRAY[links.link_url, links.link_title])::jsonb) AS links
         FROM story
@@ -84,7 +84,7 @@ BEGIN
             ST_GeomFromText('POINT('||site.longitude||' '||site.latitude||')'),
             ST_GeomFromText('POINT('||$2||' '||$1||')')
         )) AS distance,
-        jsonb_agg(DISTINCT json_object('{id, name}', ARRAY[to_char(site.heritageItemId, '9999999'), site.name])::jsonb) AS sites
+        jsonb_agg(DISTINCT json_object('{id, name, architectural_style, heritage_categories}', ARRAY[to_char(site.heritageItemId, '9999999'), site.name, site.architectural_style, site.heritage_categories])::jsonb) AS sites
     FROM story
     LEFT JOIN story_photo ON story_photo.story_id = story.id
     LEFT JOIN photo       ON story_photo.photo_id = photo.id
@@ -110,6 +110,8 @@ CREATE OR REPLACE FUNCTION hnm.sites_near_location(lat TEXT, lng TEXT, count INT
         address TEXT,
         latitude TEXT,
         longitude TEXT,
+        architectural_style TEXT,
+        heritage_categories TEXT,
         -- plus the following:
         distance FLOAT -- in meters, between this site and the location passed in
     ) AS
@@ -219,7 +221,7 @@ BEGIN
         MIN(nearest_site.distance) distance, -- MIN(d1,d1,d1) = d1. They're the same distance.
         jsonb_agg(DISTINCT photo.photo) AS photos,
         jsonb_object('{start, end}', ARRAY[to_char(story.dateStart, 'YYYY-MM-DD'), to_char(story.dateEnd, 'YYYY-MM-DD')]) AS dates,
-        jsonb_agg(DISTINCT json_object('{id, name}', ARRAY[to_char(site.heritageItemId, '9999999'), site.name])::jsonb) AS sites,
+        jsonb_agg(DISTINCT json_object('{id, name, architectural_style, heritage_categories}', ARRAY[to_char(site.heritageItemId, '9999999'), site.name, site.architectural_style, site.heritage_categories])::jsonb) AS sites,
         jsonb_agg(DISTINCT json_object('{lat, lng}', ARRAY[site.latitude, site.longitude])::jsonb) AS locations,
         jsonb_agg(DISTINCT json_object('{url, title}', ARRAY[links.link_url, links.link_title])::jsonb) AS links
     FROM story
