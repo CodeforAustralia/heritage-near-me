@@ -10296,7 +10296,8 @@ Elm.Types.make = function (_elm) {
    var _op = {};
    var Window = F2(function (a,b) {    return {width: a,height: b};});
    var Dates = F2(function (a,b) {    return {start: a,end: b};});
-   var Site = F2(function (a,b) {    return {id: a,name: b};});
+   var Site = F4(function (a,b,c,d) {    return {id: a,name: b,architecturalStyle: c,heritageCategories: d};});
+   var Link = F2(function (a,b) {    return {url: a,title: b};});
    var LatLng = F2(function (a,b) {    return {lat: a,lng: b};});
    var FullStory = function (a) {    return {ctor: "FullStory",_0: a};};
    var DiscoverStory = function (a) {    return {ctor: "DiscoverStory",_0: a};};
@@ -10339,6 +10340,7 @@ Elm.Types.make = function (_elm) {
                               ,ItemView: ItemView
                               ,Site: Site
                               ,LatLng: LatLng
+                              ,Link: Link
                               ,Dates: Dates
                               ,Window: Window
                               ,Discovering: Discovering
@@ -13853,7 +13855,35 @@ Elm.Story.make = function (_elm) {
               photoPosition(pos)))]),
       _U.list([]));
    });
-   var link = F2(function (name,url) {
+   var sitesStyleHtml = function (sites) {
+      var _p12 = sites;
+      if (_p12.ctor === "[]") {
+            return $Html.text("n/a");
+         } else {
+            return $Html.text(_p12._0.architecturalStyle);
+         }
+   };
+   var architecturalStyle = function (story) {
+      return A2($Html.div,
+      _U.list([$Html$Attributes.$class("architectural-style-container")]),
+      _U.list([A2($Html.h4,_U.list([]),_U.list([$Html.text("Architectural Style")]))
+              ,A2($Html.div,_U.list([$Html$Attributes.$class("architectural-style")]),_U.list([sitesStyleHtml(story.sites)]))]));
+   };
+   var sitesCategoriesHtml = function (sites) {
+      var _p13 = sites;
+      if (_p13.ctor === "[]") {
+            return $Html.text("n/a");
+         } else {
+            return $Html.text(_p13._0.heritageCategories);
+         }
+   };
+   var categories = function (story) {
+      return A2($Html.div,
+      _U.list([$Html$Attributes.$class("heritage-categories-container")]),
+      _U.list([A2($Html.h4,_U.list([]),_U.list([$Html.text("Heritage Categories")]))
+              ,A2($Html.div,_U.list([$Html$Attributes.$class("heritage-categories")]),_U.list([sitesCategoriesHtml(story.sites)]))]));
+   };
+   var linkHtml = F2(function (name,url) {
       return A2($Html.a,
       _U.list([$Html$Attributes.href(url)]),
       _U.list([$Html.text(name)
@@ -13863,23 +13893,23 @@ Elm.Story.make = function (_elm) {
                       ,A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-angle-right")]),_U.list([]))]))]));
    });
    var links = function (story) {
-      var heritageUrl = "http://www.environment.nsw.gov.au/heritageapp/visit/ViewAttractionDetail.aspx?ID=";
-      return A2($Html.div,
-      _U.list([$Html$Attributes.$class("links")]),
-      _U.list([A2($Html.h4,_U.list([]),_U.list([$Html.text("Further Reading")]))
-              ,A2($Html.ul,
-              _U.list([$Html$Attributes.$class("links")]),
-              A2($List.map,
-              function (site) {
-                 return A2($Html.li,_U.list([]),_U.list([A2(link,site.name,A2($Basics._op["++"],heritageUrl,site.id))]));
-              },
-              story.sites))]));
+      var _p14 = story.links;
+      if (_p14.ctor === "[]") {
+            return $Html.text("");
+         } else {
+            return A2($Html.div,
+            _U.list([$Html$Attributes.$class("links")]),
+            _U.list([A2($Html.h4,_U.list([]),_U.list([$Html.text("Further Reading")]))
+                    ,A2($Html.ul,
+                    _U.list([$Html$Attributes.$class("links")]),
+                    A2($List.map,function (link) {    return A2($Html.li,_U.list([]),_U.list([A2(linkHtml,link.title,link.url)]));},story.links))]));
+         }
    };
    var photoIndicators = F3(function (address,story,index) {
       return A2($Html.div,
       _U.list([$Html$Attributes.$class("photo-indicators")]),
       A2($List.indexedMap,
-      F2(function (index$,_p12) {
+      F2(function (index$,_p15) {
          return _U.eq(index$,A2(storyIndex,index,story)) ? A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-circle")]),_U.list([])) : A2($Html.i,
          _U.list([$Html$Attributes.$class("fa fa-circle-o"),A2($Html$Events.onClick,address,$Types.JumpPhoto(index$))]),
          _U.list([]));
@@ -13900,28 +13930,28 @@ Elm.Story.make = function (_elm) {
       _U.list([A3(storyImage,story,item.photoPosition,item.photoIndex)])) : $Html.text("");
    });
    var introOrBody = F2(function (story,storyScreen) {
-      var _p13 = {ctor: "_Tuple2",_0: story,_1: storyScreen};
-      _v11_2: do {
-         if (_p13._0.ctor === "FullStory") {
-               switch (_p13._1.ctor)
-               {case "Intro": return A2($Html.p,_U.list([]),_U.list([$Html.text(_p13._0._0.blurb)]));
-                  case "Body": var _p14 = _p13._0._0;
-                    return A2($Html.div,_U.list([$Html$Attributes.$class("passage")]),_U.list([$Markdown.toHtml(A2(addQuote,_p14.quote,_p14.story))]));
-                  default: break _v11_2;}
+      var _p16 = {ctor: "_Tuple2",_0: story,_1: storyScreen};
+      _v14_2: do {
+         if (_p16._0.ctor === "FullStory") {
+               switch (_p16._1.ctor)
+               {case "Intro": return A2($Html.p,_U.list([]),_U.list([$Html.text(_p16._0._0.blurb)]));
+                  case "Body": var _p17 = _p16._0._0;
+                    return A2($Html.div,_U.list([$Html$Attributes.$class("passage")]),_U.list([$Markdown.toHtml(A2(addQuote,_p17.quote,_p17.story))]));
+                  default: break _v14_2;}
             } else {
-               break _v11_2;
+               break _v14_2;
             }
       } while (false);
       return $Html.text("");
    });
    var locationsToDirections = function (locations) {
-      var _p15 = $List.head(locations);
-      if (_p15.ctor === "Just") {
-            var _p16 = _p15._0;
+      var _p18 = $List.head(locations);
+      if (_p18.ctor === "Just") {
+            var _p19 = _p18._0;
             return A2($Html.a,
             _U.list([$Html$Attributes.href(A2($Basics._op["++"],
                     "https://www.google.com/maps/dir/Current+Location/",
-                    A2($Basics._op["++"],_p16.lat,A2($Basics._op["++"],",",_p16.lng))))
+                    A2($Basics._op["++"],_p19.lat,A2($Basics._op["++"],",",_p19.lng))))
                     ,$Html$Attributes.target("_blank")]),
             _U.list([A2($Html.button,_U.list([$Html$Attributes.$class("btn btn-directions directions")]),_U.list([$Html.text("Directions")]))]));
          } else {
@@ -13932,75 +13962,73 @@ Elm.Story.make = function (_elm) {
       var header = A2($Html.div,
       _U.list([$Html$Attributes.$class("screen-header screen-more-info")]),
       _U.list([A2($Html.h1,_U.list([]),_U.list([$Html.text("More Information")]))]));
-      var screen = function (body) {    return A2($Html.div,_U.list([]),_U.list([header,body]));};
-      var _p17 = {ctor: "_Tuple2",_0: story,_1: storyScreen};
-      if (_p17.ctor === "_Tuple2" && _p17._0.ctor === "FullStory" && _p17._1.ctor === "MoreInfo") {
-            var _p19 = _p17._0._0;
-            var _p18 = _p19.sites;
-            if (_p18.ctor === "[]") {
-                  return screen($Html.text(""));
-               } else {
-                  return screen(links(_p19));
-               }
+      var screen = function (body) {    return A2($Html.div,_U.list([]),A2($List._op["::"],header,body));};
+      var _p20 = {ctor: "_Tuple2",_0: story,_1: storyScreen};
+      if (_p20.ctor === "_Tuple2" && _p20._0.ctor === "FullStory" && _p20._1.ctor === "MoreInfo") {
+            var _p21 = _p20._0._0;
+            var style_ = architecturalStyle(_p21);
+            var categories_ = categories(_p21);
+            var links_ = links(_p21);
+            return screen(A2($List._op["::"],links_,A2($List._op["::"],categories_,A2($List._op["::"],style_,_U.list([])))));
          } else {
             return $Html.text("");
          }
    });
    var buttons = F3(function (address,story,storyScreen) {
-      var _p20 = {ctor: "_Tuple2",_0: story,_1: storyScreen};
-      if (_p20._0.ctor === "FullStory" && _p20._1.ctor === "Intro") {
-            var _p21 = _p20._0._0;
+      var _p22 = {ctor: "_Tuple2",_0: story,_1: storyScreen};
+      if (_p22._0.ctor === "FullStory" && _p22._1.ctor === "Intro") {
+            var _p23 = _p22._0._0;
             return A2($Html.div,
             _U.list([$Html$Attributes.$class("buttons")]),
             _U.list([A2($Html.button,
-                    _U.list([$Html$Attributes.$class("btn btn-story"),A2($Html$Events.onClick,address,A2($Types.View,_p21.id,$Types.Body))]),
+                    _U.list([$Html$Attributes.$class("btn btn-story"),A2($Html$Events.onClick,address,A2($Types.View,_p23.id,$Types.Body))]),
                     _U.list([$Html.text("Story")]))
                     ,A2($Html.button,
-                    _U.list([$Html$Attributes.$class("btn btn-more-info"),A2($Html$Events.onClick,address,A2($Types.View,_p21.id,$Types.MoreInfo))]),
+                    _U.list([$Html$Attributes.$class("btn btn-more-info"),A2($Html$Events.onClick,address,A2($Types.View,_p23.id,$Types.MoreInfo))]),
                     _U.list([$Html.text("Info")]))
-                    ,locationsToDirections(_p21.locations)]));
+                    ,locationsToDirections(_p23.locations)]));
          } else {
             return $Html.text("");
          }
    });
    var titleHtml = function (story) {    return A2($Html.h1,_U.list([$Html$Attributes.$class("title")]),_U.list([$Html.text(title(story))]));};
    var metaHtml = F2(function (story,screen) {
-      var _p22 = {ctor: "_Tuple2",_0: story,_1: screen};
-      if (_p22._0.ctor === "DiscoverStory") {
+      var _p24 = {ctor: "_Tuple2",_0: story,_1: screen};
+      if (_p24._0.ctor === "DiscoverStory") {
             return titleHtml(story);
          } else {
-            if (_p22._1.ctor === "MoreInfo") {
+            if (_p24._1.ctor === "MoreInfo") {
                   return $Html.text("");
                } else {
-                  var _p26 = _p22._0._0;
+                  var _p28 = _p24._0._0;
                   return A2($Html.div,
                   _U.list([$Html$Attributes.$class("fullStory-meta")]),
                   _U.list([titleHtml(story)
-                          ,A2($Html.div,_U.list([$Html$Attributes.$class("fullStory-site")]),_U.list([$Html.text(sitesName(_p26.sites))]))
+                          ,A2($Html.div,_U.list([$Html$Attributes.$class("fullStory-site")]),_U.list([$Html.text(sitesName(_p28.sites))]))
                           ,function () {
-                             var _p23 = _p26.suburb;
-                             if (_p23.ctor === "Just") {
-                                   return A2($Html.div,_U.list([$Html$Attributes.$class("fullStory-suburb")]),_U.list([$Html.text(_p23._0)]));
-                                } else {
-                                   return $Html.text("");
-                                }
-                          }()
-                          ,function () {
-                             var _p24 = formatDate(_p26.dates);
-                             if (_p24.ctor === "Just") {
-                                   return A2($Html.div,_U.list([$Html$Attributes.$class("fullStory-date")]),_U.list([$Html.text(_p24._0)]));
-                                } else {
-                                   return $Html.text("");
-                                }
-                          }()
-                          ,function () {
-                             var _p25 = distance(story);
+                             var _p25 = _p28.suburb;
                              if (_p25.ctor === "Just") {
+                                   return A2($Html.div,_U.list([$Html$Attributes.$class("fullStory-suburb")]),_U.list([$Html.text(_p25._0)]));
+                                } else {
+                                   return $Html.text("");
+                                }
+                          }()
+                          ,function () {
+                             var _p26 = formatDate(_p28.dates);
+                             if (_p26.ctor === "Just") {
+                                   return A2($Html.div,_U.list([$Html$Attributes.$class("fullStory-date")]),_U.list([$Html.text(_p26._0)]));
+                                } else {
+                                   return $Html.text("");
+                                }
+                          }()
+                          ,function () {
+                             var _p27 = distance(story);
+                             if (_p27.ctor === "Just") {
                                    return A2($Html.p,
                                    _U.list([$Html$Attributes.$class("fullStory-distance")]),
                                    _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-map-marker")]),_U.list([]))
                                            ,$Html.text(" ")
-                                           ,$Html.text(_p25._0)]));
+                                           ,$Html.text(_p27._0)]));
                                 } else {
                                    return A2($Html.p,
                                    _U.list([$Html$Attributes.$class("fullStory-distance got-no-distance")]),
@@ -14014,22 +14042,22 @@ Elm.Story.make = function (_elm) {
       return A2($Html.div,
       _U.list([$Html$Attributes.$class("story")]),
       function () {
-         var _p27 = story;
-         switch (_p27.ctor)
-         {case "Loaded": var _p29 = _p27._0;
+         var _p29 = story;
+         switch (_p29.ctor)
+         {case "Loaded": var _p31 = _p29._0;
               return A2($Basics._op["++"],
-              _U.list([A4(photoSlider,address,_p29,item,storyScreen),A2(metaHtml,_p29,storyScreen)]),
+              _U.list([A4(photoSlider,address,_p31,item,storyScreen),A2(metaHtml,_p31,storyScreen)]),
               function () {
-                 var _p28 = _p29;
-                 if (_p28.ctor === "DiscoverStory") {
+                 var _p30 = _p31;
+                 if (_p30.ctor === "DiscoverStory") {
                        return _U.list([$Loading.loading]);
                     } else {
-                       return _U.list([A3(buttons,address,_p29,storyScreen),A2(introOrBody,_p29,storyScreen),A3(moreInfo,address,_p29,storyScreen)]);
+                       return _U.list([A3(buttons,address,_p31,storyScreen),A2(introOrBody,_p31,storyScreen),A3(moreInfo,address,_p31,storyScreen)]);
                     }
               }());
             case "Failed": return _U.list([A2($Html.div,
               _U.list([$Html$Attributes.$class("error")]),
-              _U.list([$Html.text("Something went wrong: "),$Html.text($Basics.toString(log(_p27._0)))]))]);
+              _U.list([$Html.text("Something went wrong: "),$Html.text($Basics.toString(log(_p29._0)))]))]);
             default: return _U.list([$Loading.loading]);}
       }());
    });
@@ -14093,14 +14121,22 @@ Elm.Data.make = function (_elm) {
    $Time = Elm.Time.make(_elm),
    $Types = Elm.Types.make(_elm);
    var _op = {};
+   var linkDecoder = A3($Json$Decode.object2,
+   $Maybe.map2(F2(function (url,title) {    return {url: url,title: title};})),
+   $Json$Decode.maybe(A2($Json$Decode._op[":="],"url",$Json$Decode.string)),
+   $Json$Decode.maybe(A2($Json$Decode._op[":="],"title",$Json$Decode.string)));
    var locationDecoder = A3($Json$Decode.object2,
    $Maybe.map2(F2(function (lat,lng) {    return {lat: lat,lng: lng};})),
    $Json$Decode.maybe(A2($Json$Decode._op[":="],"lat",$Json$Decode.string)),
    $Json$Decode.maybe(A2($Json$Decode._op[":="],"lng",$Json$Decode.string)));
-   var siteDecoder = A3($Json$Decode.object2,
-   $Maybe.map2(F2(function (id,name) {    return {id: id,name: name};})),
+   var siteDecoder = A5($Json$Decode.object4,
+   $Maybe.map4(F4(function (id,name,architecturalStyle,heritageCategories) {
+      return {id: id,name: name,architecturalStyle: architecturalStyle,heritageCategories: heritageCategories};
+   })),
    $Json$Decode.maybe(A2($Json$Decode._op[":="],"id",$Json$Decode.string)),
-   $Json$Decode.maybe(A2($Json$Decode._op[":="],"name",$Json$Decode.string)));
+   $Json$Decode.maybe(A2($Json$Decode._op[":="],"name",$Json$Decode.string)),
+   $Json$Decode.maybe(A2($Json$Decode._op[":="],"architectural_style",$Json$Decode.string)),
+   $Json$Decode.maybe(A2($Json$Decode._op[":="],"heritage_categories",$Json$Decode.string)));
    var datesDecoder = A3($Json$Decode.object2,
    F2(function (start,end) {
       return {start: A2($Maybe.andThen,start,function (_p0) {    return $Result.toMaybe($Date.fromString(_p0));})
@@ -14109,6 +14145,7 @@ Elm.Data.make = function (_elm) {
    $Json$Decode.maybe(A2($Json$Decode._op[":="],"start",$Json$Decode.string)),
    $Json$Decode.maybe(A2($Json$Decode._op[":="],"end",$Json$Decode.string)));
    var fullStoryDecoder = A2($Json$Decode$Extra._op["|:"],
+   A2($Json$Decode$Extra._op["|:"],
    A2($Json$Decode$Extra._op["|:"],
    A2($Json$Decode$Extra._op["|:"],
    A2($Json$Decode$Extra._op["|:"],
@@ -14129,18 +14166,21 @@ Elm.Data.make = function (_elm) {
                         return function (photos) {
                            return function (sites) {
                               return function (locations) {
-                                 return function (distance) {
-                                    return $Types.FullStory({id: $Types.StoryId(id)
-                                                            ,title: A2($Maybe.withDefault,"",title)
-                                                            ,blurb: A2($Maybe.withDefault,"",blurb)
-                                                            ,suburb: suburb
-                                                            ,dates: A2($Maybe.withDefault,{start: $Maybe.Nothing,end: $Maybe.Nothing},dates)
-                                                            ,photos: photos
-                                                            ,story: story
-                                                            ,quote: quote
-                                                            ,sites: A2($List.filterMap,$Basics.identity,sites)
-                                                            ,locations: A2($List.filterMap,$Basics.identity,locations)
-                                                            ,distance: distance});
+                                 return function (links) {
+                                    return function (distance) {
+                                       return $Types.FullStory({id: $Types.StoryId(id)
+                                                               ,title: A2($Maybe.withDefault,"",title)
+                                                               ,blurb: A2($Maybe.withDefault,"",blurb)
+                                                               ,suburb: suburb
+                                                               ,dates: A2($Maybe.withDefault,{start: $Maybe.Nothing,end: $Maybe.Nothing},dates)
+                                                               ,photos: photos
+                                                               ,story: story
+                                                               ,quote: quote
+                                                               ,sites: A2($List.filterMap,$Basics.identity,sites)
+                                                               ,locations: A2($List.filterMap,$Basics.identity,locations)
+                                                               ,links: A2($List.filterMap,$Basics.identity,links)
+                                                               ,distance: distance});
+                                    };
                                  };
                               };
                            };
@@ -14162,6 +14202,7 @@ Elm.Data.make = function (_elm) {
    A2($Json$Decode._op[":="],"photos",$Json$Decode.list($Json$Decode.oneOf(_U.list([$Json$Decode.string,$Json$Decode.$null("images/unavailable.jpg")]))))),
    A2($Json$Decode._op[":="],"sites",$Json$Decode.list(siteDecoder))),
    A2($Json$Decode._op[":="],"locations",$Json$Decode.list(locationDecoder))),
+   A2($Json$Decode._op[":="],"links",$Json$Decode.list(linkDecoder))),
    $Json$Decode.maybe(A2($Json$Decode._op[":="],"distance",$Json$Decode.$float)));
    var fullStoriesDecoder = $Json$Decode.list(fullStoryDecoder);
    var discoverStory = A7($Json$Decode.object6,
