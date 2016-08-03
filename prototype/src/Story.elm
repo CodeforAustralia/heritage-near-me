@@ -51,7 +51,7 @@ metaHtml story screen =
 
         (FullStory fullStory, _) ->
 
-             div [class "fullStory-meta"] [
+             div [class "fullStory-meta screen-header"] [
                 titleHtml story
                 , div [class "fullStory-site"] [text (sitesName fullStory.sites)]
                 , case fullStory.suburb of
@@ -61,8 +61,8 @@ metaHtml story screen =
                     Just date -> div [class "fullStory-date"] [text date]
                     Nothing -> text ""
                 ,  case distance story of
-                    Just distance -> p [class "fullStory-distance"] [i [class "fa fa-map-marker"] [], text " ", text distance]
-                    Nothing -> p [class "fullStory-distance got-no-distance"] [text "got-no-distance"]
+                    Just distance -> div [class "fullStory-distance"] [i [class "fa fa-map-marker"] [], text " ", text distance]
+                    Nothing -> div [class "fullStory-distance got-no-distance"] [text "got-no-distance"]
             ]
 
 titleHtml : Story -> Html
@@ -121,7 +121,7 @@ introOrBody : Story -> StoryScreen -> Html
 introOrBody story storyScreen =
     case (story, storyScreen) of
         (FullStory s, Intro) ->
-            p [] [text s.blurb]
+            div [class "story-intro"] [p [] [text s.blurb]]
         (FullStory s, Body) ->
             div [class "passage"] [Markdown.toHtml (addQuote s.quote s.story)]
         (_, _) -> text ""
