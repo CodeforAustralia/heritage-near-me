@@ -373,7 +373,8 @@ html, body, body > div {
             min-height: 100vh;
             /* margin-top: 65px; */ /* match height of navigation bar */
             background-color: #FCFCFC; /* just off white */
-            color:black;
+            color: #343434;
+            padding-bottom: 10px;
         }
 
 
@@ -498,7 +499,7 @@ html, body, body > div {
         margin: 0;
         padding-top: 1rem;
         padding-left: 1rem;
-        padding-bottom: 1rem;
+        padding-bottom: .5rem;
         font-size: 27px;
         font-weight: 700;
         line-height: 1;
@@ -548,6 +549,7 @@ html, body, body > div {
         font-weight: 200;
         font-size: 14px;
         text-shadow: 1px 1px 1px rgba(0,0,0,.5);
+        padding-top: .5rem;
     }
 
     .story-body .fullStory-meta .fullStory-suburb {
@@ -583,7 +585,8 @@ html, body, body > div {
             padding-top: 0.5rem;
             margin: 0;
             color: white;
-            font-weight: normal;
+            font-size: 24px;
+            font-weight: 700;
         }
 
     .heritage-meta-info {
