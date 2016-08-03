@@ -356,6 +356,8 @@ html, body, body > div {
                 width: 90px;
                 border: 12px solid rgba(255, 255, 255, 0);
                 font-size: 14px;
+                font-weight: 600;
+                color: #354716;
                 padding: 75px 0 0;
             }
             .btn-story {
@@ -502,7 +504,7 @@ html, body, body > div {
         letter-spacing: 0.06rem;
         margin: 0;
         padding-top: 1rem;
-        padding-left: 1rem;
+        /* padding-left: 1rem; */
         padding-bottom: .5rem;
         font-size: 27px;
         font-weight: 700;
@@ -524,7 +526,7 @@ html, body, body > div {
          top: 65px;
          display: block;
          margin: 0;
-         z-index: 2;
+         z-index: 1;
     }
     
    .story-body .fullStory-meta div, .story-body .fullStory-meta p {
@@ -591,8 +593,7 @@ html, body, body > div {
         padding-top: 1rem;
     }
         .screen-header .title {
-            font-size: 24px;
-            font-weight: 700;
+            
         }
 
     .heritage-meta-info {
@@ -601,6 +602,10 @@ html, body, body > div {
         margin: 0 1rem;
     }
 
+    .screen-more-info .title {
+        font-size: 24px;
+        font-weight: 800;
+    }
 
 
     /* Links list style */
@@ -610,7 +615,7 @@ html, body, body > div {
 
     .links h4 {
         text-align: left;
-        /* margin-bottom: 8px; */
+        margin-bottom: 8px;
         /*margin-left: 16px;*/
     }
 
@@ -683,7 +688,7 @@ html, body, body > div {
 
 h1 {
     text-align: center;
-    font-size: 28px;
+    font-size: 27px;
     font-weight: normal;
     color: #1887EC;
 }
