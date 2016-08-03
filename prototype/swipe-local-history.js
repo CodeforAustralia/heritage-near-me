@@ -13934,7 +13934,9 @@ Elm.Story.make = function (_elm) {
       _v14_2: do {
          if (_p16._0.ctor === "FullStory") {
                switch (_p16._1.ctor)
-               {case "Intro": return A2($Html.p,_U.list([]),_U.list([$Html.text(_p16._0._0.blurb)]));
+               {case "Intro": return A2($Html.div,
+                    _U.list([$Html$Attributes.$class("story-intro")]),
+                    _U.list([A2($Html.p,_U.list([]),_U.list([$Html.text(_p16._0._0.blurb)]))]));
                   case "Body": var _p17 = _p16._0._0;
                     return A2($Html.div,_U.list([$Html$Attributes.$class("passage")]),_U.list([$Markdown.toHtml(A2(addQuote,_p17.quote,_p17.story))]));
                   default: break _v14_2;}
@@ -14002,7 +14004,7 @@ Elm.Story.make = function (_elm) {
                } else {
                   var _p28 = _p24._0._0;
                   return A2($Html.div,
-                  _U.list([$Html$Attributes.$class("fullStory-meta")]),
+                  _U.list([$Html$Attributes.$class("fullStory-meta screen-header")]),
                   _U.list([titleHtml(story)
                           ,A2($Html.div,_U.list([$Html$Attributes.$class("fullStory-site")]),_U.list([$Html.text(sitesName(_p28.sites))]))
                           ,function () {
@@ -14024,13 +14026,13 @@ Elm.Story.make = function (_elm) {
                           ,function () {
                              var _p27 = distance(story);
                              if (_p27.ctor === "Just") {
-                                   return A2($Html.p,
+                                   return A2($Html.div,
                                    _U.list([$Html$Attributes.$class("fullStory-distance")]),
                                    _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-map-marker")]),_U.list([]))
                                            ,$Html.text(" ")
                                            ,$Html.text(_p27._0)]));
                                 } else {
-                                   return A2($Html.p,
+                                   return A2($Html.div,
                                    _U.list([$Html$Attributes.$class("fullStory-distance got-no-distance")]),
                                    _U.list([$Html.text("got-no-distance")]));
                                 }
