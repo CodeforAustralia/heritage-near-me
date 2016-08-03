@@ -444,10 +444,10 @@ html, body, body > div {
 
     .story-suburb {
         color: rgba(0,0,0,0.55);
-        padding-bottom: 0.5rem;*/
-      font-size: 14px;
+        padding-bottom: 0.5rem;
+        font-size: 14px;
         font-weight: bold;
-        padding-top: 0.5rem;*/
+        padding-top: 0.5rem;
     }
 
     .story-date {
