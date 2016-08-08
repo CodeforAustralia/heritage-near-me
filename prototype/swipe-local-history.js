@@ -15223,20 +15223,18 @@ Elm.Main.make = function (_elm) {
             case "UpdateLocation": return _U.update(app,{latLng: A2($Debug.log,"model setting GPS coords: ",_p18._1._0)});
             default: break _v10_15;}
       } while (false);
-      var _p22 = A2($Debug.log,"updateModel, no change for action  ",action);
-      var _p23 = A2($Debug.log,"updateModel, no change for location",app.location);
-      return app;
+      return A2($Debug.log,"uM: (_,_)",app);
    });
    var update = F2(function (action,model) {
-      var _p24 = A2($Debug.log,"update w/ action",action);
-      var _p25 = A2($Debug.log,"update w/ model.location",model.location);
-      return {ctor: "_Tuple2",_0: A2(updateModel,action,model),_1: A2(updateAction,action,model)};
+      return {ctor: "_Tuple2"
+             ,_0: A2(updateModel,A2($Debug.log,"updateModel action:",action),A2($Debug.log,"updateModel model:",model))
+             ,_1: A2(updateAction,A2($Debug.log,"updateAction action:",action),A2($Debug.log,"updateAction model:",model))};
    });
    var initialApp = {location: $Types.Discovering,discovery: initialDiscovery,items: $Remote$DataStore.empty,latLng: $Maybe.Nothing};
    var app = $StartApp.start({init: {ctor: "_Tuple2",_0: initialApp,_1: $Effects.none}
                              ,view: $View.view
                              ,update: update
-                             ,inputs: _U.list([history.signal,$Swiping.animate,userLocation])});
+                             ,inputs: _U.list([history.signal,userLocation])});
    var main = app.html;
    var tasks = Elm.Native.Task.make(_elm).performSignal("tasks",app.tasks);
    var routeTasks = Elm.Native.Task.make(_elm).performSignal("routeTasks",
