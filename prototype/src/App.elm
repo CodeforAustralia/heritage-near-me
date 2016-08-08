@@ -81,9 +81,9 @@ app = StartApp.start
     { init = (initialApp, Effects.none)
     , view = view
     , update = update
-    , inputs = [history.signal, userLocation]
+    --, inputs = [history.signal, userLocation]
+    , inputs = [history.signal, Swiping.animate, userLocation]
     }
-    --, inputs = [history.signal, Swiping.animate, userLocation]
 
 {-| The HTML view created by the app -}
 main : Signal Html
