@@ -81,9 +81,9 @@ app = StartApp.start
     { init = (initialApp, Effects.none)
     , view = view
     , update = update
-    , inputs = [history.signal, userLocation]
+    --, inputs = [history.signal, userLocation]
+    , inputs = [history.signal, Swiping.animate, userLocation]
     }
-    --, inputs = [history.signal, Swiping.animate, userLocation]
 
 {-| The HTML view created by the app -}
 main : Signal Html
@@ -178,7 +178,12 @@ and viewing the console while starting the app.
 
 -}
 update: AppAction -> AppModel -> (AppModel, Effects.Effects AppAction)
-update action model = (updateModel (Debug.log "updateModel action:" action) (Debug.log "updateModel model:" model), updateAction (Debug.log "updateAction action:" action) (Debug.log "updateAction model:" model))
+update action model =
+    let
+        _ = Debug.log "update w/ model.location" model.location
+        _ = Debug.log "update w/ action" action
+    in
+        (updateModel action model, updateAction action model)
 
 
 {-| This function updates the state of the app based on the given action and previous state of the app
@@ -210,7 +215,12 @@ updateModel action app = case (app.location, action) of
     -- Geoposition update actions
     (_, UpdateLocation loc)                   -> {app | latLng = Debug.log "model setting GPS coords: " loc }
     -- Do nothing for the rest of the actions
-    (_, _)                                    -> (Debug.log "uM: (_,_)" app)
+    (_, _)                                    ->
+        let
+            _ = Debug.log "updateModel, no change for location" app.location
+            _ = Debug.log "updateModel, no change for action  " action
+        in
+            app
 
 
 
