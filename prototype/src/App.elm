@@ -197,7 +197,7 @@ updateModel action app = case (app.location, action) of
     (Discovering, Favourite)                  -> {app | location = Discovering, discovery = favouriteItem app.discovery}
     (Discovering, Pass)                       -> {app | location = Discovering, discovery = passItem app.discovery}
     -- Viewing location actions
-    (Viewing item view _ , Animate time window) -> {app | location = Viewing item {view | photoPosition = Swiping.animateStep time window view.photoPosition} screen1}
+    (Viewing item view screen', Animate time window) -> {app | location = Viewing item {view | photoPosition = Swiping.animateStep time window view.photoPosition} screen'}
     (Viewing item view _ , MovePhoto pos)       -> {app | location = Viewing item {view | photoPosition = pos} screen1}
     (Viewing item view _ , PrevPhoto)           -> {app | location = Viewing item {view | photoIndex = view.photoIndex-1, photoPosition = Static} screen1}
     (Viewing item view _ , NextPhoto)           -> {app | location = Viewing item {view | photoIndex = view.photoIndex+1, photoPosition = Static} screen1}
