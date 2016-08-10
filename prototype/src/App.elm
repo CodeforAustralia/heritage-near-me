@@ -52,7 +52,7 @@ custom types we'll see here, like `AppModel` (top level model) and
 `Discovering` (a screen within the web app, in this parlance, a `Location`), seen used below.
 
 -}
-initialApp : AppModel -- this reads as "initialApp is of ty"
+initialApp : AppModel -- an Elm type definition. In English: "initialApp is of type AppModel"
 initialApp =
     { location = Discovering,
       discovery = initialDiscovery,
