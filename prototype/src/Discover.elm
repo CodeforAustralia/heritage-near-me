@@ -11,10 +11,11 @@ import Swiping exposing (itemSwipe, itemPos, onSwipe, swipeAction)
 import Data exposing (getItem)
 import Remote.Data exposing (RemoteData(..))
 import Story exposing (viewStoryAction)
+import Splash
 
 {-| The main HTML view for discovering stories -}
 view : Signal.Address AppAction -> AppModel -> Html -> Html
-view address app topNav = div [class "app screen-size discovery"]
+view address app topNav = div [class "discovery discovery-screen"]
     [ topNav
     , case app.discovery.item of
         Loaded item -> case item of
@@ -24,7 +25,7 @@ view address app topNav = div [class "app screen-size discovery"]
                 Loading -> div [class "discovery-empty"] [loading]
             Nothing -> noStory "No more stories left!"
         Failed err -> noStory "Something went wrong"
-        Loading -> div [class "discovery-empty"] [loading]
+        Loading -> div [class "discovery-empty loader"] [Splash.loader] -- Loading.loading
     , navigation address
     ]
 
