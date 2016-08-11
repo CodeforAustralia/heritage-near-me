@@ -131,6 +131,18 @@ html, body, body > div {
         .splash-hero-image img, .splash-app-logo img {
             width: 200px;
         }
+        .splash-hero-image img {
+            height: 115px;
+        }
+
+        .splash-app-logo {
+            margin-top: 1em;
+        }
+
+    .splash-screen .loader {
+        position: absolute;
+        top: 75%;
+    }
 
     .splash-footer {
         position: absolute;
