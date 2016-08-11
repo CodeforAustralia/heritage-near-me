@@ -157,13 +157,8 @@ html, body, body > div {
 
     .discovery-empty {
         height: 100%;
-        padding-top: 30vh;
     }
 
-        .discovery-empty h2 {
-            color: white;
-        }
-    
     .discovery-story {
         position: relative;
         display: flex;
