@@ -13,6 +13,7 @@ import Html.Events exposing (onClick)
 import Types exposing (..)
 import Remote.Data
 import Data
+import Splash
 import Navigation exposing (navigation)
 import Discover
 import Story
@@ -24,14 +25,29 @@ It takes the location from the app state and turns it into the view of the app.
 It also passes the address for UI actions (such as clicking and swiping) to the sub views.
 -}
 view : Signal.Address AppAction -> AppModel -> Html
-view address app = case app.location of
+view address app =
+    let
+        _ = Debug.log "Viewing location" app.location
+        content = screenView address app
+    in
+        div [class "app screen-size"] [content]
+
+
+{-| Get view for a single screen -}
+screenView : Signal.Address AppAction -> AppModel -> Html
+screenView address app = case app.location of
+
+    SplashPage -> Splash.view
+
     Discovering -> Discover.view address app
         <| navigation address app.location
-    Viewing storyId itemView storyScreen -> div [class <| "app story-screen " ++ storyScreenClass storyScreen]
+
+    Viewing storyId itemView storyScreen -> div [class <| "story-screen " ++ storyScreenClass storyScreen]
         [ navigation address app.location
         , Story.view address (Data.getItem storyId app) itemView storyScreen
         ]
-    ViewingFavourites -> div [class "app favourites-screen"]
+
+    ViewingFavourites -> div [class "favourites-screen"]
         [ navigation address app.location
         , Favourites.view address
             <| List.filterMap Remote.Data.get
