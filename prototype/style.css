@@ -124,8 +124,7 @@ html, body, body > div {
 
     .splash-content {
         position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
+        top: 20%;
         width: 100%;
     }
 
