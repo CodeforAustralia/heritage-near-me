@@ -16,7 +16,7 @@ import Data
 import Navigation exposing (navigation)
 import Discover
 import Story
-import Favourites 
+import Favourites
 
 
 {-| The main view for the app.
