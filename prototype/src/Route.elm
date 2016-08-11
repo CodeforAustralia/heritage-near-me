@@ -25,12 +25,13 @@ action url = case url of
             screen = screen1
         in
             [View id screen]
-    _ -> Debug.log "converted url into default action: " [Discover]
+    _ -> Debug.log "converted url into default action: " [ViewSplashPage]
 
 {-| Turn the difference between two app states into a browser URL -}
 url : AppModel -> AppModel -> Maybe HashUpdate
 url old new = if old.location /= new.location then
         Just <| case new.location of
+            SplashPage        -> RouteHash.set [""]
             Discovering       -> RouteHash.set ["discover"]
             ViewingFavourites -> RouteHash.set ["favourites"]
             Viewing storyId _ storyScreen -> RouteHash.set ["story", storyIdToStr storyId, urliseStoryScreen storyScreen]

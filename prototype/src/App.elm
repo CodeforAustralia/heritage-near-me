@@ -49,12 +49,12 @@ import Swiping
 We start the app with a bunch of empty / default values in `initialApp` and `initialDiscovery`.
 Give the file `Types.elm` a quick glance to familiarize yourself with
 custom types we'll see here, like `AppModel` (top level model) and
-`Discovering` (a screen within the web app, in this parlance, a `Location`), seen used below.
+`SplashPage` (a screen within the web app, in this parlance, a `Location`), seen used below.
 
 -}
 initialApp : AppModel -- an Elm type definition. In English: "initialApp is of type AppModel"
 initialApp =
-    { location = Discovering,
+    { location = SplashPage,
       discovery = initialDiscovery,
       items = Remote.DataStore.empty,
       latLng = Nothing
@@ -78,7 +78,7 @@ The app consists of inputs, HTML views and functions which update and produce ef
 -}
 app : StartApp.App AppModel
 app = StartApp.start
-    { init = (initialApp, Effects.none)
+    { init = (initialApp, viewSplash)
     , view = view
     , update = update
     , inputs = [history.signal, userLocation]
@@ -89,7 +89,11 @@ app = StartApp.start
 main : Signal Html
 main = app.html
 
+viewSplash : Effects.Effects AppAction
+viewSplash = effectAction ViewSplashPage
 
+effectAction : AppAction -> Effects.Effects AppAction
+effectAction action = Effects.task <| Task.succeed action
 
 -----------------------------------------------  Set up some ports
 
@@ -141,9 +145,9 @@ https://github.com/elm-lang/elm-platform/blob/master/upgrade-docs/0.17.md#action
 For example, if you first point your web browser to http://localhost/
 (assuming you're developing locally), the `Route.action` function passed
 into `RouteHash.start` will convert the URL into the default home
-location, and produce the `Discover` action (as of this writing,
-the home location is the Discovering page).  As a result, `update` is
-first called with `action == Discover` and `model == initialApp`.
+location, and produce the `SplashPage` action (as of this writing,
+the home location is ViewSplashPage).  As a result, `update` is
+first called with `action == ViewSplashPage` and `model == initialApp`.
 In the `updateAction` function further down, you'd notice that there isn't anything
 special to do in this case, and so we do nothing using Elm's underscore case which
 catches everything not already caught:  `_ -> Effects.none`. At this point,
@@ -217,6 +221,7 @@ updateModel action app = case (app.location, action) of
 {-| Perform effectful actions based on actions and app state -}
 updateAction : AppAction -> AppModel -> Effects.Effects AppAction
 updateAction action app = case action of
+    ViewSplashPage -> Effects.task <| Task.sleep 3000 `Task.andThen` \_ -> Task.succeed <| Debug.log "Slept for a while, new action: " Discover
     View storyId _ ->
             -- sorry this case is long; if `let` is confusing, this might help:
             -- http://www.lambdacat.com/road-to-elm-let-and-in/
