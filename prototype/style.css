@@ -93,7 +93,7 @@ html, body, body > div {
             padding: 13px;
         }
 
-/* Discovery (swiping) stlye */
+/* Discovery (swiping) style */
 .discovery {
     display: flex;
     flex-direction: column;
