@@ -118,8 +118,8 @@ html, body, body > div {
         background-image: url("/images/splash-background.jpg");
         background-repeat: no-repeat;
         background-size: cover;
-        -webkit-filter: blur(2px) brightness(28%);
-        filter: blur(2px) brightness(28%);
+        -webkit-filter: blur(1px) brightness(28%);
+        filter: blur(1px) brightness(28%);
     }
 
     .splash-content {
