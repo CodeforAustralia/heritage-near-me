@@ -19,40 +19,57 @@
         <!-- preload font awesome -->
         <i style="color:transparent; opacity: 0.001; position: absolute;" class="fa fa-times"> </i>
 
+        <script type="text/javascript">
+            // Make :active work in mobile safari
+            document.addEventListener("touchstart", function(){}, true);
+
+            window.addEventListener("load",function() {
+                // Set a timeout...
+                setTimeout(function() {
+                    // Hide the address bar!
+                    window.scrollTo(0, 1);
+                }, 0);
+            });
+
+            // Start app
+            var app = Elm.fullscreen(Elm.Main, {
+                geolocation: null,
+            });
+
+            // Set up user geolocation
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(updateLocation, noLocation);
+            } else {
+                noLocation();
+            }
+
+            function updateLocation(position) {
+                    app.ports.geolocation.send({
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    });
+            }
+
+            function noLocation() {
+                app.ports.geolocation.send(null);
+            }
+
+            /* preload images - define and run immediately */
+            function preloadImages() {
+                images = [
+                        { url: "/images/logo.png"},
+                        { url: "/images/splash-background.jpg"},
+                        { url: "/images/splash-hero-image.png"},
+                        { url: "/images/splash-site-logo.png"},
+                    ];
+
+                for (var i = 0; i < images.length; ++i) {
+                     var img = new Image();
+                     img.src = images[i]['url'];
+                }
+            };
+
+            preloadImages();
+        </script>
     </body>
-    <script type="text/javascript">
-        // Make :active work in mobile safari
-        document.addEventListener("touchstart", function(){}, true);
-
-        window.addEventListener("load",function() {
-            // Set a timeout...
-            setTimeout(function() {
-                // Hide the address bar!
-                window.scrollTo(0, 1);
-            }, 0);
-        });
-
-        // Start app
-        var app = Elm.fullscreen(Elm.Main, {
-            geolocation: null,
-        });
-
-        // Set up user geolocation
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(updateLocation, noLocation);
-        } else {
-            noLocation();
-        }
-
-        function updateLocation(position) {
-                app.ports.geolocation.send({
-                    lat: position.coords.latitude,
-                    lng: position.coords.longitude
-                });
-        }
-        
-        function noLocation() {
-            app.ports.geolocation.send(null);
-        }
-    </script>
 </html>
