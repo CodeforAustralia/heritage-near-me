@@ -93,6 +93,49 @@ html, body, body > div {
             padding: 13px;
         }
 
+
+/* Splash screen style */
+.splash-screen {
+    height: 100%; /* use full height since there is no nav bar */
+    text-align: center;
+    position: relative;
+}
+
+    .splash-background {
+        height: 100%;
+        width: 100%;
+        background-color: #5A311C;
+        background-image: url("/images/splash-background.jpg");
+        background-repeat: no-repeat;
+        background-size: cover;
+        -webkit-filter: blur(2px) brightness(28%);
+        filter: blur(2px) brightness(28%);
+    }
+
+    .splash-content {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 100%;
+    }
+
+        .splash-hero-image img, .splash-app-logo img {
+            width: 200px;
+        }
+
+    .splash-footer {
+        position: absolute;
+        width: 100%;
+        bottom: 0;
+    }
+
+        .splash-footer img {
+            vertical-align: bottom;
+            margin-bottom: 10px;
+            width: 150px;
+        }
+
+
 /* Discovery (swiping) style */
 .discovery {
     display: flex;
