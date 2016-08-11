@@ -93,6 +93,16 @@ html, body, body > div {
             padding: 13px;
         }
 
+/* spinner / loader style */
+.loader {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+    .loader .pacman {
+        zoom: 50%;
+    }
 
 /* Splash screen style */
 .splash-screen {
