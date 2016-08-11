@@ -359,15 +359,27 @@ html, body, body > div {
                 font-weight: 600;
                 color: #354716;
                 padding: 75px 0 0;
+                transition: all 0.1s;
+                background-repeat: no-repeat;
+                background-color: transparent;
             }
-            .btn-story {
-                 background: url("/images/button-story.png") no-repeat;
+            .buttons .btn-story {
+                background-image: url("/images/button-story-off.png");
             }
-            .btn-more-info {
-                background: url("/images/button-more-info.png") no-repeat;
+            .buttons .btn-story:active, .buttons .btn-story:hover, .buttons .btn-story:focus {
+                background-image: url("/images/button-story-active.png");
             }
-            .btn-directions {
-                background: url("/images/button-directions.png") no-repeat;
+            .buttons .btn-more-info {
+                background-image: url("/images/button-more-info-off.png");
+            }
+            .buttons .btn-more-info:active, .buttons .btn-more-info:hover, .buttons .btn-more-info:focus {
+                 background-image: url("/images/button-more-info-active.png");
+            }
+            .buttons .btn-directions {
+                background-image: url("/images/button-directions-off.png");
+            }
+            .buttons .btn-directions:active, .buttons .btn-directions:hover, .buttons .btn-directions:focus {
+                background-image: url("/images/button-directions-active.png");
             }
 
 /* Story page style */
