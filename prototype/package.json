@@ -7,6 +7,7 @@
     "build": "make app"
   },
   "devDependencies": {
+    "loaders.css": "^0.1.2",
     "watch": "latest"
   }
 }
