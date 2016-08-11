@@ -81,9 +81,9 @@ app = StartApp.start
     { init = (initialApp, Effects.none)
     , view = view
     , update = update
-    , inputs = [history.signal, userLocation]
+    --, inputs = [history.signal, userLocation]
+    , inputs = [history.signal, Swiping.animate, userLocation]
     }
-    --, inputs = [history.signal, Swiping.animate, userLocation]
 
 {-| The HTML view created by the app -}
 main : Signal Html
@@ -178,7 +178,12 @@ and viewing the console while starting the app.
 
 -}
 update: AppAction -> AppModel -> (AppModel, Effects.Effects AppAction)
-update action model = (updateModel (Debug.log "updateModel action:" action) (Debug.log "updateModel model:" model), updateAction (Debug.log "updateAction action:" action) (Debug.log "updateAction model:" model))
+update action model =
+    let
+        _ = Debug.log "update w/ model.location" model.location
+        _ = Debug.log "update w/ action" action
+    in
+        (updateModel action model, updateAction action model)
 
 
 {-| This function updates the state of the app based on the given action and previous state of the app
@@ -192,7 +197,7 @@ updateModel action app = case (app.location, action) of
     (Discovering, Favourite)                  -> {app | location = Discovering, discovery = favouriteItem app.discovery}
     (Discovering, Pass)                       -> {app | location = Discovering, discovery = passItem app.discovery}
     -- Viewing location actions
-    (Viewing item view _ , Animate time window) -> {app | location = Viewing item {view | photoPosition = Swiping.animateStep time window view.photoPosition} screen1}
+    (Viewing item view screen', Animate time window) -> {app | location = Viewing item {view | photoPosition = Swiping.animateStep time window view.photoPosition} screen'}
     (Viewing item view _ , MovePhoto pos)       -> {app | location = Viewing item {view | photoPosition = pos} screen1}
     (Viewing item view _ , PrevPhoto)           -> {app | location = Viewing item {view | photoIndex = view.photoIndex-1, photoPosition = Static} screen1}
     (Viewing item view _ , NextPhoto)           -> {app | location = Viewing item {view | photoIndex = view.photoIndex+1, photoPosition = Static} screen1}
@@ -210,7 +215,12 @@ updateModel action app = case (app.location, action) of
     -- Geoposition update actions
     (_, UpdateLocation loc)                   -> {app | latLng = Debug.log "model setting GPS coords: " loc }
     -- Do nothing for the rest of the actions
-    (_, _)                                    -> (Debug.log "uM: (_,_)" app)
+    (_, _)                                    ->
+        let
+            _ = Debug.log "updateModel, no change for location" app.location
+            _ = Debug.log "updateModel, no change for action  " action
+        in
+            app
 
 
 
