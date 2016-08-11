@@ -1,4 +1,4 @@
-module Splash (view) where
+module Splash (view, loader) where
 
 import Html exposing (Html, div, img)
 import Html.Attributes exposing (class, src)
@@ -13,10 +13,37 @@ view =
               img [src "images/splash-hero-image.png"] []
             ]
             , div [class "splash-app-logo"] [
-                img [src "images/splash-app-logo.png"] []
+                img [src "images/logo.png"] []
             ]
         ]
+        , div [class "loader"] [loader]
         , div [class "footer splash-footer"] [
             img [src "images/splash-site-logo.png"] []
         ]
+    ]
+
+{-| Loading animation.
+
+See https://connoratherton.com/loaders
+-}
+loader : Html
+loader = ballScaleMultiple
+
+
+ballScaleMultiple : Html
+ballScaleMultiple =
+ div [class "loader-inner-xx ball-scale-multiple"] [
+          div [] []
+        , div [] []
+        , div [] []
+    ]
+
+pacman : Html
+pacman =
+    div [class "loader-inner pacman"] [
+          div [] []
+        , div [] []
+        , div [] []
+        , div [] []
+        , div [] []
     ]
