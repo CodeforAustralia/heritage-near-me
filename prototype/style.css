@@ -156,13 +156,18 @@ html, body, body > div {
 
                 .discovery-story-image i {
                     opacity: 0.5;
-                    font-size: 10em;
+                    font-size: 8em;
+                    position: absolute;
+                    top: 65px;
+                    margin: 0rem 1rem;
                 }
                 .discovery-story-image i.favourite {
                     color: #417505;
+                    right: 0;
                 }
                 .discovery-story-image i.pass {
                     color: red;
+                    left: 0;
                 }
 
             .discovery-story-details 
