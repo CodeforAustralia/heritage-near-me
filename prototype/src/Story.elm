@@ -21,30 +21,40 @@ import Swiping exposing (onSwipe, swipePhotoAction, itemSwipe, itemPos)
 Displays a simpler view if only part of the story is available.
 -} 
 view : Signal.Address AppAction -> RemoteData Story -> ItemView -> StoryScreen -> Html
-view address story item storyScreen = div [class "story"]
-    <| case story of
-        Loaded story ->
-            [ photoSlider address story item storyScreen
-            , metaHtml story storyScreen
-            ] ++ case story of
-                DiscoverStory discoverStory -> [loading]
-                FullStory fullStory -> [
-                    buttons address story storyScreen
-                    , introOrBody story storyScreen
-                    , moreInfo address story storyScreen
-                    ]
-        Failed error ->
-            [ div [class "error"] [text "Something went wrong: ", text <| toString <| log error]]
-        Loading ->
-            [ loading ]
+view address story item storyScreen =
+    let
+        loadStatus =
+            case story of
+                Loaded (DiscoverStory s) -> "story-loading" -- because no FullStory yet
+                _ -> ""
+    in div [class <| "story content-area " ++ loadStatus]
+        <| case story of
+            Loaded story ->
+                [ photoSlider address story item storyScreen
+                , metaHtml story storyScreen
+                ] ++ case story of
+                    DiscoverStory discoverStory -> [loading]
+                    FullStory fullStory -> [
+                        buttons address story storyScreen
+                        , introOrBody story storyScreen
+                        , moreInfo address story storyScreen
+                        ]
+            Failed error ->
+                [ div [class "error"] [text "Something went wrong: ", text <| toString <| log error]]
+            Loading ->
+                [ loading ]
 
 
 metaHtml : Story -> StoryScreen -> Html
 metaHtml story screen =
     case (story, screen) of
 
-        (DiscoverStory _, _) ->
-            titleHtml story
+        (DiscoverStory s, _) ->
+
+            div [class "screen-header"] [
+                titleHtml story
+                , div [class "story-site"] [text (sitesName s.sites)]
+            ]
 
         (FullStory _, MoreInfo) ->
             text ""
