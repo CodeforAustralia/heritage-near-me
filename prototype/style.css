@@ -37,6 +37,14 @@ html, body, body > div {
      z-index: 2;
 }
 
+/* adjust some screens to start after nav bar
+   (but not all: screens with photos start beneath nav bar) */
+.favourites-screen .favourites,
+.story-screen.story-body .fullStory-meta,
+.story-screen.story-more-info .content-area {
+    margin-top: 65px;
+}
+
 /*.story-screen .navigation, 
 .favourites-screen .navigation  {
     background: rgba(0, 0, 0, 0.6);
@@ -284,7 +292,6 @@ html, body, body > div {
 /* Favourites list style */
 .favourites {
     margin: 16px;
-    margin-top: 65px;
 }
 
     .favourites .favourites-empty {
@@ -386,7 +393,6 @@ html, body, body > div {
         .story {
             height: auto;
             min-height: 100vh;
-            /* margin-top: 65px; */ /* match height of navigation bar */
             background-color: #FCFCFC; /* just off white */
             color: #343434;
             padding-bottom: 10px;
@@ -535,9 +541,10 @@ html, body, body > div {
    .story-body .fullStory-meta {
          background: none;
          position: absolute;
-         top: 65px;
-         display: block;
-         margin: 0;
+         top: 0;
+         margin-left: 0;
+         margin-right: 0;
+         margin-bottom: 0;
          z-index: 1;
     }
     
@@ -600,7 +607,6 @@ html, body, body > div {
     background-color: #77a131;
 }
     .story-more-info .screen-header {
-        margin-top: 65px;
         padding-bottom: 2rem;
         padding-top: 1rem;
     }
