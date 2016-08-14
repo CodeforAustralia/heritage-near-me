@@ -25,7 +25,8 @@ App screens:
     * ViewingFavourites: You are looking at your list of favourite stories.
 -}
 type Location id =
-      Discovering
+      SplashPage
+    | Discovering
     | Viewing id ItemView StoryScreen
     | ViewingFavourites
 
@@ -52,6 +53,7 @@ type Action id a =
     | JumpPhoto Int
     | View id StoryScreen
     | ViewFavourites
+    | ViewSplashPage
     | Back
     | LoadData UpdaterFunction
     | LoadDiscoveryData (RemoteData (List id)) UpdaterFunction

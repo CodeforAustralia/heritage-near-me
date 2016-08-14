@@ -21,6 +21,8 @@ titleHtml location =
     in
         case location of
 
+            SplashPage -> none
+
             Discovering ->
                 container [logoDiv]
 
@@ -38,6 +40,8 @@ buttonHtml : Signal.Address AppAction -> AppLocation -> Html
 buttonHtml address location =
     case location of
 
+        SplashPage -> none
+
         Discovering ->
             button [onClick address ViewFavourites] [i [class "fa fa-heart fa-2x"] []]
 
@@ -47,3 +51,5 @@ buttonHtml address location =
         ViewingFavourites ->
              button [onClick address Discover] [i [class "fa fa-map fa-2x"] []]
 
+none : Html
+none = text ""

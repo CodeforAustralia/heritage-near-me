@@ -93,7 +93,71 @@ html, body, body > div {
             padding: 13px;
         }
 
-/* Discovery (swiping) stlye */
+/* spinner / loader style */
+.loader {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+    .loader .pacman {
+        zoom: 50%;
+    }
+
+/* Splash screen style */
+.splash-screen {
+    height: 100%; /* use full height since there is no nav bar */
+    text-align: center;
+    position: relative;
+}
+
+    .splash-background {
+        height: 100%;
+        width: 100%;
+        background-color: #5A311C;
+        background-image: url("/images/splash-background.jpg");
+        background-repeat: no-repeat;
+        background-size: cover;
+        -webkit-filter: blur(1px) brightness(28%);
+        filter: blur(1px) brightness(28%);
+    }
+
+    .splash-content {
+        position: absolute;
+        top: 20%;
+        width: 100%;
+    }
+
+        .splash-hero-image img, .splash-app-logo img {
+            width: 200px;
+        }
+        .splash-hero-image img {
+            height: 115px;
+        }
+
+        .splash-app-logo {
+            margin-top: 1em;
+        }
+
+    .splash-screen .loader {
+        position: absolute;
+        top: 75%;
+    }
+
+    .splash-footer {
+        position: absolute;
+        width: 100%;
+        bottom: 0;
+    }
+
+        .splash-footer img {
+            vertical-align: bottom;
+            margin-bottom: 10px;
+            width: 150px;
+        }
+
+
+/* Discovery (swiping) style */
 .discovery {
     display: flex;
     flex-direction: column;
@@ -105,13 +169,8 @@ html, body, body > div {
 
     .discovery-empty {
         height: 100%;
-        padding-top: 30vh;
     }
 
-        .discovery-empty h2 {
-            color: white;
-        }
-    
     .discovery-story {
         position: relative;
         display: flex;
