@@ -39,6 +39,7 @@ html, body, body > div {
 
 /* adjust some screens to start after nav bar
    (but not all: screens with photos start beneath nav bar) */
+.about-screen .content-area,
 .favourites-screen .favourites,
 .story-screen.story-body .fullStory-meta,
 .story-screen.story-more-info .content-area {
@@ -53,12 +54,19 @@ html, body, body > div {
         height: 100%;
         text-align: center;
     }
-    .favourites-screen .navigation-center {
+/*    .favourites-screen .navigation-center {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }*/
+    .navigation-center {
         display: flex;
         align-items: center;
         justify-content: center;
     }
-        .favourites-screen .navigation-center h1 {
+        /*.favourites-screen .navigation-center h1 {*/
+
+        .navigation-center h1 {
             color: white;
             font-size: 24px;
             font-weight: 400;
@@ -164,6 +172,34 @@ html, body, body > div {
             width: 150px;
         }
 
+
+/* About screen style */
+.about-screen {
+    background: #383636;
+}
+    .about-screen section {
+        margin: 0 16px;
+        color: #F9F9FB;
+    }
+    .about-screen p {
+        padding: 0;
+        color: #F9F9FB;
+    }
+    .about-image {
+        margin-top: 12px;
+        max-height: 40px;
+    }
+    .about-screen a {
+        color: white;
+        border-bottom: 1px solid #DCDCDC;
+        margin-bottom: 15px;
+    }
+    .about-screen a .external-link {
+        color: #DCDCDC;
+    }
+    .about-screen .content-area {
+        padding-bottom: 15px;
+    }
 
 /* Discovery (swiping) style */
 .discovery {
@@ -736,7 +772,7 @@ html, body, body > div {
             border-bottom: none;
         }
 
-            .links ul li a {
+            .links ul li a, .block-link {
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
@@ -752,7 +788,10 @@ html, body, body > div {
                 background-color: #eee;
             }
 
-                .links ul li a .link-arrow {
+                /*.links ul li a .link-arrow {*/
+                /*.links ul li a .link-arrow .external-link {*/
+
+                .link-arrow {
                     flex-shrink: 0;
                 }
 
@@ -765,7 +804,7 @@ html, body, body > div {
                     display: inline-block;
                 }
 
-                .links ul li a .link-arrow i {
+                .link-arrow i {
                     float: right;
                     margin-left: 5px;
                     padding: 2px;
