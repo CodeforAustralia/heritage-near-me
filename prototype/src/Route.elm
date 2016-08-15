@@ -13,6 +13,7 @@ action : List String -> List AppAction
 action url = case url of
     "discover"::_ -> [Discover]
     "favourites"::_ -> [ViewFavourites]
+    "about"::_ -> [ViewAboutScreen]
     "story"::storyId::storyScreen::_ ->
         let
             id = parseStoryId storyId
@@ -32,6 +33,7 @@ url : AppModel -> AppModel -> Maybe HashUpdate
 url old new = if old.location /= new.location then
         Just <| case new.location of
             SplashPage        -> RouteHash.set [""]
+            AboutScreen       -> RouteHash.set ["about"]
             Discovering       -> RouteHash.set ["discover"]
             ViewingFavourites -> RouteHash.set ["favourites"]
             Viewing storyId _ storyScreen -> RouteHash.set ["story", storyIdToStr storyId, urliseStoryScreen storyScreen]
