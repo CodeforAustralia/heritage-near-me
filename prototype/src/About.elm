@@ -10,13 +10,13 @@ view =
     let
         appInfo =
             { image = "images/logo.png"
-            , description = "[Filler content] Heritage Near Me is a government initiative to implement transformational change to protect, share, and celebrate heritage in NSW at the local level by working closely with local government and communities to ensure that local heritage values have greater recognition."
+            , description = "Heritage Near Me is a government initiative to implement transformational change to protect, share, and celebrate heritage in NSW at the local level by working closely with local government and communities to ensure that local heritage values have greater recognition."
             , title = "Heritage Near Me"
             , url = "http://github.com/CodeforAustralia/heritage-near-me"
             }
         creditInfo =
             { image = "images/logo-code-for-australia.png"
-            , description = "[Filler content] Franchise semiotics geodesic stimulate weathered-ware bicycle cyber-warehouse skyscraper chrome drone. Chiba denim pistol man math-bicycle neural euro-pop sensory nodal point. Ablative industrial grade network film drone vehicle shoes futurity 3D-printed tanto Chiba systemic. Chiba savant sprawl 8-bit narrative shoes wonton soup uplink courier faded concrete man singularity math-tiger-team."
+            , description = "Code for Australia is nonprofit whose vision is a responsive government that works seamlessly with the public to create meaningful change through technology. This project was built by Code for Australia's 2016 fellows in Sydney."
             , title = "Code for Australia"
             , url = "http://codeforaustralia.org"
             }
