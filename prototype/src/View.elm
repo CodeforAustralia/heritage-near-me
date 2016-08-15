@@ -14,6 +14,7 @@ import Types exposing (..)
 import Remote.Data
 import Data
 import Splash
+import About
 import Navigation exposing (navigation)
 import Discover
 import Story
@@ -38,6 +39,11 @@ screenView : Signal.Address AppAction -> AppModel -> Html
 screenView address app = case app.location of
 
     SplashPage -> Splash.view
+
+    AboutScreen -> div [class "about-screen"]
+        [ navigation address app.location
+        , About.view
+        ]
 
     Discovering -> Discover.view address app
         <| navigation address app.location
