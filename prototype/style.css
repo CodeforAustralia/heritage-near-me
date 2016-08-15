@@ -41,7 +41,8 @@ html, body, body > div {
    (but not all: screens with photos start beneath nav bar) */
 .favourites-screen .favourites,
 .story-screen.story-body .fullStory-meta,
-.story-screen.story-more-info .content-area {
+.story-screen.story-more-info .content-area,
+.discovery-screen .discovery-empty {
     margin-top: 65px;
 }
 
