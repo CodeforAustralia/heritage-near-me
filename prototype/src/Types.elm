@@ -26,6 +26,7 @@ App screens:
 -}
 type Location id =
       SplashPage
+    | AboutScreen
     | Discovering
     | Viewing id ItemView StoryScreen
     | ViewingFavourites
@@ -54,6 +55,7 @@ type Action id a =
     | View id StoryScreen
     | ViewFavourites
     | ViewSplashPage
+    | ViewAboutScreen
     | Back
     | LoadData UpdaterFunction
     | LoadDiscoveryData (RemoteData (List id)) UpdaterFunction
