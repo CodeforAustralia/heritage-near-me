@@ -23,6 +23,9 @@ titleHtml location =
 
             SplashPage -> none
 
+            AboutScreen ->
+                container [h1 [] [text "About"]]
+
             Discovering ->
                 container [logoDiv]
 
@@ -42,14 +45,21 @@ buttonHtml address location =
 
         SplashPage -> none
 
+        AboutScreen ->
+            backButton address
+
         Discovering ->
             button [onClick address ViewFavourites] [i [class "fa fa-heart fa-2x"] []]
 
         Viewing _ _ _ ->
-            button [onClick address Back] [i [class "fa fa-angle-left fa-3x"] []]
+            backButton address
 
         ViewingFavourites ->
              button [onClick address Discover] [i [class "fa fa-map fa-2x"] []]
+
+backButton : Signal.Address AppAction -> Html
+backButton address =
+    button [onClick address Back] [i [class "fa fa-angle-left fa-3x"] []]
 
 none : Html
 none = text ""
