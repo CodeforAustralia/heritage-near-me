@@ -36,15 +36,15 @@ navigation address location =
                 }
 
             ViewingFavourites -> navBarHtml
-                { side1 = [goDiscoverButton]
+                { side1 = [goBackButton]
                 , center = [navTitle "Favourites"]
                 , side2 = []
                 }
 
             Discovering -> navBarHtml
-                { side1 = [goFavsButton]
+                { side1 = []
                 , center = [logoDiv]
-                , side2 = []
+                , side2 = [goFavsButton]
                 }
 
 
