@@ -12,7 +12,8 @@ navigation address location =
     let
         -- define some html components
         goBackButton = button [onClick address Back] [i [class "fa fa-angle-left fa-3x"] []]
-        goDiscoverButton = button [onClick address Discover] [i [class "fa fa-map fa-2x"] []]
+        goDiscoverButton = button [onClick address Discover] [i [class "fa fa-compass fa-2x"] []]
+        goMapButton = button [onClick address ViewMapScreen] [i [class "fa fa-map fa-2x"] []]
         goFavsButton = button [onClick address ViewFavourites] [i [class "fa fa-heart fa-2x"] []]
         logoDiv = div [class "logo"] [a [href "/"] [img [src "images/logo.png"] []]]
         navTitle title = h1 [] [text title]
@@ -44,9 +45,19 @@ navigation address location =
             Discovering -> navBarHtml
                 { side1 = []
                 , center = [logoDiv]
-                , side2 = [goFavsButton]
+                , side2 =
+                    [ goMapButton
+                    , goFavsButton ]
                 }
 
+            MapScreen -> navBarHtml
+                { side1 = []
+                , center = [logoDiv]
+                , side2 =
+                    [ goDiscoverButton
+                    , goFavsButton
+                    ]
+                }
 
 type alias NavBarElements =
     { side1 : List Html
