@@ -119,6 +119,9 @@ history = Signal.mailbox NoAction
 {-| Location from browser -}
 port geolocation : Signal Json.Encode.Value
 
+-- extra port
+port showMap : Signal Bool
+port showMap = Signal.map (\m -> m.location == MapScreen) app.model
 {-| Signal with Actions to update the user's location.
 If `Nothing` then the user has disallowed geolocation.
 -}
