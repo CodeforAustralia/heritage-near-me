@@ -35,6 +35,13 @@ html, body, body > div {
      position: fixed;
      width: 100%;
      z-index: 2;
+     display: flex;
+}
+.navigation > div {
+    flex: 1 0; /* grow, don't shrink */
+}
+.navigation button {
+    height: 100%;
 }
 
 /* adjust some screens to start after nav bar
@@ -78,7 +85,7 @@ html, body, body > div {
             color: white;
             background: none;
             border: none;
-            height: inherit;
+            /* height: inherit; */
             cursor: pointer;
             transition: all 0.3s ease 0s;
             opacity: 1;
@@ -93,8 +100,8 @@ html, body, body > div {
         }
 
         .navigation button:first-child {
-            position: absolute;
-            float: left;
+            /* position: absolute; */
+            /* float: left; */
             margin-left: 10px;
         }
 

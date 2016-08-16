@@ -1,6 +1,6 @@
 module Navigation (navigation) where
 
-import Html exposing (Html, div, nav, h1, img, button, a, i, text)
+import Html exposing (Html, div, span, nav, h1, img, button, a, i, text)
 import Html.Attributes exposing (class, src, href)
 import Html.Events exposing (onClick)
 
@@ -9,57 +9,55 @@ import Types exposing (..)
 {-| The top level navigation view for the app -}
 navigation : Signal.Address AppAction -> AppLocation -> Html
 navigation address location =
-    nav [class "navigation"] [ buttonHtml address location, titleHtml location]
-
-
-
-{-| Generate the title of the nav bar, which may vary depending on the screen -}
-titleHtml : AppLocation -> Html
-titleHtml location =
     let
-        container = div [class "navigation-center"]
+        -- define some html components
+        goBackButton = button [onClick address Back] [i [class "fa fa-angle-left fa-3x"] []]
+        goDiscoverButton = button [onClick address Discover] [i [class "fa fa-map fa-2x"] []]
+        goFavsButton = button [onClick address ViewFavourites] [i [class "fa fa-heart fa-2x"] []]
+        logoDiv = div [class "logo"] [a [href "/"] [img [src "images/logo.png"] []]]
+        navTitle title = h1 [] [text title]
+        noNavBar = text ""
     in
+        -- produce a different nav bar for every AppLocation
         case location of
 
-            SplashPage -> none
+            SplashPage -> noNavBar
 
-            AboutScreen ->
-                container [h1 [] [text "About"]]
+            AboutScreen -> navBarHtml
+                { side1 = [goBackButton]
+                , center = [navTitle "About"]
+                , side2 = []
+                }
 
-            Discovering ->
-                container [logoDiv]
+            Viewing _ _ _ -> navBarHtml
+                { side1 = [goBackButton]
+                , center = [logoDiv]
+                , side2 = []
+                }
 
-            Viewing _ _ _ ->
-                container [logoDiv]
+            ViewingFavourites -> navBarHtml
+                { side1 = [goDiscoverButton]
+                , center = [navTitle "Favourites"]
+                , side2 = []
+                }
 
-            ViewingFavourites ->
-                container [h1 [] [text "Favourites"]]
+            Discovering -> navBarHtml
+                { side1 = [goFavsButton]
+                , center = [logoDiv]
+                , side2 = []
+                }
 
-logoDiv = div [class "logo"] [a [href "/"] [img [src "images/logo.png"] []]]
 
+type alias NavBarElements =
+    { side1 : List Html
+    , center : List Html
+    , side2 : List Html
+    }
 
-{-| Generate the top button on the nav bar, which may vary depending on the screen. -}
-buttonHtml : Signal.Address AppAction -> AppLocation -> Html
-buttonHtml address location =
-    case location of
-
-        SplashPage -> none
-
-        AboutScreen ->
-            backButton address
-
-        Discovering ->
-            button [onClick address ViewFavourites] [i [class "fa fa-heart fa-2x"] []]
-
-        Viewing _ _ _ ->
-            backButton address
-
-        ViewingFavourites ->
-             button [onClick address Discover] [i [class "fa fa-map fa-2x"] []]
-
-backButton : Signal.Address AppAction -> Html
-backButton address =
-    button [onClick address Back] [i [class "fa fa-angle-left fa-3x"] []]
-
-none : Html
-none = text ""
+navBarHtml : NavBarElements -> Html
+navBarHtml bar =
+    nav [class "navigation"]
+        [ div [class "navigation-side1"] bar.side1
+        , div [class "navigation-center"] bar.center
+        , div [class "navigation-side2"] bar.side2
+        ]
