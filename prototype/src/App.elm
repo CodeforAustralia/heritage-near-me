@@ -214,6 +214,7 @@ updateModel action app = case (app.location, action) of
     (_, View story' screen')                  -> {app | location = Viewing story' initialItemView screen'}
     (_, ViewFavourites)                       -> {app | location = ViewingFavourites}
     (_, ViewAboutScreen)                      -> {app | location = AboutScreen}
+    (_, ViewMapScreen)                        -> {app | location = MapScreen}
     -- Data update actions
     (_, LoadData updateItems)                 -> {app | items = updateItems app.items}
     (_, LoadDiscoveryData items updateItems)  -> {app | items = updateItems app.items, discovery = updateDiscoverableItems app.discovery items}
