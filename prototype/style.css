@@ -48,7 +48,7 @@ html, body, body > div {
 }
 .navigation-side2 {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-around;
 }
 
 /* adjust some screens to start after nav bar
@@ -109,7 +109,7 @@ html, body, body > div {
         .navigation button:first-child {
             /* position: absolute; */
             /* float: left; */
-            margin-left: 10px;
+            /* margin: 0 10px; */
         }
 
         .navigation .logo {
