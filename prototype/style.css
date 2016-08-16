@@ -36,12 +36,19 @@ html, body, body > div {
      width: 100%;
      z-index: 2;
      display: flex;
+     justify-content: space-between;
+     box-sizing: border-box;
+     padding: 0 1em;
 }
 .navigation > div {
     flex: 1 0; /* grow, don't shrink */
 }
 .navigation button {
     height: 100%;
+}
+.navigation-side2 {
+    display: flex;
+    justify-content: flex-end;
 }
 
 /* adjust some screens to start after nav bar
