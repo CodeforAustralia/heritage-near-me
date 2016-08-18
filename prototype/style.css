@@ -200,6 +200,46 @@ html, body, body > div {
             width: 150px;
         }
 
+/* map style */
+.mapboxgl-marker.site-marker {
+    background-size: cover;
+    border-radius: 20px;
+    width: 40px;
+    height: 40px;
+    border-width: 0;
+}
+    .mapboxgl-marker.site-marker:hover {
+        box-shadow: 1px 1px 1px black;
+    }
+
+    .mapboxgl-popup-content {
+        max-width: 80%;
+    }
+    .popup-site-overview {
+        display: flex;
+        height: 100px;
+    }
+        .popup-site-text {
+            flex: 4 0;
+            margin-right: 5px;
+        }
+            .popup-site-text h1 {
+                color: black;
+                font-size: 14px;
+                margin: 0;
+                text-align: left;
+                font-weight: bold;
+            }
+        .popup-site-image {
+            flex: 0 1;
+            height: 100%;
+        }
+        .popup-site-image img {
+            height: 100%;
+        }
+
+
+
 
 /* About screen style */
 .about-screen {
