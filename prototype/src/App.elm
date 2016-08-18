@@ -37,6 +37,7 @@ import StartApp
 import Types exposing (..)
 import Remote.Data exposing (RemoteData(..))
 import Remote.DataStore exposing (RemoteDataStore)
+import Encoders exposing (remoteFullStoriesMapEncoder)
 import Route
 import Data
 import View exposing (view)
@@ -126,6 +127,13 @@ port showMap =
         booleanSignal =  Signal.map (\m -> m.location == MapScreen) app.model
     in
         Signal.dropRepeats booleanSignal
+
+
+{-| Any time the model changes, Json-encode our fetched stories and send to JavaScript-land for mapping. -}
+--port mapMarkers : Signal Json.Encode.Value
+--port mapMarkers =
+--    Signal.map (\m -> remoteFullStoriesMapEncoder m.items) app.model
+
 
 {-| Signal with Actions to update the user's location.
 If `Nothing` then the user has disallowed geolocation.
