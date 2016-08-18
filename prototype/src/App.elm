@@ -121,7 +121,12 @@ port geolocation : Signal Json.Encode.Value
 
 -- extra port
 port showMap : Signal Bool
-port showMap = Signal.map (\m -> m.location == MapScreen) app.model
+port showMap =
+    let
+        booleanSignal =  Signal.map (\m -> m.location == MapScreen) app.model
+    in
+        Signal.dropRepeats booleanSignal
+
 {-| Signal with Actions to update the user's location.
 If `Nothing` then the user has disallowed geolocation.
 -}
