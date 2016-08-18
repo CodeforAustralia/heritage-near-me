@@ -12,8 +12,8 @@
         <link rel="stylesheet" type="text/css" href="style.css">
         <link rel="stylesheet" type="text/css" href="css/loaders.min.css">
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
-        <link rel="stylesheet" href="https://npmcdn.com/leaflet@1.0.0-rc.3/dist/leaflet.css" />
-        <script src="https://npmcdn.com/leaflet@1.0.0-rc.3/dist/leaflet.js"></script>
+        <script src='https://api.mapbox.com/mapbox-gl-js/v0.22.0/mapbox-gl.js'></script>
+        <link href='https://api.mapbox.com/mapbox-gl-js/v0.22.0/mapbox-gl.css' rel='stylesheet' />
 
         <script src="https://use.typekit.net/tzz4als.js"></script>
         <script>try{Typekit.load({ async: true });}catch(e){}</script>
@@ -65,35 +65,184 @@
                 app.ports.geolocation.send(null);
             }
 
-            /* show map when Elm wants us to */
-            mapEl = document.getElementById("map");
-            app.ports.showMap.subscribe(function(showMap) {
-                console.log("show map: " + showMap);
-                if (showMap) {
-                    mapEl.style.zIndex = '2';
 
-                } else {
-                    mapEl.style.zIndex = '-1';
-                }
-            });
-
-
+            var map = null;
             function setupMap() {
 
-                var map = L.map('map').setView([-33.868820, 151.209296], 13);
+                // TODO: when user location changes, update person marker
+                var startLngLat = [151.209296, -33.868820];  // just Sydney for now: TODO - USER LOCATION
 
-                L.tileLayer('https://api.tiles.mapbox.com/v4/mapbox.emerald/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoidGVjaGllc2hhcmsiLCJhIjoiYzk2ZEFWTSJ9.8ZY6rG2BWXkDBmvAPvn_nw', {
-                    attribution: 'Mapbox <a href="https://mapbox.com/about/maps" target="_blank">Terms &amp; Feedback</a>'
-                }).addTo(map);
+                mapboxgl.accessToken = 'pk.eyJ1IjoiamVzc2Vtb3JlYnVycml0b3MiLCJhIjoiY2lraHBxMm10MDI4b3RubTZ1ZnU0emF0eSJ9.1XYxvJb60uABEGx4aDXTbg';
 
-                // Latitude: N (+90), S (-90)
-                // Longitude: E (+180) / W (-180)
-                L.marker([-33.9, 151.209296]).addTo(map)
-                    .bindPopup('A pretty CSS3 popup.<br> Easily customizable.')
-                    .openPopup();
+                map = new mapboxgl.Map({
+                    container: 'map',
+                    style: 'mapbox://styles/jessemoreburritos/cikhuc8i600239vm0q8524u9e',
+                    center: startLngLat,
+                    zoom: 13,
+                });
+
+                function mapClickHandler (e) {
+                    var features = map.queryRenderedFeatures(e.point, { layers: ['places'] });
+
+                    if (!features.length) {
+                        return;
+                    }
+
+                    var feature = features[0];
+
+                    // Populate the popup and set its coordinates
+                    // based on the feature found.
+                    var popup = new mapboxgl.Popup()
+                        .setLngLat(feature.geometry.coordinates)
+                        .setHTML(feature.properties.description)
+                        .addTo(map);
+                }
+
+                // When a click event occurs near a place, open a popup at the location of
+                // the feature, with description HTML from its properties.
+                map.on('click', mapClickHandler);
             }
 
             setupMap();
+
+
+            // rowToFeature : row -> GeoJSON Feature
+            function rowToFeature (row) {
+                return {
+                    "type": "Feature",
+                    "properties": row,
+                    "geometry":
+                        {
+                            "type": "Point",
+                            "coordinates": [row.longitude, row.latitude]
+                        }
+                }
+            }
+
+            //toGeoJson : List row -> GeoJSON object
+            function toGeoJson (rows) {
+                return {
+                        "type": "FeatureCollection",
+                        "features": rows.map(rowToFeature)
+                    }
+            }
+
+            var geojson;
+            var popups = [];
+
+            function closeAllPopups () {
+                popups.forEach(function (popup) {
+                    popup.remove();
+                })
+            }
+
+            function popupContent (marker) {
+
+                function storyCountOrOnlyStoryTitle (marker) {
+                    var p = marker.properties,
+                        s = p.stories[0];
+
+                    return p.story_count !== 1 ?
+                        p.story_count :
+                        '<a href="#!/story/' + s.id + '">' + s.title + '</a>';
+                }
+
+                return '' +
+                    '<article class="popup">' +
+                        '<header class="popup-site-overview">' +
+                            '<div class="popup-site-text">' +
+                                '<h1>' + marker.properties.name + '</h1>' +
+                                storyCountOrOnlyStoryTitle(marker) +
+                            '</div>' +
+                            '<div class="popup-site-image">' +
+                                '<img src="' + marker.properties.featured_photo + '">' +
+                            '</div>'
+                        '</header>' +
+                    '</article>';
+            }
+
+            // request sites to put on map
+            function getSites () {
+                var request = new XMLHttpRequest();
+                request.open('GET', '/api/rpc/all_site', true);
+
+                request.onload = function() {
+                  if (request.status >= 200 && request.status < 400) {
+                    // Success!
+                    var data = JSON.parse(request.responseText);
+                    console.log("fetched sites:");
+                    console.log(data);
+                    geojson = toGeoJson(data);
+                    console.log("geojson:");
+                    console.log(geojson);
+
+                    map.once('load', function load() {
+                        console.log("map: adding source to mapbox");
+                        map.addSource('heritage-sites', {type: 'geojson', data: geojson});
+
+                        // add markers to map
+                        geojson.features.forEach(function(marker) {
+
+                            // create an image element for the marker
+                            var el = document.createElement('button');
+                            el.className = 'site-marker';
+                            el.style.backgroundImage = 'url(' + marker.properties.featured_photo + ')';
+
+                            el.addEventListener('click', function() {
+                                closeAllPopups();
+                                var popup = new mapboxgl.Popup({closeOnClick: false})
+                                    .setLngLat(marker.geometry.coordinates)
+                                    .setHTML(popupContent(marker))
+                                    .addTo(map);
+                                popups.push(popup);
+                            });
+
+                            // add marker to map
+                            new mapboxgl.Marker(el)
+                                .setLngLat(marker.geometry.coordinates)
+                                .addTo(map);
+
+                        });
+
+
+
+                    });
+
+                  } else {
+                    // We reached our target server, but it returned an error
+                    console.log("failed fetching sites from server")
+                  }
+                };
+
+                request.onerror = function() {
+                  // There was a connection error of some sort
+                  console.log("connection error while fetching sites");
+                };
+
+                request.send();
+            }
+
+            getSites();
+
+
+
+
+            /* show map when Elm wants us to */
+            mapContainerEl = document.getElementsByClassName("map-container")[0];
+            app.ports.showMap.subscribe(function(showMap) {
+                console.log("show map: " + showMap);
+                if (showMap) {
+                    mapContainerEl.style.zIndex = '1';
+                } else {
+                    mapContainerEl.style.zIndex = '-1';
+                }
+            });
+
+            // var markers = null;
+            // app.ports.mapMarkers.subscribe(function (data) {
+            //     console.log("map markers:");
+            //     console.log(data);
+            // });
 
 
             /* preload images - define and run immediately */
