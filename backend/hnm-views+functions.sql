@@ -7,6 +7,33 @@ DROP SCHEMA IF EXISTS hnm CASCADE;
 SET client_min_messages TO NOTICE; -- notices OK after DROP SCHEMA
 
 CREATE SCHEMA hnm
+
+    -- produces the content we need for the map interface:
+    --   sites with lat+Lng + photo,
+    --   and each site with a list of associated stories (just id and title)
+    CREATE VIEW all_site AS
+        SELECT
+            site.id,
+            site.latitude,
+            site.longitude,
+            site.name,
+            (SELECT COUNT(*) FROM story_site WHERE story_site.site_id = site.id) AS story_count,
+            (SELECT photo FROM photo
+                JOIN story_photo ON story_photo.photo_id = photo.id
+                WHERE story_photo.story_id = story_site.story_id LIMIT 1) AS featured_photo,
+            (SELECT json_agg(
+                json_object(
+                    '{id, title}',
+                    ARRAY[
+                        story.id::text,
+                        story.title
+                        ])::jsonb)
+                FROM story
+                WHERE story.id = story_site.story_id) AS stories
+        FROM site
+        LEFT JOIN story_site ON story_site.site_id = site.id
+
+
     CREATE VIEW story_discover AS
         SELECT DISTINCT ON (story.id) -- just picks one row https://www.postgresql.org/message-id/22uphu0hohpbnvg3a6d4qv21ofr4di7kda%404ax.com
             story.id, story.title, story.blurb, photo.photo,
