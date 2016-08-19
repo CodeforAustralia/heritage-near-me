@@ -508,6 +508,9 @@ html, body, body > div {
     }
 
 /* Story page style */
+        .story.content-area {
+            position: relative; /* so we can absolutely position .fullStory-meta relative to this */
+        }
         .story {
             height: auto;
             min-height: 100vh;
