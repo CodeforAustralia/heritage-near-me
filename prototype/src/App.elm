@@ -37,6 +37,7 @@ import StartApp
 import Types exposing (..)
 import Remote.Data exposing (RemoteData(..))
 import Remote.DataStore exposing (RemoteDataStore)
+import Encoders exposing (remoteFullStoriesMapEncoder)
 import Route
 import Data
 import View exposing (view)
@@ -118,6 +119,21 @@ history = Signal.mailbox NoAction
 
 {-| Location from browser -}
 port geolocation : Signal Json.Encode.Value
+
+-- extra port
+port showMap : Signal Bool
+port showMap =
+    let
+        booleanSignal =  Signal.map (\m -> m.location == MapScreen) app.model
+    in
+        Signal.dropRepeats booleanSignal
+
+
+{-| Any time the model changes, Json-encode our fetched stories and send to JavaScript-land for mapping. -}
+--port mapMarkers : Signal Json.Encode.Value
+--port mapMarkers =
+--    Signal.map (\m -> remoteFullStoriesMapEncoder m.items) app.model
+
 
 {-| Signal with Actions to update the user's location.
 If `Nothing` then the user has disallowed geolocation.
@@ -214,6 +230,7 @@ updateModel action app = case (app.location, action) of
     (_, View story' screen')                  -> {app | location = Viewing story' initialItemView screen'}
     (_, ViewFavourites)                       -> {app | location = ViewingFavourites}
     (_, ViewAboutScreen)                      -> {app | location = AboutScreen}
+    (_, ViewMapScreen)                        -> {app | location = MapScreen}
     -- Data update actions
     (_, LoadData updateItems)                 -> {app | items = updateItems app.items}
     (_, LoadDiscoveryData items updateItems)  -> {app | items = updateItems app.items, discovery = updateDiscoverableItems app.discovery items}

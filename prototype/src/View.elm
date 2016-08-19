@@ -40,6 +40,9 @@ screenView address app = case app.location of
 
     SplashPage -> Splash.view
 
+    MapScreen -> div [class "map-screen"]
+        [ navigation address app.location ]
+
     AboutScreen -> div [class "about-screen"]
         [ navigation address app.location
         , About.view
