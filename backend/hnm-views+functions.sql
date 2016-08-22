@@ -34,6 +34,15 @@ CREATE SCHEMA hnm
         LEFT JOIN story_site ON story_site.site_id = site.id
 
 
+    -- view useful for testing photo URLs for each site
+    CREATE VIEW site_photos AS
+        SELECT site.id AS site_id, site.name AS site_name, photo.id AS photo_id, photo.photo
+        FROM site
+        JOIN story_site ON story_site.site_id = site.id
+        JOIN story_photo ON story_photo.story_id = story_site.story_id
+        JOIN photo ON photo.id = story_photo.photo_id
+
+
     CREATE VIEW story_discover AS
         SELECT DISTINCT ON (story.id) -- just picks one row https://www.postgresql.org/message-id/22uphu0hohpbnvg3a6d4qv21ofr4di7kda%404ax.com
             story.id, story.title, story.blurb, photo.photo,
