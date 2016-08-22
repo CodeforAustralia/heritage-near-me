@@ -12,24 +12,38 @@ function geocode (heritageItems, callback) {
 
     const geocodePromises = heritageItems.map((item, index) => new Promise (function (resolve, reject) {
 
-        // delay each API query long enough so we don't hit Google's 10 queries / second limit
-        // a delay > 100ms between queries should do the trick (10 queries * 101ms gives  >1 second / 10 queries)
-        setTimeout (() => {
-            geocoder.geocode(item.address, function setLocation (err, res) {
-                if (err) {
-                    reject(`geocoding address "${item.address}" failed: ${err}`)
-                } else {
-                    item.location = {}
-                    item.location.latitude = res[0].latitude
-                    item.location.longitude = res[0].longitude
+        if (item.location &&
+                typeof item.location.latitude !== 'undefined' && item.location.latitude !== "" &&
+                typeof item.location.longitude !== 'undefined' && item.location.longitude !== "") {
+            // item lat/long already set, no need to geocode
+            // console.log("skipping item with address: " + item.address)
+            resolve("success: already have coordinates for site w/ address: " + item.address)
+        } else if (!item.address) {
 
-                    resolve(item.location)
-                }
+            let warning = "WARNING: skipping geocoding on site with no address"
+            console.warn(chalk.red(warning + ": " + JSON.stringify(item)))
+            resolve(warning)
+
+        } else {
+
+            // delay each API query long enough so we don't hit Google's 10 queries / second limit
+            // a delay > 100ms between queries should do the trick (10 queries * 101ms gives  >1 second / 10 queries)
+            setTimeout (() => {
+                geocoder.geocode(item.address, function setLocation (err, res) {
+                    if (err) {
+                        reject(`geocoding address "${item.address}" failed: ${err}`)
+                    } else {
+                        item.location = {}
+                        item.location.latitude = res[0].latitude
+                        item.location.longitude = res[0].longitude
+
+                        resolve(item.location)
+                    }
 
 
-            })
-        }, index * 250)
-
+                })
+            }, index * 250)
+        }
     }))
 
     Promise.all(geocodePromises).then(values => {
