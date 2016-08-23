@@ -2,9 +2,17 @@
 
 module.exports = { geocode: geocode }
 
-const NodeGeocoder = require("node-geocoder");
-const geocoder = NodeGeocoder();
-const chalk = require("chalk");
+const NodeGeocoder = require("node-geocoder"),
+    geocoder = NodeGeocoder(),
+    chalk = require("chalk"),
+    dns = require("dns"),
+    dnscache = require("dnscache")({
+        "enable" : true,
+        "ttl" : 300,
+        "cachesize" : 1000
+    })
+
+
 // TODO: use `winston` for logging to file / console / with colors
 
 function geocode (heritageItems, callback) {
