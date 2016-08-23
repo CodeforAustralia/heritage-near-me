@@ -45,7 +45,7 @@ describe("geocoder.js", function () {
                     console.log(err)
                 }
 
-                expect(items[0])
+                expect(locations[0])
                     .to.have.property("location")
                     .that.is.an("object")
                     .that.deep.equals({latitude: 0, longitude: 0})
