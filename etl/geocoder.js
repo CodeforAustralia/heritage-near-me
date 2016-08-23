@@ -21,10 +21,12 @@ function geocode (heritageItems, callback) {
     const geocodePromises = heritageItems.map((item, index) => new Promise (function (resolve, reject) {
 
         if (item.location &&
-                typeof item.location.latitude !== 'undefined' && item.location.latitude !== "" &&
-                typeof item.location.longitude !== 'undefined' && item.location.longitude !== "") {
+                typeof item.location.latitude !== "undefined" && item.location.latitude !== "" &&
+                typeof item.location.longitude !== "undefined" && item.location.longitude !== "") {
             // item lat/long already set, no need to geocode
-            // console.log("skipping item with address: " + item.address)
+            let lat = item.location.latitude, lng = item.location.longitude
+            let notice = `skipping geocoding item "${item.name}", already have (lat,lng): (${lat},${lng})`
+            console.log(chalk.green(notice))
             resolve("success: already have coordinates for site w/ address: " + item.address)
         } else if (!item.address) {
 
