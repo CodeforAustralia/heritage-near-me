@@ -32,8 +32,9 @@ describe("geocoder.js", function () {
 
         it("skips geocoding when lat/lng already present", function (testDone) {
             let items = [{
-                address: "foo bar",
-                location: { latitude: 0, longitude: 0 }
+                name: "Test Item: Old Government House",
+                address: "Old Government House",
+                location: { latitude: -33.812142, longitude: 150.997494 }
             }]
 
             // console.log("items:")
@@ -48,7 +49,7 @@ describe("geocoder.js", function () {
                 expect(locations[0])
                     .to.have.property("location")
                     .that.is.an("object")
-                    .that.deep.equals({latitude: 0, longitude: 0})
+                    .that.deep.equals({ latitude: -33.812142, longitude: 150.997494 })
 
                 testDone()
             })
