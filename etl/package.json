@@ -7,6 +7,7 @@
     "//": "mocha --debug --debug-brk",
     "test": "cross-env  NODE_ENV=dev PGHOST=localhost PGPORT=5432 PGDATABASE=testdb mocha --compilers js:babel-register",
     "start": "cross-env NODE_ENV=dev PGHOST=localhost PGPORT=5432 PGDATABASE=hnm    node app.js",
+    "check-links": "cross-env NODE_ENV=dev PGHOST=localhost PGPORT=5432 PGDATABASE=hnm  node utils/checklinks.js",
     "db-drop": "cd ../backend && ./dbdrop.sh",
     "db-prep": "cd ../backend && ./db-etl-init.sh",
     "redo-all": "npm run db-drop && npm run db-prep && npm run start"

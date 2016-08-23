@@ -4,9 +4,7 @@
 "use strict"
 
 const expect = require("chai").expect,
-    SQL = require("sql-template-strings"),
     pg = require("pg"),
-    Pool = require("pg-pool"),
     url = require("url"),
     validUrl = require("valid-url"),
     chalk = require("chalk"),
@@ -20,8 +18,6 @@ const expect = require("chai").expect,
         "ttl" : 300,
         "cachesize" : 1000
     })
-
-const pool = new Pool()
 
 
 function seemsLikeUrl (address) {
@@ -63,49 +59,51 @@ function testPhotoRow (row) {
     )
 }
 
+// console.log("checking database content...")
+// console.log("checking photos collection for sites...")
+console.log("checking for working links for all images:")
 
-describe("database content", function() {
 
-    describe("photos collection for sites", function () {
+var client = new pg.Client();
 
-        it("has working links for all images", function (testDone) {
+// connect to our database
+client.connect(function (err) {
+  if (err) throw err;
 
-            this.timeout(35000)
+  // execute a query on our database
+  client.query("SELECT * FROM hnm.site_photos", function (err, result) {
+    if (err) throw err;
 
-            // try {
+    let numberGoodLinks = 0, numberBadLinks = 0
 
-                pool.connect().then(client => {
-                    client.query(SQL`SELECT * FROM site_photos AS site`).then(result => {
+    let promises = result.rows.map(testPhotoRow);
+    Promise.all(promises).then(function resolved (results) {
+        // summarize test results and assert success
+        // console.log(results)
 
-                        let numberGoodLinks = 0, numberBadLinks = 0
+        const numTests = results.length
+        let numberGoodLinks = 0, numberBadLinks = 0;
+        for (result of results) {
+            result.success ? ++numberGoodLinks : ++numberBadLinks
+        }
 
-                        let promises = result.rows.map(testPhotoRow);
-                        Promise.all(promises).then(function resolved (results) {
-                            // summarize test results and assert success
-                            // console.log(results)
-
-                            const numTests = results.length
-                            let numberGoodLinks = 0, numberBadLinks = 0;
-                            for (result of results) {
-                                result.success ? ++numberGoodLinks : ++numberBadLinks
-                            }
-
-                            console.log(`\nFinished testing ${numTests} image links: ${numberGoodLinks} OK, ${numberBadLinks} Bad`)
-                            expect(numberBadLinks).to.equal(0)
-                            testDone()
-                        }, function rejected (reason) {
-                            console.error(reason)
-                            testDone()
-                        })
-                    })
-                })
-
-            // } catch (err) {
-            //     console.log("pool connect error: " + err)
-            //     testDone(err)
-            // }
-        })
+        console.log(`\nFinished testing ${numTests} image links: ${numberGoodLinks} OK, ${numberBadLinks} Bad`)
+        expect(numberBadLinks).to.equal(0)
+        testDone()
+    }, function rejected (reason) {
+        console.error(reason)
+        testDone()
     })
+  })
 })
+
+
+function testDone () {
+    // console.log("... done.")
+    // disconnect the client
+    client.end(function (err) {
+      if (err) throw err;
+    });
+}
 
 
