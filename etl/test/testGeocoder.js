@@ -30,5 +30,51 @@ describe("geocoder.js", function () {
                 testDone()
             })
         })
+
+        it("skips geocoding when lat/lng already present", function (testDone) {
+            let items = [{
+                address: "foo bar",
+                location: { latitude: 0, longitude: 0 }
+            }]
+
+            // console.log("items:")
+            // console.log(items)
+
+            geocoder.geocode (items, function validator (err, locations) {
+                if (err) {
+                    console.log("geocoder error: ")
+                    console.log(err)
+                }
+
+                expect(items[0])
+                    .to.have.property("location")
+                    .that.is.an("object")
+                    .that.deep.equals({latitude: 0, longitude: 0})
+
+                testDone()
+            })
+        })
+
+        it("skips geocoding when no address given", function (testDone) {
+
+            let items = [{
+                address: "", // should be skipped if .address missing or empty
+                // note: no coordinates given, but no address, so geocoding should skip w/ warning
+            }]
+
+            geocoder.geocode (items, function validator (err, locations) {
+                if (err) {
+                    console.log("geocoder error: ")
+                    console.log(err)
+                }
+
+                expect(items[0])
+                    .to.not.have.property("location")
+
+                testDone()
+            })
+
+
+        })
     })
 })
