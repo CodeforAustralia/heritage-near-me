@@ -164,7 +164,7 @@
             // request sites to put on map
             function getSites () {
                 var request = new XMLHttpRequest();
-                request.open('GET', '/api/rpc/all_site', true);
+                request.open('GET', '/api/all_site', true);
 
                 request.onload = function() {
                   if (request.status >= 200 && request.status < 400) {
