@@ -42,7 +42,7 @@ function geocode (heritageItems, callback) {
 
 
                 })
-            }, index * 250)
+            }, index * 300)
         }
     }))
 
