@@ -211,9 +211,25 @@ html, body, body > div {
     .mapboxgl-marker.site-marker:hover {
         box-shadow: 1px 1px 1px black;
     }
+    
+    button.mapboxgl-popup-close-button {
+        display: none;
+    }
 
-    .mapboxgl-popup-content {
+    #map {
+        font-family: "proxima-nova";
+    }
+
+    #map .mapboxgl-popup-content {
         max-width: 80%;
+        padding: 0px;
+    }
+    .popup i.fa.fa-times-circle {
+        color: red;
+        position: absolute;
+        right: 0;
+        top: 0;
+        margin: 6px;
     }
     .popup-site-overview {
         display: flex;
@@ -222,10 +238,13 @@ html, body, body > div {
         .popup-site-text {
             flex: 4 0;
             margin-right: 5px;
+            margin-left: 5px;
+            margin-top: 5px;
         }
             .popup-site-text h1 {
                 color: black;
-                font-size: 14px;
+                font-size: 16px;
+                line-height: 1em;
                 margin: 0;
                 text-align: left;
                 font-weight: bold;
@@ -236,6 +255,8 @@ html, body, body > div {
         }
         .popup-site-image img {
             height: 100%;
+            border-top-right-radius: 3px;
+            border-bottom-right-radius: 3px;
         }
 
 
