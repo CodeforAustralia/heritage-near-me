@@ -131,7 +131,7 @@ introOrBody : Story -> StoryScreen -> Html
 introOrBody story storyScreen =
     case (story, storyScreen) of
         (FullStory s, Intro) ->
-            div [class "story-intro"] [p [] [text s.blurb]]
+            div [class "story-intro"] [Markdown.toHtml s.blurb]
         (FullStory s, Body) ->
             div [class "passage"] [Markdown.toHtml (addQuote s.quote s.story)]
         (_, _) -> text ""
