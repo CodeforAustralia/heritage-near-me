@@ -186,7 +186,13 @@
                             // create an image element for the marker
                             var el = document.createElement('button');
                             el.className = 'site-marker';
-                            el.style.backgroundImage = 'url(' + marker.properties.featured_photo + ')';
+                            var pic = marker.properties.featured_photo;
+                            if (pic) {
+                                el.style.backgroundImage = 'url("' + pic + '"")';
+                            } else {
+                                el.style.backgroundColor = '#2FAA60';
+                                // el.style.backgroundImage = 'url("/images/some-marker-icon.png")';
+                            }
 
                             el.addEventListener('click', function() {
                                 closeAllPopups();
