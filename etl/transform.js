@@ -93,9 +93,10 @@ function cleanupHeritageRow (row) {
         name: row["Heritage Item Name"],
         suburb: row["Location/Suburb"],
         address: row["Street Address"],
-        location: {},
-        latitude: row["Latitude"], // and we'll geocode address if these aren't present
-        longitude: row["Longitude"],
+        location: {
+            latitude: row["Latitude"], // and we'll geocode address if these aren't present
+            longitude: row["Longitude"],
+        },
         heritage_categories: row["Heritage Categories"],
         architectural_style: row["Architectural Style"],
         links: parseLinks(row["Links & Further Reading"]),
