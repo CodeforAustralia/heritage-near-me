@@ -20,8 +20,7 @@ describe("geocoder.js", function () {
                     // console.log("locations: ")
                     // console.log(locations)
                 }
-                // console.log(items)
-                expect(items[0])
+                expect(locations[0])
                     .to.have.property("location")
                     .that.is.an("object")
                     // .that.deep.equals({foo: "bar"})
