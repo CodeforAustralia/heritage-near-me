@@ -17,6 +17,7 @@
   "dependencies": {
     "chalk": "^1.1.3",
     "cross-env": "^1.0.8",
+    "dnscache": "0.0.4",
     "massive": "^2.3.0",
     "node-geocoder": "^3.12.0",
     "pg": "^5.1.0",
