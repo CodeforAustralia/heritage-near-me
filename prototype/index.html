@@ -224,6 +224,17 @@
                                     .setLngLat(marker.geometry.coordinates)
                                     .setHTML(popupContent(marker))
                                     .addTo(map);
+
+                                closeBtns = document.getElementsByClassName("popup-close-button");
+                                if (closeBtns) {
+                                    for (var i = 0; i < closeBtns.length; i++) {
+                                        var el = closeBtns[i];
+                                        el.addEventListener('click', function () {
+                                            closeAllPopups();
+                                        });
+                                    }
+                                }
+
                                 popups.push(popup);
                             });
 
