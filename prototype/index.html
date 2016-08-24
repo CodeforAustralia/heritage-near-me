@@ -54,11 +54,15 @@
                 noLocation();
             }
 
+            agentLngLat = null;
             function updateLocation(position) {
-                    app.ports.geolocation.send({
+                    var loc = {
                         lat: position.coords.latitude,
                         lng: position.coords.longitude
-                    });
+                    };
+                    agentLngLat = [loc.lng, loc.lat];
+                    updateUserMarker(agentLngLat);
+                    app.ports.geolocation.send(loc);
             }
 
             function noLocation() {
