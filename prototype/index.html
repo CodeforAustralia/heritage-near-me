@@ -74,7 +74,8 @@
             function setupMap() {
 
                 // TODO: when user location changes, update person marker
-                var startLngLat = [151.209296, -33.868820];  // just Sydney for now: TODO - USER LOCATION
+                var sydneyLngLat = [151.209296, -33.868820];
+                var startLngLat = agentLngLat ? agentLngLat : sydneyLngLat;
 
                 mapboxgl.accessToken = 'pk.eyJ1IjoiamVzc2Vtb3JlYnVycml0b3MiLCJhIjoiY2lraHBxMm10MDI4b3RubTZ1ZnU0emF0eSJ9.1XYxvJb60uABEGx4aDXTbg';
 
