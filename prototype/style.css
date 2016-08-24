@@ -31,7 +31,6 @@ html, body, body > div {
     z-index: -1;
     height: 100%;
     width: 100%;
-    padding-top: 65px;
     position: absolute;
     top: 0;
     box-sizing: border-box;
@@ -222,6 +221,7 @@ html, body, body > div {
 
     #map .mapboxgl-popup-content {
         max-width: 80%;
+        min-width: 200px;
         padding: 0px;
     }
     .popup i.fa.fa-times-circle {
@@ -233,30 +233,40 @@ html, body, body > div {
     }
     .popup-site-overview {
         display: flex;
-        height: 100px;
+        height: 50px;
     }
         .popup-site-text {
             flex: 4 0;
-            margin-right: 5px;
-            margin-left: 5px;
-            margin-top: 5px;
+            margin: 10px;
         }
             .popup-site-text h1 {
                 color: black;
                 font-size: 16px;
                 line-height: 1em;
-                margin: 0;
+                margin: 1px;
                 text-align: left;
-                font-weight: bold;
+                font-weight: 600;
             }
+        .popup-site-text a, .popup-stories-list.links ul li a {
+            text-decoration: none;
+            font-size: 14px;
+            color: black;
+            font-weight: 700;
+            line-height: 1.2em;
+        }    
+
+        section.popup-stories-list.links {
+            margin-left: 10px;
+        }
+
         .popup-site-image {
             flex: 0 1;
             height: 100%;
         }
         .popup-site-image img {
-            height: 100%;
             border-top-right-radius: 3px;
-            border-bottom-right-radius: 3px;
+            max-width: 70px;
+            max-height: 60px;
         }
 
 
