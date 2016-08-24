@@ -115,6 +115,45 @@
             setupMap();
 
 
+            userMarker = null;
+            function updateUserMarker (agentLngLat) {
+
+                map.once('load', function load() {
+                    console.log("preparing to update user marker")
+
+                    if (!userMarker) {
+
+                        console.log("creating user marker")
+
+                        /* create:
+                            <div class='user-marker'>
+                                <div class='pin'></div>
+                                <div class='pulse'></div>
+                            </div>
+                        */
+                        var pin = document.createElement('div');
+                        pin.className = 'pin';
+                        var pulse = document.createElement('div');
+                        pulse.className = 'pulse';
+                        var el = document.createElement('div');
+                        el.className = 'user-marker';
+                        el.appendChild(pin)
+                        el.appendChild(pulse)
+
+                        // el = document.createElement('button');
+                        // el.className = 'user-marker';
+                        // add marker to map
+                        userMarker = new mapboxgl.Marker(el)
+                            .setLngLat(agentLngLat)
+                            .addTo(map);
+                    } else {
+                        console.log("re-centering user marker")
+                        userMarker.setLngLat(agentLngLat);
+                    }
+                });
+            }
+
+
             // rowToFeature : row -> GeoJSON Feature
             function rowToFeature (row) {
                 return {
