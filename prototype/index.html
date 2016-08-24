@@ -147,18 +147,41 @@
                         '<a href="#!/story/' + s.id + '">' + s.title + '</a>';
                 }
 
+                /* Array of stories -> Html for list of story links */
+                function popupStoryLinks (marker) {
+                    console.log(marker);
+                    return marker.properties.stories.map(function (s) {
+                        return '' +
+                            '<li>' +
+                                '<a href="#!/story/' + s.id + '">' + s.title +
+                                    '<span class="link-arrow"><i class="fa fa-angle-right"></i></span>' +
+                                '</a>' +
+                            '</li>';
+                    })
+                }
+
+
                 return '' +
                     '<article class="popup">' +
                         '<i class="popup-close-button fa fa-times-circle"></i>' +
                         '<header class="popup-site-overview">' +
                             '<div class="popup-site-text">' +
                                 '<h1>' + marker.properties.name + '</h1>' +
-                                storyCountOrOnlyStoryTitle(marker) +
+                                /* storyCountOrOnlyStoryTitle(marker) + */
+                                '<span class="popup-story-count">' +
+                                    marker.properties.story_count +
+                                    (marker.properties.story_count > 1 ? ' stories ' : ' story ') +
+                                    'at this site' +
                             '</div>' +
                             '<div class="popup-site-image">' +
                                 '<img src="' + marker.properties.featured_photo + '">' +
-                            '</div>'
+                            '</div>' +
                         '</header>' +
+                        '<section class="popup-stories-list links">' +
+                            '<ul>' +
+                                popupStoryLinks(marker) +
+                            '</ul>' +
+                        '</section>' +
                     '</article>';
             }
 
