@@ -81,6 +81,10 @@
                     zoom: 13,
                 });
 
+                map.addControl(new mapboxgl.Geolocate({position: 'bottom-right'}));
+                var nav = new mapboxgl.Navigation({position: 'top-left'});
+                map.addControl(nav);
+
                 function mapClickHandler (e) {
                     var features = map.queryRenderedFeatures(e.point, { layers: ['places'] });
 
