@@ -61,6 +61,11 @@ html, body, body > div {
 .navigation-side2 {
     display: flex;
     justify-content: space-around;
+    align-items: center;
+}
+.navigation-side1 {
+    display: flex;
+    align-items: center;
 }
 
 /* adjust some screens to start after nav bar
@@ -261,8 +266,9 @@ html, body, body > div {
         }
 
         .popup-site-image {
-            flex: 0 1;
+            flex: 2 0;
             height: 100%;
+            max-width: 70px;
         }
         .popup-site-image img {
             border-top-right-radius: 3px;
