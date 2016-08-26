@@ -28,6 +28,7 @@ type Location id =
       SplashPage
     | AboutScreen
     | MapScreen
+    | SearchScreen
     | Discovering
     | Viewing id ItemView StoryScreen
     | ViewingFavourites
@@ -58,6 +59,7 @@ type Action id a =
     | ViewSplashPage
     | ViewAboutScreen
     | ViewMapScreen
+    | ViewSearchScreen
     | Back
     | LoadData UpdaterFunction
     | LoadDiscoveryData (RemoteData (List id)) UpdaterFunction
