@@ -27,6 +27,13 @@
         <div class="map-container">
             <div id="map"></div>
         </div>
+        <div class="search-container">
+            <div id="search">
+                <div class="search-input-container">
+                    <input id="heritage-search" class="search-input" type="search">
+                </div>
+            </div>
+        </div>
 
 
         <script type="text/javascript">
@@ -314,7 +321,13 @@
             getSites();
 
 
+            /* JS for search functionality */
+            var e = document.getElementById('heritage-search');
 
+            e.oninput = function (e) {
+                console.log("searching for '" + e.target.value + "'");
+                // todo: run search and spit back results
+            }
 
             /* show map when Elm wants us to */
             mapContainerEl = document.getElementsByClassName("map-container")[0];
@@ -324,6 +337,17 @@
                     mapContainerEl.style.zIndex = '1';
                 } else {
                     mapContainerEl.style.zIndex = '-1';
+                }
+            });
+
+            /* show search when Elm wants us to */
+            searchContainerEl = document.getElementsByClassName("search-container")[0];
+            app.ports.showSearch.subscribe(function(show) {
+                console.log("show search: " + show);
+                if (show) {
+                    searchContainerEl.style.zIndex = '1';
+                } else {
+                    searchContainerEl.style.zIndex = '-1';
                 }
             });
 
