@@ -274,3 +274,49 @@ END;
 $$
 LANGUAGE plpgsql STABLE -- STABLE because we don't change the database and so long as the DB isn't changed, function results don't change.
 COST 100;
+
+-- Return a "featured photo" for a story. Note: right now, this just gives any single photo.
+CREATE OR REPLACE FUNCTION hnm.story_featured_photo(story INTEGER)
+    RETURNS TABLE (
+        story_id INTEGER,
+        photo_id INTEGER,
+        photo_url TEXT
+    ) AS
+$$
+BEGIN
+    RETURN QUERY
+    SELECT
+        story_photo.story_id,
+        story_photo.photo_id,
+        photo.photo AS photo_url
+    FROM photo
+    JOIN story_photo ON story_photo.photo_id = photo.id
+    WHERE story_photo.story_id = $1
+    LIMIT 1;
+END;
+$$
+LANGUAGE plpgsql STABLE -- STABLE because we don't change the database and so long as the DB isn't changed, function results don't change.
+COST 100;
+
+
+-- search for story title matches to query
+CREATE OR REPLACE FUNCTION hnm.search_stories(query TEXT)
+    RETURNS TABLE (
+        id INTEGER,
+        title TEXT,
+        photo_url TEXT
+    ) AS
+$$
+BEGIN
+    RETURN QUERY
+    SELECT
+        story.id,
+        story.title,
+        (SELECT story_featured_photo.photo_url FROM hnm.story_featured_photo(story.id))
+    FROM story
+    WHERE story.title ~* $1; -- ~*: case insensitive regex match
+END;
+$$
+LANGUAGE plpgsql STABLE -- STABLE because we don't change the database and so long as the DB isn't changed, function results don't change.
+COST 100;
+
