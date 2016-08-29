@@ -870,6 +870,10 @@ html, body, body > div {
         /* top: 150px; */
     }
 
+    .fullStory-meta:first-child {
+      margin-top:65px;
+    }
+
     .story-body .fullStory-meta .fullStory-site {
         font-weight: 500;
         font-size: 18px;
