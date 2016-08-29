@@ -43,6 +43,26 @@ CREATE SCHEMA hnm
         JOIN photo ON photo.id = story_photo.photo_id
 
 
+    CREATE VIEW story_featured_photos AS
+        SELECT
+            story_id,
+            -- we assume that the lowest photo_id is the first added.
+            -- content editors can put put their desired featured photo as the first
+            -- in the list of pictures.
+            -- see also: http://stackoverflow.com/questions/3800551/select-first-row-in-each-group-by-group
+            min(photo_id) AS photo_id
+        FROM story_photo
+        GROUP BY story_id
+
+    -- Get a "featured photo" (first photo from spreadsheet) for a story.
+    CREATE VIEW story_featured_photo_urls AS
+        SELECT
+            story_featured_photos.story_id,
+            photo.photo AS photo_url
+        FROM story_featured_photos
+        JOIN photo ON photo.id = story_featured_photos.photo_id
+
+
     CREATE VIEW story_discover AS
         SELECT DISTINCT ON (story.id) -- just picks one row https://www.postgresql.org/message-id/22uphu0hohpbnvg3a6d4qv21ofr4di7kda%404ax.com
             story.id, story.title, story.blurb, photo.photo,
@@ -274,3 +294,33 @@ END;
 $$
 LANGUAGE plpgsql STABLE -- STABLE because we don't change the database and so long as the DB isn't changed, function results don't change.
 COST 100;
+
+
+-- search for story title matches to query
+CREATE OR REPLACE FUNCTION hnm.search_stories(query TEXT)
+    RETURNS TABLE (
+        story_id INTEGER,
+        story_title TEXT,
+        site_name TEXT,
+        photo_url TEXT
+    ) AS
+$$
+BEGIN
+    RETURN QUERY
+    SELECT
+        story.id AS story_id,
+        story.title AS story_title,
+        site.name AS site_name,
+        (SELECT hnm.story_featured_photo_urls.photo_url
+            FROM hnm.story_featured_photo_urls
+            WHERE hnm.story_featured_photo_urls.story_id = story.id)
+    FROM story
+    JOIN story_site ON story_site.story_id = story.id
+    JOIN site ON site.id = story_site.site_id
+    WHERE story.title ~* $1  -- ~*: case insensitive regex match
+       OR site.name ~* $1;
+END;
+$$
+LANGUAGE plpgsql STABLE -- STABLE because we don't change the database and so long as the DB isn't changed, function results don't change.
+COST 100;
+

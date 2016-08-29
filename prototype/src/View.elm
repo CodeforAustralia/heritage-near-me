@@ -43,6 +43,9 @@ screenView address app = case app.location of
     MapScreen -> div [class "map-screen"]
         [ navigation address app.location ]
 
+    SearchScreen -> div [class "search-screen"]
+        [ navigation address app.location ]
+
     AboutScreen -> div [class "about-screen"]
         [ navigation address app.location
         , About.view

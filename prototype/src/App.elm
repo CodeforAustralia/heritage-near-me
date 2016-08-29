@@ -128,6 +128,9 @@ port showMap =
     in
         Signal.dropRepeats booleanSignal
 
+-- signal to js component when we need search screen displayed
+port showSearch : Signal Bool
+port showSearch = Signal.dropRepeats <| Signal.map (\m -> m.location == SearchScreen) app.model
 
 {-| Any time the model changes, Json-encode our fetched stories and send to JavaScript-land for mapping. -}
 --port mapMarkers : Signal Json.Encode.Value
@@ -231,6 +234,7 @@ updateModel action app = case (app.location, action) of
     (_, ViewFavourites)                       -> {app | location = ViewingFavourites}
     (_, ViewAboutScreen)                      -> {app | location = AboutScreen}
     (_, ViewMapScreen)                        -> {app | location = MapScreen}
+    (_, ViewSearchScreen)                     -> {app | location = SearchScreen}
     -- Data update actions
     (_, LoadData updateItems)                 -> {app | items = updateItems app.items}
     (_, LoadDiscoveryData items updateItems)  -> {app | items = updateItems app.items, discovery = updateDiscoverableItems app.discovery items}

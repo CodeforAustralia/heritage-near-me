@@ -15,6 +15,7 @@ navigation address location =
         goDiscoverButton = button [onClick address Discover] [i [class "fa fa-compass fa-2x"] []]
         goMapButton = button [onClick address ViewMapScreen] [i [class "fa fa-map fa-2x"] []]
         goFavsButton = button [onClick address ViewFavourites] [i [class "fa fa-heart fa-2x"] []]
+        goSearchButton = button [onClick address ViewSearchScreen] [i [class "fa fa-search fa-2x"] []]
         logoDiv = div [class "logo"] [a [href "/"] [img [src "images/logo.png"] []]]
         navTitle title = h1 [] [text title]
         noNavBar = text ""
@@ -47,6 +48,7 @@ navigation address location =
                 , center = [logoDiv]
                 , side2 =
                     [ goMapButton
+                    , goSearchButton
                     , goFavsButton ]
                 }
 
@@ -55,6 +57,17 @@ navigation address location =
                 , center = [logoDiv]
                 , side2 =
                     [ goDiscoverButton
+                    , goSearchButton
+                    , goFavsButton
+                    ]
+                }
+
+            SearchScreen -> navBarHtml
+                { side1 = []
+                , center = [logoDiv]
+                , side2 =
+                    [ goDiscoverButton
+                    , goSearchButton
                     , goFavsButton
                     ]
                 }

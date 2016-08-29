@@ -27,6 +27,14 @@
         <div class="map-container">
             <div id="map"></div>
         </div>
+        <div class="search-container">
+            <div id="search">
+                <div class="search-input-container">
+                    <input id="heritage-search" class="search-input" type="search">
+                </div>
+                <div id="search-results-container"></div>
+            </div>
+        </div>
 
 
         <script type="text/javascript">
@@ -314,7 +322,64 @@
             getSites();
 
 
+            /* JS for search functionality */
+            var resultsDiv = document.getElementById("search-results-container");
 
+            var e = document.getElementById('heritage-search');
+
+            e.oninput = function (e) {
+                var q = e.target.value;
+
+                if (q.length < 3) {
+                    console.log("skipping too-short query string: " + q);
+                    resultsDiv.innerHTML = '';
+                    return;
+                }
+
+                console.log("searching for '" + q + "'");
+                // todo: run search and spit back results
+
+                var request = new XMLHttpRequest();
+                request.open("POST", "/api/rpc/search_stories", true);
+
+                request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+
+                request.onload = function(e) {
+                  if (request.status >= 200 && request.status < 400) {
+                    // Success!
+                    var data = JSON.parse(request.responseText);
+                    console.log("response:")
+                    console.log(data)
+
+                    var resultsHtml = data.map(function (item) {
+                        return '' +
+                            '<div class="search-result">' +
+                                '<a class="cf" href="/#!/story/' + item.story_id + '/"><div class="search-result-title">' +
+                                    item.story_title +
+                                '</div>' +
+                                '<div class="search-result-photo"><img src="' + item.photo_url +'"></div>' +
+                                '<div class="clearfix"></div>' +
+                                '</a>' +
+                            '</div>';
+                    }).join('');
+
+                    resultsDiv.innerHTML = resultsHtml;
+
+                  } else {
+                    // We reached our target server, but it returned an error
+                    console.log("server returned error")
+                  }
+                };
+
+                request.onerror = function() {
+                  // There was a connection error of some sort
+                  console.log("error connecting to server")
+                };
+
+                var data = JSON.stringify({query: e.target.value})
+                request.send(data);
+
+            }
 
             /* show map when Elm wants us to */
             mapContainerEl = document.getElementsByClassName("map-container")[0];
@@ -324,6 +389,17 @@
                     mapContainerEl.style.zIndex = '1';
                 } else {
                     mapContainerEl.style.zIndex = '-1';
+                }
+            });
+
+            /* show search when Elm wants us to */
+            searchContainerEl = document.getElementsByClassName("search-container")[0];
+            app.ports.showSearch.subscribe(function(show) {
+                console.log("show search: " + show);
+                if (show) {
+                    searchContainerEl.style.zIndex = '1';
+                } else {
+                    searchContainerEl.style.zIndex = '-1';
                 }
             });
 

@@ -15,6 +15,7 @@ action url = case url of
     "favourites"::_ -> [ViewFavourites]
     "about"::_ -> [ViewAboutScreen]
     "map"::_ -> [ViewMapScreen]
+    "search"::_ -> [ViewSearchScreen]
     "story"::storyId::storyScreen::_ ->
         let
             id = parseStoryId storyId
@@ -36,6 +37,7 @@ url old new = if old.location /= new.location then
             SplashPage        -> RouteHash.set [""]
             AboutScreen       -> RouteHash.set ["about"]
             MapScreen         -> RouteHash.set ["map"]
+            SearchScreen      -> RouteHash.set ["search"]
             Discovering       -> RouteHash.set ["discover"]
             ViewingFavourites -> RouteHash.set ["favourites"]
             Viewing storyId _ storyScreen -> RouteHash.set ["story", storyIdToStr storyId, urliseStoryScreen storyScreen]

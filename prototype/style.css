@@ -27,7 +27,7 @@ html, body, body > div {
     flex-direction: column;
     height: 100%;
 }
-.map-container {
+.map-container, .search-container {
     z-index: -1;
     height: 100%;
     width: 100%;
@@ -35,7 +35,7 @@ html, body, body > div {
     top: 0;
     box-sizing: border-box;
 }
-#map {
+#map, #search {
     width: 100%;
     height: 100%;
 }
@@ -75,8 +75,11 @@ html, body, body > div {
 .story-screen.story-body .fullStory-meta,
 .story-screen.story-more-info .content-area,
 .discovery-screen .discovery-empty,
-.mapboxgl-ctrl-top-left  {
+.mapboxgl-ctrl-top-left {
     margin-top: 65px;
+}
+.search-container {
+    padding-top: 65px;
 }
 
 /*.story-screen .navigation, 
@@ -359,6 +362,52 @@ html, body, body > div {
       }
     }
 
+/* Search screen style */
+
+.search-input-container {
+    background: #f7f5f3;
+    padding: 5px 10px;
+}
+    input.search-input {
+        background: #dad8d3;
+        width: 100%;
+        font-size: 16px;
+        border-radius: 5px;
+        border: none;
+        padding: 8px;
+        font-family: "proxima-nova";
+    }
+
+    #search-results-container {
+    background: #ECE9E8;
+    padding: 5px 10px 5px 18px;
+    }
+
+    .search-result {
+        /*height: 40px;*/
+        padding: 5px 0;
+        border-bottom: 1px solid #e0e0e0;
+    }
+    .search-result:last-child {
+        border: none;
+    }
+    .search-result a {
+        text-decoration: none;
+        color: black;
+        display: block;
+    }
+    .search-result-title {
+        padding-top: 5px;
+        max-width: 80%; /* keep title + image on same line */
+        float: left;
+    }
+    .search-result-photo {
+        height: 30px;
+        float: right;
+    }
+    .search-result-photo img {
+        height: 100%;
+    }
 
 /* About screen style */
 .about-screen {
@@ -1075,4 +1124,32 @@ button {
 /* Other tweaks */
 .app .fa-inverse {
     color: #1D1D1D;
+}
+
+
+/** clearfix used by bootstrap - http://nicolasgallagher.com/micro-clearfix-hack/
+ * For modern browsers
+ * 1. The space content is one way to avoid an Opera bug when the
+ *    contenteditable attribute is included anywhere else in the document.
+ *    Otherwise it causes space to appear at the top and bottom of elements
+ *    that are clearfixed.
+ * 2. The use of `table` rather than `block` is only necessary if using
+ *    `:before` to contain the top-margins of child elements.
+ */
+.cf:before,
+.cf:after {
+    content: " "; /* 1 */
+    display: table; /* 2 */
+}
+
+.cf:after {
+    clear: both;
+}
+
+/**
+ * For IE 6/7 only
+ * Include this rule to trigger hasLayout and contain floats.
+ */
+.cf {
+    *zoom: 1;
 }
