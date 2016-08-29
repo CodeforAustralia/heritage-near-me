@@ -43,6 +43,26 @@ CREATE SCHEMA hnm
         JOIN photo ON photo.id = story_photo.photo_id
 
 
+    CREATE VIEW story_featured_photos AS
+        SELECT
+            story_id,
+            -- we assume that the lowest photo_id is the first added.
+            -- content editors can put put their desired featured photo as the first
+            -- in the list of pictures.
+            -- see also: http://stackoverflow.com/questions/3800551/select-first-row-in-each-group-by-group
+            min(photo_id) AS photo_id
+        FROM story_photo
+        GROUP BY story_id
+
+    -- Get a "featured photo" (first photo from spreadsheet) for a story.
+    CREATE VIEW story_featured_photo_urls AS
+        SELECT
+            story_featured_photos.story_id,
+            photo.photo AS photo_url
+        FROM story_featured_photos
+        JOIN photo ON photo.id = story_featured_photos.photo_id
+
+
     CREATE VIEW story_discover AS
         SELECT DISTINCT ON (story.id) -- just picks one row https://www.postgresql.org/message-id/22uphu0hohpbnvg3a6d4qv21ofr4di7kda%404ax.com
             story.id, story.title, story.blurb, photo.photo,
@@ -275,29 +295,6 @@ $$
 LANGUAGE plpgsql STABLE -- STABLE because we don't change the database and so long as the DB isn't changed, function results don't change.
 COST 100;
 
--- Return a "featured photo" for a story. Note: right now, this just gives any single photo.
-CREATE OR REPLACE FUNCTION hnm.story_featured_photo(story INTEGER)
-    RETURNS TABLE (
-        story_id INTEGER,
-        photo_id INTEGER,
-        photo_url TEXT
-    ) AS
-$$
-BEGIN
-    RETURN QUERY
-    SELECT
-        story_photo.story_id,
-        story_photo.photo_id,
-        photo.photo AS photo_url
-    FROM photo
-    JOIN story_photo ON story_photo.photo_id = photo.id
-    WHERE story_photo.story_id = $1
-    LIMIT 1;
-END;
-$$
-LANGUAGE plpgsql STABLE -- STABLE because we don't change the database and so long as the DB isn't changed, function results don't change.
-COST 100;
-
 
 -- search for story title matches to query
 CREATE OR REPLACE FUNCTION hnm.search_stories(query TEXT)
@@ -312,7 +309,7 @@ BEGIN
     SELECT
         story.id,
         story.title,
-        (SELECT story_featured_photo.photo_url FROM hnm.story_featured_photo(story.id))
+        (SELECT hnm.story_featured_photo_urls.photo_url FROM hnm.story_featured_photo_urls WHERE story_id = story.id)
     FROM story
     WHERE story.title ~* $1; -- ~*: case insensitive regex match
 END;
