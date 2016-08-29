@@ -299,19 +299,26 @@ COST 100;
 -- search for story title matches to query
 CREATE OR REPLACE FUNCTION hnm.search_stories(query TEXT)
     RETURNS TABLE (
-        id INTEGER,
-        title TEXT,
+        story_id INTEGER,
+        story_title TEXT,
+        site_name TEXT,
         photo_url TEXT
     ) AS
 $$
 BEGIN
     RETURN QUERY
     SELECT
-        story.id,
-        story.title,
-        (SELECT hnm.story_featured_photo_urls.photo_url FROM hnm.story_featured_photo_urls WHERE story_id = story.id)
+        story.id AS story_id,
+        story.title AS story_title,
+        site.name AS site_name,
+        (SELECT hnm.story_featured_photo_urls.photo_url
+            FROM hnm.story_featured_photo_urls
+            WHERE hnm.story_featured_photo_urls.story_id = story.id)
     FROM story
-    WHERE story.title ~* $1; -- ~*: case insensitive regex match
+    JOIN story_site ON story_site.story_id = story.id
+    JOIN site ON site.id = story_site.site_id
+    WHERE story.title ~* $1  -- ~*: case insensitive regex match
+       OR site.name ~* $1;
 END;
 $$
 LANGUAGE plpgsql STABLE -- STABLE because we don't change the database and so long as the DB isn't changed, function results don't change.
