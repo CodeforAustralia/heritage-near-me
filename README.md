@@ -40,7 +40,8 @@ brew services start nginx
 Once PostgreSQL server is running, then import the required database:
 
 ```
-backend/dbinit.sh
+cd backend
+./dbinit.sh
 ```
 
 (Need to wipe the database and restart? Run `backend/dbdrop.sh`.)
@@ -105,6 +106,3 @@ sudo service postgrest start
 npm install -g elm@0.16
 cd prototype && elm-package install && make app
 ```
-
-
-
