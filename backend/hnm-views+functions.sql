@@ -253,7 +253,7 @@ COST 100;
 
 
 -- TODO: make this actually use the view story_details (or a common view used by that as well, to reduce SQL code)
-CREATE OR REPLACE FUNCTION hnm.story_details_by_location(lat TEXT, lng TEXT, story_of_interest INT) -- story: story ID
+CREATE OR REPLACE FUNCTION hnm.story_details_by_location(lat TEXT, lng TEXT, story_of_interest INT) -- story_of_interest: story ID
     RETURNS TABLE (
         id INTEGER,
         title TEXT,
