@@ -135,15 +135,24 @@ BEGIN
     RETURN QUERY
     SELECT
         story.id, story.title, story.blurb,
-        MIN(photo.photo),
+        -- (SELECT photo.photo
+        -- NOTE: this inner select is same effect as using story_featured_photo_urls but maybe faster;
+        -- something to consider for later; using the other one for now so SQL is more readable.
+        --     FROM photo
+        --     JOIN story_photo ON story_photo.photo_id = photo.id
+        --     WHERE story_photo.story_id = story.id
+        --     ORDER BY photo.id
+        --     LIMIT 1
+        -- ),
+        (SELECT hnm.story_featured_photo_urls.photo_url as photo
+            FROM hnm.story_featured_photo_urls
+            WHERE hnm.story_featured_photo_urls.story_id = story.id),
         MIN(ST_Distance_Sphere(
             ST_GeomFromText('POINT('||site.longitude||' '||site.latitude||')'),
             ST_GeomFromText('POINT('||$2||' '||$1||')')
         )) AS distance,
         jsonb_agg(DISTINCT json_object('{id, name, architectural_style, heritage_categories}', ARRAY[to_char(site.heritageItemId, '9999999'), site.name, site.architectural_style, site.heritage_categories])::jsonb) AS sites
     FROM story
-    LEFT JOIN story_photo ON story_photo.story_id = story.id
-    LEFT JOIN photo       ON story_photo.photo_id = photo.id
     LEFT JOIN story_site  ON story_site.story_id  = story.id
     LEFT JOIN site        ON story_site.site_id   = site.id
     GROUP BY story.id
