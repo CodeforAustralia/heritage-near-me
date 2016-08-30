@@ -15122,7 +15122,9 @@ Elm.Navigation.make = function (_elm) {
       var navTitle = function (title) {    return A2($Html.h1,_U.list([]),_U.list([$Html.text(title)]));};
       var logoDiv = A2($Html.div,
       _U.list([$Html$Attributes.$class("logo")]),
-      _U.list([A2($Html.a,_U.list([$Html$Attributes.href("/")]),_U.list([A2($Html.img,_U.list([$Html$Attributes.src("images/logo.png")]),_U.list([]))]))]));
+      _U.list([A2($Html.a,
+      _U.list([$Html$Attributes.href("/#!/about")]),
+      _U.list([A2($Html.img,_U.list([$Html$Attributes.src("images/logo.png")]),_U.list([]))]))]));
       var goSearchButton = A2($Html.button,
       _U.list([A2($Html$Events.onClick,address,$Types.ViewSearchScreen)]),
       _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-search fa-2x"),$Html$Attributes.id("search-nav-icon")]),_U.list([]))]));
