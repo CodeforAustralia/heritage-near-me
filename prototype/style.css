@@ -412,6 +412,7 @@ html, body, body > div {
 /* About screen style */
 .about-screen {
     background: #383636;
+    background-size: cover;
 }
     .about-screen section {
         margin: 0 16px;
@@ -1157,18 +1158,6 @@ button {
 /**
  *id tags added to the nav icons for positioning on the map and discovery screens.
 **/
-#share-nav-icon {
-  padding: 1px;
-}
-
-#map-nav-icon {
-  padding: 1px;
-}
-
-#heart-nav-icon {
-  padding: 1px;
-}
-
-#search-nav-icon {
+#share-nav-icon, #map-nav-icon, #heart-nav-icon, #search-nav-icon {
   padding: 1px;
 }
