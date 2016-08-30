@@ -12456,6 +12456,7 @@ Elm.Types.make = function (_elm) {
    var LoadDiscoveryData = F2(function (a,b) {    return {ctor: "LoadDiscoveryData",_0: a,_1: b};});
    var LoadData = function (a) {    return {ctor: "LoadData",_0: a};};
    var Back = {ctor: "Back"};
+   var ViewSearchScreen = {ctor: "ViewSearchScreen"};
    var ViewMapScreen = {ctor: "ViewMapScreen"};
    var ViewAboutScreen = {ctor: "ViewAboutScreen"};
    var ViewSplashPage = {ctor: "ViewSplashPage"};
@@ -12474,6 +12475,7 @@ Elm.Types.make = function (_elm) {
    var ViewingFavourites = {ctor: "ViewingFavourites"};
    var Viewing = F3(function (a,b,c) {    return {ctor: "Viewing",_0: a,_1: b,_2: c};});
    var Discovering = {ctor: "Discovering"};
+   var SearchScreen = {ctor: "SearchScreen"};
    var MapScreen = {ctor: "MapScreen"};
    var AboutScreen = {ctor: "AboutScreen"};
    var SplashPage = {ctor: "SplashPage"};
@@ -12490,6 +12492,7 @@ Elm.Types.make = function (_elm) {
                               ,SplashPage: SplashPage
                               ,AboutScreen: AboutScreen
                               ,MapScreen: MapScreen
+                              ,SearchScreen: SearchScreen
                               ,Discovering: Discovering
                               ,Viewing: Viewing
                               ,ViewingFavourites: ViewingFavourites
@@ -12514,6 +12517,7 @@ Elm.Types.make = function (_elm) {
                               ,ViewSplashPage: ViewSplashPage
                               ,ViewAboutScreen: ViewAboutScreen
                               ,ViewMapScreen: ViewMapScreen
+                              ,ViewSearchScreen: ViewSearchScreen
                               ,Back: Back
                               ,LoadData: LoadData
                               ,LoadDiscoveryData: LoadDiscoveryData
@@ -13977,25 +13981,23 @@ Elm.Story.make = function (_elm) {
    });
    var log = function (anything) {    return A2($Debug.log,"",anything);};
    var photoSlider = F4(function (address,story,item,screen) {
-      return _U.eq(screen,$Types.Intro) && _U.cmp($List.length(photos(story)),1) > 0 ? A2($Html.div,
+      var numStories = $List.length(photos(story));
+      return _U.eq(screen,$Types.Intro) && _U.cmp(numStories,1) > 0 ? A2($Html.div,
       A2($Basics._op["++"],
       _U.list([$Html$Attributes.$class("photo-slide")]),
       A3($Swiping.onSwipe,address,$Swiping.itemSwipe(item.photoPosition),$Swiping.swipePhotoAction)),
       _U.list([A2($Html.div,
               _U.list([$Html$Attributes.$class("photos")]),
               A2($List.map,A2(storyImage,story,item.photoPosition),_U.list([item.photoIndex - 1,item.photoIndex,item.photoIndex + 1])))
-              ,A3(photoIndicators,address,story,item.photoIndex)])) : _U.eq(screen,$Types.Body) ? A2($Html.div,
-      _U.list([$Html$Attributes.$class("photos")]),
-      _U.list([A3(storyImage,story,item.photoPosition,item.photoIndex)])) : $Html.text("");
+              ,A3(photoIndicators,address,story,item.photoIndex)])) : _U.eq(screen,$Types.Body) || _U.eq(screen,$Types.Intro) && _U.eq(numStories,
+      1) ? A2($Html.div,_U.list([$Html$Attributes.$class("photos")]),_U.list([A3(storyImage,story,item.photoPosition,item.photoIndex)])) : $Html.text("");
    });
    var introOrBody = F2(function (story,storyScreen) {
       var _p16 = {ctor: "_Tuple2",_0: story,_1: storyScreen};
       _v14_2: do {
          if (_p16._0.ctor === "FullStory") {
                switch (_p16._1.ctor)
-               {case "Intro": return A2($Html.div,
-                    _U.list([$Html$Attributes.$class("story-intro")]),
-                    _U.list([A2($Html.p,_U.list([]),_U.list([$Html.text(_p16._0._0.blurb)]))]));
+               {case "Intro": return A2($Html.div,_U.list([$Html$Attributes.$class("story-intro")]),_U.list([$Markdown.toHtml(_p16._0._0.blurb)]));
                   case "Body": var _p17 = _p16._0._0;
                     return A2($Html.div,_U.list([$Html$Attributes.$class("passage")]),_U.list([$Markdown.toHtml(A2(addQuote,_p17.quote,_p17.story))]));
                   default: break _v14_2;}
@@ -15052,6 +15054,7 @@ Elm.Route.make = function (_elm) {
          {case "SplashPage": return $RouteHash.set(_U.list([""]));
             case "AboutScreen": return $RouteHash.set(_U.list(["about"]));
             case "MapScreen": return $RouteHash.set(_U.list(["map"]));
+            case "SearchScreen": return $RouteHash.set(_U.list(["search"]));
             case "Discovering": return $RouteHash.set(_U.list(["discover"]));
             case "ViewingFavourites": return $RouteHash.set(_U.list(["favourites"]));
             default: return $RouteHash.set(_U.list(["story",$Story.storyIdToStr(_p2._0),urliseStoryScreen(_p2._2)]));}
@@ -15059,13 +15062,14 @@ Elm.Route.make = function (_elm) {
    });
    var action = function (url) {
       var _p3 = url;
-      _v3_6: do {
+      _v3_7: do {
          if (_p3.ctor === "::") {
                switch (_p3._0)
                {case "discover": return _U.list([$Types.Discover]);
                   case "favourites": return _U.list([$Types.ViewFavourites]);
                   case "about": return _U.list([$Types.ViewAboutScreen]);
                   case "map": return _U.list([$Types.ViewMapScreen]);
+                  case "search": return _U.list([$Types.ViewSearchScreen]);
                   case "story": if (_p3._1.ctor === "::") {
                           if (_p3._1._1.ctor === "::") {
                                 var screen = parseStoryScreen(_p3._1._1._0);
@@ -15077,11 +15081,11 @@ Elm.Route.make = function (_elm) {
                                 return _U.list([A2($Types.View,id,screen)]);
                              }
                        } else {
-                          break _v3_6;
+                          break _v3_7;
                        }
-                  default: break _v3_6;}
+                  default: break _v3_7;}
             } else {
-               break _v3_6;
+               break _v3_7;
             }
       } while (false);
       return A2($Debug.log,"converted url into default action: ",_U.list([$Types.ViewSplashPage]));
@@ -15119,15 +15123,18 @@ Elm.Navigation.make = function (_elm) {
       var logoDiv = A2($Html.div,
       _U.list([$Html$Attributes.$class("logo")]),
       _U.list([A2($Html.a,_U.list([$Html$Attributes.href("/")]),_U.list([A2($Html.img,_U.list([$Html$Attributes.src("images/logo.png")]),_U.list([]))]))]));
+      var goSearchButton = A2($Html.button,
+      _U.list([A2($Html$Events.onClick,address,$Types.ViewSearchScreen)]),
+      _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-search fa-2x"),$Html$Attributes.id("search-nav-icon")]),_U.list([]))]));
       var goFavsButton = A2($Html.button,
       _U.list([A2($Html$Events.onClick,address,$Types.ViewFavourites)]),
-      _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-heart fa-2x")]),_U.list([]))]));
+      _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-heart fa-2x"),$Html$Attributes.id("heart-nav-icon")]),_U.list([]))]));
       var goMapButton = A2($Html.button,
       _U.list([A2($Html$Events.onClick,address,$Types.ViewMapScreen)]),
-      _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-map fa-2x")]),_U.list([]))]));
+      _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-map fa-2x"),$Html$Attributes.id("map-nav-icon")]),_U.list([]))]));
       var goDiscoverButton = A2($Html.button,
       _U.list([A2($Html$Events.onClick,address,$Types.Discover)]),
-      _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-compass fa-2x")]),_U.list([]))]));
+      _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-share fa-2x"),$Html$Attributes.id("share-nav-icon")]),_U.list([]))]));
       var goBackButton = A2($Html.button,
       _U.list([A2($Html$Events.onClick,address,$Types.Back)]),
       _U.list([A2($Html.i,_U.list([$Html$Attributes.$class("fa fa-angle-left fa-3x")]),_U.list([]))]));
@@ -15137,8 +15144,9 @@ Elm.Navigation.make = function (_elm) {
          case "AboutScreen": return navBarHtml({side1: _U.list([goBackButton]),center: _U.list([navTitle("About")]),side2: _U.list([])});
          case "Viewing": return navBarHtml({side1: _U.list([goBackButton]),center: _U.list([logoDiv]),side2: _U.list([])});
          case "ViewingFavourites": return navBarHtml({side1: _U.list([goBackButton]),center: _U.list([navTitle("Favourites")]),side2: _U.list([])});
-         case "Discovering": return navBarHtml({side1: _U.list([]),center: _U.list([logoDiv]),side2: _U.list([goMapButton,goFavsButton])});
-         default: return navBarHtml({side1: _U.list([]),center: _U.list([logoDiv]),side2: _U.list([goDiscoverButton,goFavsButton])});}
+         case "Discovering": return navBarHtml({side1: _U.list([goFavsButton]),center: _U.list([logoDiv]),side2: _U.list([goMapButton,goSearchButton])});
+         case "MapScreen": return navBarHtml({side1: _U.list([goFavsButton]),center: _U.list([logoDiv]),side2: _U.list([goDiscoverButton,goSearchButton])});
+         default: return navBarHtml({side1: _U.list([goFavsButton]),center: _U.list([logoDiv]),side2: _U.list([goDiscoverButton,goSearchButton])});}
    });
    return _elm.Navigation.values = {_op: _op,navigation: navigation};
 };
@@ -15178,6 +15186,9 @@ Elm.View.make = function (_elm) {
       switch (_p1.ctor)
       {case "SplashPage": return $Splash.view;
          case "MapScreen": return A2($Html.div,_U.list([$Html$Attributes.$class("map-screen")]),_U.list([A2($Navigation.navigation,address,app.location)]));
+         case "SearchScreen": return A2($Html.div,
+           _U.list([$Html$Attributes.$class("search-screen")]),
+           _U.list([A2($Navigation.navigation,address,app.location)]));
          case "AboutScreen": return A2($Html.div,
            _U.list([$Html$Attributes.$class("about-screen")]),
            _U.list([A2($Navigation.navigation,address,app.location),$About.view]));
@@ -15365,22 +15376,22 @@ Elm.Main.make = function (_elm) {
    });
    var updateModel = F2(function (action,app) {
       var _p19 = {ctor: "_Tuple2",_0: app.location,_1: action};
-      _v10_17: do {
+      _v10_18: do {
          switch (_p19._1.ctor)
          {case "MoveItem": if (_p19._0.ctor === "Discovering") {
                     return _U.update(app,{discovery: A2(moveItem,app.discovery,_p19._1._0)});
                  } else {
-                    break _v10_17;
+                    break _v10_18;
                  }
             case "Favourite": if (_p19._0.ctor === "Discovering") {
                     return _U.update(app,{location: $Types.Discovering,discovery: favouriteItem(app.discovery)});
                  } else {
-                    break _v10_17;
+                    break _v10_18;
                  }
             case "Pass": if (_p19._0.ctor === "Discovering") {
                     return _U.update(app,{location: $Types.Discovering,discovery: passItem(app.discovery)});
                  } else {
-                    break _v10_17;
+                    break _v10_18;
                  }
             case "Animate": switch (_p19._0.ctor)
               {case "Discovering": return _U.update(app,{discovery: A3(animateItem,app.discovery,_p19._1._0,_p19._1._1)});
@@ -15390,41 +15401,42 @@ Elm.Main.make = function (_elm) {
                    _p19._0._0,
                    _U.update(_p20,{photoPosition: A3($Swiping.animateStep,_p19._1._0,_p19._1._1,_p20.photoPosition)}),
                    _p19._0._2)});
-                 default: break _v10_17;}
+                 default: break _v10_18;}
             case "MovePhoto": if (_p19._0.ctor === "Viewing") {
                     return _U.update(app,{location: A3($Types.Viewing,_p19._0._0,_U.update(_p19._0._1,{photoPosition: _p19._1._0}),$Types.screen1)});
                  } else {
-                    break _v10_17;
+                    break _v10_18;
                  }
             case "PrevPhoto": if (_p19._0.ctor === "Viewing") {
                     var _p21 = _p19._0._1;
                     return _U.update(app,
                     {location: A3($Types.Viewing,_p19._0._0,_U.update(_p21,{photoIndex: _p21.photoIndex - 1,photoPosition: $Types.Static}),$Types.screen1)});
                  } else {
-                    break _v10_17;
+                    break _v10_18;
                  }
             case "NextPhoto": if (_p19._0.ctor === "Viewing") {
                     var _p22 = _p19._0._1;
                     return _U.update(app,
                     {location: A3($Types.Viewing,_p19._0._0,_U.update(_p22,{photoIndex: _p22.photoIndex + 1,photoPosition: $Types.Static}),$Types.screen1)});
                  } else {
-                    break _v10_17;
+                    break _v10_18;
                  }
             case "JumpPhoto": if (_p19._0.ctor === "Viewing") {
                     return _U.update(app,
                     {location: A3($Types.Viewing,_p19._0._0,_U.update(_p19._0._1,{photoIndex: _p19._1._0,photoPosition: $Types.Static}),$Types.screen1)});
                  } else {
-                    break _v10_17;
+                    break _v10_18;
                  }
             case "Discover": return _U.update(app,{location: $Types.Discovering});
             case "View": return _U.update(app,{location: A3($Types.Viewing,_p19._1._0,initialItemView,_p19._1._1)});
             case "ViewFavourites": return _U.update(app,{location: $Types.ViewingFavourites});
             case "ViewAboutScreen": return _U.update(app,{location: $Types.AboutScreen});
             case "ViewMapScreen": return _U.update(app,{location: $Types.MapScreen});
+            case "ViewSearchScreen": return _U.update(app,{location: $Types.SearchScreen});
             case "LoadData": return _U.update(app,{items: _p19._1._0(app.items)});
             case "LoadDiscoveryData": return _U.update(app,{items: _p19._1._1(app.items),discovery: A2(updateDiscoverableItems,app.discovery,_p19._1._0)});
             case "UpdateLocation": return _U.update(app,{latLng: A2($Debug.log,"model setting GPS coords: ",_p19._1._0)});
-            default: break _v10_17;}
+            default: break _v10_18;}
       } while (false);
       var _p23 = A2($Debug.log,"updateModel, no change for action  ",action);
       var _p24 = A2($Debug.log,"updateModel, no change for location",app.location);
@@ -15452,6 +15464,11 @@ Elm.Main.make = function (_elm) {
       var booleanSignal = A2($Signal.map,function (m) {    return _U.eq(m.location,$Types.MapScreen);},app.model);
       return $Signal.dropRepeats(booleanSignal);
    }());
+   var showSearch = Elm.Native.Port.make(_elm).outboundSignal("showSearch",
+   function (v) {
+      return v;
+   },
+   $Signal.dropRepeats(A2($Signal.map,function (m) {    return _U.eq(m.location,$Types.SearchScreen);},app.model)));
    return _elm.Main.values = {_op: _op
                              ,initialApp: initialApp
                              ,initialDiscovery: initialDiscovery
