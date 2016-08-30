@@ -249,7 +249,7 @@ html, body, body > div {
             margin: 10px;
         }
             .popup-site-text h1 {
-                color: black;
+                color: #343434;
                 font-size: 16px;
                 line-height: 1em;
                 margin: 1px;
@@ -259,7 +259,7 @@ html, body, body > div {
         .popup-site-text a, .popup-stories-list.links ul li a {
             text-decoration: none;
             font-size: 14px;
-            color: black;
+            color: #343434;
             font-weight: 700;
             line-height: 1.2em;
         }    
@@ -285,7 +285,8 @@ html, body, body > div {
   width: 30px;
   height: 30px;
   border-radius: 50% 50% 50% 0;
-  background: #89849b;
+  background-image: url("./images/rock-imgpin.png");
+  /* background: #F4AF12; */
   position: absolute;
   transform: rotate(-45deg);
   left: 50%;
@@ -697,7 +698,7 @@ html, body, body > div {
                    button text centered beneath that icon. Bit of a hack? */
                 background-size: contain;
                 width: 90px;
-                border: 12px solid rgba(255, 255, 255, 0);
+                border: 10px solid rgba(255, 255, 255, 0);
                 font-size: 14px;
                 font-weight: 600;
                 color: #354716;
@@ -807,7 +808,7 @@ html, body, body > div {
         /* letter-spacing: 0.06rem; */
         margin: 0;
         padding-bottom: 0.2rem;
-        font-weight: 800;
+        font-weight: 900;
         line-height: 1;
         text-align: left;
     }
@@ -881,7 +882,7 @@ html, body, body > div {
         /* padding-left: 1rem; */
         padding-bottom: .5rem;
         font-size: 27px;
-        font-weight: 700;
+        font-weight: 900;
         line-height: 1;
         text-align: left;
         z-index: 1;
@@ -924,7 +925,7 @@ html, body, body > div {
     }
 
     .story-body .fullStory-meta .fullStory-site {
-        font-weight: 500;
+        font-weight: 600;
         font-size: 18px;
         letter-spacing: .01rem;
         text-shadow: 1px 1px 1px rgba(0,0,0,.5);
