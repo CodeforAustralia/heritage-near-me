@@ -16,7 +16,7 @@ navigation address location =
         goMapButton = button [onClick address ViewMapScreen] [i [class "fa fa-map fa-2x", id "map-nav-icon"] []]
         goFavsButton = button [onClick address ViewFavourites] [i [class "fa fa-heart fa-2x", id "heart-nav-icon"] []]
         goSearchButton = button [onClick address ViewSearchScreen] [i [class "fa fa-search fa-2x", id "search-nav-icon"] []]
-        logoDiv = div [class "logo"] [a [href "/"] [img [src "images/logo.png"] []]]
+        logoDiv = div [class "logo"] [a [href "/#!/about"] [img [src "images/logo.png"] []]]
         navTitle title = h1 [] [text title]
         noNavBar = text ""
     in
