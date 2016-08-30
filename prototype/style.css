@@ -1153,3 +1153,22 @@ button {
 .cf {
     *zoom: 1;
 }
+
+/**
+ *id tags added to the nav icons for positioning on the map and discovery screens.
+**/
+#share-nav-icon {
+  padding: 1px;
+}
+
+#map-nav-icon {
+  padding: 1px;
+}
+
+#heart-nav-icon {
+  padding: 1px;
+}
+
+#search-nav-icon {
+  padding: 1px;
+}
