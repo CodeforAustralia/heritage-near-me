@@ -1,7 +1,7 @@
 module Navigation (navigation) where
 
 import Html exposing (Html, div, span, nav, h1, img, button, a, i, text)
-import Html.Attributes exposing (class, src, href)
+import Html.Attributes exposing (class, id, src, href)
 import Html.Events exposing (onClick)
 
 import Types exposing (..)
@@ -12,10 +12,10 @@ navigation address location =
     let
         -- define some html components
         goBackButton = button [onClick address Back] [i [class "fa fa-angle-left fa-3x"] []]
-        goDiscoverButton = button [onClick address Discover] [i [class "fa fa-compass fa-2x"] []]
-        goMapButton = button [onClick address ViewMapScreen] [i [class "fa fa-map fa-2x"] []]
-        goFavsButton = button [onClick address ViewFavourites] [i [class "fa fa-heart fa-2x"] []]
-        goSearchButton = button [onClick address ViewSearchScreen] [i [class "fa fa-search fa-2x"] []]
+        goDiscoverButton = button [onClick address Discover] [i [class "fa fa-share fa-2x", id "share-nav-icon"] []]
+        goMapButton = button [onClick address ViewMapScreen] [i [class "fa fa-map fa-2x", id "map-nav-icon"] []]
+        goFavsButton = button [onClick address ViewFavourites] [i [class "fa fa-heart fa-2x", id "heart-nav-icon"] []]
+        goSearchButton = button [onClick address ViewSearchScreen] [i [class "fa fa-search fa-2x", id "search-nav-icon"] []]
         logoDiv = div [class "logo"] [a [href "/"] [img [src "images/logo.png"] []]]
         navTitle title = h1 [] [text title]
         noNavBar = text ""
@@ -44,31 +44,29 @@ navigation address location =
                 }
 
             Discovering -> navBarHtml
-                { side1 = []
+                { side1 = [goFavsButton]
                 , center = [logoDiv]
                 , side2 =
                     [ goMapButton
                     , goSearchButton
-                    , goFavsButton ]
+                    ]
                 }
 
             MapScreen -> navBarHtml
-                { side1 = []
+                { side1 = [goFavsButton]
                 , center = [logoDiv]
                 , side2 =
                     [ goDiscoverButton
                     , goSearchButton
-                    , goFavsButton
                     ]
                 }
 
             SearchScreen -> navBarHtml
-                { side1 = []
+                { side1 = [goFavsButton]
                 , center = [logoDiv]
                 , side2 =
                     [ goDiscoverButton
                     , goSearchButton
-                    , goFavsButton
                     ]
                 }
 
