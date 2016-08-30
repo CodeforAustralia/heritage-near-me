@@ -138,19 +138,24 @@ introOrBody story storyScreen =
 
 photoSlider : Signal.Address AppAction -> Story -> ItemView -> StoryScreen -> Html
 photoSlider address story item screen =
-    if screen == Intro && (List.length <| photos story) > 1 then
-        div
-            ([class "photo-slide"] ++ onSwipe address (itemSwipe item.photoPosition) swipePhotoAction)
-            [ div [class "photos"]
-                <| List.map (storyImage story item.photoPosition) [item.photoIndex-1, item.photoIndex, item.photoIndex+1]
-            , photoIndicators address story item.photoIndex
-            ]
-    else if screen == Body then
-        div
-            [class "photos"]
-            [storyImage story item.photoPosition item.photoIndex]
-    else
-        text ""
+    let
+        numStories = List.length <| photos story
+    in
+        if screen == Intro && numStories > 1 then
+            div
+                ([class "photo-slide"] ++ onSwipe address (itemSwipe item.photoPosition) swipePhotoAction)
+                [ div [class "photos"]
+                    <| List.map (storyImage story item.photoPosition) [item.photoIndex-1, item.photoIndex, item.photoIndex+1]
+                , photoIndicators address story item.photoIndex
+                ]
+
+        else if screen == Body || (screen == Intro && numStories == 1) then
+            div
+                [class "photos"]
+                [storyImage story item.photoPosition item.photoIndex]
+
+        else
+            text ""
 
 log : a -> a
 log anything =
