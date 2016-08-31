@@ -1,0 +1,64 @@
+# This is an nginx config file for the server.
+# It should be copied to somewhere like /etc/nginx/site-enabled/heritage-near-me
+
+# For a simple version that will work on dev machines, see server/heritage-near-me
+
+server {
+    root /usr/share/nginx/www;
+    index index.html index.htm;
+
+    #server_name localhost;
+    server_name heritagenear.me;
+
+    ### SSL Part
+    listen 443 ssl;
+
+    # Use only the three most trusted encryption protocols
+    ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+
+    ssl_ciphers 'EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH';
+    ssl_prefer_server_ciphers on;
+
+    # https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-encrypt-on-ubuntu-14-04
+    ssl_session_timeout 1d;
+    ssl_session_cache shared:SSL:50m;
+    ssl_stapling on;
+    ssl_stapling_verify on;
+    add_header Strict-Transport-Security max-age=15768000;
+
+    # openssl dhparam -out /etc/nginx/ssl/dhparam.pem 4096
+    ssl_dhparam /etc/nginx/ssl/dhparam.pem;
+
+    # These were self generated; they work but require user to approve (they're "untrusted" by the user's browser because we signed them)
+    # ssl_certificate /etc/nginx/ssl/nginx.crt;
+    # ssl_certificate_key /etc/nginx/ssl/nginx.key;
+
+    # These are generated / signed by letsencrypt service (/opt/letsencrypt)
+    # /opt/letsencrypt(master)$ ./letsencrypt-auto certonly -a webroot --webroot-path=/usr/share/nginx/www -d heritagenear.me
+    ssl_certificate /etc/letsencrypt/live/heritagenear.me/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/heritagenear.me/privkey.pem;
+
+    # for letsencrypt service
+    location ~ /.well-known {
+        allow all;
+    }
+
+    location /api {
+    rewrite    /api/(.*) /$1 break;
+        proxy_pass http://localhost:3000/;
+    }
+
+    location / {
+        try_files $uri $uri/ $uri/index.html =404;
+    }
+}
+
+server {
+    # We need connections to come over HTTPS rather than HTTP (for Geolocation to work in Chrome [1])
+    # so listen on port 80 but only so we can then redirect users to a secure port.
+    # 1: https://developers.google.com/web/updates/2016/04/geolocation-on-secure-contexts-only?hl=en
+
+    listen 80;
+    server_name heritagenear.me;
+    return 301 https://$host$request_uri;
+}
