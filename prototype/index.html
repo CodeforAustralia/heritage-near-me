@@ -41,6 +41,7 @@
             <div id="search">
                 <div class="search-input-container">
                     <input id="heritage-search" class="search-input" type="search">
+                    <button type="button" onClick="goBack()" name="Cancel" class="search-cancel">Cancel</button>
                 </div>
                 <div id="search-results-container"></div>
             </div>
@@ -336,6 +337,10 @@
             var resultsDiv = document.getElementById("search-results-container");
 
             var e = document.getElementById('heritage-search');
+
+            function goBack() {
+              window.history.back();
+            }
 
             e.oninput = function (e) {
                 var q = e.target.value;
