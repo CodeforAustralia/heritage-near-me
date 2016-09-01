@@ -380,12 +380,13 @@ html, body, body > div {
     flex-wrap: nowrap;
 }
     input.search-input {
+        -webkit-appearance: none; /* otherwise Safari won't let us style it */
         background: #dad8d3;
         font-size: 16px;
         border-radius: 5px;
         border: none;
         align-items: center;
-        flex: 2 0;
+        flex: 1 0;
         padding: 5px 10px;
     }
 
@@ -395,9 +396,13 @@ html, body, body > div {
       text-decoration: none;
       font-size: 16px;
       border: none;
-      padding: 8px;
-      padding-left: 18px;
+      padding: 8px !important;
+      padding-left: 18px !important; /* important necessary to overcome Safari's defaults */
       background-color: transparent;
+      /* width auto + flex-basis auto = size is no smaller/larger than its content dictates */
+      width: auto;
+      flex-basis: auto;
+      margin: 0 !important; /* overcome Safari default */
     }
 
     #search-results-container {
