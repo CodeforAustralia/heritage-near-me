@@ -1170,10 +1170,10 @@ button {
 /**
  * For IE 6/7 only
  * Include this rule to trigger hasLayout and contain floats.
- */
 .cf {
     *zoom: 1;
 }
+*/
 
 /**
  *id tags added to the nav icons for positioning on the map and discovery screens.
