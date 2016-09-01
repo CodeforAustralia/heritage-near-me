@@ -11,8 +11,11 @@ body {
     background: linear-gradient(to bottom,  #202527 15%,#1d1d1d 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#202527', endColorstr='#1D1D1D',GradientType=0 ); /* IE6-9 */
     color: white;
-    font-family: "proxima-nova" /*typekit;,
-    "Proxima Nova","Open Sans",Corbel,Helvetica,Arial,sans-serif;;;;;; */;
+}
+
+/* Typography */
+body, #elm, #map, button.search-cancel, input.search-input, blockquote {
+    font-family: "proxima-nova", "Open Sans",Corbel, Helvetica,Arial,sans-serif;
 }
 
 html, body, body > div {
@@ -224,9 +227,6 @@ html, body, body > div {
         display: none;
     }
 
-    #map {
-        font-family: "proxima-nova";
-    }
 
     #map .mapboxgl-popup-content {
         max-width: 80%;
@@ -380,7 +380,6 @@ html, body, body > div {
         border-radius: 5px;
         border: none;
         align-items: center;
-        font-family: "proxima-nova";
         flex: 2 0;
         padding: 5px 10px;
     }
@@ -393,8 +392,6 @@ html, body, body > div {
       border: none;
       padding: 8px;
       padding-left: 18px;
-      font-family: "proxima-nova" /*typekit;,
-      "Proxima Nova","Open Sans",Corbel,Helvetica,Arial,sans-serif;;;;;; */;
       background-color: transparent;
     }
 
@@ -1134,7 +1131,6 @@ blockquote {
     font-size: 18px;
     line-height: 1.4;
     color: #343434;
-    font-family: "proxima-nova" /*typekit*/, "Proxima Nova","Open Sans",Corbel,Helvetica,Arial,sans-serif;
 }
 
 button {
