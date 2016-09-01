@@ -431,6 +431,7 @@ html, body, body > div {
 /* About screen style */
 .about-screen {
     background: #383636;
+    background: #333131;
     background-size: cover;
 }
     .about-screen section {
@@ -454,6 +455,7 @@ html, body, body > div {
         color: #DCDCDC;
     }
     .about-screen .content-area {
+        background: #333131;
         padding-bottom: 15px;
     }
 
