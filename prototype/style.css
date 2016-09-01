@@ -34,6 +34,8 @@ html, body, body > div {
 #elm {
     position: absolute;
     top: 0;
+    width: 100%;
+    height: 100%;
 }
 .map-container, .search-container {
     z-index: -1;
