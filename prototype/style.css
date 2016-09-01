@@ -376,8 +376,6 @@ html, body, body > div {
     display: flex;
     align-items: center;
     flex-wrap: nowrap;
-    -webkit-flex-direction: row;
-	  flex-direction: row;
 }
     input.search-input {
         background: #dad8d3;
