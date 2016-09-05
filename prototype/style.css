@@ -82,7 +82,7 @@ html, body, body > div {
     padding-top: 65px;
 }
 
-/*.story-screen .navigation,
+/*.story-screen .navigation, 
 .favourites-screen .navigation  {
     background: rgba(0, 0, 0, 0.6);
 }*/
@@ -219,7 +219,7 @@ html, body, body > div {
     .mapboxgl-marker.site-marker:hover {
         box-shadow: 1px 1px 1px black;
     }
-
+    
     button.mapboxgl-popup-close-button {
         display: none;
     }
@@ -244,20 +244,6 @@ html, body, body > div {
         display: flex;
         height: 50px;
     }
-    .mapboxgl-popup-anchor-left {
-      padding-left: 40px;
-      padding-top: 40px;
-    }
-    .mapboxgl-popup-anchor-right {
-      padding-top: 40px;
-    }
-    .mapboxgl-popup-anchor-top {
-      padding-left: 40px;
-      padding-top: 40px;
-    }
-    .mapboxgl-popup-anchor-bottom {
-      padding-left: 40px;
-    }
         .popup-site-text {
             flex: 4 0;
             margin: 10px;
@@ -276,7 +262,7 @@ html, body, body > div {
             color: #343434;
             font-weight: 700;
             line-height: 1.2em;
-        }
+        }    
 
         section.popup-stories-list.links {
             margin-left: 10px;
@@ -491,7 +477,7 @@ html, body, body > div {
         flex-direction: column;
         justify-content: flex-end;
         flex: 1 1 100%;
-        -webkit-tap-highlight-color: rgba(0,0,0,0);
+        -webkit-tap-highlight-color: rgba(0,0,0,0); 
         -moz-user-select: none;
         -khtml-user-select: none;
         -webkit-user-select: none;
@@ -543,7 +529,7 @@ html, body, body > div {
                     left: 0;
                 }
 
-            .discovery-story-details
+            .discovery-story-details 
             {
                 text-shadow: 1px 1px 1px black;
                 flex: 1;
@@ -586,7 +572,7 @@ html, body, body > div {
                       font-weight: 300;
                  }
 
-
+      
                 .discovery-story-details p {
                     font-weight: 300;
                     padding: 0;
@@ -606,7 +592,7 @@ html, body, body > div {
                 .discovery-story-distance p{
                     margin: 0px;
                     font-size: 16px;
-
+                   
                 }
 
     .discovery-navigation {
@@ -831,7 +817,7 @@ html, body, body > div {
         display: inline-block;
         margin-right: 1em;
         font-size: 1em;
-    }
+    }    
 
 
     .story .title {
@@ -927,7 +913,7 @@ html, body, body > div {
         position: absolute;
         top: 100px;
     }
-
+   
    .story-body .fullStory-meta {
          background: none;
          position: absolute;
@@ -937,14 +923,14 @@ html, body, body > div {
          margin-bottom: 0;
          z-index: 1;
     }
-
+    
    .story-body .fullStory-meta div, .story-body .fullStory-meta p {
         color: #FFF;
         display: block;
         /* position: absolute; */
         /* z-index: 2; */
         /* top: 10px; */
-
+      
     }
 
     .fullStory-meta div, .fullStory-meta p {
@@ -1008,7 +994,7 @@ html, body, body > div {
         padding-top: 1rem;
     }
         .screen-header .title {
-
+            
         }
 
     .heritage-meta-info {
