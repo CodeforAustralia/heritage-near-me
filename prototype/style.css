@@ -241,7 +241,7 @@ html, body, body > div {
         padding: 0px;
     }
     .popup i.fa.fa-times-circle {
-        color: red;
+        color: white;
         position: absolute;
         right: 0;
         top: 0;
