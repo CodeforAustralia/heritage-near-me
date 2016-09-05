@@ -113,27 +113,6 @@
                 map.addControl(new mapboxgl.Geolocate({position: 'bottom-right'}));
                 var nav = new mapboxgl.Navigation({position: 'top-left'});
                 map.addControl(nav);
-
-                function mapClickHandler (e) {
-                    var features = map.queryRenderedFeatures(e.point, { layers: ['places'] });
-
-                    if (!features.length) {
-                        return;
-                    }
-
-                    var feature = features[0];
-
-                    // Populate the popup and set its coordinates
-                    // based on the feature found.
-                    var popup = new mapboxgl.Popup()
-                        .setLngLat(feature.geometry.coordinates)
-                        .setHTML(feature.properties.description)
-                        .addTo(map);
-                }
-
-                // When a click event occurs near a place, open a popup at the location of
-                // the feature, with description HTML from its properties.
-                map.on('click', mapClickHandler);
             }
 
             setupMap();
