@@ -244,20 +244,6 @@ html, body, body > div {
         display: flex;
         height: 50px;
     }
-    .mapboxgl-popup-anchor-left {
-      padding-left: 40px;
-      padding-top: 40px;
-    }
-    .mapboxgl-popup-anchor-right {
-      padding-top: 40px;
-    }
-    .mapboxgl-popup-anchor-top {
-      padding-left: 40px;
-      padding-top: 40px;
-    }
-    .mapboxgl-popup-anchor-bottom {
-      padding-left: 40px;
-    }
         .popup-site-text {
             flex: 4 0;
             margin: 10px;
