@@ -12,8 +12,8 @@
         <link rel="stylesheet" type="text/css" href="style.css">
         <link rel="stylesheet" type="text/css" href="css/loaders.min.css">
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
-        <script src='https://api.mapbox.com/mapbox-gl-js/v0.22.0/mapbox-gl.js'></script>
-        <link href='https://api.mapbox.com/mapbox-gl-js/v0.22.0/mapbox-gl.css' rel='stylesheet' />
+        <script src='https://api.mapbox.com/mapbox-gl-js/v0.23.0/mapbox-gl.js'></script>
+        <link href='https://api.mapbox.com/mapbox-gl-js/v0.23.0/mapbox-gl.css' rel='stylesheet' />
 
         <script src="https://use.typekit.net/tzz4als.js"></script>
         <script>try{Typekit.load({ async: true });}catch(e){}</script>
@@ -113,33 +113,12 @@
                 map.addControl(new mapboxgl.Geolocate({position: 'bottom-right'}));
                 var nav = new mapboxgl.Navigation({position: 'top-left'});
                 map.addControl(nav);
-
-                function mapClickHandler (e) {
-                    var features = map.queryRenderedFeatures(e.point, { layers: ['places'] });
-
-                    if (!features.length) {
-                        return;
-                    }
-
-                    var feature = features[0];
-
-                    // Populate the popup and set its coordinates
-                    // based on the feature found.
-                    var popup = new mapboxgl.Popup()
-                        .setLngLat(feature.geometry.coordinates)
-                        .setHTML(feature.properties.description)
-                        .addTo(map);
-                }
-
-                // When a click event occurs near a place, open a popup at the location of
-                // the feature, with description HTML from its properties.
-                map.on('click', mapClickHandler);
             }
 
             setupMap();
 
 
-            userMarker = null;
+            var userMarker = null;
             function updateUserMarker (agentLngLat) {
 
                 map.once('load', function load() {
@@ -292,7 +271,10 @@
 
                             el.addEventListener('click', function() {
                                 closeAllPopups();
-                                var popup = new mapboxgl.Popup({closeOnClick: false})
+                                var popup = new mapboxgl.Popup({
+                                        closeOnClick: false,
+                                        offset: 20,
+                                    })
                                     .setLngLat(marker.geometry.coordinates)
                                     .setHTML(popupContent(marker))
                                     .addTo(map);
@@ -311,7 +293,9 @@
                             });
 
                             // add marker to map
-                            new mapboxgl.Marker(el)
+                            new mapboxgl.Marker(el, {
+                                    offset: [-20,-20] /* center circular marker (diameter = 40px) on location */
+                                })
                                 .setLngLat(marker.geometry.coordinates)
                                 .addTo(map);
 
