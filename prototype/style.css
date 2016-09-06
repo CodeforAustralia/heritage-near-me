@@ -252,7 +252,7 @@ html, body, body > div {
         height: 50px;
     }
         .popup-site-text {
-            flex: 4 0;
+            flex: 1 0;
             margin: 10px;
         }
             .popup-site-text h1 {
@@ -276,7 +276,7 @@ html, body, body > div {
         }
 
         .popup-site-image {
-            flex: 2 0;
+            flex: 1 0;
             height: 100%;
             max-width: 70px;
         }
