@@ -19,6 +19,7 @@ import Navigation exposing (navigation)
 import Discover
 import Story
 import Favourites
+import Console
 
 
 {-| The main view for the app.
@@ -28,7 +29,7 @@ It also passes the address for UI actions (such as clicking and swiping) to the 
 view : Signal.Address AppAction -> AppModel -> Html
 view address app =
     let
-        _ = Debug.log "Viewing location" app.location
+        _ = Console.log "Viewing location" app.location
         content = screenView address app
     in
         div [class "app screen-size"] [content]

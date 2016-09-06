@@ -43,6 +43,7 @@ import Data
 import View exposing (view)
 import Story
 import Swiping
+import Console
 
 
 {-| The initial state /model of the app
@@ -203,8 +204,8 @@ and viewing the console while starting the app.
 update: AppAction -> AppModel -> (AppModel, Effects.Effects AppAction)
 update action model =
     let
-        _ = Debug.log "update w/ model.location" model.location
-        _ = Debug.log "update w/ action" action
+        _ = Console.log "update w/ model.location" model.location
+        _ = Console.log "update w/ action" action
     in
         (updateModel action model, updateAction action model)
 
@@ -243,8 +244,8 @@ updateModel action app = case (app.location, action) of
     -- Do nothing for the rest of the actions
     (_, _)                                    ->
         let
-            _ = Debug.log "updateModel, no change for location" app.location
-            _ = Debug.log "updateModel, no change for action  " action
+            _ = Console.log "updateModel, no change for location" app.location
+            _ = Console.log "updateModel, no change for action  " action
         in
             app
 
