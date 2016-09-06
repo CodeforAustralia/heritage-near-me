@@ -15,8 +15,8 @@ animate = Signal.map2 Animate timeSoFar windowSize
 
 animateStep : Time -> Window -> ItemPosition -> ItemPosition
 animateStep t window state = case state of
-    Leave pos -> Leaving window pos t (t+600) t
-    Return pos -> Returning window pos t (t+600) t
+    Leave pos -> Leaving window pos t (t+250) t
+    Return pos -> Returning window pos t (t+250) t
     Leaving w pos start end _ ->
         Leaving window pos start end t
     Returning w pos start end _ ->
