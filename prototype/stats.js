@@ -25,17 +25,34 @@ $(function () {
     function favouriteChart(element, story) {
         element.highcharts({
             chart: {
+                type: 'bar',
                 height: 150,
                 width: 200,
                 plotBackgroundColor: null,
                 plotBorderWidth: 0,
                 plotShadow: false
             },
+            xAxis: {
+                categories: ['Favourites', 'Passes'],
+                title: {
+                  text: null
+                }
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: 'Total',
+                    align: 'high'
+                },
+                labels: {
+                  overflow: 'justify'
+                }
+            },
             title: {
                 text: '',
             },
             plotOptions: {
-                pie: {
+                bar: {
                     dataLabels: {
                         enabled: true,
                         distance: -10,
@@ -44,10 +61,8 @@ $(function () {
                             color: '#555',
                         }
                     },
-                    startAngle: -90,
-                    endAngle: 90,
-                    size: '160%',
-                    center: ['50%', '100%']
+                    size: '160%'
+                    // center: ['50%', '100%']
                 }
             },
             lang: {
@@ -61,7 +76,7 @@ $(function () {
                 },
             },
             series: [{
-                type: 'pie',
+                type: 'bar',
                 name: 'Favourites vs. Passes',
                 innerSize: '70%',
                 data: story.total_swipes !== 0 ? [
@@ -69,7 +84,7 @@ $(function () {
                     ['Passes', story.passes]
                 ] : [],
             }],
-            colors: ['#417505', '#a52105'],
+            // colors: ['#a52105', '#417505', '#a52105'],
         });
     }
 

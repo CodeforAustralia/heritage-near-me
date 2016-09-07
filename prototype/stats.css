@@ -10,3 +10,7 @@
 #favourites li h3 {
     margin-left: 15px;
 }
+
+html, body {
+  font-family: "proxima-nova", "Open Sans",Corbel, Helvetica,Arial,sans-serif;
+}
