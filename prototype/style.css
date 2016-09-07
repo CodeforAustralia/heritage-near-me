@@ -395,6 +395,7 @@ html, body, body > div {
       flex: 0 0;
       text-decoration: none;
       font-size: 16px;
+      color: #628529;
       border: none;
       padding: 8px !important;
       padding-left: 18px !important; /* important necessary to overcome Safari's defaults */
