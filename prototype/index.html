@@ -52,6 +52,9 @@
             </div>
         </div>
 
+        <script src="/js/vendor/gascrolldepth.js"></script>
+
+
 
         <script type="text/javascript">
             // Make :active work in mobile safari
@@ -63,6 +66,8 @@
                     // Hide the address bar!
                     window.scrollTo(0, 1);
                 }, 0);
+
+                gascrolldepth.init();
             });
 
             // Start app
@@ -431,5 +436,25 @@
 
             preloadImages();
         </script>
+<!--
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js" integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s= sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq sha512-qzrZqY/kMVCEYeu/gCm8U2800Wz++LTGK4pitW/iswpCbjwxhsmUwleL1YXaHImptCHG0vJwU7Ly7ROw3ZQoww==" crossorigin="anonymous"></script> -->
+        <!-- <script src="/js/vendor/jquery.scrolldepth.js"></script> -->
+<!--
+        <script>
+            $(function() {
+                console.log("page has been loaded");
+                // custom events for mixpanel
+                jQuery.scrollDepth({
+                    elements: ['body'], //#end-marker
+                });
+                // $.scrollDepth({
+                //     eventHandler: function(data) {
+                //         console.log(data);
+                //         farts = barfs;
+                //     }
+                // });
+
+            });
+        </script> -->
     </body>
 </html>
