@@ -10578,6 +10578,22 @@ Elm.About.make = function (_elm) {
    }();
    return _elm.About.values = {_op: _op,view: view};
 };
+Elm.Console = Elm.Console || {};
+Elm.Console.make = function (_elm) {
+   "use strict";
+   _elm.Console = _elm.Console || {};
+   if (_elm.Console.values) return _elm.Console.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm);
+   var _op = {};
+   var log = F2(function (msg,a) {    var enabled = false;return enabled ? A2($Debug.log,msg,a) : a;});
+   return _elm.Console.values = {_op: _op,log: log};
+};
 Elm.Native.Date = {};
 Elm.Native.Date.make = function(localRuntime) {
 	localRuntime.Native = localRuntime.Native || {};
@@ -13999,7 +14015,10 @@ Elm.Story.make = function (_elm) {
                switch (_p16._1.ctor)
                {case "Intro": return A2($Html.div,_U.list([$Html$Attributes.$class("story-intro")]),_U.list([$Markdown.toHtml(_p16._0._0.blurb)]));
                   case "Body": var _p17 = _p16._0._0;
-                    return A2($Html.div,_U.list([$Html$Attributes.$class("passage")]),_U.list([$Markdown.toHtml(A2(addQuote,_p17.quote,_p17.story))]));
+                    return A2($Html.div,
+                    _U.list([$Html$Attributes.$class("passage")]),
+                    _U.list([$Markdown.toHtml(A2(addQuote,_p17.quote,_p17.story))
+                            ,A2($Html.div,_U.list([$Html$Attributes.id("story-end-marker")]),_U.list([]))]));
                   default: break _v14_2;}
             } else {
                break _v14_2;
@@ -15160,6 +15179,7 @@ Elm.View.make = function (_elm) {
    var _U = Elm.Native.Utils.make(_elm),
    $About = Elm.About.make(_elm),
    $Basics = Elm.Basics.make(_elm),
+   $Console = Elm.Console.make(_elm),
    $Data = Elm.Data.make(_elm),
    $Debug = Elm.Debug.make(_elm),
    $Discover = Elm.Discover.make(_elm),
@@ -15208,7 +15228,7 @@ Elm.View.make = function (_elm) {
    });
    var view = F2(function (address,app) {
       var content = A2(screenView,address,app);
-      var _p3 = A2($Debug.log,"Viewing location",app.location);
+      var _p3 = A2($Console.log,"Viewing location",app.location);
       return A2($Html.div,_U.list([$Html$Attributes.$class("app screen-size")]),_U.list([content]));
    });
    return _elm.View.values = {_op: _op,view: view};
@@ -15220,6 +15240,7 @@ Elm.Main.make = function (_elm) {
    if (_elm.Main.values) return _elm.Main.values;
    var _U = Elm.Native.Utils.make(_elm),
    $Basics = Elm.Basics.make(_elm),
+   $Console = Elm.Console.make(_elm),
    $Data = Elm.Data.make(_elm),
    $Debug = Elm.Debug.make(_elm),
    $Effects = Elm.Effects.make(_elm),
@@ -15440,13 +15461,13 @@ Elm.Main.make = function (_elm) {
             case "UpdateLocation": return _U.update(app,{latLng: A2($Debug.log,"model setting GPS coords: ",_p19._1._0)});
             default: break _v10_18;}
       } while (false);
-      var _p23 = A2($Debug.log,"updateModel, no change for action  ",action);
-      var _p24 = A2($Debug.log,"updateModel, no change for location",app.location);
+      var _p23 = A2($Console.log,"updateModel, no change for action  ",action);
+      var _p24 = A2($Console.log,"updateModel, no change for location",app.location);
       return app;
    });
    var update = F2(function (action,model) {
-      var _p25 = A2($Debug.log,"update w/ action",action);
-      var _p26 = A2($Debug.log,"update w/ model.location",model.location);
+      var _p25 = A2($Console.log,"update w/ action",action);
+      var _p26 = A2($Console.log,"update w/ model.location",model.location);
       return {ctor: "_Tuple2",_0: A2(updateModel,action,model),_1: A2(updateAction,action,model)};
    });
    var initialApp = {location: $Types.SplashPage,discovery: initialDiscovery,items: $Remote$DataStore.empty,latLng: $Maybe.Nothing};
