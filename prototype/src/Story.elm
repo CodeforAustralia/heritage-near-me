@@ -133,7 +133,10 @@ introOrBody story storyScreen =
         (FullStory s, Intro) ->
             div [class "story-intro"] [Markdown.toHtml s.blurb]
         (FullStory s, Body) ->
-            div [class "passage"] [Markdown.toHtml (addQuote s.quote s.story)]
+            div [class "passage"]
+                [ Markdown.toHtml (addQuote s.quote s.story)
+                , div [Attr.id "story-end-marker"] [] -- div#story-end-marker just for analytics usage
+                ]
         (_, _) -> text ""
 
 photoSlider : Signal.Address AppAction -> Story -> ItemView -> StoryScreen -> Html
