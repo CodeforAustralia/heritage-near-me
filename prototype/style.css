@@ -871,6 +871,8 @@ html, body, body > div {
 
     /* Story body style */
    .story-body {
+        overflow: scroll;
+        -webkit-overflow-scrolling: touch;
     }
 
     .featured-quote {
