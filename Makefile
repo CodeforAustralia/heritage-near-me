@@ -20,10 +20,15 @@ server-dbinit:
 server-dropdb:
 	su postgres -c "dropdb --if-exists $(DB)"
 
-RUN_API="postgrest postgres://localhost:5432/hnm --port 3000 --schema hnm --anonymous $(DB_USER) --pool 200"
+server-install-api-service:
+	sudo touch /var/log/heritage-api.log
+	sudo chown postgres /var/log/heritage-api.log
+	sudo mkdir -p /var/run/heritage
+	sudo chown postgres /var/run/heritage
+	sudo cp server/heritage-api.conf /etc/init
 
 server-apistart:
-	screen -S hnm-api -d -m $(RUN_API)
+	sudo service heritage-api start
 
 server-update-from-git:
 	git pull
